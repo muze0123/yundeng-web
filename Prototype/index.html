@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>云登 · PC端产品原型导航</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = { theme: { extend: {
+      colors: {
+        primary:{DEFAULT:'#0066FF',hover:'#0052CC',active:'#0047B3',bg:'#E6F0FF'},
+        ink:{title:'#1A1D24',body:'#3A3F4A',sub:'#6E7685',muted:'#9DA2AC'},
+        line:{DEFAULT:'#DFE1E5',light:'#E8EAED',lighter:'#F0F1F3'},
+        page:'#F7F8FA',card:'#FFFFFF',hover:'#F3F4F6',
+        success:{DEFAULT:'#0FC060',bg:'#E7F9F0'}, warning:{DEFAULT:'#E7772D',bg:'#FDF2E9'},
+        danger:{DEFAULT:'#D9001B',bg:'#FFE8EB'}, info:{DEFAULT:'#0091D5',bg:'#E4F4FB'}
+      },
+      fontFamily:{ sans:["-apple-system","BlinkMacSystemFont","PingFang SC","Microsoft YaHei","Hiragino Sans GB","Segoe UI","system-ui","sans-serif"], mono:["JetBrains Mono","monospace"] },
+      borderRadius:{ DEFAULT:'4px', lg:'8px' }
+    }}};
+  </script>
+  <style>
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { margin:0; overflow-x:hidden; font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei','Hiragino Sans GB','Segoe UI',system-ui,sans-serif; color:#3A3F4A; }
+    button, input { font:inherit; }
+    .mono { font-family:'JetBrains Mono',monospace; font-variant-numeric:tabular-nums; }
+    .topbar { box-shadow:0 4px 12px rgba(26,29,36,.10); }
+    .prototype-card { transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease; }
+    .prototype-card:hover { transform:translateY(-2px); border-color:#C7CAD1; box-shadow:0 2px 8px rgba(0,0,0,.06); }
+    .prototype-card:focus-within { outline:2px solid #E6F0FF; outline-offset:2px; }
+    .filter-tab { height:32px; padding:0 12px; border-radius:4px; color:#6E7685; display:inline-flex; align-items:center; gap:6px; transition:background .15s,color .15s; }
+    .filter-tab:hover { background:#F3F4F6; color:#3A3F4A; }
+    .filter-tab.active { color:#0066FF; background:#E6F0FF; font-weight:600; }
+    .map-track { position:relative; }
+    .map-track::before { content:""; position:absolute; left:28px; right:28px; top:24px; height:1px; background:#DFE1E5; }
+    .map-node { position:relative; z-index:1; }
+    .card-enter { animation:card-enter .32s ease both; }
+    @keyframes card-enter { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+    .anno-badge { position:fixed; width:20px; height:20px; border-radius:50%; background:#0066FF; color:#fff; font:700 11px/20px 'JetBrains Mono',monospace; text-align:center; box-shadow:0 2px 6px rgba(0,0,0,.15); pointer-events:auto; cursor:pointer; transition:transform .15s; }
+    .anno-badge:hover { transform:scale(1.2); }
+    @media (max-width:767px) {
+      .map-track::before { left:24px; right:auto; top:24px; bottom:24px; width:1px; height:auto; }
+    }
+    @media (prefers-reduced-motion:reduce) {
+      *,*::before,*::after { scroll-behavior:auto!important; animation-duration:.01ms!important; transition-duration:.01ms!important; }
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-page text-[13px]">
+  <!-- 顶部导航栏 -->
+  <header class="topbar sticky top-0 z-30 h-14 bg-card" aria-label="原型导航顶部栏">
+    <div class="max-w-[1280px] h-full mx-auto px-4 md:px-6 flex items-center justify-between gap-4">
+      <a href="index.html" class="flex items-center gap-2 min-w-0" aria-label="返回云登原型导航首页">
+        <span class="w-7 h-7 shrink-0 rounded bg-primary text-white flex items-center justify-center text-[15px] font-bold">云</span>
+        <span class="font-semibold text-[16px] text-ink-title tracking-tight">云登</span>
+        <span class="hidden sm:block h-4 border-l border-line mx-1"></span>
+        <span class="hidden sm:block text-ink-sub">PC端产品原型</span>
+      </a>
+      <div class="flex items-center gap-2">
+        <span id="pageCounter" class="hidden sm:inline-flex h-7 px-2.5 rounded bg-success-bg text-success items-center gap-1.5">
+          <span class="w-1.5 h-1.5 rounded-full bg-success"></span><span class="mono">3 / 3</span> 页面可访问
+        </span>
+        <a href="设计系统.html" class="h-8 px-3 rounded border border-line bg-card hover:bg-hover text-ink-body flex items-center gap-1.5">
+          <i data-lucide="swatch-book" class="w-4 h-4 text-primary"></i><span class="hidden sm:inline">查看设计规范</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-[1280px] mx-auto px-4 md:px-6 py-8 md:py-10">
+    <!-- 页面导语 -->
+    <section class="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_360px] gap-6 items-stretch mb-6 min-w-0" aria-labelledby="pageTitle">
+      <div class="min-w-0 bg-card rounded-lg p-6 md:p-8 min-h-[232px] flex flex-col justify-between overflow-hidden relative">
+        <div class="absolute right-0 top-0 w-32 h-32 bg-primary-bg rounded-bl-[128px]" aria-hidden="true"></div>
+        <div class="relative max-w-[700px]">
+          <div class="flex items-center gap-2 text-primary font-medium mb-4">
+            <i data-lucide="panels-top-left" class="w-4 h-4"></i>
+            <span class="mono text-[11px] tracking-[.12em] uppercase">Prototype workspace</span>
+          </div>
+          <h1 id="pageTitle" class="text-[28px] md:text-[30px] leading-tight font-bold text-ink-title tracking-[-.02em] break-words">从规范到页面，一处查看全部原型</h1>
+          <p class="mt-3 text-[14px] leading-7 text-ink-sub max-w-[620px]">这里汇总云登 PC 端当前可交付原型。先核对设计与框架规范，再进入具体业务页面，可减少跨文件查找和版本识别成本。</p>
+        </div>
+        <div class="relative mt-6 flex flex-wrap gap-x-6 gap-y-2 text-[12px] text-ink-sub">
+          <span class="flex items-center gap-1.5"><i data-lucide="file-code-2" class="w-4 h-4 text-primary"></i><strong class="mono text-ink-title">3</strong> 个原型页面</span>
+          <span class="flex items-center gap-1.5"><i data-lucide="folder-tree" class="w-4 h-4 text-primary"></i><strong class="mono text-ink-title">2</strong> 个内容分组</span>
+          <span class="flex items-center gap-1.5"><i data-lucide="calendar-check-2" class="w-4 h-4 text-success"></i>同步于 <strong class="mono text-ink-title">2026-08-07</strong></span>
+        </div>
+      </div>
+
+      <!-- 原型关系图 -->
+      <aside class="min-w-0 bg-card rounded-lg p-5 md:p-6" aria-labelledby="mapTitle">
+        <div class="flex items-center justify-between mb-5">
+          <div><p class="text-[11px] mono text-ink-muted mb-1">DELIVERY MAP</p><h2 id="mapTitle" class="text-[16px] font-semibold text-ink-title">原型交付链路</h2></div>
+          <span class="w-8 h-8 rounded bg-primary-bg text-primary flex items-center justify-center"><i data-lucide="git-branch" class="w-[18px] h-[18px]"></i></span>
+        </div>
+        <ol class="map-track grid md:grid-cols-3 lg:grid-cols-1 gap-4 lg:gap-3">
+          <li class="map-node flex lg:items-center gap-3"><span class="w-12 h-12 rounded bg-primary-bg text-primary flex items-center justify-center shrink-0"><i data-lucide="swatch-book" class="w-5 h-5"></i></span><div><strong class="block text-ink-title">设计规范</strong><span class="text-[12px] text-ink-sub">统一视觉与组件</span></div></li>
+          <li class="map-node flex lg:items-center gap-3"><span class="w-12 h-12 rounded bg-info-bg text-info flex items-center justify-center shrink-0"><i data-lucide="panel-left" class="w-5 h-5"></i></span><div><strong class="block text-ink-title">系统框架</strong><span class="text-[12px] text-ink-sub">承载导航与全局能力</span></div></li>
+          <li class="map-node flex lg:items-center gap-3"><span class="w-12 h-12 rounded bg-success-bg text-success flex items-center justify-center shrink-0"><i data-lucide="monitor-cog" class="w-5 h-5"></i></span><div><strong class="block text-ink-title">业务页面</strong><span class="text-[12px] text-ink-sub">验证真实操作流程</span></div></li>
+        </ol>
+      </aside>
+    </section>
+
+    <!-- 搜索与分组筛选 -->
+    <section class="bg-card rounded-lg p-4 md:p-5 mb-4" aria-label="原型筛选">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div id="filterTabs" data-anno="1" class="flex max-w-full min-w-0 items-center gap-1 overflow-x-auto" role="tablist" aria-label="原型页面分组"></div>
+        <label class="relative block w-full md:w-[320px] shrink-0">
+          <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-muted pointer-events-none"></i>
+          <input id="searchInput" data-anno="2" type="search" class="w-full h-8 pl-9 pr-14 rounded border border-line bg-card outline-none focus:border-primary focus:ring-2 focus:ring-primary-bg" placeholder="搜索页面名称或功能" autocomplete="off">
+          <kbd class="absolute right-2 top-1/2 -translate-y-1/2 h-5 min-w-5 px-1 rounded border border-line bg-page mono text-[10px] text-ink-muted flex items-center justify-center">/</kbd>
+        </label>
+      </div>
+    </section>
+
+    <!-- 原型页面列表 -->
+    <section class="bg-card rounded-lg p-5 md:p-6 min-h-[360px]" aria-labelledby="listTitle">
+      <div class="flex items-center justify-between gap-4 mb-5">
+        <div>
+          <h2 id="listTitle" class="inline-block text-[18px] font-semibold text-ink-title">原型页面</h2>
+          <p id="resultSummary" class="mt-1 text-[12px] text-ink-sub" aria-live="polite"></p>
+        </div>
+        <button id="resetButton" class="hidden h-8 px-3 rounded border border-line hover:bg-hover text-ink-body items-center gap-1.5"><i data-lucide="rotate-ccw" class="w-4 h-4"></i>重置筛选</button>
+      </div>
+      <div id="prototypeGroups" data-anno="3" class="space-y-7"></div>
+      <div id="emptyState" class="hidden min-h-[240px] flex-col items-center justify-center text-center">
+        <span class="w-12 h-12 rounded-lg bg-page text-ink-muted flex items-center justify-center mb-3"><i data-lucide="file-search" class="w-6 h-6"></i></span>
+        <h3 class="text-[15px] font-semibold text-ink-title">没有匹配的原型页面</h3>
+        <p class="mt-1.5 text-ink-sub">请更换关键词或清除当前分组筛选。</p>
+        <button id="emptyResetButton" class="mt-4 h-8 px-4 rounded bg-primary hover:bg-primary-hover text-white">查看全部页面</button>
+      </div>
+    </section>
+  </main>
+
+  <footer class="max-w-[1280px] mx-auto px-4 md:px-6 pb-8 text-[12px] text-ink-muted flex flex-wrap items-center justify-between gap-3">
+    <span>云登 PC 端产品原型 · 本地单文件预览入口</span>
+    <span class="mono">YUNLOGIN / PROTOTYPE INDEX</span>
+  </footer>
+
+  <!-- Portal 交互标注 -->
+  <div id="annoLayer" style="position:fixed;inset:0;pointer-events:none;z-index:9998;"></div>
+  <button id="annoToggle" class="fixed z-[9997] right-2 top-[120px] h-8 px-3 rounded-full bg-primary text-white shadow-[0_2px_8px_rgba(0,0,0,.12)] flex items-center justify-center gap-1.5 cursor-pointer" aria-label="显示或隐藏交互标注"><i data-lucide="tags" class="w-4 h-4"></i><span class="text-[12px] font-medium whitespace-nowrap">交互标注</span></button>
+  <div id="annoPopup" class="hidden fixed inset-0 z-[9999] bg-black/30 p-4 items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="annoTitle">
+    <div class="w-[520px] max-w-full bg-card rounded-lg shadow-[0_6px_24px_rgba(0,0,0,.12)]">
+      <div class="px-5 py-4 border-b border-line flex justify-between items-center"><h2 id="annoTitle" class="text-[16px] font-semibold text-ink-title"></h2><button id="closeAnno" class="text-ink-muted hover:text-ink-body" aria-label="关闭标注说明"><i data-lucide="x" class="w-5 h-5"></i></button></div>
+      <div id="annoDesc" class="p-5 text-[14px] text-ink-body leading-7"></div>
+    </div>
+  </div>
+
+  <script>
+    // 页面数据：所有入口均对应 Prototype 目录内的真实 HTML 文件。
+    const prototypes = [
+      { id:'browser-editor', group:'后台系统', title:'编辑浏览器', description:'配置环境信息、浏览器指纹、插件与偏好设置，验证随机指纹覆盖、帮助说明和保存保护流程。', file:'编辑浏览器.html', icon:'monitor-cog', status:'业务原型', statusTone:'success', updated:'08-07 20:30', size:'99.9 KB', tags:['环境配置','浏览器指纹','插件','表单'] },
+      { id:'app-shell', group:'后台系统', title:'系统框架', description:'展示云登 PC 端统一应用壳，包含侧栏、顶部导航、路由承载、全局通知与智能助手入口。', file:'系统框架.html', icon:'panel-left', status:'基础框架', statusTone:'info', updated:'08-07 20:28', size:'33.7 KB', tags:['App Shell','全局导航','路由','响应式'] },
+      { id:'design-system', group:'设计规范', title:'设计系统', description:'集中查看颜色、字体、间距、组件和配置型长表单规范，作为原型视觉实现的单一事实来源。', file:'设计系统.html', icon:'swatch-book', status:'规范文档', statusTone:'primary', updated:'08-07 20:47', size:'234.1 KB', tags:['Design Token','组件','表单规范','交付标准'] }
+    ];
+    const filters = [
+      { id:'全部', label:'全部', icon:'layout-grid' },
+      { id:'后台系统', label:'后台系统', icon:'monitor' },
+      { id:'设计规范', label:'设计规范', icon:'ruler' }
+    ];
+    const annotations = {
+      1:{title:'页面分组筛选',desc:['点击“全部 / 后台系统 / 设计规范”切换页面分组。','筛选与搜索关键词共同生效，页面数量会实时更新。']},
+      2:{title:'原型搜索',desc:['输入页面名称、简介、标签或文件名进行实时搜索。','按键盘“/”可快速聚焦搜索框；按 Esc 清空关键词。']},
+      3:{title:'原型页面卡片',desc:['卡片由内联数据统一渲染，展示页面状态、简介、标签、更新时间和文件体积。','点击卡片标题或“打开页面”进入对应的真实 HTML 原型。']},
+      4:{title:'打开原型页面',desc:['点击后在当前窗口打开目标 HTML 文件。','所有链接均使用 Prototype 目录内的相对路径，支持双击 index.html 本地预览。']}
+    };
+    let activeFilter = '全部';
+    let annoVisible = true;
+
+    const $ = id => document.getElementById(id);
+    const toneClass = tone => ({success:'bg-success-bg text-success',info:'bg-info-bg text-info',primary:'bg-primary-bg text-primary'}[tone] || 'bg-page text-ink-sub');
+
+    function renderFilters() {
+      $('filterTabs').innerHTML = filters.map(filter => `<button type="button" role="tab" aria-selected="${filter.id===activeFilter}" data-filter="${filter.id}" class="filter-tab ${filter.id===activeFilter?'active':''}"><i data-lucide="${filter.icon}" class="w-4 h-4"></i>${filter.label}<span class="mono text-[11px]">${filter.id==='全部'?prototypes.length:prototypes.filter(item=>item.group===filter.id).length}</span></button>`).join('');
+      $('filterTabs').querySelectorAll('[data-filter]').forEach(button => button.addEventListener('click', () => { activeFilter=button.dataset.filter; renderFilters(); renderPrototypes(); }));
+    }
+
+    function getVisiblePrototypes() {
+      const keyword = $('searchInput').value.trim().toLowerCase();
+      return prototypes.filter(item => {
+        const inGroup = activeFilter === '全部' || item.group === activeFilter;
+        const searchable = [item.title,item.description,item.file,item.group,...item.tags].join(' ').toLowerCase();
+        return inGroup && (!keyword || searchable.includes(keyword));
+      });
+    }
+
+    function renderPrototypes() {
+      const visible = getVisiblePrototypes();
+      const groups = [...new Set(visible.map(item=>item.group))];
+      $('prototypeGroups').innerHTML = groups.map(group => {
+        const items = visible.filter(item=>item.group===group);
+        return `<section aria-labelledby="group-${group}">
+          <div class="flex items-center gap-2 mb-3"><h3 id="group-${group}" class="text-[13px] font-semibold text-ink-title">${group}</h3><span class="mono text-[11px] text-ink-muted">${items.length}</span><span class="h-px bg-line-lighter flex-1"></span></div>
+          <div class="grid md:grid-cols-2 xl:grid-cols-3 gap-4">${items.map((item,index)=>cardTemplate(item,index)).join('')}</div>
+        </section>`;
+      }).join('');
+      $('prototypeGroups').classList.toggle('hidden', visible.length===0);
+      $('emptyState').classList.toggle('hidden', visible.length!==0);
+      $('emptyState').classList.toggle('flex', visible.length===0);
+      $('resultSummary').textContent = visible.length === prototypes.length ? `共 ${prototypes.length} 个页面，全部入口可直接访问` : `当前显示 ${visible.length} / ${prototypes.length} 个页面`;
+      const filtered = activeFilter!=='全部' || $('searchInput').value.trim();
+      $('resetButton').classList.toggle('hidden', !filtered);
+      $('resetButton').classList.toggle('flex', !!filtered);
+      lucide.createIcons();
+      requestAnimationFrame(renderAnnoBadges);
+    }
+
+    function cardTemplate(item,index) {
+      return `<article class="prototype-card card-enter rounded-lg border border-line bg-card p-5 flex flex-col min-h-[260px]" style="animation-delay:${index*45}ms">
+        <div class="flex items-start justify-between gap-4">
+          <span class="w-10 h-10 rounded bg-primary-bg text-primary flex items-center justify-center shrink-0"><i data-lucide="${item.icon}" class="w-5 h-5"></i></span>
+          <span class="h-6 px-2 rounded ${toneClass(item.statusTone)} text-[11px] font-medium flex items-center">${item.status}</span>
+        </div>
+        <div class="mt-4 flex-1">
+          <a href="${item.file}" class="inline-flex items-center gap-1.5 text-[16px] font-semibold text-ink-title hover:text-primary focus:outline-none"><span>${item.title}</span><i data-lucide="arrow-up-right" class="w-4 h-4"></i></a>
+          <p class="mt-2 text-[13px] leading-6 text-ink-sub">${item.description}</p>
+          <div class="mt-3 flex flex-wrap gap-1.5">${item.tags.map(tag=>`<span class="h-6 px-2 rounded bg-page text-[11px] text-ink-sub flex items-center">${tag}</span>`).join('')}</div>
+        </div>
+        <div class="mt-5 pt-4 border-t border-line-lighter flex items-center justify-between gap-3">
+          <div class="min-w-0 text-[11px] text-ink-muted"><span class="mono">${item.updated}</span><span class="mx-1.5">·</span><span class="mono">${item.size}</span></div>
+          <a href="${item.file}" data-anno="4" class="h-8 px-3 rounded bg-primary hover:bg-primary-hover active:bg-primary-active text-white flex items-center gap-1.5 shrink-0"><span>打开页面</span><i data-lucide="arrow-right" class="w-4 h-4"></i></a>
+        </div>
+      </article>`;
+    }
+
+    function resetFilters() { activeFilter='全部'; $('searchInput').value=''; renderFilters(); renderPrototypes(); $('searchInput').focus(); }
+
+    // Portal 标注系统。
+    function renderAnnoBadges() {
+      const layer = $('annoLayer'); layer.innerHTML='';
+      if (!annoVisible || !$('annoPopup').classList.contains('hidden')) return;
+      const seen = new Set();
+      document.querySelectorAll('[data-anno]').forEach(element => {
+        const id = element.dataset.anno;
+        if (seen.has(id) || !annotations[id]) return;
+        const rect = element.getBoundingClientRect();
+        if (rect.width===0 || rect.height===0 || rect.bottom<0 || rect.top>innerHeight) return;
+        seen.add(id);
+        const badge=document.createElement('button'); badge.className='anno-badge'; badge.textContent=id; badge.style.left=Math.max(0,rect.right-10)+'px'; badge.style.top=Math.max(0,rect.top-10)+'px'; badge.setAttribute('aria-label',`查看标注 ${id}`); badge.onclick=()=>showAnnoPopup(id); layer.appendChild(badge);
+      });
+    }
+    function showAnnoPopup(id) { const item=annotations[id]; $('annoTitle').textContent=`${id}. ${item.title}`; $('annoDesc').innerHTML=item.desc.map(text=>`<p>${text}</p>`).join(''); $('annoPopup').classList.remove('hidden'); $('annoPopup').classList.add('flex'); renderAnnoBadges(); $('closeAnno').focus(); }
+    function closeAnnoPopup() { $('annoPopup').classList.add('hidden'); $('annoPopup').classList.remove('flex'); renderAnnoBadges(); }
+
+    $('searchInput').addEventListener('input',renderPrototypes);
+    $('resetButton').addEventListener('click',resetFilters);
+    $('emptyResetButton').addEventListener('click',resetFilters);
+    $('annoToggle').addEventListener('click',()=>{ annoVisible=!annoVisible; $('annoToggle').classList.toggle('bg-primary',annoVisible); $('annoToggle').classList.toggle('bg-ink-muted',!annoVisible); renderAnnoBadges(); });
+    $('closeAnno').addEventListener('click',closeAnnoPopup);
+    $('annoPopup').addEventListener('click',event=>{ if(event.target===$('annoPopup')) closeAnnoPopup(); });
+    document.addEventListener('keydown',event=>{
+      if(event.key==='/' && document.activeElement!==$('searchInput')) { event.preventDefault(); $('searchInput').focus(); }
+      if(event.key==='Escape') { if(!$('annoPopup').classList.contains('hidden')) closeAnnoPopup(); else if(document.activeElement===$('searchInput') && $('searchInput').value) { $('searchInput').value=''; renderPrototypes(); } }
+    });
+    window.addEventListener('scroll',renderAnnoBadges,{passive:true});
+    window.addEventListener('resize',renderAnnoBadges);
+
+    renderFilters();
+    renderPrototypes();
+    lucide.createIcons();
+  </script>
+</body>
+</html>

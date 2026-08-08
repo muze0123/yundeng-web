@@ -1,0 +1,488 @@
+# design.md — 视觉设计规范（单一事实来源）
+
+> 本文件是项目视觉规范的**单一事实来源**，提取自《设计系统.html》。所有页面的颜色、字号、圆角、间距、组件外观**必须**引用本文件，不得自造。视觉如有调整，只改本文件。
+> 配套文件：`claude.md`（工程与行为约束）、各模块 `PRD.md`（页面内容与交互）。
+
+---
+
+## 一、颜色
+
+### 1.1 主色
+
+| 角色 | 色值 | 用途 |
+|------|------|------|
+| primary | `#0066FF` | 主操作、选中、链接、品牌强调 |
+| primary-hover | `#0052CC` | 主按钮 hover |
+| primary-active | `#0047B3` | 主按钮 active |
+| primary-bg | `#E6F0FF` | 主色浅底（选中背景、标签底） |
+
+### 1.2 中性色（文字与线）
+
+| 角色 | 色值 | 用途 |
+|------|------|------|
+| ink-title | `#1A1D24` | 标题文字 |
+| ink-body | `#3A3F4A` | 正文 |
+| ink-sub | `#6E7685` | 次要/辅助文字 |
+| ink-muted | `#9DA2AC` | 占位/禁用文字 |
+| line | `#DFE1E5` | 主分割线/边框 |
+| line-light | `#E8EAED` | 浅分割线 |
+| line-lighter | `#F0F1F3` | 更浅（表头底等） |
+| bg-page | `#F7F8FA` | 页面底色 |
+| bg-card | `#FFFFFF` | 卡片底色 |
+| bg-hover | `#F3F4F6` | 行/项 hover 底色 |
+
+### 1.3 语义色
+
+| 角色 | 主色 | 浅底 | 用途 |
+|------|------|------|------|
+| success | `#0FC060` | `#E7F9F0` | 成功、进行中、完成正向 |
+| warning | `#E7772D` | `#FDF2E9` | 警告、临期、超时提示 |
+| danger | `#D9001B` | `#FFE8EB` | 错误、危险、异常、删除 |
+| info | `#0091D5` | `#E4F4FB` | 信息、中性提示 |
+
+### 1.4 语义色使用铁律
+
+- 主操作/选中/链接 → **primary**
+- 进行中/完成正向 → **success**
+- 临期/超时/警告 → **warning**
+- 异常/删除/错误 → **danger**
+- 中性信息提示 → **info**
+- 状态 Badge 一律"主色字/描边 + 对应浅底"
+
+---
+
+## 二、字体
+
+### 2.1 字体族
+
+| 用途 | 字体 |
+|------|------|
+| UI 文本（sans） | `-apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', 'Hiragino Sans GB', 'Segoe UI', system-ui, sans-serif` |
+| 数字/编号/金额/代码（mono） | `'JetBrains Mono', monospace` |
+
+> 数字、订单号、金额、编码、时间戳等**必须**用 mono 字体，增强数据感与对齐。
+> JetBrains Mono 通过 CDN 引入：`https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap`
+
+### 2.2 字号层级（B 端高信息密度）
+
+| 层级 | 字号 / 字重 | 用途 |
+|------|-------------|------|
+| 主标题 | 20–30px / 700 | 页面主标题 |
+| 区块标题 | 16–19px / 600 | 卡片/区块标题 |
+| 正文（主） | 13px / 400–500 | 表格、正文、表单 |
+| 正文（次） | 12px / 400 | 密集信息 |
+| 辅助 | 11px / 400 | 标签、次要说明 |
+
+### 2.3 界面语言规范
+
+云登后台管理系统的用户界面以简体中文为唯一主展示语言，页面标题、区块标题、卡片标题、字段标签、表头、按钮、状态名称、辅助说明和空/错状态文案必须使用准确、简洁的中文。
+
+- **禁止装饰性英文标题**：不得使用 `DATA GOVERNANCE CONSOLE`、`DELIVERY MAP` 等英文眉题、副标题或氛围文案；此类内容没有独立业务信息时直接删除，不需要中文占位替代。
+- **禁止中英双标题或字段翻译**：不得展示“中文标题 / English Title”“负责人（Owner）”“数据结构（Schema）”等并列翻译；统一保留中文名称。
+- **英文缩写须中文化**：英文缩写直接充当指标或字段名称时，应改为中文业务名称，例如 `DAU` 显示为“日活跃用户”、`GMV` 显示为“成交金额”、`MTTR` 显示为“平均恢复时长”。
+- **允许保留必要技术值**：事件英文名、属性标识、接口参数、事件/会话/请求/链路标识、代码、文件格式、客户端名称、版本号和技术枚举属于数据本身，可按原值展示，并使用等宽字体区分于界面文案。
+- **避免重复解释**：技术值已有中文字段标签时，不再额外展示英文标签翻译；需要解释时使用中文帮助文本或 Tooltip。
+
+新增或改版页面必须在视觉验收前执行用户可见文案检查；发现纯英文标题、装饰性英文或中英并列字段时视为不符合设计规范。
+
+---
+
+## 三、圆角与间距
+
+### 3.1 圆角
+
+| 值 | 用途 |
+|----|------|
+| **4px** | 默认（按钮、输入框、标签、Badge 等小元素） |
+| 8px | 卡片、弹窗、模态、大容器 |
+
+> 注：6px 保留可用，用于内嵌小组件（如 KPI 统计小卡），不作为主要层级。
+
+### 3.2 间距
+
+- 基数 **6px**；
+- 常用梯度：`4 / 6 / 8 / 10 / 12 / 16 / 20 / 32px`；
+- 就近取梯度值，不用非梯度的随意像素。
+
+---
+
+## 四、阴影层次
+
+| 层级 | 用途 | 参考 |
+|------|------|------|
+| 无/极浅 | 卡片默认（以边框区分为主） | `border: 1px solid line` |
+| 轻 | hover 卡片、下拉 | `0 2px 8px rgba(0,0,0,.06)` |
+| 中 | 弹窗、抽屉、悬浮层 | `0 6px 24px rgba(0,0,0,.12)` |
+
+> B 端以边框和底色区分层级为主，阴影克制使用，避免过重。
+
+---
+
+## 五、组件外观标准
+
+同类组件全站外观必须一致。以下为视觉标准（行为交互见 `claude.md`）。
+
+### 5.0 页面标准布局
+
+> **核心原则**：所有后台列表/管理页面采用统一的两区块结构。**不设独立的页面主标题区块**（标题整合进数据区标题行）。
+
+**标准结构**：
+
+```
+┌─ 区块1：筛选区 ─────────────────────────────┐
+│  [状态Tab]（可选）                            │
+│  filter-flow（400px 筛选项，最多 4 项/行）       │
+│  …… [最后一个条件] [查询] [重置]               │
+└────────────────────────────────────────────┘
+┌─ 区块2：数据区 ─────────────────────────────┐
+│  工单列表（h2, 左）       [操作按钮]（右）      │
+│  ┌─────┐ ┌─────┐ ┌─────┐ ┌─────┐            │
+│  │ KPI │ │ KPI │ │ KPI │ │ KPI │ ← 有则显示  │
+│  └─────┘ └─────┘ └─────┘ └─────┘            │
+│  ┌─ 表格 ──────────────────────────┐         │
+│  │ ...data rows...                 │         │
+│  └─────────────────────────────────┘         │
+│  分页器（表格右下方）                           │
+└────────────────────────────────────────────┘
+```
+
+**布局规则**：
+
+| 区域 | 规则 |
+|------|------|
+| 区块1 筛选区 | `bg-white rounded-lg border border-line p-5 md:p-6 mb-4` |
+| 区块2 数据区 | `bg-white rounded-lg border border-line p-5 md:p-6` |
+| 数据区标题 | `h2`，`text-[16px]`（有指标卡）或 `text-[18px]`（无指标卡），`font-semibold`，左对齐 |
+| 操作按钮 | 与标题同行，右对齐，`flex items-center justify-between flex-wrap gap-3` |
+| 数据指标卡 | 有则放在标题行下方、表格上方（`mb-4`），无则不显示 |
+| 指标卡样式 | `grid grid-cols-2 lg:grid-cols-4 gap-3`，每卡 `p-3 rounded-md border border-line bg-bg-page` |
+| 筛选字段 | 使用可换行的 `filter-flow` 布局；控件基准宽度 400px，单行最多 4 项（见 §5.4） |
+| 查询/重置 | 作为末尾操作组紧跟最后一个查询条件，不另起独立按钮行；容器不足时随筛选项整体换行 |
+
+**页面标题处理**：
+- ❌ **禁止**设置独立的页面标题卡片（如单独的 `<h1>订单管理</h1>` 卡片区块）
+- ✅ 页面标题语义整合到数据区的 `h2` 标题中（如"工单列表"、"订单列表"）
+- ✅ 必要的页面级操作按钮（如"标记异常"、"新增"）放在数据区标题行右侧
+
+**区块1 筛选区 HTML 结构参考**：
+
+```html
+<div class="bg-white rounded-lg border border-line p-5 md:p-6 mb-4">
+  <!-- 状态 Tab（按需） -->
+  <div class="flex items-center gap-2 mb-4 flex-wrap">
+    <span class="text-[13px] text-ink-sub mr-1">状态：</span>
+    <div class="flex items-center gap-1 flex-wrap" id="statusTabs">
+      <span class="filter-tab active">全部</span>...
+    </div>
+  </div>
+  <!-- filter-flow：筛选项与操作组共用同一换行流 -->
+  <div class="filter-flow">
+    <div class="filter-item">...</div>
+    ...
+    <div class="filter-actions">
+      <button class="btn btn-primary btn-sm">查询</button>
+      <button class="btn btn-default btn-sm">重置</button>
+    </div>
+  </div>
+</div>
+```
+
+**区块2 数据区 HTML 结构参考**：
+
+```html
+<div class="bg-white rounded-lg border border-line p-5 md:p-6">
+  <!-- 标题行 -->
+  <div class="flex items-center justify-between flex-wrap gap-3 mb-4">
+    <h2 class="text-[18px] font-semibold text-ink-title inline-block">数据列表</h2>
+    <button class="btn btn-primary"><i ...></i> 操作</button>
+  </div>
+  <!-- 数据指标卡（有则放，无则跳过） -->
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-4">...</div>
+  <!-- 表格 -->
+  <div class="overflow-x-auto"><table class="data-table">...</table></div>
+  <!-- 分页 -->
+  <div class="flex items-center justify-end flex-wrap gap-4 pt-5 text-[12px]" id="pagination"></div>
+</div>
+```
+
+### 5.1 按钮
+
+| 类型 | 外观 |
+|------|------|
+| 主按钮 | primary 实底 + 白字，圆角 4px，高度 32px（默认）/28px（小） |
+| 次按钮 | 白底 + line 描边 + ink-body 字 |
+| 危险按钮 | danger 实底/描边 |
+| 禁用 | 底色/文字置灰（ink-muted），不可点 |
+| hover/active | 主按钮用 primary-hover / primary-active |
+
+### 5.2 表格
+
+| 区域 | 样式 |
+|------|------|
+| 表格整体 | `width:100%; border-collapse:collapse; font-size:13px` |
+| 表头 | `line-lighter` 底色（`#F0F1F3`）+ `ink-sub` 字色（`#6E7685`），字重 600，字号 12px，padding `9px 12px`，下边框 `1px solid line`，不换行 |
+| 数据行 | 字号 13px，`ink-body` 字色，padding `9px 12px`，下边框 `1px solid line-lighter`，行高约 44–52px |
+| hover 行 | `bg-hover`（`#F3F4F6`）高亮底色；斑马纹可选 |
+| 对齐 | **所有列左对齐**（含数字列）；列头与数据水平 padding 一致，保持上下对齐 |
+| 数字列 | 使用 mono 字体（金额、数量、订单号等），与其他列保持左对齐 |
+| 响应式 | 表格外层容器 `overflow-x: auto`，窄屏横向滚动 |
+| 操作列 | 操作链接之间 12px 水平间距（如"编辑 删除"），危险操作（删除）用 danger 色 |
+
+> **实现参考**：所有原型页面中表格使用 `.data-table` 类统一以上样式。新页面从框架模板复制后，表格 CSS 已内置。
+
+### 5.3 状态 Badge
+
+- 圆角标签（4px），主色字/描边 + 对应浅底；
+- 进行中 success / 临期超时 warning / 异常 danger / 终态 ink-muted 灰。
+
+### 5.4 筛选区
+
+> 筛选区统一采用“定宽筛选项 + 流式换行”的响应式布局。查询控件基准宽度固定为 400px，单行最多展示 4 个查询条件；可用宽度不足时按 4→3→2→1 项自然换行，不产生页面级横向滚动。
+
+**容器 `.filter-flow`**：`display:flex; flex-wrap:wrap; align-items:flex-end; gap:16px 24px;`。横向间距 24px 用于区分不同查询维度，纵向间距 16px 用于保持换行后的扫描节奏。
+
+**筛选项 `.filter-item`**：`flex:0 0 400px; width:400px; display:flex; flex-direction:column; gap:6px;`。
+
+**标签 `.filter-label`**：标签位于控件上方，左对齐，`font-size:13px; line-height:18px; color:#3A3F4A;`，不追加中文冒号。
+
+**控件 `.control`**：`width:400px; max-width:100%;`
+
+- 内部 `input` / `select`：`width:100%; height:32px; font-size:14px; padding:0 8px; border-radius:4px; border:1px solid #DFE1E5; color:#3A3F4A; outline:none; font-family:inherit; background:#fff;`
+- placeholder 样式：`color:#9DA2AC; font-size:14px;`
+- focus 态：`border-color:#0066FF; box-shadow:0 0 0 2px rgba(0,102,255,.12);`
+- select 下拉箭头使用内联 SVG background-image 替代浏览器默认样式，`padding-right:24px;`
+
+**日期范围 `.date-range`**：`display:flex; align-items:center; gap:4px;`
+
+- 分隔符 `.date-sep`：`font-size:14px; color:#9DA2AC; flex-shrink:0; margin:0 2px;`
+- 日期输入框使用 `type="text"` + `placeholder` 展示提示文字，focus 时切换 `type="date"` 调用原生日期选择器，blur 无值时恢复 `type="text"` 显示 placeholder。
+- 空状态文字色 `#9DA2AC`，有值后切换为 `#3A3F4A`。
+
+**查询/重置按钮**使用 `.filter-actions` 作为一个不可拆分的末尾操作组，紧跟最后一个查询条件右侧；按钮间距 12px，高度 32px。操作组不得通过绝对定位或空标签占位实现，容器不足时应整体换行。
+
+**筛选字段顺序建议**：搜索框放第一位，日期范围合并为一个字段（`创建时间：[开始时间 - 结束时间]`），其余按业务优先级排列。单行最多 4 个查询条件，超过 4 个从下一行继续；查询/重置始终位于全部条件之后。
+
+**响应式降级**：当筛选区可用宽度小于 720px 时，`.filter-item` 与 `.control` 均切换为 `width:100%`，操作组保持左对齐并整组换行。桌面及大屏保持 400px 基准宽度，由 Flex 容器依据实际可用宽度决定每行展示数量。
+
+**搜索框清空按钮**：搜索输入框在有内容时，右侧显示清空按钮 `✕`（位于搜索图标对面），点击后清空输入内容并保持焦点；无内容时按钮隐藏。清空按钮样式：`position:absolute;right:8px;top:50%;transform:translateY(-50%);width:16px;height:16px;font-size:12px;color:#9DA2AC;cursor:pointer`，hover 时颜色变深 `#6E7685`。
+
+### 5.5 分页
+
+> 严格对齐设计系统.html 中的分页器组件。
+
+**容器**：`display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:16px;font-size:12px`。
+
+**位置**：分页器放在数据表格所在区块卡片（`.bg-white.rounded-lg.border`）内部，位于表格（`.overflow-x-auto`）的右下方，通过 `pt-5`（20px）与上方表格区域保持间距。分页器**不是**独立的区块卡片，而应与表格同属一个卡片区块。
+
+**布局（三区，居右）**：
+
+| 位置 | 内容 | 说明 |
+|------|------|------|
+| 左 | 页码导航 `#pg-nav` | `display:flex;gap:4px` — `‹` + 页码按钮 + 省略号 `…` + `›` |
+| 中 | 条/页选择 | `.pg-select-wrap` 包裹 `<select>`，`::after` 自定义下拉箭头 |
+| 右 | 跳页 + 统计 | 跳至 `[input(value=1)]` 页 + `共 N 条记录　第 a/b 页` |
+
+**页码按钮 `.pg-btn`**：`min-width:30px;height:30px;padding:0 8px;font:500 12px inherit;color:#3A3F4A;background:#fff;border:1px solid #DFE1E5;border-radius:4px;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;justify-content:center`
+- hover（非当前页、非禁用）：`color:primary;border-color:primary`
+- 当前页 `.pg-current`：`background:primary;border-color:primary;color:#fff`
+- 禁用（首页 `‹` / 末页 `›`）：`color:#C7CAD1;background:#F7F8FA;cursor:not-allowed;border-color:#DFE1E5`
+
+**省略号 `.pg-ellipsis`**：`min-width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;color:#9DA2AC;font-size:13px`
+
+**条/页下拉 `.pg-select`**：`font:12px inherit;height:30px;padding:0 28px 0 8px;border-radius:4px;border:1px solid #DFE1E5;color:#3A3F4A;background:#fff;cursor:pointer;appearance:none;-webkit-appearance:none`
+- `.pg-select-wrap`：`position:relative;display:inline-flex;align-items:center`
+- `.pg-select-wrap::after`：`content:'▼';position:absolute;right:8px;font-size:8px;color:#9DA2AC;pointer-events:none`
+
+**跳页输入框 `.pg-jump-input`**：`font:12px inherit;width:44px;height:30px;text-align:center;border-radius:4px;border:1px solid #DFE1E5;color:#3A3F4A;outline:none`
+- focus：`border-color:primary;box-shadow:0 0 0 2px rgba(0,102,255,.12)`
+- **默认值**：`value="1"`，输入框始终不为空；跳页成功后重置为 `1`（不清空）
+
+**统计文字 `.pg-stats`**：`color:#9DA2AC;white-space:nowrap`
+
+**页码逻辑**：≤7 页全显示；>7 页时始终显示首页和末页，当前页 ±1 范围显示，其余用 `…` 折叠。
+
+### 5.6 弹窗 Modal
+
+- 居中；遮罩 `rgba(0,0,0,.3)`；圆角 8px；宽度 **760px**（`max-width:92vw` 响应式）；
+- 结构：标题栏（16px/600）+ 关闭 ×（20px，ink-muted，右上角）+ 内容区（padding 32px 24px）+ 底部操作区（border-top 分隔，按钮居右）；
+- 表单字段：label 90px 右对齐（标签文字末尾带中文冒号 `：`）+ 控件 400px 宽 30px 高（`border-radius:4px;border:1px solid line`）；字段区块在弹窗内容区居中。
+
+### 5.7 抽屉 Drawer
+
+- 右侧滑出；用于详情展示；宽度 **800px**（`max-width:100%` 响应式）；
+- 遮罩 `rgba(0,0,0,.3)`；阴影 `-4px 0 24px rgba(0,0,0,.1)`；入场动画 `ds-drawer-in .22s ease`；
+- 结构：标题栏（16px/600 + 关闭 ×）+ 内容区（`overflow-y:auto`）+ 底部按钮。
+
+### 5.8 信息提示弹窗 Dialog
+
+> 严格对齐设计系统.html 中的 Dialog 组件。用于信息提示、操作确认（如删除确认）等轻量场景，与 Modal（表单弹窗）区分。
+
+**容器**：`position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:1200;display:flex;align-items:center;justify-content:center`
+
+**弹窗本体**：`width:600px;max-width:92vw;height:250px;background:#fff;border-radius:8px;box-shadow:0 8px 32px rgba(0,0,0,.12);display:flex;flex-direction:column;position:relative;animation:ds-modal-in .15s ease`
+
+**结构**：
+
+| 区域 | 样式 |
+|------|------|
+| 关闭 × | `position:absolute;top:14px;right:18px;font-size:20px;color:#9DA2AC;cursor:pointer;z-index:1`（纯文本 `×`，非 Lucide 图标） |
+| 内容区 | `flex:1;display:flex;align-items:center;padding:0 24px` |
+| ICO | `width:20px;height:20px;border-radius:50%;flex-shrink:0` 圆形图标，颜色随 Dialog 类型变化 |
+| 标题 | `font-size:16px;font-weight:600;color:#1A1D24` |
+| 副标题 | `font-size:14px;color:#6E7685;margin-top:6px` |
+| 底部按钮区 | `padding:0 24px 20px;display:flex;justify-content:flex-end;gap:12px` |
+| 取消按钮 | `font:500 13px inherit;padding:6px 20px;border-radius:4px;background:#fff;color:#3A3F4A;border:1px solid #DFE1E5;cursor:pointer` |
+| 确定按钮 | `font:500 13px inherit;padding:6px 20px;border-radius:4px;border:1px solid transparent;cursor:pointer;background:primary;color:#fff` |
+
+**6 种 Dialog 类型**：
+
+| 类型 | ICO | 图标色 | 底色 | 用途 |
+|------|-----|--------|------|------|
+| info | `i` | `#0091D5` | `#E4F4FB` | 信息提示 |
+| success | `✓` | `#0FC060` | `#E7F9F0` | 操作成功 |
+| warning | `!` | `#E7772D` | `#FDF2E9` | 警告提示 |
+| danger | `✕` | `#D9001B` | `#FFE8EB` | 错误提示（操作失败、系统异常等已发生的错误） |
+| confirm | `?` | `#E7772D` | `#FDF2E9` | 操作确认（删除确认、标记异常等需用户二次确认的操作） |
+
+> **删除确认**使用 `confirm` 类型（ICO `?`），因为本质是"确认是否执行"的询问，而非已发生的错误。确定按钮可使用 `danger` 红底强调破坏性操作。
+| system | `ⓘ` | `#0091D5` | `#E4F4FB` | 系统通知 |
+
+### 5.9 表单
+
+- label + 控件；配置型表单标签默认不显示中文冒号；必填标识 `*`（danger 色）位于标签文字**左侧**（即 `* 字段名`）；
+- 通用控件默认宽度 400px、高度 30px；配置型表单控件宽度 500px、高度 32px；圆角 4px；边框 1px solid line；
+- 校验错误：控件描边转 danger + 下方 danger 字提示。
+
+**配置型长表单（编辑浏览器等页面）**：
+
+| 项目 | 规范 |
+|---|---|
+| 字段布局 | 一个字段占一行，不使用双栏字段栅格 |
+| 标签列 | 桌面端宽 120px，右对齐；移动端移至控件上方并左对齐 |
+| 控件区 | 标准宽 500px，最大宽度不超过可用空间 |
+| 组合控件 | 同一字段内多个输入框、下拉框的总宽度为 500px；操作按钮、帮助提示不计入控件宽度 |
+| 字段间距 | 垂直 16px；不得依赖会被全局规则覆盖的临时 margin 类 |
+| 字段分隔 | 默认不使用字段行分割线，尤其是偏好设置等连续分段控件 |
+| 区块开合 | 下拉面板或菜单参与文档流时，父区块必须自动增高/收回，后续字段不得重叠或被裁切 |
+
+**字段语义图标**：安全项与风险项均使用 `16×16px`、`1.5px` 描边圆形图标；安全项为绿色描边 `✓`，风险项为红色描边 `!`。页面顶部图例必须复用字段旁同一套尺寸、线宽和颜色，必填项继续使用 danger 色 `*`。
+
+**字段帮助入口**：文本帮助使用灰色文字与虚线下划线，hover/focus 是否变蓝由业务语义决定；低优先级问号使用 `18×18px` 低对比度灰色圆形图标。Popover 必须支持 hover 与键盘 focus，用户移入 Popover 后不得立即关闭；帮助中心链接使用 primary 蓝色。
+
+**插件分组选择器**：触发器宽 500px；展开面板宽 500px、高 280px，左侧范围导航宽 200px，右侧为内容区；空集合显示“暂无数据”。面板在配置区块内展开并参与高度计算。全局插件快捷菜单宽 210px，菜单文字不换行；与分组面板互斥打开。
+
+**字符计数器 `x/y`**（全局适用）：
+
+| 控件类型 | 计数器位置 | 说明 |
+|---------|-----------|------|
+| 单行文本输入框 `<input>` | 控件内**右侧** | `x` 为当前已输入字符数，`y` 为最大字符数（`maxlength`），输入时实时更新 |
+| 多行文本域 `<textarea>` | 控件外**右下侧** | 同上，位于文本域下方、右对齐 |
+
+- 计数器样式：字号 12px，颜色 `ink-muted`（`#9DA2AC`），格式 `x/y`（如 `0/20`、`15/200`）；
+- 单行输入框：计数器 `position:absolute` 定位在输入框内右侧，输入框 `padding-right` 预留 48px 空间，避免输入文字与计数器重叠；
+- 多行文本域：计数器独立一行，`text-align:right`，宽度与文本域一致；
+- 计数逻辑：以 `input.value.length` 为准，maxlength 由 `input` 属性直接提供或隐式声明。
+
+**Toggle 开关**：
+
+- 尺寸 40×22px，圆角 11px；圆钮 18px 白色；过渡 `.2s`；
+- 关闭态：底色 `#C7CAD1`，圆钮居左（`left:2px`）；
+- **开启态：底色 primary `#0066FF`**（非 success 绿），圆钮居右（`translateX(18px)`）。
+
+### 5.10 卡片
+
+- 通用数据卡片：`bg-card` + `line` 边框 + 圆角 8px + 内边距 16–20px；
+- App Shell 路由承载卡片和配置页主要业务区块：使用 `bg-card`、圆角与留白分层，默认不使用外描边；内部标题/内容分隔可继续使用 `line-lighter`；
+- 强调型配置命令区可使用浅主色背景与 `1px` 浅蓝描边，但同一页面只保留一个此类强调容器。
+
+### 5.11 图标
+
+- Lucide 图标；尺寸随文本（14–16px 常用）；颜色随语义。
+
+### 5.12 空状态 / 加载态
+
+- 空状态：图标 + 说明文案 +（可选）操作引导；
+- 加载态：骨架屏或 loading 指示。
+
+### 5.13 交互标注徽标（Portal 图层）
+
+> 标注徽标通过 Portal 独立图层渲染，与页面 DOM 完全解耦。详见 `claude.md` §7。
+
+| 属性 | 值 |
+|------|----|
+| 尺寸 | 20×20px 圆形 |
+| 底色 | primary `#0066FF` |
+| 文字 | 白色，11px，700 |
+| 阴影 | `0 2px 6px rgba(0,0,0,.15)` |
+| z-index | 9998（图层）/ 9999（弹窗） |
+| hover | `transform: scale(1.2)` |
+| 定位 | `position: fixed`，动态计算目标元素右上角坐标（`rect.top - 10`, `rect.right - 10`） |
+
+**标准悬浮开关**：使用“tags 图标 + 交互标注”文字的 32px 高胶囊按钮，右侧间距 8px。单击切换标注显隐；长按 350ms 后可沿页面右侧上下拖拽，位置限制在视口安全区并持久化。拖拽完成不得误触发显隐切换。
+
+**业务页面标注隔离**：复用 App Shell 的业务页面只渲染当前业务内容区及该页面固定操作栏的标注，侧栏、顶部导航和系统级浮层不显示编号。编号从 1 开始，按上→下、左→右连续排列；折叠区或子流程编号仅在对应内容可见时显示。任何会改变文档流高度的控件开合后必须重新计算标注位置。
+
+---
+
+## 六、布局规范
+
+### 6.1 后台（Web 管理系统）
+
+经典三段布局：
+
+```
+顶部栏 TopBar（系统名 / 用户 / 退出；无描边、底部轻阴影）
+├─ 侧边导航 Sidebar（220px，可折叠，当前页高亮；容器无描边）
+│   ├─ 一级菜单 .menu-item.l1：padding-left 20px，含 28×28 图标 + 10px 间距，文字起始 58px
+│   └─ 二级菜单 .menu-item.l2：padding-left 64px（比一级文字右缩 6px，形成层级缩进）
+└─ 主内容区 MainContent（flex-1，bg-page 背景，p-4 内边距，自适应宽度）
+    ├─ App Shell 内容承载卡片：bg-white rounded-lg p-5 md:p-6，无描边；卡片内部所需分隔仍使用 line
+    ├─ 单区块：卡片最小高度 = 内容区高度 − 16px（`min-h-full` + `flex-1` 撑满），内容超过时自适应增高，main 滚动
+    ├─ 多区块（≥2）：卡片高度由内容决定，垂直堆叠，间距 16px（mb-4）
+    └─ 无面包屑，页面标题内嵌于首张卡片中
+```
+
+**App Shell 导航栏细则**：
+
+- Logo 区块与侧边栏容器均不使用边框；完整态显示 Logo，并将“收起侧栏”按钮置于右侧；紧凑态隐藏 Logo，仅将“展开侧栏”按钮居中显示，避免 68px 宽度内发生重叠；
+- TopBar 不使用底部描边，使用 `0 4px 12px rgba(26,29,36,.10)` 向下阴影与正文分层；保持 sticky/固定时阴影不得被主内容裁切；
+- 页面底部固定操作栏使用方向相反的向上阴影，正文底部需预留其高度，避免最后一项表单被遮挡；
+- 本规则仅适用于后台 App Shell 的顶栏、侧栏与路由内容承载容器。表格、表单控件、弹窗与卡片内部信息分隔仍按各自组件规范使用 `line` 边框。
+
+### 6.2 用户端（小程序，如需）
+
+- 移动端竖屏基准宽 375px；页面中居中放"手机外框"容器展示；主色仍用本规范 token。
+
+---
+
+## 七、Tailwind 配置镜像（供实现直接引用）
+
+> 以下为本规范的 Tailwind 映射，实现时内联到页面 `tailwind.config`。**本文件为准，此为镜像。**
+
+```js
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        primary: { DEFAULT: '#0066FF', hover: '#0052CC', active: '#0047B3', bg: '#E6F0FF' },
+        ink:     { title: '#1A1D24', body: '#3A3F4A', sub: '#6E7685', muted: '#9DA2AC' },
+        line:    { DEFAULT: '#DFE1E5', light: '#E8EAED', lighter: '#F0F1F3' },
+        bg:      { page: '#F7F8FA', card: '#FFFFFF', hover: '#F3F4F6' },
+        success: { DEFAULT: '#0FC060', bg: '#E7F9F0' },
+        warning: { DEFAULT: '#E7772D', bg: '#FDF2E9' },
+        danger:  { DEFAULT: '#D9001B', bg: '#FFE8EB' },
+        info:    { DEFAULT: '#0091D5', bg: '#E4F4FB' },
+      },
+      borderRadius: { DEFAULT: '4px', md: '6px', lg: '8px' },
+      fontFamily: {
+        sans: ['-apple-system','BlinkMacSystemFont','PingFang SC','Microsoft YaHei','Hiragino Sans GB','Segoe UI','system-ui','sans-serif'],
+        mono: ['JetBrains Mono','monospace'],
+      },
+    }
+  }
+}
+```
+
+---
+
+**说明**：本文件与《设计系统.html》保持一致。若设计系统更新，先更新《设计系统.html》，再同步本文件，确保单一事实来源。

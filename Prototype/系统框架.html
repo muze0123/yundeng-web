@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>云登 · 系统框架</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = { theme: { extend: { colors: {
+      primary:{DEFAULT:'#0066FF',hover:'#0052CC',active:'#0047B3',bg:'#E6F0FF'},
+      ink:{title:'#1A1D24',body:'#3A3F4A',sub:'#6E7685',muted:'#9DA2AC'},
+      line:{DEFAULT:'#DFE1E5',light:'#E8EAED',lighter:'#F0F1F3'},
+      page:'#F7F8FA',card:'#FFFFFF',hover:'#F3F4F6',
+      success:{DEFAULT:'#0FC060',bg:'#E7F9F0'}, warning:{DEFAULT:'#E7772D',bg:'#FDF2E9'},
+      danger:{DEFAULT:'#D9001B',bg:'#FFE8EB'}, info:{DEFAULT:'#0091D5',bg:'#E4F4FB'}
+    }}}};
+  </script>
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei','Hiragino Sans GB','Segoe UI',system-ui,sans-serif; color:#3A3F4A; }
+    .mono { font-family:'JetBrains Mono',monospace; font-variant-numeric:tabular-nums; }
+    .sidebar { width:220px; transition:width .22s ease; }
+    .sidebar.compact { width:68px; }
+    .sidebar.compact .brand-copy, .sidebar.compact .menu-label, .sidebar.compact .group-chevron, .sidebar.compact .create-label, .sidebar.compact .bottom-label { display:none; }
+    .sidebar.compact .menu-link, .sidebar.compact .bottom-link { justify-content:center; padding-left:0; padding-right:0; }
+    .sidebar.compact .create-button { padding-left:0; padding-right:0; justify-content:center; }
+    .sidebar.compact .submenu { display:none!important; }
+    .sidebar.compact .brand-row { justify-content:center; padding-left:0; padding-right:0; }
+    .sidebar.compact .brand-link { display:none; }
+    .sidebar.compact #collapseBtn { margin-left:0; }
+    .menu-link { min-height:38px; border-radius:4px; color:#3A3F4A; transition:background .15s,color .15s; }
+    .menu-link:hover, .bottom-link:hover { background:#F3F4F6; }
+    .menu-link.active-leaf { color:#0066FF; background:#E6F0FF; font-weight:600; }
+    .menu-link.active-group { color:#0066FF; font-weight:600; }
+    .submenu .menu-link { min-height:34px; font-size:12px; }
+    .submenu .menu-link.active-leaf { background:#E6F0FF; }
+    .menu-icon { width:18px; height:18px; flex:0 0 18px; }
+    .popover { box-shadow:0 6px 24px rgba(0,0,0,.12); }
+    .route-card { min-height:420px; }
+    .toast { animation:toast-in .2s ease both; }
+    @keyframes toast-in { from { transform:translateY(-8px); opacity:0; } to { transform:translateY(0); opacity:1; } }
+    @keyframes drawer-in { from { transform:translateX(100%); } to { transform:translateX(0); } }
+    .drawer-panel { animation:drawer-in .22s ease; }
+    .anno-badge { position:fixed; width:20px; height:20px; border-radius:50%; background:#0066FF; color:#fff; font:700 11px/20px 'JetBrains Mono',monospace; text-align:center; box-shadow:0 2px 6px rgba(0,0,0,.15); pointer-events:auto; cursor:pointer; transition:transform .15s; }
+    .anno-badge:hover { transform:scale(1.2); }
+    .status-dot { width:8px; height:8px; border-radius:50%; display:inline-block; }
+    @media (max-width: 767px) { .sidebar { position:fixed; z-index:50; height:100vh; box-shadow:0 6px 24px rgba(0,0,0,.12); } .sidebar.compact { width:0; overflow:hidden; } }
+  </style>
+</head>
+<body class="bg-page text-[13px]">
+  <div class="flex min-h-screen">
+    <!-- 左侧应用导航 -->
+    <aside id="sidebar" class="sidebar sticky top-0 h-screen shrink-0 bg-card flex flex-col overflow-hidden" aria-label="主导航">
+      <div class="brand-row h-14 px-5 flex items-center gap-2 shrink-0">
+        <a href="#环境管理" class="brand-link flex items-center gap-2 min-w-0" aria-label="云登首页">
+        <span class="w-7 h-7 rounded-md bg-primary text-white flex items-center justify-center font-bold text-[15px]">云</span>
+        <span class="brand-copy font-semibold text-ink-title text-[16px] tracking-tight">云登</span>
+        </a>
+        <button id="collapseBtn" data-anno="2" class="ml-auto w-8 h-8 shrink-0 rounded flex items-center justify-center text-ink-sub hover:bg-hover" title="收起侧栏" aria-label="收起侧栏"><i data-lucide="panel-left-close" class="w-[18px] h-[18px]"></i></button>
+      </div>
+      <div class="p-3">
+        <button id="createBrowserBtn" data-anno="1" class="create-button h-8 w-full rounded bg-primary hover:bg-primary-hover active:bg-primary-active text-white flex items-center justify-center gap-2 font-medium transition-colors">
+          <i data-lucide="plus" class="w-4 h-4"></i><span class="create-label">新建浏览器</span>
+        </button>
+      </div>
+      <nav id="primaryNav" class="px-3 flex-1 overflow-y-auto pb-3" aria-label="业务模块"></nav>
+      <div class="p-3 space-y-1">
+        <div class="border-t border-line mb-3" aria-hidden="true"></div>
+        <button data-anno="7" class="bottom-link w-full h-8 px-2 flex items-center gap-3 rounded text-ink-sub" data-global="help"><i data-lucide="circle-help" class="menu-icon"></i><span class="bottom-label">新手帮助</span></button>
+        <button class="bottom-link w-full h-8 px-2 flex items-center gap-3 rounded text-ink-sub" data-global="settings"><i data-lucide="settings-2" class="menu-icon"></i><span class="bottom-label">偏好设置</span></button>
+      </div>
+    </aside>
+
+    <div class="min-w-0 flex-1 flex flex-col min-h-screen">
+      <!-- 顶部全局栏 -->
+      <header class="h-14 shrink-0 bg-card shadow-[0_8px_8px_-8px_rgba(0,0,0,.18)] z-10 flex items-center justify-between px-4 md:px-6">
+        <div class="flex items-center gap-3 min-w-0"><button id="mobileMenu" class="md:hidden text-ink-sub" aria-label="展开导航"><i data-lucide="menu" class="w-5 h-5"></i></button><span id="breadcrumb" class="text-ink-sub truncate">工作台 / 环境管理</span></div>
+        <div class="flex items-center gap-1 md:gap-2">
+          <button id="helpBtn" data-anno="7" class="relative w-8 h-8 rounded flex items-center justify-center text-ink-sub hover:bg-hover" aria-label="新手帮助"><i data-lucide="circle-help" class="w-[18px] h-[18px]"></i></button>
+          <button id="noticeBtn" data-anno="5" class="relative w-8 h-8 rounded flex items-center justify-center text-ink-sub hover:bg-hover" aria-label="通知"><i data-lucide="bell" class="w-[18px] h-[18px]"></i><span class="absolute right-1 top-1 w-2 h-2 bg-danger rounded-full border border-white"></span></button>
+          <button id="languageBtn" data-anno="6" class="w-8 h-8 rounded flex items-center justify-center text-ink-sub hover:bg-hover" aria-label="切换语言"><i data-lucide="languages" class="w-[18px] h-[18px]"></i></button>
+          <span class="h-5 border-l border-line mx-1"></span>
+          <button id="accountBtn" class="flex items-center gap-2 rounded px-1 py-1 hover:bg-hover"><span class="w-7 h-7 rounded-full bg-primary-bg text-primary flex items-center justify-center font-semibold">张</span><span class="hidden sm:block text-ink-body">张小登</span><i data-lucide="chevron-down" class="hidden sm:block w-3.5 h-3.5 text-ink-muted"></i></button>
+        </div>
+      </header>
+
+      <!-- 路由内容承载区 -->
+      <main id="mainContent" class="flex-1 overflow-auto p-4" tabindex="-1">
+        <section id="routeOutlet" aria-live="polite"></section>
+      </main>
+    </div>
+  </div>
+
+  <!-- 右侧智能助手 -->
+  <button id="assistantBtn" data-anno="8" class="fixed right-5 bottom-5 z-30 w-11 h-11 rounded-full bg-primary hover:bg-primary-hover text-white shadow-[0_6px_24px_rgba(0,0,0,.12)] flex items-center justify-center" aria-label="打开智能助手"><i data-lucide="sparkles" class="w-5 h-5"></i></button>
+
+  <!-- 通用浮层 -->
+  <div id="noticePopover" class="hidden fixed right-20 top-12 z-40 w-[340px] max-w-[calc(100vw-32px)] bg-card border border-line rounded-lg popover">
+    <div class="px-4 py-3 border-b border-line flex items-center justify-between"><strong class="text-[16px] text-ink-title">通知</strong><button class="text-primary hover:text-primary-hover" id="readAll">全部已读</button></div>
+    <div id="noticeList" class="max-h-[320px] overflow-auto"></div>
+    <button class="w-full py-3 border-t border-line text-primary hover:bg-hover" data-global="notice-center">查看全部通知</button>
+  </div>
+  <div id="languagePopover" class="hidden fixed right-14 top-12 z-40 w-40 bg-card border border-line rounded-lg popover p-1"></div>
+  <div id="helpPopover" class="hidden fixed right-28 top-12 z-40 w-64 bg-card border border-line rounded-lg popover p-2"></div>
+  <div id="accountPopover" class="hidden fixed right-4 top-12 z-40 w-44 bg-card border border-line rounded-lg popover p-1"></div>
+
+  <!-- 创建流程确认 Dialog -->
+  <div id="createDialog" class="hidden fixed inset-0 z-50 bg-black/30 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="createTitle">
+    <div id="createPanel" class="w-[600px] max-w-[92vw] h-[250px] bg-card rounded-lg shadow-[0_6px_24px_rgba(0,0,0,.12)] flex flex-col relative">
+      <button class="absolute top-3 right-4 text-[20px] text-ink-muted hover:text-ink-body" data-close="createDialog" aria-label="关闭">×</button>
+      <div class="flex-1 flex items-center p-6"><span class="w-5 h-5 rounded-full bg-info-bg text-info flex items-center justify-center mr-3 font-semibold">i</span><div><h2 id="createTitle" data-anno="1" class="inline-block text-[16px] font-semibold text-ink-title">创建浏览器</h2><p class="text-[14px] text-ink-sub mt-1.5">将把创建意图交给“环境管理”业务模块处理；系统框架不会伪造创建结果。</p></div></div>
+      <div class="px-6 pb-5 flex justify-end gap-3"><button class="h-8 px-5 rounded border border-line text-ink-body hover:bg-hover" data-close="createDialog">取消</button><button id="handoffCreate" class="h-8 px-5 rounded bg-primary hover:bg-primary-hover text-white">进入创建流程</button></div>
+    </div>
+  </div>
+
+  <!-- 智能助手抽屉 -->
+  <div id="assistantDrawer" class="hidden fixed inset-0 z-50 bg-black/30" role="dialog" aria-modal="true">
+    <section id="assistantPanel" class="drawer-panel ml-auto h-full w-[800px] max-w-full bg-card shadow-[-4px_0_24px_rgba(0,0,0,.1)] flex flex-col">
+      <header class="h-14 px-6 border-b border-line flex items-center justify-between"><div class="flex items-center gap-2"><span class="w-7 h-7 rounded bg-primary-bg text-primary flex items-center justify-center"><i data-lucide="sparkles" class="w-4 h-4"></i></span><h2 data-anno="8" class="inline-block text-[16px] font-semibold text-ink-title">云登智能助手</h2></div><button class="text-ink-muted hover:text-ink-body" data-close="assistantDrawer" aria-label="关闭"><i data-lucide="x" class="w-5 h-5"></i></button></header>
+      <div class="flex-1 p-6 overflow-auto"><div class="max-w-lg"><p class="text-ink-title font-medium">我可以帮你快速定位环境、代理与团队设置。</p><p class="mt-2 text-ink-sub leading-relaxed">当前为框架原型，问答引擎不在本期范围内。你仍可通过下方快捷问题验证入口、关闭与焦点恢复行为。</p><div class="mt-5 flex flex-wrap gap-2"><button class="quick-question">如何新建浏览器？</button><button class="quick-question">在哪里管理团队成员？</button><button class="quick-question">如何查看 API？</button></div><div id="assistantReply" class="hidden mt-5 p-3 border border-info bg-info-bg rounded text-info"></div></div></div>
+      <form id="assistantForm" class="p-4 border-t border-line flex gap-2"><input id="assistantInput" maxlength="120" class="h-8 flex-1 rounded border border-line px-2 outline-none focus:border-primary focus:ring-2 focus:ring-primary-bg" placeholder="输入问题（演示入口）"><button class="h-8 px-4 rounded bg-primary text-white hover:bg-primary-hover">发送</button></form>
+    </section>
+  </div>
+
+  <!-- Toast 容器 -->
+  <div id="toastContainer" class="fixed top-4 left-1/2 -translate-x-1/2 z-[60] space-y-2 pointer-events-none"></div>
+
+  <!-- Portal 标注图层 -->
+  <div id="annoLayer" style="position:fixed;inset:0;pointer-events:none;z-index:9998;"></div>
+  <button id="annoToggle" class="fixed z-[9997] right-2 top-[120px] h-8 px-3 rounded-full bg-primary text-white shadow-[0_2px_8px_rgba(0,0,0,.12)] flex items-center justify-center gap-1.5 cursor-grab select-none touch-none" title="点击显示或隐藏；长按拖拽调整位置" aria-label="显示或隐藏交互标注，长按可拖拽"><i data-lucide="tags" class="w-4 h-4"></i><span class="text-[12px] font-medium whitespace-nowrap">交互标注</span></button>
+  <div id="annoPopup" class="hidden fixed inset-0 z-[9999] bg-black/30 p-4 flex items-center justify-center">
+    <div class="w-[520px] max-w-full bg-card rounded-lg shadow-[0_6px_24px_rgba(0,0,0,.12)]"><div id="annoDrag" class="px-5 py-4 border-b border-line flex justify-between items-center cursor-move"><h2 id="annoTitle" class="text-[16px] font-semibold text-ink-title"></h2><button id="closeAnno" type="button" class="text-ink-muted hover:text-ink-body cursor-pointer" aria-label="关闭标注说明"><i data-lucide="x" class="w-5 h-5 pointer-events-none"></i></button></div><div id="annoDesc" class="p-5 text-[14px] text-ink-body leading-relaxed"></div></div>
+  </div>
+
+  <script>
+    // Mock 数据：会话、导航、通知均由数据驱动渲染
+    const session = { user:'张小登', role:'团队管理员', workspace:'云登团队', language:'简体中文' };
+    const navItems = [
+      { id:'environment', label:'环境管理', icon:'monitor-cog', description:'管理浏览器环境、标签与运行状态', state:'ready' },
+      { id:'proxy', label:'代理管理', icon:'network', description:'管理代理资源与绑定关系', state:'ready' },
+      { id:'store', label:'商城', icon:'shopping-bag', description:'购买云登增值服务', state:'loading' },
+      { id:'billing', label:'费用管理', icon:'receipt-text', description:'查看套餐、账单与费用明细', state:'ready' },
+      { id:'team', label:'团队', icon:'users-round', group:true, expanded:true, children:[
+        { id:'team-management', label:'团队管理', icon:'building-2', description:'管理团队基本信息与权限边界', state:'ready' },
+        { id:'members', label:'成员管理', icon:'user-round-cog', description:'邀请成员、分配角色与查看成员状态', state:'ready' },
+        { id:'transfer', label:'分享转移', icon:'arrow-right-left', description:'管理环境分享与资源转移记录', state:'empty' },
+        { id:'logs', label:'日志管理', icon:'scroll-text', description:'查看团队操作与安全审计日志', state:'ready' },
+        { id:'account-settings', label:'账号设置', icon:'key-round', description:'配置账号安全与访问策略', state:'permission' }
+      ]},
+      { id:'plugins', label:'插件管理', icon:'blocks', description:'管理浏览器插件与启用状态', state:'ready' },
+      { id:'automation', label:'自动化', icon:'workflow', group:true, expanded:true, children:[
+        { id:'api', label:'API', icon:'braces', description:'访问 API 密钥与接口文档入口', state:'ready' },
+        { id:'rpa', label:'RPA', icon:'bot', description:'配置自动化流程与运行记录', state:'error' }
+      ]},
+      { id:'recycle', label:'回收站', icon:'trash-2', description:'恢复或彻底删除已回收资源', state:'ready' }
+    ];
+    const notices = [
+      { id:'N-20260807-01', title:'成员申请待处理', desc:'王晓明申请加入“云登团队”。', time:'5 分钟前', unread:true },
+      { id:'N-20260806-03', title:'浏览器环境已同步', desc:'环境 ENV-20260806-092 已完成云端同步。', time:'昨天 18:20', unread:true },
+      { id:'N-20260806-01', title:'套餐到期提醒', desc:'专业版套餐将在 14 天后到期。', time:'昨天 10:15', unread:false }
+    ];
+    let currentRoute = 'environment', sidebarCompact = false, annoVisible = true, annoScopeStack = [];
+    const annotations = {
+      1:{ title:'新建浏览器入口', desc:['触发：点击左上“新建浏览器”。','响应：框架打开创建意图确认弹窗，交由环境管理业务模块承接。','规则：App Shell 不伪造浏览器创建成功结果。'] },
+      2:{ title:'侧栏折叠', desc:['触发：点击侧栏底部收起按钮。','响应：侧栏切换完整与紧凑模式，主内容区自适应扩展。','规则：窄屏下侧栏作为覆盖层显示。'] },
+      3:{ title:'模块路由与菜单高亮', desc:['触发：点击任一叶子菜单。','响应：更新当前路由、面包屑、菜单高亮和内容承载区。','规则：任一时刻只有一个叶子菜单处于当前页状态。'] },
+      4:{ title:'菜单分组展开', desc:['触发：点击“团队”或“自动化”分组标题。','响应：切换对应子菜单可见性，不跳转路由。','规则：本页允许多个分组同时展开，符合系统框架 PRD 的覆盖规则。'] },
+      5:{ title:'全局通知', desc:['触发：点击顶部通知图标。','响应：打开通知 Popover，可标记全部已读或进入通知中心。','规则：不破坏当前路由、筛选和页面滚动状态。'] },
+      6:{ title:'语言切换', desc:['触发：点击语言图标并选择语言。','响应：更新当前会话语言并显示全局提示。','规则：原型仅模拟会话状态，不发起真实国际化资源加载。'] },
+      7:{ title:'新手帮助', desc:['触发：点击顶部或侧栏的新手帮助。','响应：显示教程、快捷键和联系支持入口。','规则：帮助入口使用 Popover，不离开当前页面。'] },
+      8:{ title:'智能助手入口', desc:['触发：点击右下角悬浮按钮。','响应：从右侧打开 800px 抽屉，并将标注范围限定在抽屉内。','规则：智能问答引擎不在本期范围内，保留入口与交互容器。'] },
+      9:{ title:'路由承载区', desc:['触发：首屏加载或切换业务模块。','响应：显示业务模块注入的内容承载占位、加载、无权限、空或失败状态。','规则：框架层不将路由插槽误作业务空状态。'] },
+      10:{ title:'恢复入口', desc:['触发：路由加载失败或权限不足时点击恢复操作。','响应：模拟重试、申请权限或返回环境管理。','规则：保留当前菜单与会话上下文，并给出明确下一步。'] }
+    };
+
+    const $ = id => document.getElementById(id);
+    function getLeaf(id) { for (const item of navItems) { if (item.id === id) return item; if (item.children) { const child = item.children.find(x => x.id === id); if (child) return child; } } return navItems[0]; }
+    function renderNav() {
+      $('primaryNav').innerHTML = navItems.map(item => item.group ? `
+        <div class="mb-1"><button data-group="${item.id}" data-anno="4" class="menu-link ${item.children.some(c=>c.id===currentRoute)?'active-group':''} w-full px-2 flex items-center gap-3 text-left"><i data-lucide="${item.icon}" class="menu-icon"></i><span class="menu-label flex-1">${item.label}</span><i data-lucide="chevron-${item.expanded?'down':'right'}" class="group-chevron w-4 h-4"></i></button>
+          <div class="submenu ${item.expanded?'':'hidden'} ml-4 pl-3 border-l border-line-light">${item.children.map(child => menuButton(child,true)).join('')}</div></div>` : menuButton(item,false)).join('');
+      lucide.createIcons();
+    }
+    function menuButton(item, child) { return `<button data-route="${item.id}" data-anno="3" class="menu-link ${currentRoute===item.id?'active-leaf':''} w-full px-2 ${child?'pl-3':''} flex items-center gap-3 text-left mb-1"><i data-lucide="${item.icon}" class="menu-icon"></i><span class="menu-label">${item.label}</span></button>`; }
+    function renderRoute() {
+      const route = getLeaf(currentRoute), parent = navItems.find(x => x.children?.some(c=>c.id===route.id));
+      $('breadcrumb').textContent = `${parent ? parent.label+' / ' : '工作台 / '}${route.label}`;
+      const statusMap = { ready:['内容承载已就绪','业务页面将在此注入，系统框架仅保留稳定的路由上下文与全局能力。','box'], loading:['正在加载业务模块','正在恢复模块数据与页面状态，请稍候。','loader-circle'], empty:['该模块暂无可展示数据','这是目标路由的业务 Empty 状态，不是框架插槽的空状态。','inbox'], permission:['暂无访问权限','请联系团队管理员申请该模块权限；当前页面状态会被保留。','lock-keyhole'], error:['模块加载失败','网络连接异常或业务模块暂不可用，请重试或返回环境管理。','triangle-alert'] };
+      const [title,desc,icon] = statusMap[route.state] || statusMap.ready;
+      const action = route.state==='loading' ? '' : route.state==='permission' ? '<button data-recover="permission" data-anno="10" class="h-8 px-4 rounded bg-primary hover:bg-primary-hover text-white">申请权限</button>' : route.state==='error' ? '<button data-recover="retry" data-anno="10" class="h-8 px-4 rounded bg-primary hover:bg-primary-hover text-white">重新加载</button>' : route.state==='empty' ? '<button data-recover="environment" data-anno="10" class="h-8 px-4 rounded bg-primary hover:bg-primary-hover text-white">前往环境管理</button>' : '<button data-anno="9" class="h-8 px-4 rounded border border-line hover:bg-hover text-ink-body" data-global="details">查看框架契约</button>';
+      $('routeOutlet').innerHTML = `<section data-anno="9" class="route-card bg-card rounded-lg flex flex-col" aria-label="${route.label}路由内容"><div class="px-5 md:px-6 py-4 border-b border-line flex items-center justify-between gap-3"><div><h1 class="text-[20px] font-bold text-ink-title">${route.label}</h1><p class="text-[12px] text-ink-sub mt-1">Router Outlet · ${route.description}</p></div><span class="mono text-[11px] text-ink-muted hidden sm:block">ROUTE/${route.id.toUpperCase()}</span></div><div class="flex-1 flex items-center justify-center p-6"><div class="max-w-md text-center"><span class="w-12 h-12 rounded-lg bg-page text-primary mx-auto flex items-center justify-center"><i data-lucide="${icon}" class="w-6 h-6 ${route.state==='loading'?'animate-spin':''}"></i></span><h2 class="text-[18px] font-semibold text-ink-title mt-4">${title}</h2><p class="text-ink-sub leading-relaxed mt-2">${desc}</p><div class="mt-5">${action}</div></div></div><footer class="px-5 md:px-6 py-3 border-t border-line-lighter flex items-center justify-between text-[12px] text-ink-muted"><span>当前团队：${session.workspace}</span><span class="mono">SESSION/ONLINE</span></footer></section>`;
+      lucide.createIcons(); renderAnnoBadges();
+    }
+    function renderNotices() { $('noticeList').innerHTML = notices.map(n=>`<button class="w-full text-left px-4 py-3 hover:bg-hover border-b border-line-lighter last:border-0"><div class="flex gap-2"><span class="status-dot ${n.unread?'bg-primary':'bg-line'} mt-1.5"></span><div class="min-w-0"><p class="font-medium text-ink-title">${n.title}</p><p class="text-[12px] text-ink-sub mt-1 truncate">${n.desc}</p><p class="mono text-[11px] text-ink-muted mt-1">${n.time}</p></div></div></button>`).join(''); }
+    function openPopover(id) { ['noticePopover','languagePopover','helpPopover','accountPopover'].forEach(x=>{ if(x!==id) $(x).classList.add('hidden'); }); $(id).classList.toggle('hidden'); }
+    function closeOverlays() { ['noticePopover','languagePopover','helpPopover','accountPopover'].forEach(id=>$(id).classList.add('hidden')); }
+    function toast(message, kind='info') { const color={info:'bg-info',success:'bg-success',warning:'bg-warning',danger:'bg-danger'}[kind]; const el=document.createElement('div'); el.className=`toast ${color} text-white px-4 py-2 rounded shadow-[0_2px_8px_rgba(0,0,0,.12)] text-[13px]`; el.textContent=message; $('toastContainer').append(el); setTimeout(()=>el.remove(),2800); }
+    function openAssistant() { $('assistantDrawer').classList.remove('hidden'); pushAnnoScope($('assistantPanel')); $('assistantInput').focus(); }
+    function closeDrawer() { $('assistantDrawer').classList.add('hidden'); popAnnoScope($('assistantPanel')); $('assistantBtn').focus(); }
+    function pushAnnoScope(el) { const index=annoScopeStack.indexOf(el); if(index>=0) annoScopeStack.splice(index,1); annoScopeStack.push(el); renderAnnoBadges(); }
+    function popAnnoScope(el) { const index=annoScopeStack.indexOf(el); if(index>=0) annoScopeStack.splice(index,1); renderAnnoBadges(); }
+    function resolveAnnoTarget(el) { const rect=el.getBoundingClientRect(); return (rect.width>800 || rect.width>window.innerWidth*.7) ? el.querySelector('h1,h2,h3,button,input') || el : el; }
+    function renderAnnoBadges() { const layer=$('annoLayer'); layer.innerHTML=''; if(!annoVisible) return; const root=annoScopeStack.at(-1) || document; root.querySelectorAll('[data-anno]').forEach(el=>{ const target=resolveAnnoTarget(el), rect=target.getBoundingClientRect(); if(rect.width===0||rect.height===0) return; const badge=document.createElement('button'); badge.className='anno-badge'; badge.textContent=el.dataset.anno; badge.style.top=(rect.top-10)+'px'; badge.style.left=(rect.right-10)+'px'; badge.setAttribute('aria-label','查看交互说明 '+el.dataset.anno); badge.onclick=()=>showAnnoPopup(el.dataset.anno); layer.append(badge); }); }
+    function showAnnoPopup(id) { const item=annotations[id]; if(!item) return; $('annoTitle').textContent=`${id}. ${item.title}`; $('annoDesc').innerHTML='<ul class="list-disc pl-5 space-y-2">'+item.desc.map(x=>`<li>${x}</li>`).join('')+'</ul>'; $('annoPopup').classList.remove('hidden'); }
+    function closeAnnoPopup() { $('annoPopup').classList.add('hidden'); }
+
+    // 交互绑定
+    document.addEventListener('click', event => {
+      const routeBtn=event.target.closest('[data-route]'), groupBtn=event.target.closest('[data-group]'), globalBtn=event.target.closest('[data-global]'), closeBtn=event.target.closest('[data-close]'), recoverBtn=event.target.closest('[data-recover]');
+      if(routeBtn){ currentRoute=routeBtn.dataset.route; renderNav(); renderRoute(); }
+      if(groupBtn){ const group=navItems.find(x=>x.id===groupBtn.dataset.group); group.expanded=!group.expanded; renderNav(); renderAnnoBadges(); }
+      if(closeBtn){ const id=closeBtn.dataset.close; $(id).classList.add('hidden'); if(id==='assistantDrawer') closeDrawer(); else if(id==='createDialog'){ popAnnoScope($('createPanel')); $('createBrowserBtn').focus(); } }
+      if(recoverBtn){ if(recoverBtn.dataset.recover==='retry'){ getLeaf(currentRoute).state='loading'; renderRoute(); setTimeout(()=>{getLeaf(currentRoute).state='ready';renderRoute();toast('模块已重新加载','success');},900); } else if(recoverBtn.dataset.recover==='environment'){currentRoute='environment';renderNav();renderRoute();} else toast('已向团队管理员提交权限申请','success'); }
+      if(globalBtn){ const action=globalBtn.dataset.global; if(action==='help') openPopover('helpPopover'); else if(action==='settings'||action==='details'||action==='notice-center') toast(action==='details'?'框架事件契约已保留给业务模块接入':'该入口将在对应业务页面实现','info'); }
+    });
+    $('createBrowserBtn').onclick=()=>{ $('createDialog').classList.remove('hidden'); pushAnnoScope($('createPanel')); };
+    $('handoffCreate').onclick=()=>{ $('createDialog').classList.add('hidden'); popAnnoScope($('createPanel')); currentRoute='environment'; renderNav(); renderRoute(); toast('已将创建意图交给环境管理模块','success'); };
+    $('collapseBtn').onclick=()=>{ sidebarCompact=!sidebarCompact; $('sidebar').classList.toggle('compact',sidebarCompact); const button=$('collapseBtn'); button.title=sidebarCompact?'展开侧栏':'收起侧栏'; button.setAttribute('aria-label',button.title); button.innerHTML=`<i data-lucide="${sidebarCompact?'panel-left-open':'panel-left-close'}" class="w-[18px] h-[18px]"></i>`; lucide.createIcons(); renderAnnoBadges(); };
+    $('mobileMenu').onclick=()=>{ $('sidebar').classList.toggle('compact'); };
+    $('noticeBtn').onclick=()=>openPopover('noticePopover');
+    $('languageBtn').onclick=()=>openPopover('languagePopover');
+    $('helpBtn').onclick=()=>openPopover('helpPopover');
+    $('accountBtn').onclick=()=>openPopover('accountPopover');
+    $('assistantBtn').onclick=openAssistant;
+    $('readAll').onclick=()=>{ notices.forEach(n=>n.unread=false); renderNotices(); toast('全部通知已标记为已读','success'); };
+    $('languagePopover').innerHTML=['简体中文','English','日本語'].map(l=>`<button data-language="${l}" class="w-full text-left px-3 py-2 rounded hover:bg-hover ${l===session.language?'text-primary font-medium':'text-ink-body'}">${l}</button>`).join('');
+    $('helpPopover').innerHTML='<button class="w-full text-left px-3 py-2 rounded hover:bg-hover">新手教程</button><button class="w-full text-left px-3 py-2 rounded hover:bg-hover">快捷键说明</button><button class="w-full text-left px-3 py-2 rounded hover:bg-hover">联系支持</button>';
+    $('accountPopover').innerHTML='<div class="px-3 py-2 text-[12px] text-ink-sub border-b border-line-lighter">团队管理员</div><button class="w-full text-left px-3 py-2 rounded hover:bg-hover">账号信息</button><button class="w-full text-left px-3 py-2 rounded hover:bg-hover">退出登录</button>';
+    $('languagePopover').onclick=e=>{ const button=e.target.closest('[data-language]'); if(!button)return; session.language=button.dataset.language; $('languagePopover').querySelectorAll('button').forEach(x=>x.classList.toggle('text-primary',x.dataset.language===session.language)); toast(`语言已切换为 ${session.language}`,'success'); closeOverlays(); };
+    $('assistantForm').onsubmit=e=>{ e.preventDefault(); const input=$('assistantInput'); if(!input.value.trim()){ toast('请输入问题后再发送','warning'); return; } $('assistantReply').textContent='已收到你的问题。本原型保留智能助手的交互容器，问答引擎将在后续业务版本接入。'; $('assistantReply').classList.remove('hidden'); input.value=''; };
+    document.querySelectorAll('.quick-question').forEach(button=>button.onclick=()=>{ $('assistantInput').value=button.textContent; $('assistantInput').focus(); });
+    document.addEventListener('click',e=>{ if(!e.target.closest('.popover, #noticeBtn, #languageBtn, #helpBtn, #accountBtn, [data-global="help"]')) closeOverlays(); });
+    $('assistantDrawer').onclick=e=>{ if(e.target===$('assistantDrawer')) closeDrawer(); };
+    $('createDialog').onclick=e=>{ if(e.target===$('createDialog')){ $('createDialog').classList.add('hidden'); popAnnoScope($('createPanel')); } };
+    let annoToggleDragged=false;
+    $('annoToggle').onclick=()=>{ if(annoToggleDragged){ annoToggleDragged=false; return; } annoVisible=!annoVisible; $('annoToggle').classList.toggle('bg-primary',annoVisible); $('annoToggle').classList.toggle('bg-ink-muted',!annoVisible); renderAnnoBadges(); };
+    $('closeAnno').onclick=e=>{ e.stopPropagation(); closeAnnoPopup(); };
+    $('annoPopup').onclick=e=>{ if(e.target===$('annoPopup')) closeAnnoPopup(); };
+    // 标注说明弹窗支持标题栏拖拽，位置独立于页面文档流。
+    let dragState=null;
+    $('annoDrag').addEventListener('pointerdown',e=>{ if(e.target.closest('button')) return; const panel=$('annoDrag').parentElement; const rect=panel.getBoundingClientRect(); dragState={x:e.clientX,y:e.clientY,left:rect.left,top:rect.top,panel}; $('annoDrag').setPointerCapture(e.pointerId); panel.style.position='fixed'; panel.style.margin='0'; });
+    $('annoDrag').addEventListener('pointermove',e=>{ if(!dragState)return; dragState.panel.style.left=Math.max(8,Math.min(window.innerWidth-dragState.panel.offsetWidth-8,dragState.left+e.clientX-dragState.x))+'px'; dragState.panel.style.top=Math.max(8,Math.min(window.innerHeight-dragState.panel.offsetHeight-8,dragState.top+e.clientY-dragState.y))+'px'; });
+    $('annoDrag').addEventListener('pointerup',()=>{ dragState=null; });
+    // 长按后仅沿页面右侧上下拖拽，避免普通点击误触移动。
+    function setupAnnoToggleDrag(){ const toggle=$('annoToggle'); toggle.style.touchAction='none'; const savedTop=Number(localStorage.getItem('yundeng-anno-toggle-top')); if(Number.isFinite(savedTop)&&savedTop>0) toggle.style.top=Math.max(8,Math.min(innerHeight-toggle.offsetHeight-8,savedTop))+'px'; let state=null,timer=null; const moveTo=y=>{ if(!state)return; toggle.style.top=Math.max(8,Math.min(innerHeight-toggle.offsetHeight-8,state.top+y-state.startY))+'px'; }; const finish=e=>{ clearTimeout(timer); if(!state)return; if(state.active){ annoToggleDragged=true; moveTo(state.latestY); toggle.classList.remove('cursor-grabbing','scale-105'); toggle.classList.add('cursor-grab'); localStorage.setItem('yundeng-anno-toggle-top',parseInt(toggle.style.top,10)); } if(toggle.hasPointerCapture(e.pointerId))toggle.releasePointerCapture(e.pointerId); state=null; }; toggle.addEventListener('pointerdown',e=>{ if(e.pointerType==='mouse'&&e.button!==0)return; state={pointerId:e.pointerId,startY:e.clientY,latestY:e.clientY,top:toggle.getBoundingClientRect().top,active:false}; toggle.setPointerCapture(e.pointerId); timer=setTimeout(()=>{ if(!state)return; state.active=true; annoToggleDragged=true; toggle.classList.remove('cursor-grab'); toggle.classList.add('cursor-grabbing','scale-105'); moveTo(state.latestY); },350); }); toggle.addEventListener('pointermove',e=>{ if(!state||e.pointerId!==state.pointerId)return; state.latestY=e.clientY; if(!state.active)return; e.preventDefault(); moveTo(e.clientY); }); toggle.addEventListener('pointerup',finish); toggle.addEventListener('pointercancel',finish); }
+    $('mainContent').addEventListener('scroll',renderAnnoBadges); window.addEventListener('resize',renderAnnoBadges);
+    document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ closeOverlays(); closeAnnoPopup(); if(!$('assistantDrawer').classList.contains('hidden')) closeDrawer(); } });
+    renderNav(); renderNotices(); renderRoute(); lucide.createIcons(); setupAnnoToggleDrag();
+  </script>
+</body>
+</html>
