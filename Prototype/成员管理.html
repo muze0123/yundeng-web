@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>云登 · 成员管理</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config={theme:{extend:{colors:{primary:{DEFAULT:'#0066FF',hover:'#0052CC',bg:'#E6F0FF'},ink:{title:'#1A1D24',body:'#3A3F4A',sub:'#6E7685',muted:'#9DA2AC'},line:{DEFAULT:'#DFE1E5',light:'#E8EAED',lighter:'#F0F1F3'},page:'#F7F8FA',card:'#FFFFFF',hover:'#F3F4F6',success:{DEFAULT:'#0FC060',bg:'#E7F9F0'},warning:{DEFAULT:'#E7772D',bg:'#FDF2E9'},danger:{DEFAULT:'#D9001B',bg:'#FFE8EB'}}}}};
+  </script>
+  <style>
+    *{box-sizing:border-box}body{margin:0;font:13px/1.5 -apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei','Segoe UI',system-ui,sans-serif}.mono{font-family:'JetBrains Mono',monospace;font-variant-numeric:tabular-nums}.field{height:32px;border:1px solid #DFE1E5;border-radius:4px;padding:0 10px;background:#fff;outline:none}.field:focus{border-color:#0066FF;box-shadow:0 0 0 2px #E6F0FF}.btn{height:32px;padding:0 12px;border-radius:4px;display:inline-flex;align-items:center;justify-content:center;gap:6px;font-weight:500}.btn-primary{background:#0066FF;color:#fff}.btn-primary:hover{background:#0052CC}.btn-default{background:#fff;border:1px solid #DFE1E5;color:#3A3F4A}.btn-default:hover{background:#F3F4F6}.card{background:#fff;border-radius:8px}.tag{height:22px;padding:0 8px;border-radius:4px;display:inline-flex;align-items:center;font-size:12px}.modal-bg{position:fixed;inset:0;background:#0006;z-index:1100;display:flex;align-items:center;justify-content:center}.hidden{display:none!important}.toast{position:fixed;right:24px;top:72px;z-index:1300;background:#1A1D24;color:#fff;padding:10px 16px;border-radius:4px;box-shadow:0 4px 18px #0003}th,td{white-space:nowrap}
+  </style>
+</head>
+<body class="bg-page text-ink-body overflow-hidden">
+  <div class="h-screen flex">
+    <aside id="sidebar"></aside>
+    <div class="min-w-0 flex-1 flex flex-col h-screen">
+      <header></header>
+      <main id="mainContent" class="flex-1 min-h-0 overflow-auto p-4 md:p-6" tabindex="-1">
+        <div class="max-w-[1540px] mx-auto">
+          <section class="flex flex-wrap items-start justify-between gap-4 mb-4">
+            <div><h1 class="text-[24px] leading-8 font-bold text-ink-title">成员管理</h1><p class="mt-1 text-ink-sub">维护团队成员、部门、角色、账号状态和环境授权范围</p></div>
+            <div class="flex gap-2"><button id="inviteBtn" class="btn btn-default"><i data-lucide="link" class="w-4"></i>邀请链接</button><button id="addBtn" class="btn btn-primary"><i data-lucide="user-plus" class="w-4"></i>添加成员</button></div>
+          </section>
+
+          <section class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
+            <div class="card p-4"><span class="text-ink-sub">成员总数</span><div class="mt-2 text-[26px] font-semibold text-ink-title mono">8</div><span class="text-[12px] text-success">7 位正常使用</span></div>
+            <div class="card p-4"><span class="text-ink-sub">在线成员</span><div class="mt-2 text-[26px] font-semibold text-ink-title mono">4</div><span class="text-[12px] text-ink-muted">最近 15 分钟有活动</span></div>
+            <div class="card p-4"><span class="text-ink-sub">待处理申请</span><div class="mt-2 text-[26px] font-semibold text-warning mono">1</div><span class="text-[12px] text-ink-muted">需团队管理员审批</span></div>
+          </section>
+
+          <section class="card p-4 mb-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-[minmax(220px,1fr)_180px_180px_180px_auto] gap-3 items-end">
+              <label><span class="block text-ink-sub mb-1">姓名 / 账号</span><input id="keyword" class="field w-full" placeholder="搜索昵称、手机号或账号"></label>
+              <label><span class="block text-ink-sub mb-1">所在部门</span><select id="department" class="field w-full"><option>全部</option><option>默认部门</option><option>跨境运营</option><option>内容增长</option></select></label>
+              <label><span class="block text-ink-sub mb-1">角色</span><select id="role" class="field w-full"><option>全部</option><option>创始人</option><option>经理</option><option>财务</option><option>环境配置员</option><option>环境操作员</option></select></label>
+              <label><span class="block text-ink-sub mb-1">状态</span><select id="status" class="field w-full"><option>全部</option><option>正常</option><option>已禁用</option></select></label>
+              <div class="flex gap-2"><button id="searchBtn" class="btn btn-primary">查询</button><button id="resetBtn" class="btn btn-default">重置</button></div>
+            </div>
+          </section>
+
+          <section class="card overflow-hidden">
+            <div class="h-12 px-5 flex items-center justify-between border-b border-line-lighter"><div><strong class="text-ink-title">团队成员</strong><span id="count" class="ml-2 text-ink-sub mono"></span></div><button id="refreshBtn" class="w-8 h-8 rounded hover:bg-hover text-ink-sub" aria-label="刷新成员"><i data-lucide="refresh-cw" class="w-4 mx-auto"></i></button></div>
+            <div class="overflow-x-auto"><table class="w-full min-w-[1120px]"><thead class="bg-page text-ink-sub"><tr><th class="h-10 px-4 text-left font-medium">成员</th><th class="px-4 text-left font-medium">部门</th><th class="px-4 text-left font-medium">角色</th><th class="px-4 text-left font-medium">状态</th><th class="px-4 text-left font-medium">环境授权</th><th class="px-4 text-left font-medium">最近登录</th><th class="px-4 text-left font-medium">在线</th><th class="px-4 text-right font-medium">操作</th></tr></thead><tbody id="memberBody"></tbody></table></div>
+            <div class="min-h-12 px-4 flex items-center justify-between border-t border-line-lighter text-[12px] text-ink-sub"><span>仅创始人和授权管理员可调整成员角色</span><span class="mono">1 / 1</span></div>
+          </section>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <div id="memberModal" class="modal-bg hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <section class="w-[600px] max-w-[calc(100vw-32px)] bg-card rounded-lg shadow-[0_6px_24px_rgba(0,0,0,.14)] overflow-hidden">
+      <header class="h-14 px-5 border-b border-line flex items-center justify-between"><h2 id="modalTitle" class="text-[16px] font-semibold text-ink-title"></h2><button id="closeModal" class="w-8 h-8 rounded hover:bg-hover" aria-label="关闭"><i data-lucide="x" class="w-4 mx-auto"></i></button></header>
+      <div id="modalBody" class="p-5"></div>
+      <footer class="px-5 pb-5 flex justify-end gap-2"><button id="cancelModal" class="btn btn-default">取消</button><button id="saveModal" class="btn btn-primary">保存</button></footer>
+    </section>
+  </div>
+  <div id="toast" class="toast hidden"></div>
+
+  <script>
+    const members=[
+      {name:'张小登',account:'177****0832',department:'默认部门',role:'创始人',status:'正常',env:'全部环境',login:'2026-08-13 10:32',online:true},
+      {name:'李运营',account:'1938****0832',department:'跨境运营',role:'经理',status:'正常',env:'12 个环境',login:'2026-08-13 09:48',online:true},
+      {name:'王财务',account:'186****2719',department:'默认部门',role:'财务',status:'正常',env:'0 个环境',login:'2026-08-12 18:42',online:false},
+      {name:'陈配置',account:'155****6280',department:'跨境运营',role:'环境配置员',status:'正常',env:'18 个环境',login:'2026-08-13 09:20',online:true},
+      {name:'赵执行',account:'133****9051',department:'内容增长',role:'环境操作员',status:'正常',env:'8 个环境',login:'2026-08-10 16:31',online:false},
+      {name:'孙运营',account:'188****4421',department:'跨境运营',role:'环境操作员',status:'已禁用',env:'0 个环境',login:'2026-08-01 14:12',online:false},
+      {name:'周内容',account:'159****3708',department:'内容增长',role:'环境操作员',status:'正常',env:'6 个环境',login:'2026-08-13 10:08',online:true},
+      {name:'吴协作',account:'137****1196',department:'默认部门',role:'环境操作员',status:'正常',env:'3 个环境',login:'2026-08-09 19:22',online:false}
+    ];
+    const $=id=>document.getElementById(id); let shown=members.slice(),editing=-1;
+    function render(){const q=$('keyword').value.trim().toLowerCase(),d=$('department').value,r=$('role').value,s=$('status').value;shown=members.filter(x=>(!q||(x.name+x.account).toLowerCase().includes(q))&&(d==='全部'||x.department===d)&&(r==='全部'||x.role===r)&&(s==='全部'||x.status===s));$('memberBody').innerHTML=shown.map(x=>{const i=members.indexOf(x);return `<tr class="border-t border-line-lighter hover:bg-hover"><td class="h-13 px-4"><strong class="text-ink-title">${x.name}</strong><div class="mono text-[11px] text-ink-sub">${x.account}</div></td><td class="px-4">${x.department}</td><td class="px-4">${x.role}</td><td class="px-4"><span class="tag ${x.status==='正常'?'bg-success-bg text-success':'bg-danger-bg text-danger'}">${x.status}</span></td><td class="px-4">${x.env}</td><td class="px-4 mono text-[12px]">${x.login}</td><td class="px-4 ${x.online?'text-success':'text-ink-muted'}">${x.online?'在线':'离线'}</td><td class="px-4 text-right"><button data-edit="${i}" class="text-primary hover:underline">${x.role==='创始人'?'查看':'编辑'}</button></td></tr>`}).join('')||'<tr><td colspan="8" class="py-20 text-center text-ink-sub">暂无符合条件的成员</td></tr>';$('count').textContent=`${shown.length} 人`;lucide.createIcons()}
+    function toast(message){$('toast').textContent=message;$('toast').classList.remove('hidden');clearTimeout($('toast').timer);$('toast').timer=setTimeout(()=>$('toast').classList.add('hidden'),1800)}
+    function closeModal(){$('memberModal').classList.add('hidden')}
+    function openEditor(index){editing=index;const x=members[index];$('modalTitle').textContent=x.role==='创始人'?'查看成员':'编辑成员';$('modalBody').innerHTML=`<div class="grid grid-cols-[100px_1fr] gap-x-4 gap-y-4 items-center"><span class="text-ink-sub">成员账号</span><span class="mono">${x.account}</span><label for="editDepartment" class="text-ink-sub">所在部门</label><select id="editDepartment" class="field" ${x.role==='创始人'?'disabled':''}><option ${x.department==='默认部门'?'selected':''}>默认部门</option><option ${x.department==='跨境运营'?'selected':''}>跨境运营</option><option ${x.department==='内容增长'?'selected':''}>内容增长</option></select><label for="editRole" class="text-ink-sub">成员角色</label><select id="editRole" class="field" ${x.role==='创始人'?'disabled':''}><option ${x.role==='经理'?'selected':''}>经理</option><option ${x.role==='财务'?'selected':''}>财务</option><option ${x.role==='环境配置员'?'selected':''}>环境配置员</option><option ${x.role==='环境操作员'?'selected':''}>环境操作员</option>${x.role==='创始人'?'<option selected>创始人</option>':''}</select><span class="text-ink-sub">账号状态</span><label class="flex items-center gap-2"><input id="editEnabled" type="checkbox" ${x.status==='正常'?'checked':''} ${x.role==='创始人'?'disabled':''}>允许登录和使用已授权环境</label></div>`;$('saveModal').classList.toggle('hidden',x.role==='创始人');$('memberModal').classList.remove('hidden');lucide.createIcons()}
+    $('searchBtn').onclick=render;$('resetBtn').onclick=()=>{$('keyword').value='';$('department').value=$('role').value=$('status').value='全部';render()};$('refreshBtn').onclick=()=>{render();toast('成员列表已刷新')};$('inviteBtn').onclick=()=>toast('演示邀请链接已复制');$('addBtn').onclick=()=>toast('请通过团队管理的邀请流程添加成员');$('memberBody').onclick=e=>{const button=e.target.closest('[data-edit]');if(button)openEditor(Number(button.dataset.edit))};$('closeModal').onclick=$('cancelModal').onclick=closeModal;$('memberModal').onclick=e=>{if(e.target===$('memberModal'))closeModal()};$('saveModal').onclick=()=>{const x=members[editing];x.department=$('editDepartment').value;x.role=$('editRole').value;x.status=$('editEnabled').checked?'正常':'已禁用';closeModal();render();toast('成员信息已更新（演示）')};render();lucide.createIcons();
+  </script>
+  <script src="公共导航.js?v=20260813"></script>
+</body>
+</html>

@@ -1,0 +1,183 @@
+/* 云登 PC 端公共 App Shell。业务页面只负责主体内容，导航由公共脚本填充。 */
+body[data-yundeng-shell] { margin: 0; background: #F7F8FA; color: #3A3F4A; }
+body[data-yundeng-shell] #yundeng-shell,
+body[data-yundeng-shell] .yundeng-shell-host { display: flex; width: 100%; height: 100vh; min-height: 0; overflow: hidden; }
+body[data-yundeng-shell] #yundeng-shell > div,
+body[data-yundeng-shell] .yundeng-shell-host > div { min-width: 0; min-height: 0; flex: 1; display: flex; flex-direction: column; }
+body[data-yundeng-shell] #mainContent { min-width: 0; min-height: 0; flex: 1; overflow: auto; background: #F7F8FA; }
+body[data-yundeng-shell] #sidebar {
+  width: 220px !important;
+  flex: 0 0 220px !important;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #fff !important;
+  transition: width .22s ease, transform .22s ease;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+body[data-yundeng-shell] #sidebar .brand-row { height: 56px; padding: 0 20px; display: flex; align-items: center; gap: 8px; flex: 0 0 56px; }
+body[data-yundeng-shell] #sidebar .brand-link { min-width: 0; display: flex; align-items: center; gap: 8px; color: #1A1D24; text-decoration: none; }
+body[data-yundeng-shell] #sidebar .brand-mark { width: 28px; height: 28px; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; flex: none; background: #0066FF; color: #fff; font-size: 15px; font-weight: 700; }
+body[data-yundeng-shell] #sidebar .brand-copy { font-size: 16px; font-weight: 600; color: #1A1D24; white-space: nowrap; }
+body[data-yundeng-shell] #collapseBtn { width: 32px; height: 32px; margin-left: auto; border: 0; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; flex: none; color: #6E7685; background: transparent; cursor: pointer; }
+body[data-yundeng-shell] #collapseBtn:hover { background: #F3F4F6; }
+body[data-yundeng-shell] .yundeng-create-wrap { padding: 12px; }
+body[data-yundeng-shell] .yundeng-create { height: 32px; width: 100%; border-radius: 4px; display: flex; align-items: center; justify-content: center; gap: 8px; background: #0066FF; color: #fff; font-size: 13px; font-weight: 500; text-decoration: none; }
+body[data-yundeng-shell] .yundeng-create:hover { background: #0052CC; }
+body[data-yundeng-shell] #yundeng-primary-nav { min-height: 0; flex: 1; overflow-y: auto; padding: 0 12px 12px; }
+body[data-yundeng-shell] .yundeng-sidebar-bottom { padding: 12px; }
+body[data-yundeng-shell] .yundeng-sidebar-divider { height: 1px; margin-bottom: 12px; background: #DFE1E5; }
+body[data-yundeng-shell] .yundeng-bottom-link { height: 32px; width: 100%; padding: 0 8px; border-radius: 4px; display: flex; align-items: center; gap: 12px; color: #6E7685; text-decoration: none; }
+body[data-yundeng-shell] .yundeng-bottom-link:hover { background: #F3F4F6; }
+body[data-yundeng-shell] .yundeng-bottom-link[data-active="true"] { color: #0066FF; background: #E6F0FF; font-weight: 600; }
+body[data-yundeng-shell] #sidebar.compact {
+  width: 68px !important;
+  flex-basis: 68px !important;
+}
+body[data-yundeng-shell] #sidebar.compact .brand-link,
+body[data-yundeng-shell] #sidebar.compact .menu-label,
+body[data-yundeng-shell] #sidebar.compact .group-chevron,
+body[data-yundeng-shell] #sidebar.compact .create-label,
+body[data-yundeng-shell] #sidebar.compact .bottom-label,
+body[data-yundeng-shell] #sidebar.compact .nav-label {
+  display: none !important;
+}
+body[data-yundeng-shell] #sidebar.compact .brand-row { justify-content: center !important; padding-inline: 0 !important; }
+body[data-yundeng-shell] #sidebar.compact #collapseBtn { margin-left: 0 !important; }
+body[data-yundeng-shell] #sidebar.compact .menu-link,
+body[data-yundeng-shell] #sidebar.compact .nav-item,
+body[data-yundeng-shell] #sidebar.compact .bottom-link,
+body[data-yundeng-shell] #sidebar.compact .nav {
+  justify-content: center !important;
+  padding-inline: 0 !important;
+}
+body[data-yundeng-shell] #sidebar.compact .submenu { display: none !important; }
+body[data-yundeng-shell] [data-yundeng-topbar] {
+  height: 56px !important;
+  min-height: 56px;
+  padding: 0 24px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 16px;
+  flex: 0 0 56px;
+  background: #fff !important;
+  color: #3A3F4A;
+  position: relative;
+  z-index: 30;
+  border-bottom: 0 !important;
+  box-shadow: 0 8px 8px -8px rgba(0,0,0,.18) !important;
+}
+body[data-yundeng-shell] .yundeng-topbar-start,
+body[data-yundeng-shell] .yundeng-topbar-actions { display: flex; align-items: center; gap: 8px; min-width: 0; }
+body[data-yundeng-shell] .yundeng-breadcrumb { overflow: hidden; color: #6E7685; font-size: 13px; text-overflow: ellipsis; white-space: nowrap; }
+body[data-yundeng-shell] .yundeng-icon-button { width: 32px; height: 32px; border: 0; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; color: #6E7685; background: transparent; cursor: pointer; }
+body[data-yundeng-shell] .yundeng-icon-button:hover { background: #F3F4F6; }
+body[data-yundeng-shell] .yundeng-account { height: 34px; padding: 0 4px; border: 0; border-radius: 4px; display: inline-flex; align-items: center; gap: 8px; color: #3A3F4A; background: transparent; cursor: pointer; }
+body[data-yundeng-shell] .yundeng-account:hover { background: #F3F4F6; }
+body[data-yundeng-shell] .yundeng-avatar { width: 28px; height: 28px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; color: #0066FF; background: #E6F0FF; font-weight: 600; }
+body[data-yundeng-shell] .yundeng-divider { width: 1px; height: 20px; margin: 0 4px; background: #DFE1E5; }
+body[data-yundeng-shell] .yundeng-dirty { padding: 2px 8px; border-radius: 4px; color: #E7772D; background: #FDF2E9; font-size: 11px; }
+body[data-yundeng-shell] .yundeng-dirty.hidden { display: none; }
+body[data-yundeng-shell] #yundeng-primary-nav,
+body[data-yundeng-shell] #primaryNav { scrollbar-width: thin; }
+body[data-yundeng-shell] .yundeng-menu-link {
+  min-height: 36px;
+  border-radius: 4px;
+  color: #3A3F4A;
+  transition: background .15s ease, color .15s ease;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 8px;
+  margin-bottom: 4px;
+  text-decoration: none;
+  font-size: 13px;
+}
+body[data-yundeng-shell] .yundeng-menu-link:hover { background: #F3F4F6; }
+body[data-yundeng-shell] .yundeng-menu-link[data-active="true"] {
+  color: #0066FF !important;
+  background: #E6F0FF !important;
+  font-weight: 600;
+}
+body[data-yundeng-shell] .yundeng-group-label {
+  color: #6E7685;
+  font-size: 11px;
+  letter-spacing: .01em;
+  padding: 10px 12px 4px;
+}
+body[data-yundeng-shell] .yundeng-group-toggle {
+  color: #6E7685;
+  min-height: 36px;
+  padding: 0 8px;
+  margin-bottom: 4px;
+  border-radius: 4px;
+  font-size: 13px;
+  cursor: pointer;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 0;
+  background: transparent;
+  text-align: left;
+}
+body[data-yundeng-shell] .yundeng-group-toggle:hover { color: #3A3F4A; background: #F3F4F6; }
+body[data-yundeng-shell] .yundeng-group-toggle[data-active="true"] { color: #0066FF; font-weight: 600; }
+body[data-yundeng-shell] .yundeng-subnav {
+  overflow: hidden;
+  max-height: 420px;
+  opacity: 1;
+  margin-left: 16px;
+  padding-left: 12px;
+  border-left: 1px solid #E8EAED;
+  transition: max-height .22s ease, opacity .16s ease;
+}
+body[data-yundeng-shell] .yundeng-subnav .yundeng-menu-link { padding-left: 12px; font-size: 12px; }
+body[data-yundeng-shell] .yundeng-subnav[data-expanded="false"] { max-height: 0; opacity: 0; pointer-events: none; }
+body[data-yundeng-shell] .yundeng-group-chevron { transition: transform .22s ease; }
+body[data-yundeng-shell] .yundeng-group-toggle[aria-expanded="false"] .yundeng-group-chevron { transform: rotate(-90deg); }
+body[data-yundeng-shell] .yundeng-popover {
+  position: fixed;
+  z-index: 1200;
+  background: #fff;
+  border: 1px solid #DFE1E5;
+  border-radius: 8px;
+  box-shadow: 0 6px 24px rgba(0,0,0,.12);
+}
+body[data-yundeng-shell] .yundeng-popover.hidden { display: none; }
+body[data-yundeng-shell] .yundeng-popover button,
+body[data-yundeng-shell] .yundeng-popover a { font: inherit; color: inherit; }
+body[data-yundeng-shell] .yundeng-mobile-menu { display: none; }
+body[data-yundeng-shell] .yundeng-mobile-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background: rgba(26,29,36,.28);
+}
+body[data-yundeng-shell] .yundeng-mobile-backdrop[data-open="true"] { display: block; }
+@media (max-width: 767px) {
+  body[data-yundeng-shell] [data-yundeng-topbar] { padding: 0 12px !important; }
+  body[data-yundeng-shell] .yundeng-mobile-menu { display: inline-flex; }
+  body[data-yundeng-shell] .yundeng-account-name,
+  body[data-yundeng-shell] .yundeng-account-chevron { display: none; }
+  body[data-yundeng-shell] #sidebar {
+    position: fixed !important;
+    inset: 0 auto 0 0;
+    z-index: 50;
+    height: 100vh !important;
+    transform: translateX(-100%);
+    box-shadow: 6px 0 24px rgba(0,0,0,.12) !important;
+  }
+  body[data-yundeng-shell] #sidebar.yundeng-mobile-open { transform: translateX(0); width: 220px !important; }
+  body[data-yundeng-shell] #sidebar.compact { width: 68px !important; transform: translateX(-100%); }
+  body[data-yundeng-shell] #sidebar.yundeng-mobile-open.compact { width: 220px !important; }
+}
+@media (prefers-reduced-motion: reduce) {
+  body[data-yundeng-shell] #sidebar,
+  body[data-yundeng-shell] .yundeng-subnav,
+  body[data-yundeng-shell] .yundeng-group-chevron { transition: none !important; }
+}

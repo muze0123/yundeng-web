@@ -14,7 +14,7 @@
   toggle.style.touchAction = 'none';
   toggle.style.userSelect = 'none';
   toggle.style.cursor = 'grab';
-  toggle.setAttribute('aria-label', '显示或隐藏交互标注；可拖拽移动');
+  toggle.setAttribute('aria-label', '显示或隐藏标注；可拖拽移动');
 
   function clamp(value, min, max) {
     return Math.min(Math.max(value, min), Math.max(min, max));
@@ -35,7 +35,7 @@
     toggle.dataset.annotationVisible = String(annoVisible);
     toggle.classList.toggle('opacity-60', !annoVisible);
     toggle.classList.toggle('shadow-lg', annoVisible);
-    toggle.title = annoVisible ? '隐藏交互标注（可拖拽）' : '显示交互标注（可拖拽）';
+    toggle.title = annoVisible ? '隐藏标注（可拖拽）' : '显示标注（可拖拽）';
     const label = toggle.querySelector('span');
     if (label) label.textContent = annoVisible ? '隐藏标注' : '显示标注';
   }

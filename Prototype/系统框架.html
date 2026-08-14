@@ -129,7 +129,7 @@
 
   <!-- Portal 标注图层 -->
   <div id="annoLayer" style="position:fixed;inset:0;pointer-events:none;z-index:9998;"></div>
-  <button id="annoToggle" class="fixed z-[9997] right-2 top-[120px] h-8 px-3 rounded-full bg-primary text-white shadow-[0_2px_8px_rgba(0,0,0,.12)] flex items-center justify-center gap-1.5 cursor-grab select-none touch-none" title="点击显示或隐藏；长按拖拽调整位置" aria-label="显示或隐藏交互标注，长按可拖拽"><i data-lucide="tags" class="w-4 h-4"></i><span class="text-[12px] font-medium whitespace-nowrap">交互标注</span></button>
+  <button id="annoToggle" class="fixed z-[9997] right-2 top-[120px] h-8 px-3 rounded-full bg-ink-muted text-white shadow-[0_2px_8px_rgba(0,0,0,.12)] flex items-center justify-center gap-1.5 cursor-grab select-none touch-none" title="点击显示标注；长按拖拽调整位置" aria-label="显示交互标注，长按可拖拽" aria-pressed="false"><i data-lucide="tags" class="w-4 h-4"></i><span class="text-[12px] font-medium whitespace-nowrap">显示标注</span></button>
   <div id="annoPopup" class="hidden fixed inset-0 z-[9999] bg-black/30 p-4 flex items-center justify-center">
     <div class="w-[520px] max-w-full bg-card rounded-lg shadow-[0_6px_24px_rgba(0,0,0,.12)]"><div id="annoDrag" class="px-5 py-4 border-b border-line flex justify-between items-center cursor-move"><h2 id="annoTitle" class="text-[16px] font-semibold text-ink-title"></h2><button id="closeAnno" type="button" class="text-ink-muted hover:text-ink-body cursor-pointer" aria-label="关闭标注说明"><i data-lucide="x" class="w-5 h-5 pointer-events-none"></i></button></div><div id="annoDesc" class="p-5 text-[14px] text-ink-body leading-relaxed"></div></div>
   </div>
@@ -138,30 +138,33 @@
     // Mock 数据：会话、导航、通知均由数据驱动渲染
     const session = { user:'张小登', role:'团队管理员', workspace:'云登团队', language:'简体中文' };
     const navItems = [
-      { id:'environment', label:'环境管理', icon:'monitor-cog', description:'管理浏览器环境、标签与运行状态', state:'ready' },
-      { id:'proxy', label:'代理管理', icon:'network', description:'管理代理资源与绑定关系', state:'ready' },
-      { id:'store', label:'商城', icon:'shopping-bag', description:'购买云登增值服务', state:'loading' },
-      { id:'billing', label:'费用管理', icon:'receipt-text', description:'查看套餐、账单与费用明细', state:'ready' },
+      { id:'environment', label:'环境管理', icon:'monitor-cog', description:'管理浏览器环境、标签与运行状态', state:'ready', href:'环境管理.html' },
+      { id:'proxy', label:'代理管理', icon:'network', description:'管理代理资源与绑定关系', state:'ready', href:'代理管理.html' },
+      { id:'store', label:'商城', icon:'shopping-bag', description:'购买云登增值服务', state:'loading', href:'商城.html' },
+      { id:'billing', label:'费用管理', icon:'receipt-text', description:'查看套餐、账单与费用明细', state:'ready', href:'费用管理.html' },
       { id:'team', label:'团队', icon:'users-round', group:true, expanded:true, children:[
-        { id:'team-management', label:'团队管理', icon:'building-2', description:'管理团队基本信息与权限边界', state:'ready' },
-        { id:'members', label:'成员管理', icon:'user-round-cog', description:'邀请成员、分配角色与查看成员状态', state:'ready' },
-        { id:'transfer', label:'分享转移', icon:'arrow-right-left', description:'管理环境分享与资源转移记录', state:'empty' },
-        { id:'logs', label:'日志管理', icon:'scroll-text', description:'查看团队操作与安全审计日志', state:'ready' },
-        { id:'account-settings', label:'账号设置', icon:'key-round', description:'配置账号安全与访问策略', state:'permission' }
+        { id:'team-management', label:'团队管理', icon:'building-2', description:'管理团队基本信息与权限边界', state:'ready', href:'团队管理.html' },
+        { id:'members', label:'成员管理', icon:'user-round-cog', description:'邀请成员、分配角色与查看成员状态', state:'ready', href:'成员管理.html' },
+        { id:'account-management', label:'账号管理', icon:'contact', description:'管理业务账号与环境绑定关系', state:'ready', href:'账号管理.html' },
+        { id:'transfer', label:'分享转移', icon:'arrow-right-left', description:'管理环境分享与资源转移记录', state:'empty', href:'分享转移.html' },
+        { id:'logs', label:'日志管理', icon:'scroll-text', description:'查看团队操作与安全审计日志', state:'ready', href:'日志管理.html' },
+        { id:'account-settings', label:'账号设置', icon:'key-round', description:'配置账号安全与访问策略', state:'permission', href:'账号设置.html' }
       ]},
-      { id:'plugins', label:'插件管理', icon:'blocks', description:'管理浏览器插件与启用状态', state:'ready' },
+      { id:'plugins', label:'插件管理', icon:'blocks', description:'管理浏览器插件与启用状态', state:'ready', href:'插件管理.html' },
       { id:'automation', label:'自动化', icon:'workflow', group:true, expanded:true, children:[
-        { id:'api', label:'API', icon:'braces', description:'访问 API 密钥与接口文档入口', state:'ready' },
-        { id:'rpa', label:'RPA', icon:'bot', description:'配置自动化流程与运行记录', state:'error' }
+        { id:'api', label:'API', icon:'braces', description:'访问本地 API 状态与接口文档入口', state:'ready', href:'API.html' },
+        { id:'rpa', label:'RPA', icon:'bot', description:'配置自动化流程与运行记录', state:'ready', href:'RPA.html' }
       ]},
-      { id:'recycle', label:'回收站', icon:'trash-2', description:'恢复或彻底删除已回收资源', state:'ready' }
+      { id:'recycle', label:'回收站', icon:'trash-2', description:'恢复或彻底删除已回收资源', state:'ready', href:'回收站.html' }
     ];
     const notices = [
       { id:'N-20260807-01', title:'成员申请待处理', desc:'王晓明申请加入“云登团队”。', time:'5 分钟前', unread:true },
       { id:'N-20260806-03', title:'浏览器环境已同步', desc:'环境 ENV-20260806-092 已完成云端同步。', time:'昨天 18:20', unread:true },
       { id:'N-20260806-01', title:'套餐到期提醒', desc:'专业版套餐将在 14 天后到期。', time:'昨天 10:15', unread:false }
     ];
-    let currentRoute = 'environment', sidebarCompact = false, annoVisible = true, annoScopeStack = [];
+    const requestedRoute = decodeURIComponent(location.hash.slice(1));
+    const requestedLeaf = navItems.flatMap(item=>item.children||[item]).find(item=>item.id===requestedRoute||item.label===requestedRoute);
+    let currentRoute = requestedLeaf?.id || 'environment', sidebarCompact = false, annoVisible = false, annoScopeStack = [];
     const annotations = {
       1:{ title:'新建浏览器入口', desc:['触发：点击左上“新建浏览器”。','响应：框架打开创建意图确认弹窗，交由环境管理业务模块承接。','规则：App Shell 不伪造浏览器创建成功结果。'] },
       2:{ title:'侧栏折叠', desc:['触发：点击侧栏底部收起按钮。','响应：侧栏切换完整与紧凑模式，主内容区自适应扩展。','规则：窄屏下侧栏作为覆盖层显示。'] },
@@ -183,7 +186,7 @@
           <div class="submenu ${item.expanded?'':'hidden'} ml-4 pl-3 border-l border-line-light">${item.children.map(child => menuButton(child,true)).join('')}</div></div>` : menuButton(item,false)).join('');
       lucide.createIcons();
     }
-    function menuButton(item, child) { return `<button data-route="${item.id}" data-anno="3" class="menu-link ${currentRoute===item.id?'active-leaf':''} w-full px-2 ${child?'pl-3':''} flex items-center gap-3 text-left mb-1"><i data-lucide="${item.icon}" class="menu-icon"></i><span class="menu-label">${item.label}</span></button>`; }
+    function menuButton(item, child) { return `<button data-route="${item.id}" ${item.href?`data-href="${item.href}"`:''} data-anno="3" class="menu-link ${currentRoute===item.id?'active-leaf':''} w-full px-2 ${child?'pl-3':''} flex items-center gap-3 text-left mb-1"><i data-lucide="${item.icon}" class="menu-icon"></i><span class="menu-label">${item.label}</span></button>`; }
     function renderRoute() {
       const route = getLeaf(currentRoute), parent = navItems.find(x => x.children?.some(c=>c.id===route.id));
       $('breadcrumb').textContent = `${parent ? parent.label+' / ' : '工作台 / '}${route.label}`;
@@ -193,6 +196,7 @@
       $('routeOutlet').innerHTML = `<section data-anno="9" class="route-card bg-card rounded-lg flex flex-col" aria-label="${route.label}路由内容"><div class="px-5 md:px-6 py-4 border-b border-line flex items-center justify-between gap-3"><div><h1 class="text-[20px] font-bold text-ink-title">${route.label}</h1><p class="text-[12px] text-ink-sub mt-1">Router Outlet · ${route.description}</p></div><span class="mono text-[11px] text-ink-muted hidden sm:block">ROUTE/${route.id.toUpperCase()}</span></div><div class="flex-1 flex items-center justify-center p-6"><div class="max-w-md text-center"><span class="w-12 h-12 rounded-lg bg-page text-primary mx-auto flex items-center justify-center"><i data-lucide="${icon}" class="w-6 h-6 ${route.state==='loading'?'animate-spin':''}"></i></span><h2 class="text-[18px] font-semibold text-ink-title mt-4">${title}</h2><p class="text-ink-sub leading-relaxed mt-2">${desc}</p><div class="mt-5">${action}</div></div></div><footer class="px-5 md:px-6 py-3 border-t border-line-lighter flex items-center justify-between text-[12px] text-ink-muted"><span>当前团队：${session.workspace}</span><span class="mono">SESSION/ONLINE</span></footer></section>`;
       lucide.createIcons(); renderAnnoBadges();
     }
+    window.addEventListener('hashchange',()=>{const routeName=decodeURIComponent(location.hash.slice(1)),route=navItems.flatMap(item=>item.children||[item]).find(item=>item.id===routeName||item.label===routeName);if(!route)return;currentRoute=route.id;renderNav();renderRoute();});
     function renderNotices() { $('noticeList').innerHTML = notices.map(n=>`<button class="w-full text-left px-4 py-3 hover:bg-hover border-b border-line-lighter last:border-0"><div class="flex gap-2"><span class="status-dot ${n.unread?'bg-primary':'bg-line'} mt-1.5"></span><div class="min-w-0"><p class="font-medium text-ink-title">${n.title}</p><p class="text-[12px] text-ink-sub mt-1 truncate">${n.desc}</p><p class="mono text-[11px] text-ink-muted mt-1">${n.time}</p></div></div></button>`).join(''); }
     function openPopover(id) { ['noticePopover','languagePopover','helpPopover','accountPopover'].forEach(x=>{ if(x!==id) $(x).classList.add('hidden'); }); $(id).classList.toggle('hidden'); }
     function closeOverlays() { ['noticePopover','languagePopover','helpPopover','accountPopover'].forEach(id=>$(id).classList.add('hidden')); }
@@ -209,14 +213,14 @@
     // 交互绑定
     document.addEventListener('click', event => {
       const routeBtn=event.target.closest('[data-route]'), groupBtn=event.target.closest('[data-group]'), globalBtn=event.target.closest('[data-global]'), closeBtn=event.target.closest('[data-close]'), recoverBtn=event.target.closest('[data-recover]');
-      if(routeBtn){ currentRoute=routeBtn.dataset.route; renderNav(); renderRoute(); }
+      if(routeBtn){ if(routeBtn.dataset.href){ location.href=routeBtn.dataset.href; return; } currentRoute=routeBtn.dataset.route; renderNav(); renderRoute(); }
       if(groupBtn){ const group=navItems.find(x=>x.id===groupBtn.dataset.group); group.expanded=!group.expanded; renderNav(); renderAnnoBadges(); }
       if(closeBtn){ const id=closeBtn.dataset.close; $(id).classList.add('hidden'); if(id==='assistantDrawer') closeDrawer(); else if(id==='createDialog'){ popAnnoScope($('createPanel')); $('createBrowserBtn').focus(); } }
       if(recoverBtn){ if(recoverBtn.dataset.recover==='retry'){ getLeaf(currentRoute).state='loading'; renderRoute(); setTimeout(()=>{getLeaf(currentRoute).state='ready';renderRoute();toast('模块已重新加载','success');},900); } else if(recoverBtn.dataset.recover==='environment'){currentRoute='environment';renderNav();renderRoute();} else toast('已向团队管理员提交权限申请','success'); }
       if(globalBtn){ const action=globalBtn.dataset.global; if(action==='help') openPopover('helpPopover'); else if(action==='settings'||action==='details'||action==='notice-center') toast(action==='details'?'框架事件契约已保留给业务模块接入':'该入口将在对应业务页面实现','info'); }
     });
     $('createBrowserBtn').onclick=()=>{ $('createDialog').classList.remove('hidden'); pushAnnoScope($('createPanel')); };
-    $('handoffCreate').onclick=()=>{ $('createDialog').classList.add('hidden'); popAnnoScope($('createPanel')); currentRoute='environment'; renderNav(); renderRoute(); toast('已将创建意图交给环境管理模块','success'); };
+    $('handoffCreate').onclick=()=>{ $('createDialog').classList.add('hidden'); popAnnoScope($('createPanel')); location.href='新建浏览器.html'; };
     $('collapseBtn').onclick=()=>{ sidebarCompact=!sidebarCompact; $('sidebar').classList.toggle('compact',sidebarCompact); const button=$('collapseBtn'); button.title=sidebarCompact?'展开侧栏':'收起侧栏'; button.setAttribute('aria-label',button.title); button.innerHTML=`<i data-lucide="${sidebarCompact?'panel-left-open':'panel-left-close'}" class="w-[18px] h-[18px]"></i>`; lucide.createIcons(); renderAnnoBadges(); };
     $('mobileMenu').onclick=()=>{ $('sidebar').classList.toggle('compact'); };
     $('noticeBtn').onclick=()=>openPopover('noticePopover');
@@ -235,7 +239,7 @@
     $('assistantDrawer').onclick=e=>{ if(e.target===$('assistantDrawer')) closeDrawer(); };
     $('createDialog').onclick=e=>{ if(e.target===$('createDialog')){ $('createDialog').classList.add('hidden'); popAnnoScope($('createPanel')); } };
     let annoToggleDragged=false;
-    $('annoToggle').onclick=()=>{ if(annoToggleDragged){ annoToggleDragged=false; return; } annoVisible=!annoVisible; $('annoToggle').classList.toggle('bg-primary',annoVisible); $('annoToggle').classList.toggle('bg-ink-muted',!annoVisible); renderAnnoBadges(); };
+    $('annoToggle').onclick=()=>{ if(annoToggleDragged){ annoToggleDragged=false; return; } annoVisible=!annoVisible; $('annoToggle').classList.toggle('bg-primary',annoVisible); $('annoToggle').classList.toggle('bg-ink-muted',!annoVisible); $('annoToggle').setAttribute('aria-pressed',String(annoVisible)); $('annoToggle').querySelector('span').textContent=annoVisible?'隐藏标注':'显示标注'; renderAnnoBadges(); };
     $('closeAnno').onclick=e=>{ e.stopPropagation(); closeAnnoPopup(); };
     $('annoPopup').onclick=e=>{ if(e.target===$('annoPopup')) closeAnnoPopup(); };
     // 标注说明弹窗支持标题栏拖拽，位置独立于页面文档流。
@@ -249,5 +253,6 @@
     document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ closeOverlays(); closeAnnoPopup(); if(!$('assistantDrawer').classList.contains('hidden')) closeDrawer(); } });
     renderNav(); renderNotices(); renderRoute(); lucide.createIcons(); setupAnnoToggleDrag();
   </script>
+  <script src="公共导航.js?v=20260813"></script>
 </body>
 </html>

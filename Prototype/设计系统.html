@@ -192,6 +192,14 @@ document.addEventListener('DOMContentLoaded', async function() {
     if (supplementalSpecs && document.body) {
       document.body.insertAdjacentHTML('beforeend', supplementalSpecs);
     }
+    const shellStyle = document.createElement('link');
+    shellStyle.rel = 'stylesheet';
+    shellStyle.href = '公共导航.css?v=20260813';
+    shellStyle.dataset.yundengNavCss = 'true';
+    document.head.appendChild(shellStyle);
+    const shellScript = document.createElement('script');
+    shellScript.src = '公共导航.js?v=20260813';
+    document.body.appendChild(shellScript);
   } catch (err) {
     setStatus('Error unpacking: ' + err.message);
     console.error('Bundle unpack error:', err);

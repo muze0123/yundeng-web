@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>云登 · 日志管理</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config={theme:{extend:{colors:{primary:{DEFAULT:'#0066FF',hover:'#0052CC',bg:'#E6F0FF'},ink:{title:'#1A1D24',body:'#3A3F4A',sub:'#6E7685',muted:'#9DA2AC'},line:{DEFAULT:'#DFE1E5',light:'#E8EAED',lighter:'#F0F1F3'},page:'#F7F8FA',card:'#FFFFFF',hover:'#F3F4F6',success:{DEFAULT:'#0FC060',bg:'#E7F9F0'},warning:{DEFAULT:'#E7772D',bg:'#FDF2E9'},danger:{DEFAULT:'#D9001B',bg:'#FFE8EB'},info:{DEFAULT:'#0091D5',bg:'#E4F4FB'}}}}};
+  </script>
+  <style>
+    *{box-sizing:border-box}body{margin:0;font:13px/1.5 -apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei','Segoe UI',system-ui,sans-serif}.mono{font-family:'JetBrains Mono',monospace;font-variant-numeric:tabular-nums}.field{height:32px;border:1px solid #DFE1E5;border-radius:4px;padding:0 10px;background:#fff;outline:none}.field:focus{border-color:#0066FF;box-shadow:0 0 0 2px #E6F0FF}.btn{height:32px;padding:0 12px;border-radius:4px;display:inline-flex;align-items:center;justify-content:center;gap:6px;font-weight:500}.btn-primary{background:#0066FF;color:#fff}.btn-primary:hover{background:#0052CC}.btn-default{background:#fff;border:1px solid #DFE1E5;color:#3A3F4A}.btn-default:hover{background:#F3F4F6}.card{background:#fff;border-radius:8px}.tag{height:22px;padding:0 8px;border-radius:4px;display:inline-flex;align-items:center;font-size:12px}.modal-bg{position:fixed;inset:0;background:#0006;z-index:1100;display:flex;align-items:center;justify-content:center}.hidden{display:none!important}.toast{position:fixed;right:24px;top:72px;z-index:1300;background:#1A1D24;color:#fff;padding:10px 16px;border-radius:4px;box-shadow:0 4px 18px #0003}th,td{white-space:nowrap}
+  </style>
+</head>
+<body class="bg-page text-ink-body overflow-hidden">
+  <div class="h-screen flex">
+    <aside id="sidebar"></aside>
+    <div class="min-w-0 flex-1 flex flex-col h-screen">
+      <header></header>
+      <main id="mainContent" class="flex-1 min-h-0 overflow-auto p-4 md:p-6" tabindex="-1">
+        <div class="max-w-[1540px] mx-auto">
+          <section class="flex flex-wrap items-start justify-between gap-4 mb-4">
+            <div><h1 class="text-[24px] leading-8 font-bold text-ink-title">日志管理</h1><p class="mt-1 text-ink-sub">查询团队成员对环境、代理、账号与权限执行的操作记录</p></div>
+            <button id="exportBtn" class="btn btn-default"><i data-lucide="download" class="w-4"></i>导出当前结果</button>
+          </section>
+
+          <section class="card p-4 mb-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-[180px_180px_180px_minmax(220px,1fr)_auto] gap-3 items-end">
+              <label><span class="block text-ink-sub mb-1">开始时间</span><input id="startDate" type="date" class="field w-full" value="2026-08-01"></label>
+              <label><span class="block text-ink-sub mb-1">结束时间</span><input id="endDate" type="date" class="field w-full" value="2026-08-13"></label>
+              <label><span class="block text-ink-sub mb-1">操作模块</span><select id="moduleFilter" class="field w-full"><option value="">全部模块</option><option>环境管理</option><option>代理管理</option><option>账号管理</option><option>团队管理</option><option>费用管理</option></select></label>
+              <label><span class="block text-ink-sub mb-1">成员 / 内容</span><input id="keyword" class="field w-full" placeholder="搜索成员、对象或操作内容"></label>
+              <div class="flex gap-2"><button id="searchBtn" class="btn btn-primary"><i data-lucide="search" class="w-4"></i>查询</button><button id="resetBtn" class="btn btn-default">重置</button></div>
+            </div>
+          </section>
+
+          <section class="card overflow-hidden">
+            <div class="h-12 px-5 flex items-center justify-between border-b border-line-lighter"><div><strong class="text-ink-title">操作日志</strong><span id="count" class="ml-2 text-ink-sub mono"></span></div><button id="refreshBtn" class="w-8 h-8 rounded hover:bg-hover text-ink-sub" title="刷新" aria-label="刷新日志"><i data-lucide="refresh-cw" class="w-4 mx-auto"></i></button></div>
+            <div class="overflow-x-auto">
+              <table class="w-full min-w-[1080px]">
+                <thead class="bg-page text-ink-sub"><tr><th class="h-10 px-4 text-left font-medium">操作时间</th><th class="px-4 text-left font-medium">操作成员</th><th class="px-4 text-left font-medium">模块</th><th class="px-4 text-left font-medium">操作类型</th><th class="px-4 text-left font-medium">操作对象</th><th class="px-4 text-left font-medium">结果</th><th class="px-4 text-left font-medium">IP 地址</th><th class="px-4 text-right font-medium">操作</th></tr></thead>
+                <tbody id="logBody"></tbody>
+              </table>
+            </div>
+            <div class="min-h-12 px-4 flex items-center justify-between border-t border-line-lighter text-[12px] text-ink-sub"><span>日志仅用于审计与问题排查，不支持修改</span><span class="mono">1 / 1</span></div>
+          </section>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <div id="detailModal" class="modal-bg hidden" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
+    <section class="w-[640px] max-w-[calc(100vw-32px)] bg-card rounded-lg shadow-[0_6px_24px_rgba(0,0,0,.14)] overflow-hidden">
+      <header class="h-14 px-5 border-b border-line flex items-center justify-between"><h2 id="detailTitle" class="text-[16px] font-semibold text-ink-title">日志详情</h2><button id="closeDetail" class="w-8 h-8 rounded hover:bg-hover" aria-label="关闭"><i data-lucide="x" class="w-4 mx-auto"></i></button></header>
+      <div id="detailContent" class="p-5 grid grid-cols-[100px_1fr] gap-x-4 gap-y-3"></div>
+      <footer class="px-5 pb-5 flex justify-end"><button id="doneDetail" class="btn btn-primary">完成</button></footer>
+    </section>
+  </div>
+  <div id="toast" class="toast hidden"></div>
+
+  <script>
+    const logs=[
+      {time:'2026-08-13 10:32:18',user:'张小登',module:'环境管理',action:'编辑环境',target:'YL-000014 / 云登浏览器_1',result:'成功',ip:'120.229.**.71',detail:'更新环境名称、备注与浏览器指纹配置'},
+      {time:'2026-08-13 09:48:07',user:'李运营',module:'代理管理',action:'分配代理',target:'香港-住宅代理-08',result:'成功',ip:'14.153.**.88',detail:'将代理分配给 3 个浏览器环境'},
+      {time:'2026-08-12 21:16:05',user:'张小登',module:'账号管理',action:'新增账号',target:'Facebook / 账号 A-019',result:'成功',ip:'120.229.**.71',detail:'创建账号并绑定到默认账号分组'},
+      {time:'2026-08-12 18:42:33',user:'王财务',module:'费用管理',action:'导出流水',target:'2026-08-01 至 2026-08-12',result:'成功',ip:'113.87.**.54',detail:'导出当前团队云币流水 CSV'},
+      {time:'2026-08-12 15:10:21',user:'李运营',module:'团队管理',action:'修改角色',target:'环境操作员',result:'失败',ip:'14.153.**.88',detail:'缺少角色管理权限，未产生数据变更'},
+      {time:'2026-08-11 16:08:29',user:'陈配置',module:'环境管理',action:'批量启动',target:'环境 6 个',result:'部分成功',ip:'183.6.**.109',detail:'5 个环境启动成功，1 个环境因代理不可用启动失败'}
+    ];
+    const $=id=>document.getElementById(id); let shown=logs.slice();
+    const tone=result=>result==='成功'?'bg-success-bg text-success':result==='失败'?'bg-danger-bg text-danger':'bg-warning-bg text-warning';
+    function render(){const q=$('keyword').value.trim().toLowerCase(),mod=$('moduleFilter').value;shown=logs.filter(x=>(!mod||x.module===mod)&&(!q||[x.user,x.action,x.target,x.detail].join(' ').toLowerCase().includes(q)));$('logBody').innerHTML=shown.map((x,i)=>`<tr class="border-t border-line-lighter hover:bg-hover"><td class="h-12 px-4 mono text-[12px]">${x.time}</td><td class="px-4">${x.user}</td><td class="px-4">${x.module}</td><td class="px-4">${x.action}</td><td class="px-4 max-w-[260px] truncate">${x.target}</td><td class="px-4"><span class="tag ${tone(x.result)}">${x.result}</span></td><td class="px-4 mono text-[12px]">${x.ip}</td><td class="px-4 text-right"><button data-detail="${i}" class="text-primary hover:underline">详情</button></td></tr>`).join('')||'<tr><td colspan="8" class="py-20 text-center text-ink-sub">暂无符合条件的日志</td></tr>';$('count').textContent=`${shown.length} 条`;lucide.createIcons()}
+    function toast(message){$('toast').textContent=message;$('toast').classList.remove('hidden');clearTimeout($('toast').timer);$('toast').timer=setTimeout(()=>$('toast').classList.add('hidden'),1800)}
+    function closeDetail(){$('detailModal').classList.add('hidden')}
+    $('searchBtn').onclick=render;$('resetBtn').onclick=()=>{$('startDate').value='2026-08-01';$('endDate').value='2026-08-13';$('moduleFilter').value='';$('keyword').value='';render()};$('refreshBtn').onclick=()=>{render();toast('日志已刷新')};$('exportBtn').onclick=()=>toast(`已生成 ${shown.length} 条脱敏日志的导出文件（演示）`);$('logBody').onclick=e=>{const button=e.target.closest('[data-detail]');if(!button)return;const x=shown[Number(button.dataset.detail)];$('detailContent').innerHTML=Object.entries({操作时间:x.time,操作成员:x.user,操作模块:x.module,操作类型:x.action,操作对象:x.target,执行结果:x.result,IP地址:x.ip,变更摘要:x.detail}).map(([k,v])=>`<span class="text-ink-sub">${k}</span><span class="text-ink-body break-all">${v}</span>`).join('');$('detailModal').classList.remove('hidden');lucide.createIcons()};$('closeDetail').onclick=$('doneDetail').onclick=closeDetail;$('detailModal').onclick=e=>{if(e.target===$('detailModal'))closeDetail()};render();lucide.createIcons();
+  </script>
+  <script src="公共导航.js?v=20260813"></script>
+</body>
+</html>

@@ -148,7 +148,7 @@ var annotations = {
 <div id="annoLayer" style="position:fixed;inset:0;pointer-events:none;z-index:9998;"></div>
 <!-- 可长按拖拽的浮动开关（固定吸附页面右侧） -->
 <button id="annoToggle" class="fixed z-[9997]" style="right:8px;top:120px;cursor:grab;" ...>
-  <i data-lucide="tags"></i><span>交互标注</span>
+  <i data-lucide="tags"></i><span>显示标注</span>
 </button>
 <!-- 说明弹窗（居中，有遮罩，点击遮罩关闭） -->
 <div id="annoPopup" class="hidden fixed inset-0 z-[9999]" ...>...</div>
@@ -166,7 +166,7 @@ var annotations = {
 | `closeAnnoPopup()` | 关闭弹窗 |
 | `pushAnnoScope(el)` | 将标注范围限定在 `el` 容器内（压栈 + 重渲染），打开抽屉/弹窗时调用 |
 | `popAnnoScope(el)` | 从栈中移除 `el`（出栈 + 重渲染），关闭抽屉/弹窗时调用 |
-| 浮动开关 | 图标后固定显示“交互标注”；点击显/隐徽标（`annoVisible` 状态）；长按 350ms 后可沿页面右侧上下拖拽，拖拽时不触发切换 |
+| 浮动开关 | 标注默认隐藏（`annoVisible=false`），图标后默认显示“显示标注”；点击后显示标注并切换为“隐藏标注”，再次点击恢复默认隐藏状态；长按 350ms 后可沿页面右侧上下拖拽，拖拽时不触发切换 |
 | **弹窗拖拽** | 标题栏 `grip-horizontal` 图标 + 标题区域可拖拽移动弹窗位置 |
 
 
@@ -347,7 +347,7 @@ function closeModal() {
 
 ### 8.1.1 侧边栏菜单交互规范（强制）
 
-> `Prototype/系统框架.html` 已内置完整的菜单交互 JS 逻辑。新页面复用框架后直接继承，不得重复实现或修改公共行为。
+> `Prototype/公共导航.js` 与 `Prototype/公共导航.css` 是侧栏、顶部导航和独立页面路由的公共实现。所有 HTML 统一引用同一缓存版本；页面只声明业务主体，不得复制或另行修改公共导航行为。
 >
 >
 > | 操作           | 行为                      |
@@ -363,13 +363,13 @@ function closeModal() {
 
 - 一级菜单：`class="menu-item l1"` + `data-page="页面名"`（无子菜单）或 `data-sub="sub-xxx"`（有子菜单）+ `onclick="menuSelect(this)"`
 - 二级菜单：`class="menu-item l2"` + `data-page="目标.html"` + `onclick="menuSelect(this)"`，放在对应 `id="sub-xxx"` 的 `.submenu` 容器内
-- 菜单 JS 函数（`menuSelect`、`handleL1`、`handleL2`、`collapseAllExcept`、`clearAllActive`、`navigateToPage`）为框架内置，新页面直接使用，不得删除或替换
+- 菜单结构、当前态、分组展开、折叠、移动端侧栏和顶部栏交互均由 `公共导航.js` 统一生成；叶子菜单使用普通 `<a href="目标页面.html">` 跳转，不使用 `系统框架.html#模块` 承载业务页面
 
 
 
 ### 8.1.2 侧边栏菜单全局同步（强制，红线）
 
-> **核心规则**：`Prototype/系统框架.html` 是侧边栏与路由配置的唯一基准。新增、改名、删除模块或调整菜单结构时，必须同步更新系统框架、相关页面入口及全部路由引用，确保导航结构与实际页面一致。
+> **核心规则**：`Prototype/公共导航.js` 是侧边栏与独立页面路由配置的唯一基准，`Prototype/系统框架.html` 用于展示框架契约。新增、改名、删除模块或调整菜单结构时，必须同步更新公共导航、系统框架、`index.html` 与全部路由引用。
 
 | 变更场景 | 同步范围 | 操作 |
 |----------|----------|------|

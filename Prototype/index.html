@@ -61,7 +61,7 @@
       </a>
       <div class="flex items-center gap-2">
         <span id="pageCounter" class="hidden sm:inline-flex h-7 px-2.5 rounded bg-success-bg text-success items-center gap-1.5">
-          <span class="w-1.5 h-1.5 rounded-full bg-success"></span><span class="mono">3 / 3</span> 页面可访问
+          <span class="w-1.5 h-1.5 rounded-full bg-success"></span><span class="mono">19 / 19</span> 页面可访问
         </span>
         <a href="设计系统.html" class="h-8 px-3 rounded border border-line bg-card hover:bg-hover text-ink-body flex items-center gap-1.5">
           <i data-lucide="swatch-book" class="w-4 h-4 text-primary"></i><span class="hidden sm:inline">查看设计规范</span>
@@ -76,15 +76,11 @@
       <div class="min-w-0 bg-card rounded-lg p-6 md:p-8 min-h-[232px] flex flex-col justify-between overflow-hidden relative">
         <div class="absolute right-0 top-0 w-32 h-32 bg-primary-bg rounded-bl-[128px]" aria-hidden="true"></div>
         <div class="relative max-w-[700px]">
-          <div class="flex items-center gap-2 text-primary font-medium mb-4">
-            <i data-lucide="panels-top-left" class="w-4 h-4"></i>
-            <span class="mono text-[11px] tracking-[.12em] uppercase">Prototype workspace</span>
-          </div>
           <h1 id="pageTitle" class="text-[28px] md:text-[30px] leading-tight font-bold text-ink-title tracking-[-.02em] break-words">从规范到页面，一处查看全部原型</h1>
           <p class="mt-3 text-[14px] leading-7 text-ink-sub max-w-[620px]">这里汇总云登 PC 端当前可交付原型。先核对设计与框架规范，再进入具体业务页面，可减少跨文件查找和版本识别成本。</p>
         </div>
         <div class="relative mt-6 flex flex-wrap gap-x-6 gap-y-2 text-[12px] text-ink-sub">
-          <span class="flex items-center gap-1.5"><i data-lucide="file-code-2" class="w-4 h-4 text-primary"></i><strong class="mono text-ink-title">3</strong> 个原型页面</span>
+          <span class="flex items-center gap-1.5"><i data-lucide="file-code-2" class="w-4 h-4 text-primary"></i><strong class="mono text-ink-title">19</strong> 个原型页面</span>
           <span class="flex items-center gap-1.5"><i data-lucide="folder-tree" class="w-4 h-4 text-primary"></i><strong class="mono text-ink-title">2</strong> 个内容分组</span>
           <span class="flex items-center gap-1.5"><i data-lucide="calendar-check-2" class="w-4 h-4 text-success"></i>同步于 <strong class="mono text-ink-title">2026-08-07</strong></span>
         </div>
@@ -93,7 +89,7 @@
       <!-- 原型关系图 -->
       <aside class="min-w-0 bg-card rounded-lg p-5 md:p-6" aria-labelledby="mapTitle">
         <div class="flex items-center justify-between mb-5">
-          <div><p class="text-[11px] mono text-ink-muted mb-1">DELIVERY MAP</p><h2 id="mapTitle" class="text-[16px] font-semibold text-ink-title">原型交付链路</h2></div>
+          <div><h2 id="mapTitle" class="text-[16px] font-semibold text-ink-title">原型交付链路</h2></div>
           <span class="w-8 h-8 rounded bg-primary-bg text-primary flex items-center justify-center"><i data-lucide="git-branch" class="w-[18px] h-[18px]"></i></span>
         </div>
         <ol class="map-track grid md:grid-cols-3 lg:grid-cols-1 gap-4 lg:gap-3">
@@ -137,12 +133,11 @@
 
   <footer class="max-w-[1280px] mx-auto px-4 md:px-6 pb-8 text-[12px] text-ink-muted flex flex-wrap items-center justify-between gap-3">
     <span>云登 PC 端产品原型 · 本地单文件预览入口</span>
-    <span class="mono">YUNLOGIN / PROTOTYPE INDEX</span>
   </footer>
 
   <!-- Portal 交互标注 -->
   <div id="annoLayer" style="position:fixed;inset:0;pointer-events:none;z-index:9998;"></div>
-  <button id="annoToggle" class="fixed z-[9997] right-2 top-[120px] h-8 px-3 rounded-full bg-primary text-white shadow-[0_2px_8px_rgba(0,0,0,.12)] flex items-center justify-center gap-1.5 cursor-pointer" aria-label="显示或隐藏交互标注"><i data-lucide="tags" class="w-4 h-4"></i><span class="text-[12px] font-medium whitespace-nowrap">交互标注</span></button>
+  <button id="annoToggle" class="fixed z-[9997] right-2 top-[120px] h-8 px-3 rounded-full bg-ink-muted text-white shadow-[0_2px_8px_rgba(0,0,0,.12)] flex items-center justify-center gap-1.5 cursor-pointer" aria-label="显示交互标注" aria-pressed="false"><i data-lucide="tags" class="w-4 h-4"></i><span class="text-[12px] font-medium whitespace-nowrap">显示标注</span></button>
   <div id="annoPopup" class="hidden fixed inset-0 z-[9999] bg-black/30 p-4 items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="annoTitle">
     <div class="w-[520px] max-w-full bg-card rounded-lg shadow-[0_6px_24px_rgba(0,0,0,.12)]">
       <div class="px-5 py-4 border-b border-line flex justify-between items-center"><h2 id="annoTitle" class="text-[16px] font-semibold text-ink-title"></h2><button id="closeAnno" class="text-ink-muted hover:text-ink-body" aria-label="关闭标注说明"><i data-lucide="x" class="w-5 h-5"></i></button></div>
@@ -153,7 +148,23 @@
   <script>
     // 页面数据：所有入口均对应 Prototype 目录内的真实 HTML 文件。
     const prototypes = [
+      { id:'api', group:'后台系统', title:'API', description:'查看本地 API 状态、参数格式、接口目录与 GET /status 契约，其他接口明确标注待后端确认。', file:'API.html', icon:'braces', status:'业务原型', statusTone:'success', updated:'08-13', size:'单文件', tags:['本地API','接口文档','状态检查','自动化'] },
+      { id:'rpa', group:'后台系统', title:'RPA', description:'管理本地自动化任务流程、模板市场、计划空态和运行日志，支持流程编辑与环境分配演示。', file:'RPA.html', icon:'bot', status:'业务原型', statusTone:'success', updated:'08-13', size:'单文件', tags:['任务流程','模板市场','计划管理','运行日志'] },
+      { id:'plugins', group:'后台系统', title:'插件管理', description:'管理插件市场、我的插件、团队插件、上传插件、授权协议、分组与环境分配。', file:'插件管理.html', icon:'blocks', status:'业务原型', statusTone:'success', updated:'08-13', size:'单文件', tags:['插件市场','上传插件','团队插件','环境分配'] },
+      { id:'team-management', group:'后台系统', title:'团队管理', description:'统一管理成员、部门、角色权限、入团申请、登录授权与团队认证。', file:'团队管理.html', icon:'users', status:'业务原型', statusTone:'success', updated:'08-12', size:'单文件', tags:['成员','部门','角色权限','审批'] },
+      { id:'member-management', group:'后台系统', title:'成员管理', description:'维护团队成员、部门归属、角色、状态、在线情况和环境授权范围。', file:'成员管理.html', icon:'user-round-cog', status:'业务原型', statusTone:'success', updated:'08-13', size:'单文件', tags:['成员列表','部门','角色','环境授权'] },
+      { id:'account-management', group:'后台系统', title:'账号管理', description:'管理业务账号、平台、凭证锁定、环境绑定和账号分组。', file:'账号管理.html', icon:'contact', status:'业务原型', statusTone:'success', updated:'08-13', size:'单文件', tags:['业务账号','平台','凭证','环境绑定'] },
+      { id:'transfer', group:'后台系统', title:'分享转移', description:'管理环境分享、资源转移、缓存快照和跨团队交接记录。', file:'分享转移.html', icon:'arrow-right-left', status:'业务原型', statusTone:'success', updated:'08-13', size:'单文件', tags:['环境分享','资源转移','缓存','跨团队'] },
+      { id:'logs', group:'后台系统', title:'日志管理', description:'查询团队成员对环境、代理、账号、团队和费用执行的审计记录。', file:'日志管理.html', icon:'scroll-text', status:'业务原型', statusTone:'success', updated:'08-13', size:'单文件', tags:['操作日志','审计','筛选','导出'] },
+      { id:'account-settings', group:'后台系统', title:'账号设置', description:'维护团队、个人资料、手机邮箱、密码、第三方绑定和登录设备。', file:'账号设置.html', icon:'key-round', status:'业务原型', statusTone:'success', updated:'08-13', size:'单文件', tags:['个人资料','安全设置','设备','团队切换'] },
+      { id:'billing', group:'后台系统', title:'费用管理', description:'管理云币流水、在线充值、CDKEY、订单与优惠券，支持筛选、详情和安全导出。', file:'费用管理.html', icon:'wallet-cards', status:'业务原型', statusTone:'success', updated:'08-12', size:'单文件', tags:['云币','订单','优惠券','充值'] },
+      { id:'store', group:'后台系统', title:'商城', description:'购买平台代理与环境套餐，支持实时试算、购物车和支付前订单确认。', file:'商城.html', icon:'shopping-bag', status:'业务原型', statusTone:'success', updated:'08-12', size:'单文件', tags:['代理购买','套餐','购物车','订单确认'] },
+      { id:'proxy-management', group:'后台系统', title:'代理管理', description:'统一管理平台代理、自有代理和代理 API，支持检测、授权、环境分配、续费与安全删除。', file:'代理管理.html', icon:'network', status:'业务原型', statusTone:'success', updated:'08-12', size:'单文件', tags:['平台代理','自有代理','代理API','批量操作'] },
+      { id:'browser-create', group:'后台系统', title:'新建浏览器', description:'支持单个、批量、文件导入与一键迁移四种环境创建模式，复用完整指纹配置能力。', file:'新建浏览器.html', icon:'circle-plus', status:'业务原型', statusTone:'success', updated:'08-12', size:'单文件', tags:['单个创建','批量创建','导入','迁移'] },
       { id:'browser-editor', group:'后台系统', title:'编辑浏览器', description:'配置环境信息、浏览器指纹、插件与偏好设置，验证随机指纹覆盖、帮助说明和保存保护流程。', file:'编辑浏览器.html', icon:'monitor-cog', status:'业务原型', statusTone:'success', updated:'08-07 20:30', size:'99.9 KB', tags:['环境配置','浏览器指纹','插件','表单'] },
+      { id:'environment', group:'后台系统', title:'环境管理', description:'统一管理浏览器环境，支持筛选、多选、启动、关闭、字段设置及批量运维子流程。', file:'环境管理.html', icon:'monitor-cog', status:'已完成', statusTone:'success', updated:'08-12', size:'单文件', tags:['环境列表','批量操作','弹窗','分页'] },
+      { id:'settings', group:'后台系统', title:'设置', description:'维护客户端偏好、启动行为、更新策略、网络与其他全局配置。', file:'设置.html', icon:'settings-2', status:'业务原型', statusTone:'success', updated:'08-13', size:'单文件', tags:['偏好设置','更新','网络','客户端'] },
+      { id:'recycle', group:'后台系统', title:'回收站', description:'恢复或彻底清理已删除的环境、代理、账号和自动化资源。', file:'回收站.html', icon:'trash-2', status:'业务原型', statusTone:'success', updated:'08-13', size:'单文件', tags:['恢复','彻底删除','批量操作','保留期'] },
       { id:'app-shell', group:'后台系统', title:'系统框架', description:'展示云登 PC 端统一应用壳，包含侧栏、顶部导航、路由承载、全局通知与智能助手入口。', file:'系统框架.html', icon:'panel-left', status:'基础框架', statusTone:'info', updated:'08-07 20:28', size:'33.7 KB', tags:['App Shell','全局导航','路由','响应式'] },
       { id:'design-system', group:'设计规范', title:'设计系统', description:'集中查看颜色、字体、间距、组件和配置型长表单规范，作为原型视觉实现的单一事实来源。', file:'设计系统.html', icon:'swatch-book', status:'规范文档', statusTone:'primary', updated:'08-07 20:47', size:'234.1 KB', tags:['Design Token','组件','表单规范','交付标准'] }
     ];
@@ -169,7 +180,7 @@
       4:{title:'打开原型页面',desc:['点击后在当前窗口打开目标 HTML 文件。','所有链接均使用 Prototype 目录内的相对路径，支持双击 index.html 本地预览。']}
     };
     let activeFilter = '全部';
-    let annoVisible = true;
+    let annoVisible = false;
 
     const $ = id => document.getElementById(id);
     const toneClass = tone => ({success:'bg-success-bg text-success',info:'bg-info-bg text-info',primary:'bg-primary-bg text-primary'}[tone] || 'bg-page text-ink-sub');
@@ -249,7 +260,7 @@
     $('searchInput').addEventListener('input',renderPrototypes);
     $('resetButton').addEventListener('click',resetFilters);
     $('emptyResetButton').addEventListener('click',resetFilters);
-    $('annoToggle').addEventListener('click',()=>{ annoVisible=!annoVisible; $('annoToggle').classList.toggle('bg-primary',annoVisible); $('annoToggle').classList.toggle('bg-ink-muted',!annoVisible); renderAnnoBadges(); });
+    $('annoToggle').addEventListener('click',()=>{ annoVisible=!annoVisible; $('annoToggle').classList.toggle('bg-primary',annoVisible); $('annoToggle').classList.toggle('bg-ink-muted',!annoVisible); $('annoToggle').setAttribute('aria-pressed',String(annoVisible)); $('annoToggle').querySelector('span').textContent=annoVisible?'隐藏标注':'显示标注'; renderAnnoBadges(); });
     $('closeAnno').addEventListener('click',closeAnnoPopup);
     $('annoPopup').addEventListener('click',event=>{ if(event.target===$('annoPopup')) closeAnnoPopup(); });
     document.addEventListener('keydown',event=>{
@@ -263,5 +274,6 @@
     renderPrototypes();
     lucide.createIcons();
   </script>
+  <script src="公共导航.js?v=20260813"></script>
 </body>
 </html>

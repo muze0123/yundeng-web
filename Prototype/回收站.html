@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>回收站 - 云登</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary:'#0066FF','primary-hover':'#0052CC','primary-active':'#0047B3','primary-bg':'#E6F0FF',
+            'ink-title':'#1A1D24','ink-body':'#3A3F4A','ink-sub':'#6E7685','ink-muted':'#9DA2AC',
+            line:'#DFE1E5','line-light':'#E8EAED','line-lighter':'#F0F1F3',page:'#F7F8FA',card:'#FFFFFF',hover:'#F3F4F6',
+            success:'#0FC060','success-bg':'#E7F9F0',warning:'#E7772D','warning-bg':'#FDF2E9',danger:'#D9001B','danger-bg':'#FFE8EB',info:'#0091D5','info-bg':'#E4F4FB'
+          },
+          borderRadius:{DEFAULT:'4px',lg:'8px'},
+          boxShadow:{soft:'0 2px 8px rgba(0,0,0,.06)',float:'0 6px 24px rgba(0,0,0,.12)'}
+        }
+      }
+    };
+  </script>
+  <style>
+    * { box-sizing:border-box; letter-spacing:0; }
+    html, body { min-height:100%; }
+    body { margin:0; color:#3A3F4A; background:#F7F8FA; font:13px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif; }
+    button, input, select { font:inherit; }
+    button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible { outline:2px solid #0066FF; outline-offset:2px; }
+    .mono { font-family:"JetBrains Mono","SFMono-Regular",Consolas,monospace; }
+    .sidebar { width:220px; transition:width .2s ease, transform .2s ease; }
+    .app-main { margin-left:220px; transition:margin-left .2s ease; }
+    body.sidebar-compact .sidebar { width:68px; }
+    body.sidebar-compact .app-main { margin-left:68px; }
+    body.sidebar-compact .sidebar-label, body.sidebar-compact .sidebar-logo-text, body.sidebar-compact .sidebar-section, body.sidebar-compact .sidebar-chevron { display:none; }
+    body.sidebar-compact .sidebar-link { justify-content:center; padding-left:0; padding-right:0; }
+    body.sidebar-compact .sidebar-sub { margin-left:0; padding-left:0; border-left:0; }
+    .sidebar-link { min-height:36px; border-radius:4px; color:#6E7685; }
+    .sidebar-link:hover { background:#F3F4F6; color:#3A3F4A; }
+    .sidebar-link.active { background:#E6F0FF; color:#0066FF; font-weight:600; }
+    .sidebar-link svg { width:17px; height:17px; flex:none; }
+    .type-tab { position:relative; min-width:104px; height:52px; padding:0 16px; display:inline-flex; align-items:center; justify-content:center; gap:7px; color:#6E7685; white-space:nowrap; }
+    .type-tab::after { content:""; position:absolute; right:0; top:17px; width:1px; height:18px; background:#E8EAED; }
+    .type-tab:last-child::after { display:none; }
+    .type-tab:hover { color:#0066FF; background:#F7F8FA; }
+    .type-tab.active { color:#0066FF; font-weight:600; }
+    .type-tab.active::before { content:""; position:absolute; left:16px; right:16px; bottom:0; height:2px; background:#0066FF; }
+    .control { height:34px; border:1px solid #DFE1E5; border-radius:4px; background:#fff; color:#3A3F4A; }
+    .control:hover { border-color:#9DA2AC; }
+    .control:focus { border-color:#0066FF; box-shadow:0 0 0 2px #E6F0FF; outline:none; }
+    .btn { height:34px; padding:0 14px; border-radius:4px; display:inline-flex; align-items:center; justify-content:center; gap:7px; white-space:nowrap; font-weight:500; transition:background-color .15s,border-color .15s,color .15s; }
+    .btn-primary { background:#0066FF; color:#fff; }
+    .btn-primary:hover:not(:disabled) { background:#0052CC; }
+    .btn-secondary { border:1px solid #DFE1E5; background:#fff; color:#3A3F4A; }
+    .btn-secondary:hover:not(:disabled) { background:#F3F4F6; border-color:#9DA2AC; }
+    .btn-danger { background:#D9001B; color:#fff; }
+    .btn-danger:hover:not(:disabled) { background:#b90017; }
+    .btn-danger-outline { border:1px solid #F1A7B1; background:#fff; color:#D9001B; }
+    .btn-danger-outline:hover:not(:disabled) { background:#FFE8EB; }
+    .btn:disabled { opacity:.42; cursor:not-allowed; }
+    .icon-btn { width:34px; height:34px; border:1px solid #DFE1E5; border-radius:4px; display:inline-flex; align-items:center; justify-content:center; background:#fff; color:#6E7685; }
+    .icon-btn:hover { background:#F3F4F6; color:#0066FF; }
+    .data-table { width:100%; min-width:1160px; border-collapse:separate; border-spacing:0; }
+    .data-table th { height:42px; padding:0 12px; background:#F7F8FA; border-bottom:1px solid #DFE1E5; color:#6E7685; font-size:12px; font-weight:500; text-align:left; white-space:nowrap; }
+    .data-table td { height:54px; padding:8px 12px; border-bottom:1px solid #F0F1F3; color:#3A3F4A; vertical-align:middle; }
+    .data-table tbody tr:hover td { background:#F7F8FA; }
+    .data-table tbody tr.selected td { background:#F2F7FF; }
+    .row-check { width:15px; height:15px; accent-color:#0066FF; cursor:pointer; }
+    .cell-text { display:block; max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .tag { height:22px; padding:0 8px; border-radius:4px; display:inline-flex; align-items:center; font-size:11px; background:#E6F0FF; color:#0066FF; }
+    .pg-btn { width:30px; height:30px; border:1px solid #DFE1E5; border-radius:4px; display:inline-flex; align-items:center; justify-content:center; color:#6E7685; background:#fff; }
+    .pg-btn:hover:not(:disabled), .pg-btn.active { border-color:#0066FF; color:#0066FF; background:#E6F0FF; }
+    .pg-btn:disabled { opacity:.4; cursor:not-allowed; }
+    .modal-mask { position:fixed; inset:0; z-index:60; background:rgba(26,29,36,.42); padding:20px; display:flex; align-items:center; justify-content:center; }
+    .modal-panel { width:760px; max-width:100%; max-height:calc(100vh - 40px); overflow:auto; background:#fff; border-radius:8px; box-shadow:0 6px 24px rgba(0,0,0,.12); }
+    .dialog-panel { width:600px; max-width:100%; min-height:250px; background:#fff; border-radius:8px; box-shadow:0 6px 24px rgba(0,0,0,.12); display:flex; flex-direction:column; }
+    .toast { min-width:260px; max-width:420px; padding:11px 14px; border-radius:4px; background:#fff; box-shadow:0 6px 24px rgba(0,0,0,.12); display:flex; align-items:flex-start; gap:9px; border:1px solid #DFE1E5; animation:toast-in .18s ease; }
+    @keyframes toast-in { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
+    .anno-badge { position:fixed; width:20px; height:20px; border:0; border-radius:50%; background:#0066FF; color:#fff; font:700 11px/20px "JetBrains Mono",monospace; text-align:center; box-shadow:0 2px 6px rgba(0,0,0,.15); pointer-events:auto; cursor:pointer; }
+    .anno-badge:hover { transform:scale(1.12); }
+    .scroll-thin::-webkit-scrollbar { width:7px; height:7px; }
+    .scroll-thin::-webkit-scrollbar-thumb { background:#C9CDD4; border-radius:8px; }
+    @media (max-width:767px) {
+      .sidebar { transform:translateX(-100%); width:220px; z-index:55; }
+      body.mobile-menu-open .sidebar { transform:translateX(0); }
+      .app-main, body.sidebar-compact .app-main { margin-left:0; }
+      body.sidebar-compact .sidebar { width:220px; }
+      body.sidebar-compact .sidebar-label, body.sidebar-compact .sidebar-logo-text, body.sidebar-compact .sidebar-section { display:block; }
+      body.sidebar-compact .sidebar-link { justify-content:flex-start; padding-left:10px; padding-right:10px; }
+      .type-tab { min-width:96px; padding:0 12px; }
+      .modal-mask { padding:12px; }
+      .dialog-panel { min-height:230px; }
+    }
+  </style>
+</head>
+<body>
+  <div id="mobileMask" class="hidden fixed inset-0 z-50 bg-black/30 md:hidden"></div>
+
+  <aside id="sidebar" class="sidebar fixed inset-y-0 left-0 z-40 bg-card shadow-[2px_0_8px_rgba(0,0,0,.04)] flex flex-col" aria-label="主导航">
+    <div class="h-14 px-4 flex items-center gap-3 flex-none">
+      <span class="w-8 h-8 rounded bg-primary text-white flex items-center justify-center"><i data-lucide="cloud" class="w-[18px] h-[18px]"></i></span>
+      <span class="sidebar-logo-text text-[17px] font-bold text-ink-title">云登</span>
+    </div>
+    <div class="px-3 pb-3">
+      <a href="新建浏览器.html" class="h-9 rounded bg-primary hover:bg-primary-hover text-white flex items-center justify-center gap-2 font-medium" title="新建浏览器"><i data-lucide="plus" class="w-4 h-4"></i><span class="sidebar-label">新建浏览器</span></a>
+    </div>
+    <nav class="flex-1 min-h-0 overflow-y-auto scroll-thin px-3 pb-3" aria-label="业务模块">
+      <a class="sidebar-link px-2 flex items-center gap-3 mb-1" href="环境管理.html" title="环境管理"><i data-lucide="monitor-cog"></i><span class="sidebar-label">环境管理</span></a>
+      <a class="sidebar-link px-2 flex items-center gap-3 mb-1" href="代理管理.html" title="代理管理"><i data-lucide="network"></i><span class="sidebar-label">代理管理</span></a>
+      <a class="sidebar-link px-2 flex items-center gap-3 mb-1" href="商城.html" title="商城"><i data-lucide="shopping-bag"></i><span class="sidebar-label">商城</span></a>
+      <a class="sidebar-link px-2 flex items-center gap-3 mb-1" href="费用管理.html" title="费用管理"><i data-lucide="receipt-text"></i><span class="sidebar-label">费用管理</span></a>
+
+      <p class="sidebar-section px-2 pt-4 pb-2 text-[11px] text-ink-muted">团队协作</p>
+      <div class="sidebar-sub ml-2 pl-2 border-l border-line-light">
+        <a class="sidebar-link px-2 flex items-center gap-3 mb-1" href="团队管理.html" title="团队管理"><i data-lucide="building-2"></i><span class="sidebar-label">团队管理</span></a>
+        <a class="sidebar-link px-2 flex items-center gap-3 mb-1" href="成员管理.html" title="成员管理"><i data-lucide="users-round"></i><span class="sidebar-label">成员管理</span></a>
+        <a class="sidebar-link px-2 flex items-center gap-3 mb-1" href="分享转移.html" title="分享转移"><i data-lucide="arrow-right-left"></i><span class="sidebar-label">分享转移</span></a>
+        <a class="sidebar-link px-2 flex items-center gap-3 mb-1" href="日志管理.html" title="日志管理"><i data-lucide="scroll-text"></i><span class="sidebar-label">日志管理</span></a>
+      </div>
+
+      <p class="sidebar-section px-2 pt-4 pb-2 text-[11px] text-ink-muted">能力与工具</p>
+      <a class="sidebar-link px-2 flex items-center gap-3 mb-1" href="插件管理.html" title="插件管理"><i data-lucide="blocks"></i><span class="sidebar-label">插件管理</span></a>
+      <a class="sidebar-link px-2 flex items-center gap-3 mb-1" href="API.html" title="API"><i data-lucide="braces"></i><span class="sidebar-label">API</span></a>
+      <a class="sidebar-link px-2 flex items-center gap-3 mb-1" href="RPA.html" title="RPA"><i data-lucide="bot"></i><span class="sidebar-label">RPA</span></a>
+      <a class="sidebar-link active px-2 flex items-center gap-3 mb-1" href="回收站.html" aria-current="page" title="回收站"><i data-lucide="trash-2"></i><span class="sidebar-label">回收站</span></a>
+    </nav>
+    <div class="p-3 border-t border-line-lighter flex-none">
+      <button id="collapseBtn" type="button" class="sidebar-link w-full px-2 flex items-center gap-3" title="收起侧栏"><i data-lucide="panel-left-close"></i><span class="sidebar-label">收起侧栏</span></button>
+    </div>
+  </aside>
+
+  <div class="app-main min-h-screen flex flex-col">
+    <header class="h-14 px-4 md:px-5 bg-card shadow-[0_2px_8px_rgba(0,0,0,.04)] sticky top-0 z-30 flex items-center justify-between gap-3">
+      <div class="min-w-0 flex items-center gap-3">
+        <button id="mobileMenuBtn" type="button" class="icon-btn md:hidden" title="打开导航" aria-label="打开导航"><i data-lucide="menu" class="w-4 h-4"></i></button>
+        <button id="desktopCollapseBtn" type="button" class="hidden md:inline-flex text-ink-muted hover:text-primary" title="切换侧栏" aria-label="切换侧栏"><i data-lucide="panel-left" class="w-5 h-5"></i></button>
+        <span class="h-5 w-px bg-line-light hidden md:block"></span>
+        <div class="min-w-0">
+          <h1 data-anno="1" class="text-[17px] font-semibold text-ink-title truncate">回收站</h1>
+          <p class="text-[11px] text-ink-muted hidden sm:block">恢复或彻底删除已回收资源</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-1.5">
+        <button id="helpBtn" type="button" class="icon-btn border-0" title="帮助" aria-label="帮助"><i data-lucide="circle-help" class="w-[18px] h-[18px]"></i></button>
+        <button id="noticeBtn" type="button" class="icon-btn border-0 relative" title="通知" aria-label="通知"><i data-lucide="bell" class="w-[18px] h-[18px]"></i><span class="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-danger"></span></button>
+        <button id="accountBtn" type="button" class="h-9 px-2 rounded hover:bg-hover flex items-center gap-2" aria-label="打开账号菜单">
+          <span class="w-7 h-7 rounded bg-primary-bg text-primary flex items-center justify-center font-semibold">张</span>
+          <span class="hidden lg:block text-left"><span class="block text-[12px] font-medium text-ink-title">张小登</span><span class="block text-[10px] text-ink-muted">团队管理员</span></span>
+          <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-ink-muted hidden lg:block"></i>
+        </button>
+      </div>
+      <div id="accountPopover" class="hidden absolute right-4 top-[50px] w-56 bg-card border border-line rounded-lg shadow-float p-2">
+        <div class="px-3 py-2 border-b border-line-lighter"><p class="font-medium text-ink-title">云登团队</p><p class="text-[11px] text-ink-muted mt-0.5">团队管理员</p></div>
+        <button type="button" class="w-full h-9 px-3 mt-1 rounded hover:bg-hover text-left flex items-center gap-2"><i data-lucide="settings" class="w-4 h-4"></i>账号设置</button>
+        <button type="button" class="w-full h-9 px-3 rounded hover:bg-hover text-left flex items-center gap-2 text-danger"><i data-lucide="log-out" class="w-4 h-4"></i>退出登录</button>
+      </div>
+    </header>
+
+    <main class="flex-1 min-w-0 p-4 md:p-5">
+      <section class="bg-card border border-line rounded-lg min-h-[calc(100vh-96px)] flex flex-col overflow-hidden" aria-labelledby="recycleTitle">
+        <h2 id="recycleTitle" class="sr-only">回收站数据</h2>
+        <div id="typeTabs" class="flex overflow-x-auto border-b border-line-light scroll-thin" role="tablist" aria-label="回收资源类型"></div>
+
+        <div class="px-4 md:px-5 py-4 border-b border-line-lighter">
+          <div class="flex flex-wrap items-center gap-2.5">
+            <div id="groupControl" class="relative w-[180px]">
+              <select id="groupFilter" data-anno="3" class="control w-full pl-3 pr-8 appearance-none" aria-label="选择分组">
+                <option value="">选择分组</option>
+              </select>
+              <i data-lucide="chevron-down" class="w-4 h-4 absolute right-2.5 top-2.5 text-ink-muted pointer-events-none"></i>
+            </div>
+
+            <div class="relative w-full sm:w-[340px] lg:w-[400px]">
+              <i data-lucide="search" class="w-4 h-4 absolute left-3 top-[9px] text-ink-muted pointer-events-none"></i>
+              <input id="searchInput" data-anno="4" class="control w-full pl-9 pr-9" maxlength="100" placeholder="搜索或新建搜索条件" aria-label="搜索回收数据">
+              <button id="clearSearchBtn" type="button" class="hidden absolute right-2 top-[7px] text-ink-muted hover:text-ink-body" title="清空搜索" aria-label="清空搜索"><i data-lucide="x" class="w-[18px] h-[18px]"></i></button>
+            </div>
+
+            <div id="actionButtons" class="flex flex-wrap items-center gap-2"></div>
+
+            <div class="ml-0 xl:ml-auto flex items-center gap-2 min-w-0">
+              <span data-anno="5" class="flex items-center gap-1.5 text-[12px] text-info whitespace-nowrap"><i data-lucide="circle-alert" class="w-4 h-4 flex-none"></i>回收站中的数据保存30天后会自动清空</span>
+              <button id="refreshBtn" data-anno="6" type="button" class="icon-btn flex-none" title="刷新列表" aria-label="刷新列表"><i data-lucide="refresh-cw" class="w-4 h-4"></i></button>
+            </div>
+          </div>
+          <div id="selectionBar" class="hidden mt-3 h-8 px-3 rounded bg-primary-bg text-primary items-center justify-between gap-3">
+            <span>已选择 <strong id="selectedCount" class="mono">0</strong> 项</span>
+            <button id="clearSelectionBtn" type="button" class="hover:underline">取消选择</button>
+          </div>
+        </div>
+
+        <div id="tableArea" class="flex-1 min-h-[360px] overflow-x-auto scroll-thin"></div>
+
+        <footer id="pagination" data-anno="9" class="min-h-[54px] px-4 md:px-5 border-t border-line-lighter flex flex-wrap items-center justify-between gap-3 text-[12px] text-ink-sub"></footer>
+      </section>
+    </main>
+  </div>
+
+  <div id="confirmModal" class="hidden modal-mask" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+    <div id="confirmPanel" class="dialog-panel">
+      <div class="h-14 px-5 border-b border-line flex items-center justify-between flex-none">
+        <h2 id="confirmTitle" data-anno="10" class="text-[16px] font-semibold text-ink-title"></h2>
+        <button id="confirmCloseBtn" type="button" class="text-ink-muted hover:text-ink-body" title="关闭" aria-label="关闭确认弹窗"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <div class="flex-1 px-6 py-6 flex gap-4">
+        <span id="confirmIconWrap" class="w-10 h-10 rounded-full flex items-center justify-center flex-none"><i id="confirmIcon" data-lucide="circle-help" class="w-5 h-5"></i></span>
+        <div class="min-w-0 pt-1">
+          <p id="confirmMessage" data-anno="11" class="text-[14px] text-ink-title leading-6"></p>
+          <p id="confirmSubtext" class="text-[12px] text-ink-sub mt-2 leading-5"></p>
+        </div>
+      </div>
+      <div class="h-16 px-5 border-t border-line-lighter flex items-center justify-end gap-2 flex-none">
+        <button id="confirmCancelBtn" data-anno="12" type="button" class="btn btn-secondary min-w-[72px]">取消</button>
+        <button id="confirmSubmitBtn" data-anno="13" type="button" class="btn btn-primary min-w-[72px]">确定</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="detailModal" class="hidden modal-mask" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
+    <div id="detailPanel" class="modal-panel">
+      <div class="h-14 px-5 border-b border-line flex items-center justify-between sticky top-0 bg-card z-10">
+        <h2 id="detailTitle" data-anno="14" class="text-[16px] font-semibold text-ink-title">查看详情</h2>
+        <button id="detailCloseBtn" data-anno="16" type="button" class="text-ink-muted hover:text-ink-body" title="关闭" aria-label="关闭详情"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <div id="detailContent" data-anno="15" class="p-5 md:p-6"></div>
+      <div class="h-16 px-5 border-t border-line-lighter flex items-center justify-end">
+        <button id="detailDoneBtn" type="button" class="btn btn-primary min-w-[72px]">知道了</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toastContainer" class="fixed right-4 top-[72px] z-[80] flex flex-col gap-2" aria-live="polite" aria-atomic="true"></div>
+
+  <div id="annoLayer" style="position:fixed;inset:0;pointer-events:none;z-index:9998;"></div>
+  <button id="annoToggle" type="button" class="fixed z-[9997] right-2 top-[120px] h-8 px-3 rounded-full bg-ink-muted text-white shadow-soft flex items-center justify-center gap-1.5 cursor-grab select-none touch-none" title="点击显示标注；长按可拖拽" aria-label="显示交互标注，长按可拖拽" aria-pressed="false"><i data-lucide="tags" class="w-4 h-4"></i><span class="text-[12px] font-medium whitespace-nowrap">显示标注</span></button>
+  <div id="annoPopup" class="hidden fixed inset-0 z-[9999] bg-black/30 p-4 items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="annoTitle">
+    <div class="w-[520px] max-w-full bg-card rounded-lg shadow-float">
+      <div class="px-5 py-4 border-b border-line flex justify-between items-center"><h2 id="annoTitle" class="text-[16px] font-semibold text-ink-title"></h2><button id="closeAnno" type="button" class="text-ink-muted hover:text-ink-body" aria-label="关闭标注说明"><i data-lucide="x" class="w-5 h-5"></i></button></div>
+      <div id="annoDesc" class="p-5 text-[14px] text-ink-body leading-7"></div>
+    </div>
+  </div>
+
+  <script>
+    const $ = id => document.getElementById(id);
+    const typeConfig = {
+      environment:{label:'环境', icon:'monitor-cog', singular:'环境', toolbar:'selection', searchKeys:['id','group','name','account','remark','operator'], columns:[
+        {key:'select',label:'',width:42},{key:'id',label:'序号/ID',width:88},{key:'group',label:'分组',width:110},{key:'name',label:'环境名称',width:170},{key:'account',label:'账号',width:150},{key:'remark',label:'备注',width:150},{key:'tags',label:'标签',width:120},{key:'operator',label:'操作者',width:110},{key:'deletedAt',label:'删除时间',width:168},{key:'actions',label:'操作',width:190}
+      ]},
+      account:{label:'账号', icon:'user-round', singular:'账号', toolbar:'selection', searchKeys:['name','platform','account','remark','operator'], columns:[
+        {key:'select',label:'',width:42},{key:'name',label:'名称',width:180},{key:'platform',label:'平台',width:120},{key:'account',label:'账号',width:180},{key:'remark',label:'备注',width:180},{key:'operator',label:'操作者',width:120},{key:'deletedAt',label:'删除时间',width:168},{key:'actions',label:'操作',width:190}
+      ]},
+      platform_proxy:{label:'平台代理', icon:'cloud-cog', singular:'平台代理', toolbar:'clear', searchKeys:['id','name','proxyInfo','provider','tags','operator'], columns:[
+        {key:'select',label:'',width:42},{key:'id',label:'序号',width:82},{key:'name',label:'代理名称',width:180},{key:'proxyInfo',label:'代理信息',width:210},{key:'provider',label:'服务商',width:120},{key:'tags',label:'标签',width:120},{key:'operator',label:'操作者',width:120},{key:'deletedAt',label:'删除时间',width:168},{key:'actions',label:'操作',width:190}
+      ]},
+      owned_proxy:{label:'自有代理', icon:'server-cog', singular:'自有代理', toolbar:'all', searchKeys:['id','name','proxyInfo','proxyType','remark','operator'], columns:[
+        {key:'select',label:'',width:42},{key:'id',label:'序号/ID',width:88},{key:'name',label:'代理名称',width:180},{key:'proxyInfo',label:'代理信息',width:210},{key:'proxyType',label:'代理类型',width:110},{key:'remark',label:'备注',width:160},{key:'operator',label:'操作者',width:120},{key:'deletedAt',label:'删除时间',width:168},{key:'actions',label:'操作',width:190}
+      ]},
+      proxy_api:{label:'代理API', icon:'braces', singular:'代理 API', toolbar:'all', searchKeys:['id','name','proxyType','extractMode','extractUrl','operator'], columns:[
+        {key:'select',label:'',width:42},{key:'id',label:'序号/ID',width:88},{key:'name',label:'名称',width:180},{key:'proxyType',label:'代理类型',width:110},{key:'extractMode',label:'提取方式',width:120},{key:'extractUrl',label:'提取链接',width:240},{key:'operator',label:'操作者',width:120},{key:'deletedAt',label:'删除时间',width:168},{key:'actions',label:'操作',width:190}
+      ]},
+      rpa_template:{label:'RPA模板', icon:'bot', singular:'RPA 模板', toolbar:'all', searchKeys:['name','group','remark','operator'], columns:[
+        {key:'select',label:'',width:42},{key:'name',label:'名称',width:210},{key:'group',label:'分组',width:150},{key:'remark',label:'备注',width:240},{key:'operator',label:'操作者',width:120},{key:'deletedAt',label:'删除时间',width:168},{key:'actions',label:'操作',width:190}
+      ]}
+    };
+
+    const recycleData = {
+      environment:[
+        {recycleId:'RB-E-0019',id:'19',group:'默认分组',name:'跨境店铺-英国-01',account:'sho***@mail.test',remark:'新品测试环境',tags:['电商','英国'],operator:'成员 1938',deletedAt:'2026-08-07 15:40:12',expireAt:'2026-09-06 15:40:12',groupExists:true},
+        {recycleId:'RB-E-0018',id:'18',group:'转移环境',name:'TikTok-Shop-US-03',account:'tt_***_038',remark:'素材投放',tags:['TikTok'],operator:'成员 1938',deletedAt:'2026-08-07 15:36:28',expireAt:'2026-09-06 15:36:28',groupExists:true},
+        {recycleId:'RB-E-0015',id:'15',group:'默认分组',name:'Amazon-DE-测试',account:'amz***029',remark:'德国站验证',tags:['Amazon','德国'],operator:'成员 1938',deletedAt:'2026-08-07 15:28:54',expireAt:'2026-09-06 15:28:54',groupExists:true},
+        {recycleId:'RB-E-0002',id:'2',group:'默认分组',name:'独立站-素材-A',account:'未绑定',remark:'-',tags:['素材'],operator:'成员 1938',deletedAt:'2026-07-30 18:02:45',expireAt:'2026-08-29 18:02:45',groupExists:true},
+        {recycleId:'RB-E-0004',id:'4',group:'原分组已删除',name:'广告账户-CA-02',account:'ads***402',remark:'分组已移除',tags:['广告'],operator:'成员 1938',deletedAt:'2026-07-30 17:58:16',expireAt:'2026-08-29 17:58:16',groupExists:false},
+        {recycleId:'RB-E-0001',id:'1',group:'默认分组',name:'Facebook-BM-01',account:'fb_***_001',remark:'BM 管理',tags:['Facebook'],operator:'成员 1938',deletedAt:'2026-07-30 17:52:39',expireAt:'2026-08-29 17:52:39',groupExists:true},
+        {recycleId:'RB-E-0007',id:'7',group:'转移环境',name:'Shopee-SG-运营',account:'sp***772',remark:'新加坡站',tags:['Shopee'],operator:'成员 1938',deletedAt:'2026-07-30 17:46:02',expireAt:'2026-08-29 17:46:02',groupExists:true},
+        {recycleId:'RB-E-0005',id:'5',group:'默认分组',name:'Pinterest-素材库',account:'pin***116',remark:'图片素材',tags:['Pinterest'],operator:'成员 1938',deletedAt:'2026-07-30 17:39:28',expireAt:'2026-08-29 17:39:28',groupExists:true},
+        {recycleId:'RB-E-0009',id:'9',group:'默认分组',name:'YouTube-频道运营',account:'yt_***_092',remark:'视频发布',tags:['YouTube'],operator:'成员 1938',deletedAt:'2026-07-30 17:31:17',expireAt:'2026-08-29 17:31:17',groupExists:true},
+        {recycleId:'RB-E-0011',id:'11',group:'转移环境',name:'Etsy-US-测试',account:'et***619',remark:'订单流程验证',tags:['Etsy','美国'],operator:'成员 1938',deletedAt:'2026-07-30 17:22:05',expireAt:'2026-08-29 17:22:05',groupExists:true}
+      ],
+      account:[],
+      platform_proxy:[],
+      owned_proxy:[],
+      proxy_api:[],
+      rpa_template:[]
+    };
+
+    const state = {
+      currentType:'environment', page:1, pageSize:20, selected:new Set(),
+      filters:Object.fromEntries(Object.keys(typeConfig).map(type=>[type,{keyword:'',group:''}])),
+      pendingAction:null, lastFocus:null, operationLoading:false, annoVisible:false, annoScopeStack:[]
+    };
+
+    const annotations = {
+      1:{title:'页面职责',desc:['回收站集中承接六类软删除资源。','永久删除与到期清除完成后，资源不可从本页恢复。']},
+      2:{title:'资源分类',desc:['点击 Tab 切换环境、账号、平台代理、自有代理、代理 API 和 RPA 模板。','切换后清空当前选择，页码回到 1，并保留各分类自己的查询条件。']},
+      3:{title:'环境分组筛选',desc:['仅环境分类显示分组筛选。','选择后立即刷新当前列表；原分组不存在的记录单独标识。']},
+      4:{title:'搜索条件',desc:['输入当前分类的名称、账号、备注、ID 等可见字段，按 Enter 查询。','搜索词最多 100 字符，清空后恢复默认列表。']},
+      5:{title:'保留期说明',desc:['回收项保留 30 天，期满由服务端自动清除。','前端提示不替代服务端对到期状态的最终判定。']},
+      6:{title:'刷新列表',desc:['保留当前分类和筛选条件，重新读取列表。','刷新会清空已选项，避免对过期页面快照执行批量操作。']},
+      7:{title:'列表与行操作',desc:['表格字段随资源类型变化；环境列表复刻截图中的字段顺序。','行内支持查看详情、恢复和永久删除，敏感字段保持脱敏。']},
+      8:{title:'列表与行操作',desc:['表格字段随资源类型变化；环境列表复刻截图中的字段顺序。','行内支持查看详情、恢复和永久删除，敏感字段保持脱敏。']},
+      9:{title:'分页控制',desc:['默认 20 条/页，支持 20、50、100 条。','页码越界时阻止跳转；本原型默认数据仅占一页。']},
+      10:{title:'确认操作',desc:['弹窗标题明确当前动作。','恢复和不可逆删除使用不同的图标与按钮颜色。']},
+      11:{title:'影响说明',desc:['展示对象类型、数量和不可逆后果。','分类级清空作用于当前分类全部数据，不等同于当前页选择。']},
+      12:{title:'取消',desc:['取消不会提交请求，也不会改变当前列表。','按 Esc 或关闭图标与取消相同。']},
+      13:{title:'确认提交',desc:['提交期间按钮进入 loading 并阻止重复点击。','服务端成功后才更新列表和展示成功提示。']},
+      14:{title:'查看详情',desc:['详情用于确认待操作对象，不提供编辑能力。','关闭后焦点回到原触发按钮。']},
+      15:{title:'脱敏详情',desc:['只展示恢复判断必需的业务字段、删除时间和预计清除时间。','账号、代理凭证、Cookie、令牌和 API 密钥不会在详情出现。']},
+      16:{title:'关闭详情',desc:['点击关闭、知道了或按 Esc 返回列表。','关闭详情不会改变对象状态。']}
+    };
+
+    const escapeHtml = value => String(value ?? '-').replace(/[&<>'"]/g, char=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
+    const unique = values => [...new Set(values.filter(Boolean))];
+    const currentConfig = () => typeConfig[state.currentType];
+
+    function renderTabs() {
+      $('typeTabs').innerHTML = Object.entries(typeConfig).map(([type,config])=>`<button type="button" role="tab" aria-selected="${type===state.currentType}" data-type="${type}" ${type===state.currentType?'data-anno="2"':''} class="type-tab ${type===state.currentType?'active':''}"><i data-lucide="${config.icon}" class="w-4 h-4"></i>${config.label}</button>`).join('');
+      $('typeTabs').querySelectorAll('[data-type]').forEach(button=>button.addEventListener('click',()=>switchType(button.dataset.type)));
+    }
+
+    function renderGroupOptions() {
+      const visible = state.currentType==='environment';
+      $('groupControl').classList.toggle('hidden',!visible);
+      if (!visible) return;
+      const groups = unique(recycleData.environment.map(item=>item.group));
+      $('groupFilter').innerHTML = '<option value="">选择分组</option>'+groups.map(group=>`<option value="${escapeHtml(group)}">${escapeHtml(group)}</option>`).join('');
+      $('groupFilter').value = state.filters.environment.group;
+    }
+
+    function renderToolbar() {
+      const config=currentConfig(), count=state.selected.size, total=recycleData[state.currentType].length;
+      const selectedDisabled=count===0?'disabled':'';
+      if(config.toolbar==='selection') {
+        $('actionButtons').innerHTML=`
+          <button id="restoreSelectedBtn" data-anno="7" type="button" class="btn btn-secondary" ${selectedDisabled}><i data-lucide="archive-restore" class="w-4 h-4"></i>恢复</button>
+          <button id="deleteSelectedBtn" type="button" class="btn btn-danger-outline" ${selectedDisabled}><i data-lucide="trash-2" class="w-4 h-4"></i>删除</button>`;
+      } else if(config.toolbar==='clear') {
+        $('actionButtons').innerHTML=`<button id="clearAllBtn" data-anno="7" type="button" class="btn btn-danger-outline" ${total===0?'disabled':''}><i data-lucide="trash-2" class="w-4 h-4"></i>清空回收站</button>`;
+      } else {
+        $('actionButtons').innerHTML=`
+          <button id="restoreAllBtn" data-anno="7" type="button" class="btn btn-secondary" ${total===0?'disabled':''}><i data-lucide="archive-restore" class="w-4 h-4"></i>全部恢复</button>
+          <button id="clearAllBtn" type="button" class="btn btn-danger-outline" ${total===0?'disabled':''}><i data-lucide="trash-2" class="w-4 h-4"></i>清空回收站</button>`;
+      }
+      $('restoreSelectedBtn')?.addEventListener('click',()=>openConfirm('restore',[...state.selected]));
+      $('deleteSelectedBtn')?.addEventListener('click',()=>openConfirm('purge',[...state.selected]));
+      $('restoreAllBtn')?.addEventListener('click',()=>openConfirm('restoreAll',recycleData[state.currentType].map(item=>item.recycleId)));
+      $('clearAllBtn')?.addEventListener('click',()=>openConfirm('clearAll',recycleData[state.currentType].map(item=>item.recycleId)));
+      $('selectionBar').classList.toggle('hidden',count===0);
+      $('selectionBar').classList.toggle('flex',count>0);
+      $('selectedCount').textContent=count;
+    }
+
+    function getFilteredItems() {
+      const config=currentConfig(), filter=state.filters[state.currentType], keyword=filter.keyword.trim().toLowerCase();
+      return recycleData[state.currentType].filter(item=>{
+        const groupMatch=state.currentType!=='environment'||!filter.group||item.group===filter.group;
+        const keywordMatch=!keyword||config.searchKeys.some(key=>{
+          const value=Array.isArray(item[key])?item[key].join(' '):item[key];
+          return String(value??'').toLowerCase().includes(keyword);
+        });
+        return groupMatch&&keywordMatch;
+      });
+    }
+
+    function renderCell(item,key) {
+      if(key==='select') return `<input type="checkbox" class="row-check" data-select-id="${item.recycleId}" ${state.selected.has(item.recycleId)?'checked':''} aria-label="选择${escapeHtml(item.name)}">`;
+      if(key==='id') return `<span class="mono text-[12px] text-ink-sub">${escapeHtml(item.id)}</span>`;
+      if(key==='name') return `<button type="button" class="cell-text text-left text-primary hover:underline font-medium" data-detail="${item.recycleId}" title="${escapeHtml(item.name)}">${escapeHtml(item.name)}</button>`;
+      if(key==='tags') {
+        const tags=item.tags||[];
+        return tags.length?`<div class="flex items-center gap-1">${tags.slice(0,2).map(tag=>`<span class="tag">${escapeHtml(tag)}</span>`).join('')}${tags.length>2?`<span class="text-[11px] text-ink-muted">+${tags.length-2}</span>`:''}</div>`:'-';
+      }
+      if(key==='group') return item.groupExists===false?`<span class="inline-flex items-center gap-1 text-warning" title="恢复时进入未分组"><i data-lucide="triangle-alert" class="w-3.5 h-3.5"></i>${escapeHtml(item.group)}</span>`:`<span class="cell-text" title="${escapeHtml(item.group)}">${escapeHtml(item.group)}</span>`;
+      if(key==='deletedAt') return `<span class="mono text-[11px] whitespace-nowrap text-ink-sub">${escapeHtml(item.deletedAt)}</span>`;
+      if(key==='actions') return `<div class="flex items-center gap-1.5 whitespace-nowrap">
+        <button type="button" class="h-7 px-2 rounded text-primary hover:bg-primary-bg" data-detail="${item.recycleId}">查看详情</button>
+        <button type="button" class="h-7 px-2 rounded text-primary hover:bg-primary-bg" data-restore="${item.recycleId}">恢复</button>
+        <button type="button" class="h-7 px-2 rounded border border-primary text-primary hover:bg-primary-bg" data-purge="${item.recycleId}">删除</button>
+      </div>`;
+      const value=item[key]??'-';
+      return `<span class="cell-text" title="${escapeHtml(value)}">${escapeHtml(value)}</span>`;
+    }
+
+    function renderTable() {
+      const all=getFilteredItems(), totalPages=Math.max(1,Math.ceil(all.length/state.pageSize));
+      if(state.page>totalPages) state.page=totalPages;
+      const start=(state.page-1)*state.pageSize, pageItems=all.slice(start,start+state.pageSize), config=currentConfig();
+      const header=`<thead><tr>${config.columns.map((column,index)=>{
+        if(column.key==='select') {
+          const allSelected=pageItems.length>0&&pageItems.every(item=>state.selected.has(item.recycleId));
+          return `<th style="width:${column.width}px"><input id="selectAll" type="checkbox" class="row-check" ${allSelected?'checked':''} ${pageItems.length===0?'disabled':''} aria-label="选择当前页全部数据"></th>`;
+        }
+        return `<th ${index===1?'data-anno="8"':''} style="min-width:${column.width}px">${column.label}</th>`;
+      }).join('')}</tr></thead>`;
+
+      if(pageItems.length===0) {
+        const hasFilter=Boolean(state.filters[state.currentType].keyword||state.filters[state.currentType].group);
+        $('tableArea').innerHTML=`<table class="data-table">${header}</table><div data-anno="8" class="min-h-[390px] flex items-center justify-center px-5"><div class="text-center"><span class="w-16 h-16 rounded-lg bg-page text-ink-muted mx-auto flex items-center justify-center"><i data-lucide="${hasFilter?'search-x':'archive-restore'}" class="w-8 h-8"></i></span><p class="mt-4 text-[15px] font-medium text-ink-title">${hasFilter?'未找到符合条件的数据':'回收站很干净'}</p><p class="mt-1.5 text-[12px] text-ink-muted">${hasFilter?'请调整或清空筛选条件':'去其它的页面逛逛吧'}</p>${hasFilter?'<button id="emptyResetBtn" type="button" class="btn btn-secondary mt-4"><i data-lucide="rotate-ccw" class="w-4 h-4"></i>清空筛选</button>':''}</div></div>`;
+        $('emptyResetBtn')?.addEventListener('click',clearFilters);
+      } else {
+        $('tableArea').innerHTML=`<table class="data-table">${header}<tbody>${pageItems.map(item=>`<tr class="${state.selected.has(item.recycleId)?'selected':''}">${config.columns.map(column=>`<td>${renderCell(item,column.key)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+      }
+      bindTableEvents();
+      renderPagination(all.length,totalPages);
+      lucide.createIcons();
+      renderAnnoBadges();
+    }
+
+    function bindTableEvents() {
+      $('selectAll')?.addEventListener('change',event=>{
+        const all=getFilteredItems(), start=(state.page-1)*state.pageSize, pageItems=all.slice(start,start+state.pageSize);
+        pageItems.forEach(item=>event.target.checked?state.selected.add(item.recycleId):state.selected.delete(item.recycleId));
+        renderToolbar(); renderTable();
+      });
+      $('tableArea').querySelectorAll('[data-select-id]').forEach(input=>input.addEventListener('change',()=>{
+        input.checked?state.selected.add(input.dataset.selectId):state.selected.delete(input.dataset.selectId);
+        renderToolbar(); renderTable();
+      }));
+      $('tableArea').querySelectorAll('[data-detail]').forEach(button=>button.addEventListener('click',()=>openDetail(button.dataset.detail,button)));
+      $('tableArea').querySelectorAll('[data-restore]').forEach(button=>button.addEventListener('click',()=>openConfirm('restore',[button.dataset.restore],button)));
+      $('tableArea').querySelectorAll('[data-purge]').forEach(button=>button.addEventListener('click',()=>openConfirm('purge',[button.dataset.purge],button)));
+    }
+
+    function renderPagination(total,totalPages) {
+      $('pagination').innerHTML=`
+        <div class="flex items-center gap-3"><span>共 <strong class="mono text-ink-title">${total}</strong> 条</span><label class="flex items-center gap-1.5"><select id="pageSizeSelect" class="control h-[30px] pl-2 pr-1"><option value="20">20条/页</option><option value="50">50条/页</option><option value="100">100条/页</option></select></label></div>
+        <div class="flex items-center gap-1.5 py-2"><button id="prevPage" class="pg-btn" ${state.page===1?'disabled':''} aria-label="上一页"><i data-lucide="chevron-left" class="w-4 h-4"></i></button><button class="pg-btn active mono" aria-current="page">${state.page}</button><button id="nextPage" class="pg-btn" ${state.page===totalPages?'disabled':''} aria-label="下一页"><i data-lucide="chevron-right" class="w-4 h-4"></i></button><span class="ml-2">前往</span><input id="jumpInput" class="control w-12 h-[30px] text-center mono" value="${state.page}" inputmode="numeric" aria-label="跳转页码"><span>页</span></div>`;
+      $('pageSizeSelect').value=String(state.pageSize);
+      $('pageSizeSelect').addEventListener('change',event=>{state.pageSize=Number(event.target.value);state.page=1;state.selected.clear();renderAll();});
+      $('prevPage').addEventListener('click',()=>{if(state.page>1){state.page--;state.selected.clear();renderAll();}});
+      $('nextPage').addEventListener('click',()=>{if(state.page<totalPages){state.page++;state.selected.clear();renderAll();}});
+      $('jumpInput').addEventListener('keydown',event=>{if(event.key==='Enter')jumpPage(totalPages);});
+      $('jumpInput').addEventListener('blur',()=>{if($('jumpInput').value!==String(state.page))jumpPage(totalPages);});
+    }
+
+    function jumpPage(totalPages) {
+      const target=Number($('jumpInput').value);
+      if(!Number.isInteger(target)||target<1||target>totalPages){toast(`请输入 1-${totalPages} 之间的页码`,'warning');$('jumpInput').value=state.page;return;}
+      state.page=target; state.selected.clear(); renderAll();
+    }
+
+    function switchType(type) {
+      if(type===state.currentType) return;
+      state.currentType=type; state.page=1; state.selected.clear();
+      history.replaceState(null,'',`#${type}`);
+      $('searchInput').value=state.filters[type].keyword;
+      renderAll();
+    }
+
+    function renderAll() {
+      renderTabs(); renderGroupOptions(); renderToolbar(); renderTable();
+      $('searchInput').value=state.filters[state.currentType].keyword;
+      $('clearSearchBtn').classList.toggle('hidden',!$('searchInput').value);
+      lucide.createIcons(); renderAnnoBadges();
+    }
+
+    function clearFilters() {
+      state.filters[state.currentType]={keyword:'',group:''}; state.page=1; state.selected.clear();
+      $('searchInput').value=''; renderAll();
+    }
+
+    function getItem(recycleId) { return recycleData[state.currentType].find(item=>item.recycleId===recycleId); }
+
+    function openDetail(recycleId,trigger) {
+      const item=getItem(recycleId); if(!item) return;
+      state.lastFocus=trigger||document.activeElement;
+      const config=currentConfig();
+      const hiddenKeys=new Set(['recycleId','groupExists','tags']);
+      const labels={id:'原对象 ID',group:'原分组',name:'名称',account:'账号',remark:'备注',operator:'删除操作者',deletedAt:'删除时间',expireAt:'预计清除时间',platform:'平台',proxyInfo:'代理信息',provider:'服务商',proxyType:'代理类型',extractMode:'提取方式',extractUrl:'提取链接'};
+      const fields=Object.entries(item).filter(([key])=>!hiddenKeys.has(key)&&labels[key]);
+      $('detailContent').innerHTML=`
+        <div class="flex items-start gap-3 pb-5 border-b border-line-lighter"><span class="w-10 h-10 rounded bg-primary-bg text-primary flex items-center justify-center"><i data-lucide="${config.icon}" class="w-5 h-5"></i></span><div><p class="text-[15px] font-semibold text-ink-title">${escapeHtml(item.name)}</p><p class="text-[12px] text-ink-muted mt-1">${config.label} · 回收编号 <span class="mono">${escapeHtml(item.recycleId)}</span></p></div></div>
+        <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-0 mt-3">${fields.map(([key,value])=>`<div class="py-3 border-b border-line-lighter min-w-0"><dt class="text-[12px] text-ink-muted">${labels[key]}</dt><dd class="mt-1 text-ink-title break-words ${key.endsWith('At')||key==='id'?'mono text-[12px]':''}">${escapeHtml(value)}</dd></div>`).join('')}</dl>
+        <div class="mt-5 p-3 rounded bg-info-bg text-info flex items-start gap-2"><i data-lucide="shield-check" class="w-4 h-4 mt-0.5 flex-none"></i><p class="text-[12px] leading-5">详情已隐藏密码、Cookie、令牌、代理认证信息和 API 密钥。恢复前仍由服务端校验权限、到期状态与资源冲突。</p></div>`;
+      $('detailModal').classList.remove('hidden');
+      document.body.style.overflow='hidden';
+      pushAnnoScope($('detailPanel')); lucide.createIcons(); $('detailCloseBtn').focus();
+    }
+
+    function closeDetail() {
+      $('detailModal').classList.add('hidden'); document.body.style.overflow=''; popAnnoScope($('detailPanel'));
+      state.lastFocus?.focus?.();
+    }
+
+    function openConfirm(action,ids,trigger) {
+      if(!ids.length) return;
+      const config=currentConfig(), items=ids.map(getItem).filter(Boolean), count=items.length;
+      if(!count) return;
+      state.lastFocus=trigger||document.activeElement; state.pendingAction={action,ids:[...ids],type:state.currentType};
+      const danger=action==='purge'||action==='clearAll', all=action==='restoreAll'||action==='clearAll';
+      const title={restore:count>1?'批量恢复':`恢复${config.singular}`,purge:count>1?'批量删除':`删除${config.singular}`,restoreAll:'全部恢复',clearAll:'清空回收站'}[action];
+      let message='';
+      if(action==='restore') message=count>1?`确认恢复回收站中的所选的${config.singular}吗？`:`确认恢复回收站中的${config.singular}“${items[0].name}”吗？`;
+      if(action==='purge') message=`删除后${config.singular}将不可恢复，确认要删除吗？`;
+      if(action==='restoreAll') message=`将恢复“${config.label}”中的 ${count} 项数据，确认继续吗？`;
+      if(action==='clearAll') message=`将永久删除“${config.label}”中的 ${count} 项数据，确认清空吗？`;
+      $('confirmTitle').textContent=title; $('confirmMessage').textContent=message;
+      $('confirmSubtext').textContent=danger?'该操作不可撤销，完成后数据无法从回收站找回。':all?'该操作作用于当前分类的全部回收项，不受当前页和搜索条件限制。':`本次共处理 ${count} 项；恢复成功后可在原业务模块查看。`;
+      $('confirmIconWrap').className=`w-10 h-10 rounded-full flex items-center justify-center flex-none ${danger?'bg-danger-bg text-danger':'bg-primary-bg text-primary'}`;
+      $('confirmIcon').setAttribute('data-lucide',danger?'triangle-alert':'archive-restore');
+      $('confirmSubmitBtn').className=`btn ${danger?'btn-danger':'btn-primary'} min-w-[72px]`;
+      $('confirmSubmitBtn').innerHTML='确定'; $('confirmSubmitBtn').disabled=false; state.operationLoading=false;
+      $('confirmModal').classList.remove('hidden'); document.body.style.overflow='hidden'; pushAnnoScope($('confirmPanel')); lucide.createIcons(); $('confirmCancelBtn').focus();
+    }
+
+    function closeConfirm() {
+      if(state.operationLoading) return;
+      $('confirmModal').classList.add('hidden'); document.body.style.overflow=''; popAnnoScope($('confirmPanel')); state.pendingAction=null;
+      state.lastFocus?.focus?.();
+    }
+
+    function executePendingAction() {
+      const pending=state.pendingAction; if(!pending||state.operationLoading) return;
+      state.operationLoading=true; $('confirmSubmitBtn').disabled=true; $('confirmCancelBtn').disabled=true; $('confirmCloseBtn').disabled=true;
+      $('confirmSubmitBtn').innerHTML='<i data-lucide="loader-circle" class="w-4 h-4 animate-spin"></i>处理中'; lucide.createIcons();
+      setTimeout(()=>{
+        const config=typeConfig[pending.type], list=recycleData[pending.type], restore=pending.action==='restore'||pending.action==='restoreAll';
+        const affected=list.filter(item=>pending.ids.includes(item.recycleId));
+        recycleData[pending.type]=list.filter(item=>!pending.ids.includes(item.recycleId));
+        const missingGroup=restore&&affected.some(item=>item.groupExists===false);
+        state.selected.clear(); state.operationLoading=false; $('confirmCancelBtn').disabled=false; $('confirmCloseBtn').disabled=false;
+        $('confirmModal').classList.add('hidden'); document.body.style.overflow=''; popAnnoScope($('confirmPanel')); state.pendingAction=null;
+        if(pending.type===state.currentType) renderAll();
+        if(missingGroup) toast(`已恢复 ${affected.length} 项；原分组不存在的数据已进入未分组`,'warning');
+        else if(restore) toast(affected.length===1?`${affected[0].name}已恢复`:`已恢复 ${affected.length} 项`,'success');
+        else toast(pending.action==='clearAll'?'当前分类回收站已清空':affected.length===1?`${affected[0].name}已永久删除`:`已永久删除 ${affected.length} 项`,'success');
+      },520);
+    }
+
+    function toast(message,type='info') {
+      const config={success:['circle-check','#0FC060'],warning:['triangle-alert','#E7772D'],danger:['circle-x','#D9001B'],info:['info','#0091D5']}[type];
+      const el=document.createElement('div'); el.className='toast';
+      el.innerHTML=`<i data-lucide="${config[0]}" class="w-[18px] h-[18px] flex-none mt-0.5" style="color:${config[1]}"></i><span class="flex-1 text-[13px] text-ink-title">${escapeHtml(message)}</span><button type="button" class="text-ink-muted hover:text-ink-body" aria-label="关闭提示"><i data-lucide="x" class="w-4 h-4"></i></button>`;
+      $('toastContainer').prepend(el); while($('toastContainer').children.length>3) $('toastContainer').lastElementChild.remove();
+      el.querySelector('button').addEventListener('click',()=>el.remove()); lucide.createIcons(); setTimeout(()=>el.remove(),3200);
+    }
+
+    function pushAnnoScope(element) {
+      const index=state.annoScopeStack.indexOf(element); if(index>=0) state.annoScopeStack.splice(index,1);
+      state.annoScopeStack.push(element); renderAnnoBadges();
+    }
+    function popAnnoScope(element) {
+      const index=state.annoScopeStack.indexOf(element); if(index>=0) state.annoScopeStack.splice(index,1);
+      renderAnnoBadges();
+    }
+    function renderAnnoBadges() {
+      const layer=$('annoLayer'); layer.innerHTML=''; if(!state.annoVisible) return;
+      const root=state.annoScopeStack.at(-1)||document;
+      root.querySelectorAll('[data-anno]').forEach(element=>{
+        if(element.closest('.hidden')) return;
+        const rect=element.getBoundingClientRect(); if(!rect.width||!rect.height||rect.bottom<0||rect.top>innerHeight) return;
+        const badge=document.createElement('button'); badge.type='button'; badge.className='anno-badge'; badge.textContent=element.dataset.anno;
+        badge.style.top=`${Math.max(2,rect.top-9)}px`; badge.style.left=`${Math.min(innerWidth-22,rect.right-9)}px`;
+        badge.setAttribute('aria-label',`查看交互说明 ${element.dataset.anno}`); badge.addEventListener('click',()=>showAnnoPopup(element.dataset.anno)); layer.append(badge);
+      });
+    }
+    function showAnnoPopup(id) {
+      const item=annotations[id]; if(!item) return;
+      $('annoTitle').textContent=`${id}. ${item.title}`; $('annoDesc').innerHTML=`<ul class="list-disc pl-5 space-y-2">${item.desc.map(text=>`<li>${escapeHtml(text)}</li>`).join('')}</ul>`;
+      $('annoPopup').classList.remove('hidden'); $('annoPopup').classList.add('flex'); $('closeAnno').focus();
+    }
+    function closeAnnoPopup() { $('annoPopup').classList.add('hidden'); $('annoPopup').classList.remove('flex'); }
+
+    function toggleSidebar() {
+      if(innerWidth<768){document.body.classList.toggle('mobile-menu-open');$('mobileMask').classList.toggle('hidden',!document.body.classList.contains('mobile-menu-open'));}
+      else document.body.classList.toggle('sidebar-compact');
+      setTimeout(renderAnnoBadges,220);
+    }
+
+    $('groupFilter').addEventListener('change',event=>{state.filters.environment.group=event.target.value;state.page=1;state.selected.clear();renderAll();});
+    $('searchInput').addEventListener('input',event=>$('clearSearchBtn').classList.toggle('hidden',!event.target.value));
+    $('searchInput').addEventListener('keydown',event=>{if(event.key==='Enter'){state.filters[state.currentType].keyword=event.target.value.trim();state.page=1;state.selected.clear();renderAll();}});
+    $('clearSearchBtn').addEventListener('click',()=>{state.filters[state.currentType].keyword='';$('searchInput').value='';state.page=1;state.selected.clear();renderAll();$('searchInput').focus();});
+    $('refreshBtn').addEventListener('click',()=>{state.selected.clear();const icon=$('refreshBtn').querySelector('svg');icon?.classList.add('animate-spin');setTimeout(()=>{icon?.classList.remove('animate-spin');renderAll();toast('列表已刷新','success');},420);});
+    $('clearSelectionBtn').addEventListener('click',()=>{state.selected.clear();renderAll();});
+    $('confirmCloseBtn').addEventListener('click',closeConfirm); $('confirmCancelBtn').addEventListener('click',closeConfirm); $('confirmSubmitBtn').addEventListener('click',executePendingAction);
+    $('detailCloseBtn').addEventListener('click',closeDetail); $('detailDoneBtn').addEventListener('click',closeDetail);
+    $('collapseBtn').addEventListener('click',toggleSidebar); $('desktopCollapseBtn').addEventListener('click',toggleSidebar); $('mobileMenuBtn').addEventListener('click',toggleSidebar); $('mobileMask').addEventListener('click',toggleSidebar);
+    $('accountBtn').addEventListener('click',()=>$('accountPopover').classList.toggle('hidden'));
+    $('helpBtn').addEventListener('click',()=>toast('帮助中心入口已打开，本原型不跳转外部页面','info'));
+    $('noticeBtn').addEventListener('click',()=>toast('暂无新的回收站通知','info'));
+    $('annoToggle').addEventListener('click',()=>{state.annoVisible=!state.annoVisible;$('annoToggle').setAttribute('aria-pressed',String(state.annoVisible));$('annoToggle').querySelector('span').textContent=state.annoVisible?'隐藏标注':'显示标注';renderAnnoBadges();});
+    $('closeAnno').addEventListener('click',closeAnnoPopup); $('annoPopup').addEventListener('click',event=>{if(event.target===$('annoPopup'))closeAnnoPopup();});
+    document.addEventListener('click',event=>{if(!$('accountBtn').contains(event.target)&&!$('accountPopover').contains(event.target))$('accountPopover').classList.add('hidden');});
+    document.addEventListener('keydown',event=>{
+      if(event.key!=='Escape') return;
+      if(!$('annoPopup').classList.contains('hidden')) closeAnnoPopup();
+      else if(!$('detailModal').classList.contains('hidden')) closeDetail();
+      else if(!$('confirmModal').classList.contains('hidden')) closeConfirm();
+      else if(document.body.classList.contains('mobile-menu-open')) toggleSidebar();
+    });
+    window.addEventListener('resize',()=>{if(innerWidth>=768){document.body.classList.remove('mobile-menu-open');$('mobileMask').classList.add('hidden');}renderAnnoBadges();});
+    window.addEventListener('scroll',renderAnnoBadges,true);
+
+    const initialType=location.hash.slice(1); if(typeConfig[initialType]) state.currentType=initialType;
+    renderAll();
+  </script>
+  <script src="公共导航.js?v=20260813"></script>
+</body>
+</html>

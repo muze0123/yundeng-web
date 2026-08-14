@@ -1,0 +1,442 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>云登 · 设置</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = { theme: { extend: {
+      colors: {
+        primary:{DEFAULT:'#0066FF',hover:'#0052CC',active:'#0047B3',bg:'#E6F0FF'},
+        ink:{title:'#1A1D24',body:'#3A3F4A',sub:'#6E7685',muted:'#9DA2AC'},
+        line:{DEFAULT:'#DFE1E5',light:'#E8EAED',lighter:'#F0F1F3'},
+        page:'#F7F8FA',card:'#FFFFFF',hover:'#F3F4F6',
+        success:{DEFAULT:'#0FC060',bg:'#E7F9F0'}, warning:{DEFAULT:'#E7772D',bg:'#FDF2E9'},
+        danger:{DEFAULT:'#D9001B',bg:'#FFE8EB'}, info:{DEFAULT:'#0091D5',bg:'#E4F4FB'}
+      },
+      fontFamily:{ sans:["-apple-system","BlinkMacSystemFont","PingFang SC","Microsoft YaHei","Hiragino Sans GB","Segoe UI","system-ui","sans-serif"], mono:["JetBrains Mono","monospace"] },
+      borderRadius:{DEFAULT:'4px',lg:'8px'}
+    }}};
+  </script>
+  <style>
+    * { box-sizing:border-box; }
+    html, body { margin:0; width:100%; height:100%; overflow:hidden; }
+    body { font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei','Hiragino Sans GB','Segoe UI',system-ui,sans-serif; color:#3A3F4A; letter-spacing:0; }
+    button, input, select, textarea { font:inherit; letter-spacing:0; }
+    button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible { outline:2px solid #0066FF; outline-offset:2px; }
+    .mono { font-family:'JetBrains Mono',monospace; font-variant-numeric:tabular-nums; }
+    .sidebar { width:220px; transition:width .2s ease; }
+    .sidebar.compact { width:68px; }
+    .sidebar.compact .brand-copy, .sidebar.compact .nav-label, .sidebar.compact .nav-chevron, .sidebar.compact .create-label, .sidebar.compact .bottom-label { display:none; }
+    .sidebar.compact .nav-link, .sidebar.compact .bottom-link, .sidebar.compact .create-button { justify-content:center; padding-left:0; padding-right:0; }
+    .sidebar.compact .subnav { display:none; }
+    .nav-link, .bottom-link { min-height:36px; border-radius:4px; transition:background .15s,color .15s; }
+    .nav-link:hover, .bottom-link:hover { background:#F3F4F6; }
+    .nav-link.active { color:#0066FF; background:#E6F0FF; font-weight:600; }
+    .top-tab { height:52px; padding:0 18px; color:#6E7685; border-bottom:2px solid transparent; display:inline-flex; align-items:center; gap:7px; white-space:nowrap; }
+    .top-tab:hover { color:#3A3F4A; }
+    .top-tab.active { color:#0066FF; border-bottom-color:#0066FF; font-weight:600; }
+    .setting-nav { width:184px; flex:0 0 184px; }
+    .setting-nav-link { width:100%; min-height:38px; padding:0 12px; display:flex; align-items:center; gap:9px; border-radius:4px; color:#6E7685; text-align:left; }
+    .setting-nav-link:hover { background:#F3F4F6; color:#3A3F4A; }
+    .setting-nav-link.active { background:#E6F0FF; color:#0066FF; font-weight:600; }
+    .section-block + .section-block { border-top:1px solid #E8EAED; margin-top:28px; padding-top:28px; }
+    .control { height:32px; border:1px solid #DFE1E5; border-radius:4px; background:#FFF; color:#3A3F4A; padding:0 10px; outline:none; }
+    .control:hover { border-color:#C7CAD1; }
+    .control:focus { border-color:#0066FF; box-shadow:0 0 0 2px #E6F0FF; }
+    .btn { height:32px; border-radius:4px; display:inline-flex; align-items:center; justify-content:center; gap:6px; padding:0 14px; font-weight:500; transition:background .15s,border-color .15s,color .15s; }
+    .btn-primary { color:#FFF; background:#0066FF; }
+    .btn-primary:hover { background:#0052CC; }
+    .btn-secondary { color:#3A3F4A; background:#FFF; border:1px solid #DFE1E5; }
+    .btn-secondary:hover { background:#F3F4F6; border-color:#C7CAD1; }
+    .btn-text { color:#0066FF; padding:0 6px; }
+    .btn-text:hover { color:#0052CC; background:#E6F0FF; }
+    .switch { position:relative; width:40px; height:22px; border-radius:11px; background:#C9CDD4; flex:0 0 40px; transition:background .16s; }
+    .switch::after { content:""; position:absolute; width:18px; height:18px; top:2px; left:2px; border-radius:50%; background:#FFF; box-shadow:0 1px 3px rgba(0,0,0,.18); transition:transform .16s; }
+    .switch.on { background:#0066FF; }
+    .switch.on::after { transform:translateX(18px); }
+    .segmented { height:32px; padding:2px; display:inline-flex; gap:2px; border:1px solid #DFE1E5; background:#F7F8FA; border-radius:4px; }
+    .segmented button { min-width:76px; height:26px; padding:0 12px; border-radius:3px; color:#6E7685; }
+    .segmented button.active { color:#0066FF; background:#FFF; box-shadow:0 1px 3px rgba(26,29,36,.10); font-weight:600; }
+    .status-pill { height:24px; padding:0 8px; border-radius:4px; display:inline-flex; align-items:center; gap:5px; font-size:12px; white-space:nowrap; }
+    .kernel-row { display:grid; grid-template-columns:minmax(170px,1.15fr) minmax(110px,.7fr) minmax(160px,1fr) 112px; align-items:center; min-height:58px; padding:9px 16px; border-bottom:1px solid #F0F1F3; }
+    .kernel-row:last-child { border-bottom:0; }
+    .pref-row { min-height:64px; display:grid; grid-template-columns:minmax(180px,260px) minmax(280px,500px); align-items:center; gap:24px; }
+    .toast { animation:toast-in .2s ease both; }
+    @keyframes toast-in { from { transform:translateY(-8px); opacity:0; } to { transform:translateY(0); opacity:1; } }
+    .drawer { animation:drawer-in .2s ease both; }
+    @keyframes drawer-in { from { transform:translateX(100%); } to { transform:translateX(0); } }
+    .progress-track { height:5px; border-radius:3px; background:#E8EAED; overflow:hidden; }
+    .progress-value { height:100%; background:#0066FF; border-radius:3px; transition:width .2s ease; }
+    .sortable-row[draggable="true"] { cursor:grab; }
+    .sortable-row.dragging { opacity:.45; }
+    .anno-badge { position:fixed; width:20px; height:20px; border:0; border-radius:50%; background:#0066FF; color:#FFF; font:700 11px/20px 'JetBrains Mono',monospace; text-align:center; box-shadow:0 2px 6px rgba(0,0,0,.15); pointer-events:auto; cursor:pointer; z-index:9998; }
+    .anno-badge:hover { transform:scale(1.16); }
+    @media (max-width:1100px) {
+      .setting-nav { width:164px; flex-basis:164px; }
+      .pref-row { grid-template-columns:180px minmax(220px,1fr); }
+    }
+    @media (max-width:767px) {
+      .sidebar { position:fixed; left:0; top:0; z-index:50; height:100vh; box-shadow:0 6px 24px rgba(0,0,0,.12); }
+      .sidebar.compact { width:0; overflow:hidden; }
+      .settings-layout { display:block!important; }
+      .setting-nav { position:static!important; width:100%; display:flex; overflow-x:auto; gap:4px; padding-bottom:12px; }
+      .setting-nav .nav-heading { display:none; }
+      .setting-nav-link { width:auto; min-width:max-content; padding:0 10px; }
+      .pref-row { display:block; min-height:0; padding:12px 0; }
+      .pref-row > :last-child { margin-top:8px; }
+      .kernel-row { grid-template-columns:minmax(130px,1fr) 100px; gap:6px 12px; }
+      .kernel-row .kernel-version, .kernel-row .kernel-status { grid-row:2; }
+      .top-tab { padding:0 12px; }
+    }
+    @media (prefers-reduced-motion:reduce) {
+      *,*::before,*::after { animation-duration:.01ms!important; transition-duration:.01ms!important; scroll-behavior:auto!important; }
+    }
+  </style>
+</head>
+<body class="bg-page text-[13px]">
+  <div class="flex h-screen min-w-0">
+    <aside id="sidebar" class="sidebar h-screen shrink-0 bg-card flex flex-col overflow-hidden" aria-label="主导航">
+      <div class="h-14 px-5 flex items-center gap-2 shrink-0">
+        <a href="index.html" class="flex items-center gap-2 min-w-0" aria-label="云登原型首页">
+          <span class="w-7 h-7 rounded bg-primary text-white flex items-center justify-center font-bold text-[15px]">云</span>
+          <span class="brand-copy font-semibold text-ink-title text-[16px]">云登</span>
+        </a>
+        <button id="collapseBtn" class="ml-auto w-8 h-8 rounded flex items-center justify-center text-ink-sub hover:bg-hover" aria-label="收起侧栏" title="收起侧栏"><i data-lucide="panel-left-close" class="w-[18px] h-[18px]"></i></button>
+      </div>
+      <div class="p-3">
+        <a href="新建浏览器.html" class="create-button h-8 w-full px-3 rounded bg-primary hover:bg-primary-hover text-white flex items-center justify-center gap-2 font-medium"><i data-lucide="plus" class="w-4 h-4"></i><span class="create-label">新建浏览器</span></a>
+      </div>
+      <nav class="px-3 flex-1 overflow-y-auto pb-3" aria-label="业务模块">
+        <a href="环境管理.html" class="nav-link px-2 flex items-center gap-3 mb-1"><i data-lucide="monitor-cog" class="w-[18px] h-[18px]"></i><span class="nav-label">环境管理</span></a>
+        <a href="代理管理.html" class="nav-link px-2 flex items-center gap-3 mb-1"><i data-lucide="network" class="w-[18px] h-[18px]"></i><span class="nav-label">代理管理</span></a>
+        <a href="商城.html" class="nav-link px-2 flex items-center gap-3 mb-1"><i data-lucide="shopping-bag" class="w-[18px] h-[18px]"></i><span class="nav-label">商城</span></a>
+        <a href="费用管理.html" class="nav-link px-2 flex items-center gap-3 mb-1"><i data-lucide="receipt-text" class="w-[18px] h-[18px]"></i><span class="nav-label">费用管理</span></a>
+        <div class="mb-1">
+          <button class="nav-link w-full px-2 flex items-center gap-3 text-left" data-nav-group="team" aria-expanded="true"><i data-lucide="users-round" class="w-[18px] h-[18px]"></i><span class="nav-label flex-1">团队</span><i data-lucide="chevron-down" class="nav-chevron w-4 h-4"></i></button>
+          <div id="teamNav" class="subnav ml-4 pl-3 border-l border-line-light">
+            <a href="团队管理.html" class="nav-link min-h-[34px] px-2 flex items-center gap-3 text-[12px]"><i data-lucide="building-2" class="w-4 h-4"></i><span class="nav-label">团队管理</span></a>
+            <a href="成员管理.html" class="nav-link min-h-[34px] px-2 flex items-center gap-3 text-[12px]"><i data-lucide="user-round-cog" class="w-4 h-4"></i><span class="nav-label">账号管理</span></a>
+            <a href="分享转移.html" class="nav-link min-h-[34px] px-2 flex items-center gap-3 text-[12px]"><i data-lucide="arrow-right-left" class="w-4 h-4"></i><span class="nav-label">分享转移</span></a>
+            <a href="日志管理.html" class="nav-link min-h-[34px] px-2 flex items-center gap-3 text-[12px]"><i data-lucide="scroll-text" class="w-4 h-4"></i><span class="nav-label">日志管理</span></a>
+            <a href="账号设置.html" class="nav-link min-h-[34px] px-2 flex items-center gap-3 text-[12px]"><i data-lucide="key-round" class="w-4 h-4"></i><span class="nav-label">账号设置</span></a>
+          </div>
+        </div>
+        <a href="插件管理.html" class="nav-link px-2 flex items-center gap-3 mb-1"><i data-lucide="blocks" class="w-[18px] h-[18px]"></i><span class="nav-label">插件管理</span></a>
+        <div class="mb-1">
+          <button class="nav-link w-full px-2 flex items-center gap-3 text-left" data-nav-group="automation" aria-expanded="true"><i data-lucide="workflow" class="w-[18px] h-[18px]"></i><span class="nav-label flex-1">自动化</span><i data-lucide="chevron-down" class="nav-chevron w-4 h-4"></i></button>
+          <div id="automationNav" class="subnav ml-4 pl-3 border-l border-line-light">
+            <a href="API.html" class="nav-link min-h-[34px] px-2 flex items-center gap-3 text-[12px]"><i data-lucide="braces" class="w-4 h-4"></i><span class="nav-label">API</span></a>
+            <a href="RPA.html" class="nav-link min-h-[34px] px-2 flex items-center gap-3 text-[12px]"><i data-lucide="bot" class="w-4 h-4"></i><span class="nav-label">RPA</span></a>
+          </div>
+        </div>
+        <a href="回收站.html" class="nav-link px-2 flex items-center gap-3 mb-1"><i data-lucide="trash-2" class="w-[18px] h-[18px]"></i><span class="nav-label">回收站</span></a>
+      </nav>
+      <div class="p-3 space-y-1">
+        <div class="border-t border-line mb-3"></div>
+        <button id="sideHelpBtn" class="bottom-link w-full h-8 px-2 flex items-center gap-3 text-ink-sub"><i data-lucide="circle-help" class="w-[18px] h-[18px]"></i><span class="bottom-label">新手帮助</span></button>
+        <a href="设置.html" class="bottom-link active w-full h-8 px-2 flex items-center gap-3 text-primary bg-primary-bg font-semibold"><i data-lucide="settings-2" class="w-[18px] h-[18px]"></i><span class="bottom-label">设置</span></a>
+      </div>
+    </aside>
+
+    <div class="min-w-0 flex-1 flex flex-col h-screen">
+      <header class="h-14 shrink-0 bg-card shadow-[0_8px_8px_-8px_rgba(0,0,0,.18)] z-20 flex items-center justify-between px-4 md:px-6">
+        <div class="flex items-center gap-3 min-w-0"><button id="mobileMenu" class="md:hidden w-8 h-8 flex items-center justify-center text-ink-sub" aria-label="展开导航"><i data-lucide="menu" class="w-5 h-5"></i></button><span class="text-ink-sub truncate">管理中心 / <strong class="text-ink-title font-medium">设置</strong></span></div>
+        <div class="flex items-center gap-1 md:gap-2">
+          <button id="guideBtn" class="hidden sm:flex h-8 px-2 rounded items-center gap-1.5 text-ink-sub hover:bg-hover"><i data-lucide="circle-help" class="w-[17px] h-[17px]"></i><span>新手教程</span></button>
+          <span class="hidden lg:inline-flex h-7 px-2 rounded bg-page mono text-[11px] text-ink-sub items-center">V4.0.2.4</span>
+          <button id="updateCenterBtn" data-anno="4" class="relative w-8 h-8 rounded flex items-center justify-center text-ink-sub hover:bg-hover" aria-label="打开更新中心" aria-expanded="false"><i data-lucide="download" class="w-[18px] h-[18px]"></i><span id="updateDot" class="absolute right-1 top-1 w-2 h-2 bg-danger rounded-full border border-white"></span></button>
+          <button id="noticeBtn" class="relative w-8 h-8 rounded flex items-center justify-center text-ink-sub hover:bg-hover" aria-label="通知"><i data-lucide="bell" class="w-[18px] h-[18px]"></i></button>
+          <span class="h-5 border-l border-line mx-1"></span>
+          <button id="accountBtn" class="flex items-center gap-2 rounded px-1 py-1 hover:bg-hover" aria-expanded="false"><span class="w-7 h-7 rounded-full bg-primary-bg text-primary flex items-center justify-center font-semibold">张</span><span class="hidden sm:block">张小登</span><i data-lucide="chevron-down" class="hidden sm:block w-3.5 h-3.5 text-ink-muted"></i></button>
+        </div>
+      </header>
+
+      <main id="mainContent" class="flex-1 overflow-auto p-3 md:p-4" tabindex="-1">
+        <section class="min-h-full bg-card rounded-lg overflow-hidden" aria-labelledby="pageTitle">
+          <div class="px-5 md:px-6 pt-5 border-b border-line-light">
+            <div class="flex items-center justify-between gap-4"><div><h1 id="pageTitle" class="text-[20px] font-bold text-ink-title">设置</h1><p class="mt-1 text-[12px] text-ink-sub">管理本地、个人与团队配置</p></div><span id="saveIndicator" class="hidden text-[12px] text-ink-sub items-center gap-1.5"><i data-lucide="loader-circle" class="w-4 h-4 animate-spin"></i>保存中</span></div>
+            <div id="topTabs" data-anno="1" class="mt-3 -mb-px flex items-center overflow-x-auto" role="tablist" aria-label="设置分区"></div>
+          </div>
+          <div class="settings-layout flex items-start gap-6 p-4 md:p-6 min-w-0">
+            <aside id="settingNav" class="setting-nav sticky top-0" aria-label="设置子导航"></aside>
+            <div id="settingContent" class="min-w-0 flex-1 pb-8" aria-live="polite"></div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <div id="updateOverlay" class="hidden fixed inset-0 z-40 bg-black/20" aria-hidden="true"></div>
+  <aside id="updateDrawer" class="hidden fixed top-0 right-0 z-50 h-screen w-[420px] max-w-full bg-card shadow-[-4px_0_24px_rgba(0,0,0,.12)] drawer flex-col" role="dialog" aria-modal="true" aria-labelledby="updateTitle">
+    <header class="h-14 px-5 border-b border-line flex items-center justify-between shrink-0"><div class="flex items-center gap-2"><span class="w-8 h-8 rounded bg-primary-bg text-primary flex items-center justify-center"><i data-lucide="package-down" class="w-[18px] h-[18px]"></i></span><h2 id="updateTitle" data-anno="4" class="text-[16px] font-semibold text-ink-title">更新中心</h2></div><button id="closeUpdate" class="w-8 h-8 rounded flex items-center justify-center text-ink-muted hover:bg-hover" aria-label="关闭更新中心"><i data-lucide="x" class="w-5 h-5"></i></button></header>
+    <div class="px-5 py-3 border-b border-line-light flex items-center justify-between"><span id="updateSummary" class="text-[12px] text-ink-sub"></span><button id="downloadAllBtn" class="btn btn-text"><i data-lucide="download" class="w-4 h-4"></i>全部下载</button></div>
+    <div id="updateList" class="flex-1 overflow-auto p-4 space-y-3"></div>
+  </aside>
+
+  <div id="permissionModal" class="hidden fixed inset-0 z-[60] bg-black/30 p-4 items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="permissionTitle">
+    <section id="permissionPanel" class="w-[600px] max-w-[92vw] bg-card rounded-lg shadow-[0_6px_24px_rgba(0,0,0,.12)]">
+      <header class="px-5 py-4 border-b border-line flex items-center justify-between"><h2 id="permissionTitle" data-anno="13" class="text-[16px] font-semibold text-ink-title">确认开启</h2><button id="closePermission" class="w-8 h-8 rounded flex items-center justify-center text-ink-muted hover:bg-hover" aria-label="关闭"><i data-lucide="x" class="w-5 h-5"></i></button></header>
+      <div class="px-5 py-5 text-[14px] leading-7 text-ink-body">
+        <p>设置后，将开启代理数据权限。数据权限规则：</p>
+        <ul class="mt-2 pl-5 list-disc space-y-1">
+          <li>创始人：可查看所有代理</li>
+          <li>部门管理员：可查看部门及子部门成员创建、购买和被授权的所有代理</li>
+          <li>普通成员：可查看自己创建、购买和被授权的所有代理</li>
+        </ul>
+        <p class="mt-3 text-ink-sub">代理授权入口：代理管理-平台/自有/代理API对应代理授权列。</p>
+      </div>
+      <footer class="px-5 pb-5 flex justify-end gap-3"><button id="cancelPermission" class="btn btn-secondary">取消</button><button id="confirmPermission" class="btn btn-primary">确定</button></footer>
+    </section>
+  </div>
+
+  <div id="helpPopover" class="hidden fixed right-32 top-12 z-[45] w-64 rounded-lg border border-line bg-card shadow-[0_6px_24px_rgba(0,0,0,.12)] p-2">
+    <button class="w-full h-9 px-3 rounded hover:bg-hover text-left flex items-center gap-2"><i data-lucide="book-open" class="w-4 h-4 text-primary"></i>设置使用说明</button>
+    <button class="w-full h-9 px-3 rounded hover:bg-hover text-left flex items-center gap-2"><i data-lucide="message-circle" class="w-4 h-4 text-primary"></i>联系在线支持</button>
+  </div>
+  <div id="accountPopover" class="hidden fixed right-4 top-12 z-[45] w-44 rounded-lg border border-line bg-card shadow-[0_6px_24px_rgba(0,0,0,.12)] p-1">
+    <div class="px-3 py-2 text-[12px] text-ink-sub border-b border-line-light">团队管理员</div><button class="w-full h-9 px-3 rounded hover:bg-hover text-left">账号信息</button><button class="w-full h-9 px-3 rounded hover:bg-hover text-left">退出登录</button>
+  </div>
+
+  <div id="toastContainer" class="fixed top-4 left-1/2 -translate-x-1/2 z-[80] space-y-2 pointer-events-none" role="status" aria-live="polite"></div>
+  <div id="annoLayer" style="position:fixed;inset:0;pointer-events:none;z-index:9998;"></div>
+  <button id="annoToggle" class="fixed z-[9997] right-2 top-[120px] h-8 px-3 rounded-full bg-ink-muted text-white shadow-[0_2px_8px_rgba(0,0,0,.12)] flex items-center gap-1.5" aria-label="显示交互标注" aria-pressed="false"><i data-lucide="tags" class="w-4 h-4"></i><span class="text-[12px] whitespace-nowrap">显示标注</span></button>
+  <div id="annoPopup" class="hidden fixed inset-0 z-[9999] bg-black/30 p-4 items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="annoTitle">
+    <section class="w-[520px] max-w-full bg-card rounded-lg shadow-[0_6px_24px_rgba(0,0,0,.12)]"><header class="px-5 py-4 border-b border-line flex items-center justify-between"><h2 id="annoTitle" class="text-[16px] font-semibold text-ink-title"></h2><button id="closeAnno" class="w-8 h-8 rounded flex items-center justify-center text-ink-muted hover:bg-hover" aria-label="关闭标注"><i data-lucide="x" class="w-5 h-5"></i></button></header><div id="annoDesc" class="p-5 text-[14px] leading-7"></div></section>
+  </div>
+
+  <script>
+    const $ = id => document.getElementById(id);
+    const deepClone = value => JSON.parse(JSON.stringify(value));
+    const getPath = (object,path) => path.split('.').reduce((value,key)=>value?.[key],object);
+    const setPath = (object,path,value) => { const keys=path.split('.'); const last=keys.pop(); const target=keys.reduce((value,key)=>value[key],object); target[last]=value; };
+    const escapeHtml = value => String(value).replace(/[&<>'"]/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
+
+    const tabs = [
+      {id:'local',label:'本地设置',icon:'hard-drive',subs:[['software','软件版本','badge-check'],['kernel','内核','cpu']]},
+      {id:'personal',label:'个人偏好',icon:'user-cog',subs:[['taskbar','任务栏图标','app-window'],['search','搜索引擎','search'],['translation','翻译目标语言','languages'],['launch','指纹窗口批量启动规则','panels-top-left']]},
+      {id:'team',label:'团队偏好',icon:'users-round',subs:[['preload','预加载页面','panels-top-left'],['security-policy','环境安全策略','shield-check'],['security-monitor','环境安全监控','scan-eye'],['sync','同步设置','cloud-upload'],['proxy-permission','代理数据权限','key-round'],['defaults','默认偏好项','sliders-horizontal']]},
+      {id:'navigation',label:'导航设置',icon:'panel-left',subs:[['side-navigation','侧边导航设置','panel-left'],['tab-navigation','Tab 导航设置','gallery-horizontal']]},
+      {id:'agreement',label:'服务协议',icon:'file-text',subs:[['agreement-content','服务协议','file-text']]}
+    ];
+
+    const defaultSettings = {
+      personal:{taskbarIcon:'显示环境序号',searchEngine:'百度',translationLanguage:'简体中文',batchLaunchRule:'parallel'},
+      team:{preloadMode:'specified',preloadUrl:'https://www.yunlogin.com',hideBoundProxy:false,hideExpiredProxy:true,securityMonitor:true,highRiskAlert:true,syncCache:false,proxyDataPermission:true,defaults:{images:'off',video:false,sound:false,memory:false,cache:false,cookie:false,fingerprint:false}},
+      sideNavigation:[
+        {id:'environment',label:'环境管理',icon:'monitor-cog',visible:true},
+        {id:'proxy',label:'代理管理',icon:'network',visible:true},
+        {id:'store',label:'商城',icon:'shopping-bag',visible:true},
+        {id:'billing',label:'费用管理',icon:'receipt-text',visible:true},
+        {id:'team',label:'团队',icon:'users-round',visible:true,children:[
+          {id:'team-management',label:'团队管理',visible:true},{id:'account-management',label:'账号管理',visible:true},{id:'transfer',label:'分享转移',visible:true},{id:'logs',label:'日志管理',visible:true},{id:'account-settings',label:'账号设置',visible:true}
+        ]},
+        {id:'plugins',label:'插件管理',icon:'blocks',visible:true},
+        {id:'automation',label:'自动化',icon:'workflow',visible:true,children:[{id:'api',label:'API',visible:true},{id:'rpa',label:'RPA',visible:true}]},
+        {id:'recycle',label:'回收站',icon:'trash-2',visible:true}
+      ],
+      tabGroups:[
+        {id:'proxy',label:'代理管理',icon:'network',items:[['platform','平台代理'],['owned','自有代理'],['proxy-api','代理API']]},
+        {id:'plugins',label:'插件管理',icon:'blocks',items:[['market','插件市场'],['mine','我的插件'],['team','团队插件']]},
+        {id:'store',label:'商城',icon:'shopping-bag',items:[['proxy-product','代理'],['plan','套餐'],['cart','购物车']]},
+        {id:'billing',label:'费用管理',icon:'receipt-text',items:[['coin','云币充值'],['orders','订单管理'],['coupons','优惠券']]},
+        {id:'recycle',label:'回收站',icon:'trash-2',items:[['environment','环境'],['account','账号'],['platform-proxy','平台代理'],['owned-proxy','自有代理'],['proxy-api','代理API'],['rpa-template','RPA模板']]},
+        {id:'api',label:'API',icon:'braces',items:[['docs','API文档'],['keys','密钥管理'],['logs','调用日志']]}
+      ]
+    };
+    defaultSettings.tabGroups.forEach(group=>group.items=group.items.map(([id,label])=>({id,label,visible:true})));
+
+    function mergeSettings(base, saved) {
+      const merged=deepClone(base);
+      if(!saved||typeof saved!=='object')return merged;
+      if(saved.personal)merged.personal={...merged.personal,...saved.personal};
+      if(saved.team)merged.team={...merged.team,...saved.team,defaults:{...merged.team.defaults,...saved.team.defaults}};
+      if(Array.isArray(saved.sideNavigation))merged.sideNavigation=saved.sideNavigation;
+      if(Array.isArray(saved.tabGroups))merged.tabGroups=saved.tabGroups;
+      return merged;
+    }
+    let settings = deepClone(defaultSettings);
+    try { const saved=localStorage.getItem('yunlogin-settings-prototype'); if(saved) settings=mergeSettings(defaultSettings,JSON.parse(saved)); } catch (error) { console.info('本地设置缓存不可用',error); }
+
+    const kernels = [
+      {id:'147',name:'Chromium147',tag:'beta',version:'v2.0.1.1',status:'not_downloaded',progress:0},
+      {id:'146',name:'Chromium146',version:'v2.0.1.1',status:'not_downloaded',progress:0},
+      {id:'145',name:'Chromium145',version:'v2.0.1.1',status:'not_downloaded',progress:0},
+      {id:'144',name:'Chromium144',version:'v2.0.1.1',status:'not_downloaded',progress:0},
+      {id:'143',name:'Chromium143',version:'v2.0.1.1',status:'not_downloaded',progress:0},
+      {id:'142',name:'Chromium142',version:'v2.0.1.1',status:'not_downloaded',progress:0},
+      {id:'141',name:'Chromium141',version:'v2.0.1.1',status:'not_downloaded',progress:0},
+      {id:'140',name:'Chromium140',version:'v2.0.1.1',status:'not_downloaded',progress:0},
+      {id:'134',name:'Chromium134',version:'v2.0.1.1',status:'latest',progress:100},
+      {id:'131',name:'Chromium131',version:'v2.0.1.0',status:'not_downloaded',progress:0},
+      {id:'127',name:'Chromium127',version:'v2.0.1.0',status:'not_downloaded',progress:0},
+      {id:'107',name:'Chromium107',version:'v1.9.8.6',status:'update_available',progress:0}
+    ];
+    const releaseNotes = ['修复字体指纹、TLS 指纹和 VoiceSpeech 指纹','修复主窗口边角的显示异常','修复部分站点后台无法发送消息的问题'];
+    const annotations = {
+      1:{title:'设置分区',desc:['切换本地设置、个人偏好、团队偏好、导航设置和服务协议。','切换只改变内容区，不刷新 App Shell。']},
+      2:{title:'软件版本',desc:['展示当前版本、最新版本和更新状态。','检查更新完成前不会提前显示成功。']},
+      3:{title:'内核管理',desc:['不同内核分别呈现未下载、下载中、可更新和最新状态。','下载任务支持进度反馈和重复点击保护。']},
+      4:{title:'更新中心',desc:['点击顶栏下载图标打开更新中心，可单项或全部下载。','关闭浮层不会取消已经开始的下载任务。']},
+      5:{title:'个人偏好',desc:['配置任务栏图标、默认搜索引擎、翻译语言和批量启动规则。','任务栏图标修改需重启环境后生效。']},
+      6:{title:'预加载页面',desc:['可选择上次打开页面或指定网址。','指定网址仅接受 HTTP/HTTPS，非法输入使用字段级错误。']},
+      7:{title:'环境安全与同步',desc:['团队安全策略、监控和缓存同步即时保存。','团队设置会应用于全员，服务端仍需再次鉴权。']},
+      8:{title:'代理数据权限',desc:['开启前必须阅读创始人、部门管理员和普通成员的数据范围。','取消确认不会改变当前开关。']},
+      9:{title:'默认偏好项',desc:['配置图片、视频、声音、内存、缓存、Cookie 与随机指纹默认值。','原型不伪造“自定义图片”的二级规则。']},
+      10:{title:'侧边导航设置',desc:['控制模块显隐，并支持同层拖拽或上移/下移排序。','设置入口固定保留，隐藏菜单不等于移除权限。']},
+      11:{title:'Tab 导航设置',desc:['按业务模块控制 Tab 显隐。','每组至少保留一个可访问项。']},
+      12:{title:'服务协议',desc:['展示更新日期和滚动协议正文。','原型只放代表性内容，正式文本需由法务发布。']},
+      13:{title:'确认开启代理数据权限',desc:['确认后才模拟保存并打开开关。','关闭或取消弹窗均恢复操作前状态。']}
+    };
+
+    let activeTab='local', activeSub='software', sidebarCompact=false, annoVisible=false, annoScopeStack=[], draggedItem=null, permissionTrigger=null;
+    const downloadTimers = new Map();
+
+    function persist() { try { localStorage.setItem('yunlogin-settings-prototype',JSON.stringify(settings)); } catch (error) { console.info('无法保存原型状态',error); } }
+    function toast(message,kind='success') { const tone={success:'bg-success',danger:'bg-danger',warning:'bg-warning',info:'bg-info'}[kind]||'bg-info'; const icon={success:'circle-check',danger:'circle-x',warning:'triangle-alert',info:'info'}[kind]||'info'; const element=document.createElement('div'); element.className=`toast min-w-[220px] max-w-[calc(100vw-32px)] ${tone} text-white px-4 py-2.5 rounded shadow-[0_2px_8px_rgba(0,0,0,.14)] flex items-center gap-2`; element.innerHTML=`<i data-lucide="${icon}" class="w-4 h-4 shrink-0"></i><span>${escapeHtml(message)}</span>`; $('toastContainer').appendChild(element); lucide.createIcons(); setTimeout(()=>element.remove(),2600); }
+    function simulateSave(message='设置成功') { $('saveIndicator').classList.remove('hidden'); $('saveIndicator').classList.add('flex'); setTimeout(()=>{ persist(); $('saveIndicator').classList.add('hidden'); $('saveIndicator').classList.remove('flex'); toast(message); },420); }
+    function refreshIconsAndAnno() { lucide.createIcons(); requestAnimationFrame(renderAnnoBadges); }
+
+    function renderTabs() {
+      $('topTabs').innerHTML=tabs.map(tab=>`<button type="button" role="tab" aria-selected="${tab.id===activeTab}" data-tab="${tab.id}" class="top-tab ${tab.id===activeTab?'active':''}"><i data-lucide="${tab.icon}" class="w-4 h-4"></i>${tab.label}</button>`).join('');
+    }
+    function renderSubnav() {
+      const tab=tabs.find(item=>item.id===activeTab);
+      $('settingNav').innerHTML=`<p class="nav-heading px-3 mb-2 text-[12px] font-semibold text-ink-title">${tab.label}</p>${tab.subs.map(([id,label,icon])=>`<button type="button" data-sub="${id}" class="setting-nav-link ${activeSub===id?'active':''}"><i data-lucide="${icon}" class="w-4 h-4 shrink-0"></i><span>${label}</span></button>`).join('')}`;
+      lucide.createIcons();
+    }
+
+    function statusView(kernel) {
+      if(kernel.status==='not_downloaded') return {label:'内核未下载',tone:'bg-page text-ink-sub',icon:'circle'};
+      if(kernel.status==='downloading') return {label:`下载中 ${Math.round(kernel.progress)}%`,tone:'bg-primary-bg text-primary',icon:'loader-circle'};
+      if(kernel.status==='update_available') return {label:'内核可更新',tone:'bg-warning-bg text-warning',icon:'circle-arrow-up'};
+      if(kernel.status==='failed') return {label:'下载失败',tone:'bg-danger-bg text-danger',icon:'circle-x'};
+      return {label:'已是最新版本',tone:'bg-success-bg text-success',icon:'circle-check'};
+    }
+    function kernelAction(kernel) {
+      if(kernel.status==='latest') return '<span class="text-[12px] text-success flex items-center gap-1"><i data-lucide="check" class="w-4 h-4"></i>最新</span>';
+      if(kernel.status==='downloading') return '<button class="btn btn-secondary opacity-60 cursor-not-allowed" disabled>下载中</button>';
+      const label=kernel.status==='update_available'?'更新内核':kernel.status==='failed'?'重试':'下载内核';
+      return `<button class="btn btn-secondary" data-kernel-action="${kernel.id}">${label}</button>`;
+    }
+    function renderLocal() {
+      const rows=kernels.map(kernel=>{const status=statusView(kernel);return `<div class="kernel-row"><div class="flex items-center gap-2 min-w-0"><span class="w-8 h-8 rounded bg-page text-primary flex items-center justify-center shrink-0"><i data-lucide="cpu" class="w-4 h-4"></i></span><strong class="text-ink-title truncate">${kernel.name}</strong>${kernel.tag?'<span class="status-pill bg-info-bg text-info">beta</span>':''}</div><span class="kernel-version mono text-[12px] text-ink-sub">${kernel.version||'—'}</span><div class="kernel-status min-w-0"><span class="status-pill ${status.tone}"><i data-lucide="${status.icon}" class="w-3.5 h-3.5 ${kernel.status==='downloading'?'animate-spin':''}"></i>${status.label}</span>${kernel.status==='downloading'?`<div class="progress-track mt-2 max-w-[180px]"><div class="progress-value" style="width:${kernel.progress}%"></div></div>`:''}</div><div class="flex justify-end">${kernelAction(kernel)}</div></div>`}).join('');
+      return `<section id="software" data-anno="2" class="section-block scroll-mt-4"><div class="flex items-center justify-between gap-4"><div><h2 class="text-[17px] font-semibold text-ink-title">软件版本</h2><p class="mt-1 text-[12px] text-ink-sub">检查客户端版本并保持在受支持范围</p></div><button id="checkVersionBtn" class="btn btn-secondary"><i data-lucide="refresh-cw" class="w-4 h-4"></i>检查更新</button></div><div class="mt-5 rounded-lg bg-page p-5 flex flex-col lg:flex-row lg:items-center justify-between gap-5"><div class="flex items-center gap-4"><span class="w-12 h-12 rounded-lg bg-primary-bg text-primary flex items-center justify-center"><i data-lucide="badge-check" class="w-6 h-6"></i></span><div><p class="text-[12px] text-ink-sub">当前软件版本</p><p class="mono mt-1 text-[20px] font-semibold text-ink-title">Version 4.0.2.4</p><p class="mt-1 text-[12px] text-ink-sub">您当前正在使用 Version 4.0.2.4（更新至最新版本，体验更佳）</p></div></div><span class="status-pill bg-success-bg text-success self-start lg:self-auto"><i data-lucide="circle-check" class="w-4 h-4"></i>已是最新版本</span></div></section><section id="kernel" data-anno="3" class="section-block scroll-mt-4"><div class="flex flex-wrap items-end justify-between gap-3"><div><h2 class="text-[17px] font-semibold text-ink-title">Chromium 内核</h2><p class="mt-1 text-[12px] text-ink-sub">根据环境需求下载或更新指定版本，下载任务会显示实时进度</p></div><button id="localDownloadAll" class="btn btn-secondary"><i data-lucide="download" class="w-4 h-4"></i>全部下载</button></div><div class="mt-4 border border-line-light rounded-lg overflow-hidden"><div class="kernel-row min-h-[42px] bg-page text-[12px] text-ink-sub font-medium"><span>内核</span><span>版本</span><span>状态</span><span class="text-right">操作</span></div>${rows}</div></section>`;
+    }
+
+    function selectControl(path,options,value,label) { return `<label class="block max-w-[500px]"><span class="sr-only">${label}</span><select class="control w-full" data-setting="${path}" aria-label="${label}">${options.map(option=>`<option ${option===value?'selected':''}>${option}</option>`).join('')}</select></label>`; }
+    function segment(path,items,value) { return `<div class="segmented" role="group">${items.map(([itemValue,label])=>`<button type="button" data-segment="${path}" data-value="${itemValue}" class="${String(value)===String(itemValue)?'active':''}" aria-pressed="${String(value)===String(itemValue)}">${label}</button>`).join('')}</div>`; }
+    function switchButton(path,checked,label,extra='') { return `<button type="button" class="switch ${checked?'on':''} ${extra}" data-switch="${path}" role="switch" aria-checked="${checked}" aria-label="${label}"></button>`; }
+    function renderPersonal() {
+      return `<div data-anno="5"><section id="taskbar" class="section-block scroll-mt-4"><h2 class="text-[17px] font-semibold text-ink-title">任务栏图标</h2><div class="pref-row"><div><p class="font-medium text-ink-title">图标设置</p><p class="mt-1 text-[12px] text-ink-sub">修改后需要重启环境后生效</p></div>${selectControl('personal.taskbarIcon',['显示环境序号','显示环境名称','仅显示浏览器图标'],settings.personal.taskbarIcon,'任务栏图标')}</div></section><section id="search" class="section-block scroll-mt-4"><h2 class="text-[17px] font-semibold text-ink-title">搜索引擎</h2><div class="pref-row"><div><p class="font-medium text-ink-title">默认搜索引擎</p><p class="mt-1 text-[12px] text-ink-sub">新启动的环境应用该配置</p></div>${selectControl('personal.searchEngine',['百度','Google','必应','DuckDuckGo'],settings.personal.searchEngine,'默认搜索引擎')}</div></section><section id="translation" class="section-block scroll-mt-4"><h2 class="text-[17px] font-semibold text-ink-title">翻译目标语言</h2><div class="pref-row"><div><p class="font-medium text-ink-title">默认目标语言</p><p class="mt-1 text-[12px] leading-5 text-ink-sub">设置谷歌翻译插件的默认目标语言。设置后当前账号启动环境均将应用该配置</p></div>${selectControl('personal.translationLanguage',['简体中文','繁体中文','English','日本語','한국어'],settings.personal.translationLanguage,'默认翻译目标语言')}</div></section><section id="launch" class="section-block scroll-mt-4"><h2 class="text-[17px] font-semibold text-ink-title">指纹窗口批量启动规则</h2><div class="mt-5 max-w-[760px] grid md:grid-cols-2 gap-3"><button type="button" data-launch-rule="sequential" class="p-4 rounded-lg border text-left ${settings.personal.batchLaunchRule==='sequential'?'border-primary bg-primary-bg':'border-line hover:bg-hover'}"><div class="flex items-center gap-2"><span class="w-4 h-4 rounded-full border ${settings.personal.batchLaunchRule==='sequential'?'border-[5px] border-primary':'border-line'}"></span><strong class="text-ink-title">依次启动</strong></div><p class="mt-2 pl-6 text-[12px] leading-5 text-ink-sub">按环境展示顺序逐个启动，上一环境完成后再启动下一个。</p></button><button type="button" data-launch-rule="parallel" class="p-4 rounded-lg border text-left ${settings.personal.batchLaunchRule==='parallel'?'border-primary bg-primary-bg':'border-line hover:bg-hover'}"><div class="flex items-center gap-2"><span class="w-4 h-4 rounded-full border ${settings.personal.batchLaunchRule==='parallel'?'border-[5px] border-primary':'border-line'}"></span><strong class="text-ink-title">并行启动</strong><span class="status-pill bg-success-bg text-success">推荐</span></div><p class="mt-2 pl-6 text-[12px] leading-5 text-ink-sub">多个环境同时启动，任务栏按启动顺序展示，适合高性能电脑。</p></button></div></section></div>`;
+    }
+
+    function settingToggleRow(path,title,desc,checked) { return `<div class="pref-row"><div><p class="font-medium text-ink-title">${title}</p><p class="mt-1 text-[12px] leading-5 text-ink-sub">${desc}</p></div><div>${switchButton(path,checked,title)}</div></div>`; }
+    function renderTeam() {
+      const d=settings.team.defaults;
+      return `<div><div class="mb-5 px-4 py-3 rounded bg-danger-bg text-danger flex items-start gap-2"><i data-lucide="triangle-alert" class="w-4 h-4 mt-0.5 shrink-0"></i><div><strong>团队设置将应用于团队全员，请谨慎操作</strong><p class="mt-1 text-[12px] opacity-90">所有写操作在生产环境均需服务端权限校验和审计。</p></div></div><section id="preload" data-anno="6" class="section-block scroll-mt-4"><h2 class="text-[17px] font-semibold text-ink-title">预加载页面</h2><div class="pref-row"><div><p class="font-medium text-ink-title">环境启动后打开</p><p class="mt-1 text-[12px] text-ink-sub">为团队环境统一设置启动页</p></div><div>${segment('team.preloadMode',[['last','上次打开页面'],['specified','指定网址']],settings.team.preloadMode)}<div id="preloadUrlWrap" class="${settings.team.preloadMode==='specified'?'':'hidden'} mt-3 max-w-[500px]"><input id="preloadUrl" class="control w-full" maxlength="2048" value="${escapeHtml(settings.team.preloadUrl)}" placeholder="请输入以 http:// 或 https:// 开头的网址"><p id="preloadError" class="hidden mt-1.5 text-[12px] text-danger" role="alert">请输入有效的网址</p></div></div></div></section><section id="security-policy" data-anno="7" class="section-block scroll-mt-4"><h2 class="text-[17px] font-semibold text-ink-title">环境安全策略</h2>${settingToggleRow('team.hideBoundProxy','默认不显示已绑环境代理','换绑代理时默认隐藏已绑定代理，仍可手动取消筛选。',settings.team.hideBoundProxy)}${settingToggleRow('team.hideExpiredProxy','默认不显示已过期代理','换绑代理时默认隐藏已过期代理，仍可手动取消筛选。',settings.team.hideExpiredProxy)}</section><section id="security-monitor" class="section-block scroll-mt-4"><h2 class="text-[17px] font-semibold text-ink-title">环境安全监控</h2>${settingToggleRow('team.securityMonitor','设置环境安全监控','监控团队环境中的异常配置与风险行为。',settings.team.securityMonitor)}${settingToggleRow('team.highRiskAlert','高风险操作提醒','成员执行高风险操作时展示提醒。',settings.team.highRiskAlert)}</section><section id="sync" class="section-block scroll-mt-4"><h2 class="text-[17px] font-semibold text-ink-title">同步设置</h2>${settingToggleRow('team.syncCache','同步缓存','开启后，缓存数据将在环境关闭后自动同步至云端。',settings.team.syncCache)}</section><section id="proxy-permission" data-anno="8" class="section-block scroll-mt-4"><h2 class="text-[17px] font-semibold text-ink-title">代理数据权限</h2>${settingToggleRow('team.proxyDataPermission','是否开启代理数据权限','按创始人、部门管理员与普通成员范围控制可查看代理。',settings.team.proxyDataPermission)}<div class="mt-2 max-w-[760px] rounded bg-info-bg px-4 py-3 text-[12px] leading-5 text-info"><i data-lucide="info" class="inline w-4 h-4 mr-1"></i>代理授权入口：代理管理-平台/自有/代理API对应代理授权列。</div></section><section id="defaults" data-anno="9" class="section-block scroll-mt-4"><h2 class="text-[17px] font-semibold text-ink-title">默认偏好项</h2><p class="mt-1 text-[12px] text-ink-sub">新建环境默认继承以下团队配置，成员实际可修改范围以权限为准。</p><div class="mt-3 divide-y divide-line-lighter"><div class="pref-row"><p class="font-medium text-ink-title">禁止加载图片</p>${segment('team.defaults.images',[['custom','自定义'],['off','关闭']],d.images)}</div>${[['video','禁止加载视频'],['sound','禁止播放声音'],['memory','定时内存回收'],['cache','自动删除缓存'],['cookie','自动删除 Cookie'],['fingerprint','启动时随机生成指纹']].map(([key,label])=>`<div class="pref-row"><p class="font-medium text-ink-title">${label}</p>${segment(`team.defaults.${key}`,[['true','开启'],['false','关闭']],String(d[key]))}</div>`).join('')}</div></section></div>`;
+    }
+
+    function navigationRow(item,index,total,parentId='root') {
+      return `<div class="sortable-row min-h-[48px] px-3 flex items-center gap-3 border-b border-line-lighter last:border-0" draggable="true" data-sort-id="${item.id}" data-parent="${parentId}"><button class="w-7 h-7 rounded flex items-center justify-center text-ink-muted hover:bg-hover" data-drag-handle aria-label="拖动${item.label}"><i data-lucide="grip-vertical" class="w-4 h-4"></i></button><span class="w-8 h-8 rounded bg-page text-ink-sub flex items-center justify-center">${item.icon?`<i data-lucide="${item.icon}" class="w-4 h-4"></i>`:'<span class="w-1.5 h-1.5 rounded-full bg-line"></span>'}</span><span class="flex-1 text-ink-title ${parentId!=='root'?'text-[12px]':''}">${item.label}</span><div class="flex items-center gap-1"><button class="w-7 h-7 rounded flex items-center justify-center text-ink-muted hover:bg-hover disabled:opacity-30" data-move="up" data-id="${item.id}" data-parent="${parentId}" ${index===0?'disabled':''} aria-label="上移${item.label}"><i data-lucide="chevron-up" class="w-4 h-4"></i></button><button class="w-7 h-7 rounded flex items-center justify-center text-ink-muted hover:bg-hover disabled:opacity-30" data-move="down" data-id="${item.id}" data-parent="${parentId}" ${index===total-1?'disabled':''} aria-label="下移${item.label}"><i data-lucide="chevron-down" class="w-4 h-4"></i></button></div>${switchButton(`navigation.${parentId}.${item.id}`,item.visible,`${item.label}导航`)}</div>`;
+    }
+    function renderNavigation() {
+      const side=settings.sideNavigation.map((item,index)=>`<div>${navigationRow(item,index,settings.sideNavigation.length)}${item.children?`<div class="ml-12 border-l border-line-light">${item.children.map((child,childIndex)=>navigationRow(child,childIndex,item.children.length,item.id)).join('')}</div>`:''}</div>`).join('');
+      const groups=settings.tabGroups.map(group=>`<section class="border border-line-light rounded-lg overflow-hidden"><header class="h-12 px-4 bg-page flex items-center gap-2"><i data-lucide="${group.icon}" class="w-4 h-4 text-primary"></i><strong class="text-ink-title">${group.label}</strong></header><div class="divide-y divide-line-lighter">${group.items.map(item=>`<div class="h-12 px-4 flex items-center justify-between gap-3"><span>${item.label}</span>${switchButton(`tabs.${group.id}.${item.id}`,item.visible,`${item.label} Tab`)}</div>`).join('')}</div></section>`).join('');
+      return `<div class="grid xl:grid-cols-[minmax(420px,.95fr)_minmax(420px,1.05fr)] gap-6"><section id="side-navigation" data-anno="10" class="scroll-mt-4 min-w-0"><div><h2 class="text-[17px] font-semibold text-ink-title">侧边导航设置</h2><p class="mt-1 text-[12px] text-ink-sub">控制模块显隐与同层顺序。可拖拽手柄，或使用上下移动按钮。</p></div><div class="mt-4 border border-line-light rounded-lg overflow-hidden">${side}</div><p class="mt-3 text-[12px] text-ink-sub flex items-center gap-1.5"><i data-lucide="lock-keyhole" class="w-4 h-4"></i>设置入口固定保留；隐藏导航不改变业务权限。</p></section><section id="tab-navigation" data-anno="11" class="scroll-mt-4 min-w-0"><div><h2 class="text-[17px] font-semibold text-ink-title">Tab 导航设置</h2><p class="mt-1 text-[12px] text-ink-sub">按模块配置可见 Tab，每组至少保留一项。</p></div><div class="mt-4 grid md:grid-cols-2 xl:grid-cols-1 2xl:grid-cols-2 gap-3">${groups}</div></section></div>`;
+    }
+
+    function renderAgreement() {
+      return `<article id="agreement-content" data-anno="12" class="max-w-[920px] mx-auto scroll-mt-4"><header class="text-center pb-6 border-b border-line-light"><span class="w-11 h-11 rounded-lg bg-primary-bg text-primary mx-auto flex items-center justify-center"><i data-lucide="file-check-2" class="w-5 h-5"></i></span><h2 class="mt-4 text-[22px] font-semibold text-ink-title">服务协议</h2><p class="mt-2 mono text-[12px] text-ink-sub">更新日期：2024年1月1日</p></header><div class="mt-6 h-[min(620px,calc(100vh-310px))] min-h-[360px] overflow-y-auto pr-3 text-[14px] leading-8 text-ink-body"><h3 class="text-[16px] font-semibold text-ink-title">序言</h3><p class="mt-2">云登浏览器由杭州辰链信息科技有限公司（以下简称“辰链公司”或“我们”）开发和运营。请在使用产品与服务前阅读本协议及相关隐私规则。</p><div class="mt-6 space-y-6"><section><h3 class="font-semibold text-ink-title">一、我们如何收集和使用您的个人/企业信息</h3><p class="mt-2">我们仅在提供账号、团队协作、环境运行和安全保障所必要的范围内处理相关信息。具体字段、用途、保存期限和授权方式应以正式发布文本为准。</p></section><section><h3 class="font-semibold text-ink-title">二、我们如何存储您的个人/企业信息</h3><p class="mt-2">信息存储区域、期限、备份与删除机制由正式隐私政策说明；原型页面不构成实际数据处理承诺。</p></section><section><h3 class="font-semibold text-ink-title">三、我们如何转移、公开您的个人/企业信息</h3><p class="mt-2">除法律要求、获得授权或实现已说明的服务目的外，不应擅自转移或公开相关信息。</p></section><section><h3 class="font-semibold text-ink-title">四、我们如何保护您的个人/企业信息</h3><p class="mt-2">通过访问控制、传输保护、审计和安全响应等措施降低信息风险，具体措施以正式政策和安全规范为准。</p></section><section><h3 class="font-semibold text-ink-title">五、您管理个人/企业信息的权利</h3><p class="mt-2">用户可以依法访问、更正、删除或撤回授权；可操作入口和处理时限由正式协议列明。</p></section><section><h3 class="font-semibold text-ink-title">六、未成年人个人信息的保护</h3><p class="mt-2">产品面向企业及专业用户，涉及未成年人信息时应按照适用法律采取额外保护措施。</p></section><section><h3 class="font-semibold text-ink-title">七、隐私政策的变更和修订</h3><p class="mt-2">重大变更应通过合理方式通知，并保留版本、更新时间和生效时间。</p></section><section><h3 class="font-semibold text-ink-title">八、如何联系我们</h3><p class="mt-2">正式联系方式、受理流程和响应时限由法务审定后的服务协议统一发布。</p></section></div><div class="mt-8 rounded bg-warning-bg px-4 py-3 text-[12px] leading-6 text-warning"><strong>原型说明：</strong>以上为结构性代表文本，不是正式法律条款。生产上线必须替换为法务审核并可追溯版本的完整正文。</div></div></article>`;
+    }
+
+    function renderContent() {
+      const html=activeTab==='local'?renderLocal():activeTab==='personal'?renderPersonal():activeTab==='team'?renderTeam():activeTab==='navigation'?renderNavigation():renderAgreement();
+      $('settingContent').innerHTML=html;
+      bindContentEvents();
+      refreshIconsAndAnno();
+    }
+    function renderAll() { renderTabs(); renderSubnav(); renderContent(); }
+
+    function updateSetting(path,value) { setPath(settings,path,value); renderContent(); simulateSave(); }
+    function validatePreloadUrl() {
+      const input=$('preloadUrl'); if(!input) return true;
+      const value=input.value.trim(); const valid=/^https?:\/\/[^\s]+$/i.test(value);
+      input.classList.toggle('border-danger',!valid); $('preloadError').classList.toggle('hidden',valid);
+      if(valid && value!==settings.team.preloadUrl){ settings.team.preloadUrl=value; simulateSave(); }
+      return valid;
+    }
+    function bindContentEvents() {
+      $('checkVersionBtn')?.addEventListener('click',event=>{const button=event.currentTarget; button.disabled=true; button.innerHTML='<i data-lucide="loader-circle" class="w-4 h-4 animate-spin"></i>检查中'; lucide.createIcons(); setTimeout(()=>{button.disabled=false;button.innerHTML='<i data-lucide="refresh-cw" class="w-4 h-4"></i>检查更新';lucide.createIcons();toast('当前已是最新版本');},700);});
+      $('localDownloadAll')?.addEventListener('click',downloadAll);
+      document.querySelectorAll('[data-kernel-action]').forEach(button=>button.addEventListener('click',()=>downloadKernel(button.dataset.kernelAction)));
+      document.querySelectorAll('[data-setting]').forEach(control=>control.addEventListener('change',()=>{setPath(settings,control.dataset.setting,control.value);simulateSave();}));
+      document.querySelectorAll('[data-launch-rule]').forEach(button=>button.addEventListener('click',()=>{settings.personal.batchLaunchRule=button.dataset.launchRule;simulateSave();renderContent();}));
+      document.querySelectorAll('[data-segment]').forEach(button=>button.addEventListener('click',()=>{const path=button.dataset.segment;let value=button.dataset.value;if(value==='true'||value==='false')value=value==='true';setPath(settings,path,value);simulateSave();renderContent();}));
+      document.querySelectorAll('[data-switch]').forEach(button=>button.addEventListener('click',()=>handleSwitch(button.dataset.switch,button)));
+      $('preloadUrl')?.addEventListener('blur',validatePreloadUrl);
+      $('preloadUrl')?.addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();validatePreloadUrl();}});
+      document.querySelectorAll('[data-move]').forEach(button=>button.addEventListener('click',()=>moveNavigation(button.dataset.parent,button.dataset.id,button.dataset.move)));
+      document.querySelectorAll('.sortable-row').forEach(row=>{row.addEventListener('dragstart',()=>{draggedItem={id:row.dataset.sortId,parent:row.dataset.parent};row.classList.add('dragging');});row.addEventListener('dragend',()=>{row.classList.remove('dragging');draggedItem=null;});row.addEventListener('dragover',event=>event.preventDefault());row.addEventListener('drop',event=>{event.preventDefault();if(!draggedItem||draggedItem.parent!==row.dataset.parent||draggedItem.id===row.dataset.sortId)return;reorderNavigation(row.dataset.parent,draggedItem.id,row.dataset.sortId);});});
+    }
+    function handleSwitch(path,button) {
+      if(path==='team.proxyDataPermission' && !settings.team.proxyDataPermission){ permissionTrigger=button; openPermissionModal(); return; }
+      if(path.startsWith('navigation.')) { const [,parent,id]=path.split('.'); const collection=parent==='root'?settings.sideNavigation:settings.sideNavigation.find(item=>item.id===parent)?.children; const item=collection?.find(entry=>entry.id===id); if(item){item.visible=!item.visible;simulateSave();renderContent();} return; }
+      if(path.startsWith('tabs.')) { const [,groupId,itemId]=path.split('.');const group=settings.tabGroups.find(item=>item.id===groupId);const item=group?.items.find(entry=>entry.id===itemId);if(!item)return;if(item.visible&&group.items.filter(entry=>entry.visible).length===1){toast('每组至少保留一个可见 Tab','warning');return;}item.visible=!item.visible;simulateSave();renderContent();return; }
+      updateSetting(path,!getPath(settings,path));
+    }
+    function moveNavigation(parent,id,direction) { const collection=parent==='root'?settings.sideNavigation:settings.sideNavigation.find(item=>item.id===parent)?.children;if(!collection)return;const index=collection.findIndex(item=>item.id===id);const target=index+(direction==='up'?-1:1);if(target<0||target>=collection.length)return;[collection[index],collection[target]]=[collection[target],collection[index]];simulateSave();renderContent(); }
+    function reorderNavigation(parent,sourceId,targetId) { const collection=parent==='root'?settings.sideNavigation:settings.sideNavigation.find(item=>item.id===parent)?.children;if(!collection)return;const source=collection.findIndex(item=>item.id===sourceId),target=collection.findIndex(item=>item.id===targetId);if(source<0||target<0)return;const [item]=collection.splice(source,1);collection.splice(target,0,item);simulateSave();renderContent(); }
+
+    function downloadKernel(id) {
+      const kernel=kernels.find(item=>item.id===id); if(!kernel||kernel.status==='downloading'||kernel.status==='latest') return;
+      kernel.status='downloading'; kernel.progress=4; renderContent(); renderUpdateCenter();
+      if(downloadTimers.has(id))clearInterval(downloadTimers.get(id));
+      const timer=setInterval(()=>{kernel.progress=Math.min(100,kernel.progress+Math.floor(Math.random()*13)+7);if(kernel.progress>=100){clearInterval(timer);downloadTimers.delete(id);kernel.status='latest';kernel.progress=100;toast(`${kernel.name} 下载完成`);updateUpdateDot();}if(activeTab==='local')renderContent();renderUpdateCenter();},420);
+      downloadTimers.set(id,timer);
+    }
+    function downloadAll() { const pending=kernels.filter(item=>item.status==='not_downloaded'||item.status==='failed');if(!pending.length){toast('没有待下载的内核','info');return;}pending.forEach(item=>downloadKernel(item.id));toast(`已加入 ${pending.length} 个下载任务`,'info'); }
+    function updateUpdateDot() { const pending=kernels.some(item=>item.status==='not_downloaded'||item.status==='update_available');$('updateDot').classList.toggle('hidden',!pending); }
+    function renderUpdateCenter() {
+      if($('updateDrawer').classList.contains('hidden'))return;
+      const visible=kernels.filter(item=>['147','146','107'].includes(item.id)||item.status==='downloading');
+      $('updateSummary').textContent=`${kernels.filter(item=>item.status==='not_downloaded'||item.status==='update_available').length} 项可更新`;
+      $('updateList').innerHTML=visible.map(kernel=>{const status=statusView(kernel);return `<article class="border border-line-light rounded-lg p-4"><div class="flex items-start justify-between gap-3"><div><div class="flex flex-wrap items-center gap-2"><strong class="text-ink-title">${kernel.name.toLowerCase()} 内核</strong><span class="mono text-[11px] text-ink-sub">${kernel.version}</span>${kernel.id==='147'?'<span class="status-pill bg-danger-bg text-danger">NEW</span>':''}</div><ul class="mt-3 pl-5 list-disc text-[12px] leading-6 text-ink-sub">${releaseNotes.map(note=>`<li>${note}</li>`).join('')}</ul></div><span class="status-pill ${status.tone} shrink-0">${status.label}</span></div>${kernel.status==='downloading'?`<div class="mt-4"><div class="flex justify-between text-[11px] text-ink-sub mb-1.5"><span>下载中</span><span class="mono">${Math.round(kernel.progress)}%</span></div><div class="progress-track"><div class="progress-value" style="width:${kernel.progress}%"></div></div></div>`:`<div class="mt-4 flex justify-end">${kernelAction(kernel)}</div>`}</article>`;}).join('');
+      $('updateList').querySelectorAll('[data-kernel-action]').forEach(button=>button.addEventListener('click',()=>downloadKernel(button.dataset.kernelAction)));
+      refreshIconsAndAnno();
+    }
+    function openUpdateCenter() { $('updateOverlay').classList.remove('hidden');$('updateDrawer').classList.remove('hidden');$('updateDrawer').classList.add('flex');$('updateCenterBtn').setAttribute('aria-expanded','true');pushAnnoScope($('updateDrawer'));renderUpdateCenter();setTimeout(()=>$('closeUpdate').focus(),0); }
+    function closeUpdateCenter() { $('updateOverlay').classList.add('hidden');$('updateDrawer').classList.add('hidden');$('updateDrawer').classList.remove('flex');$('updateCenterBtn').setAttribute('aria-expanded','false');popAnnoScope($('updateDrawer'));$('updateCenterBtn').focus(); }
+    function openPermissionModal() { $('permissionModal').classList.remove('hidden');$('permissionModal').classList.add('flex');pushAnnoScope($('permissionPanel'));setTimeout(()=>$('cancelPermission').focus(),0); }
+    function closePermissionModal() { $('permissionModal').classList.add('hidden');$('permissionModal').classList.remove('flex');popAnnoScope($('permissionPanel'));permissionTrigger?.focus();permissionTrigger=null; }
+    function confirmPermission() { settings.team.proxyDataPermission=true;closePermissionModal();simulateSave();renderContent(); }
+
+    function pushAnnoScope(element) { if(!annoScopeStack.includes(element))annoScopeStack.push(element);renderAnnoBadges(); }
+    function popAnnoScope(element) { annoScopeStack=annoScopeStack.filter(item=>item!==element);renderAnnoBadges(); }
+    function renderAnnoBadges() { const layer=$('annoLayer');layer.innerHTML='';if(!annoVisible||!$('annoPopup').classList.contains('hidden'))return;const root=annoScopeStack.at(-1)||document;const seen=new Set();root.querySelectorAll('[data-anno]').forEach(element=>{const id=element.dataset.anno;if(seen.has(id)||!annotations[id])return;const target=(element.getBoundingClientRect().width>innerWidth*.7?element.querySelector('h1,h2,h3,button')||element:element);const rect=target.getBoundingClientRect();if(!rect.width||!rect.height||rect.bottom<0||rect.top>innerHeight)return;seen.add(id);const badge=document.createElement('button');badge.className='anno-badge';badge.textContent=id;badge.style.left=Math.max(2,Math.min(innerWidth-22,rect.right-10))+'px';badge.style.top=Math.max(2,Math.min(innerHeight-22,rect.top-10))+'px';badge.setAttribute('aria-label',`查看标注 ${id}`);badge.onclick=()=>showAnno(id);layer.appendChild(badge);}); }
+    function showAnno(id) { const item=annotations[id];if(!item)return;$('annoTitle').textContent=`${id}. ${item.title}`;$('annoDesc').innerHTML=`<ul class="list-disc pl-5 space-y-2">${item.desc.map(text=>`<li>${text}</li>`).join('')}</ul>`;$('annoPopup').classList.remove('hidden');$('annoPopup').classList.add('flex');renderAnnoBadges();$('closeAnno').focus(); }
+    function closeAnno() { $('annoPopup').classList.add('hidden');$('annoPopup').classList.remove('flex');renderAnnoBadges(); }
+
+    $('topTabs').addEventListener('click',event=>{const button=event.target.closest('[data-tab]');if(!button)return;activeTab=button.dataset.tab;activeSub=tabs.find(item=>item.id===activeTab).subs[0][0];renderAll();$('mainContent').scrollTop=0;});
+    $('settingNav').addEventListener('click',event=>{const button=event.target.closest('[data-sub]');if(!button)return;activeSub=button.dataset.sub;renderSubnav();document.getElementById(activeSub)?.scrollIntoView({behavior:'smooth',block:'start'});});
+    document.querySelectorAll('[data-nav-group]').forEach(button=>button.addEventListener('click',()=>{const group=button.dataset.navGroup,target=$(group+'Nav'),expanded=button.getAttribute('aria-expanded')==='true';button.setAttribute('aria-expanded',String(!expanded));target.classList.toggle('hidden',expanded);button.querySelector('.nav-chevron').setAttribute('data-lucide',expanded?'chevron-right':'chevron-down');lucide.createIcons();}));
+    $('collapseBtn').addEventListener('click',()=>{sidebarCompact=!sidebarCompact;$('sidebar').classList.toggle('compact',sidebarCompact);$('collapseBtn').innerHTML=`<i data-lucide="${sidebarCompact?'panel-left-open':'panel-left-close'}" class="w-[18px] h-[18px]"></i>`;$('collapseBtn').setAttribute('aria-label',sidebarCompact?'展开侧栏':'收起侧栏');lucide.createIcons();renderAnnoBadges();});
+    $('mobileMenu').addEventListener('click',()=>{$('sidebar').classList.toggle('compact');});
+    $('updateCenterBtn').addEventListener('click',openUpdateCenter);$('closeUpdate').addEventListener('click',closeUpdateCenter);$('updateOverlay').addEventListener('click',closeUpdateCenter);$('downloadAllBtn').addEventListener('click',downloadAll);
+    $('closePermission').addEventListener('click',closePermissionModal);$('cancelPermission').addEventListener('click',closePermissionModal);$('confirmPermission').addEventListener('click',confirmPermission);$('permissionModal').addEventListener('click',event=>{if(event.target===$('permissionModal'))closePermissionModal();});
+    $('guideBtn').addEventListener('click',()=>{$('helpPopover').classList.toggle('hidden');$('accountPopover').classList.add('hidden');});$('sideHelpBtn').addEventListener('click',()=>{$('helpPopover').classList.toggle('hidden');});$('accountBtn').addEventListener('click',()=>{$('accountPopover').classList.toggle('hidden');$('helpPopover').classList.add('hidden');});$('noticeBtn').addEventListener('click',()=>toast('暂无新通知','info'));
+    document.addEventListener('click',event=>{if(!event.target.closest('#guideBtn,#sideHelpBtn,#helpPopover'))$('helpPopover').classList.add('hidden');if(!event.target.closest('#accountBtn,#accountPopover'))$('accountPopover').classList.add('hidden');});
+    $('annoToggle').addEventListener('click',()=>{annoVisible=!annoVisible;$('annoToggle').classList.toggle('bg-primary',annoVisible);$('annoToggle').classList.toggle('bg-ink-muted',!annoVisible);$('annoToggle').setAttribute('aria-pressed',String(annoVisible));$('annoToggle').querySelector('span').textContent=annoVisible?'隐藏标注':'显示标注';renderAnnoBadges();});$('closeAnno').addEventListener('click',closeAnno);$('annoPopup').addEventListener('click',event=>{if(event.target===$('annoPopup'))closeAnno();});
+    $('mainContent').addEventListener('scroll',renderAnnoBadges,{passive:true});window.addEventListener('resize',renderAnnoBadges);
+    document.addEventListener('keydown',event=>{if(event.key!=='Escape')return;if(!$('annoPopup').classList.contains('hidden'))closeAnno();else if(!$('permissionModal').classList.contains('hidden'))closePermissionModal();else if(!$('updateDrawer').classList.contains('hidden'))closeUpdateCenter();else{$('helpPopover').classList.add('hidden');$('accountPopover').classList.add('hidden');}});
+
+    const requestedTab=new URLSearchParams(location.search).get('tab');if(tabs.some(tab=>tab.id===requestedTab)){activeTab=requestedTab;activeSub=tabs.find(tab=>tab.id===requestedTab).subs[0][0];}
+    renderAll();updateUpdateDot();refreshIconsAndAnno();
+    if(new URLSearchParams(location.search).get('panel')==='updates')openUpdateCenter();
+  </script>
+  <script src="公共导航.js?v=20260813"></script>
+</body>
+</html>

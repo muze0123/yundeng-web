@@ -1,0 +1,37 @@
+/* 通用分页器组件 · 分页器PRD规范
+ * 主色：沿用项目设计系统 #0066FF（与PRD #1677ff等价色阶）
+ * 使用：
+ *  <div class="yd-pagination" data-yd-pager></div>
+ *  实例化 new YDPager(el, options)
+ */
+.yd-pagination{display:flex;justify-content:flex-end;align-items:center;flex-wrap:wrap;gap:12px;font-size:12px;color:#3A3F4A;line-height:1}
+/* 核心分页导航区 */
+.yd-pager-nav{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.yd-pager-btn{min-width:32px;height:32px;padding:0 10px;border:1px solid #DFE1E5;border-radius:4px;background:#fff;color:#3A3F4A;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;user-select:none;font:inherit;transition:all .15s ease;box-sizing:border-box}
+.yd-pager-btn:hover:not(:disabled):not(.is-active){border-color:#0066FF;color:#0066FF;background:#E6F0FF}
+.yd-pager-btn:disabled{cursor:not-allowed;color:#9DA2AC;background:#F0F1F3;border-color:#DFE1E5}
+.yd-pager-btn.is-icon{padding:0 8px}
+.yd-pager-btn.is-active{background:#0066FF;border-color:#0066FF;color:#fff;cursor:default}
+.yd-pager-btn.is-active:hover{background:#0066FF;color:#fff;border-color:#0066FF}
+.yd-pager-ellipsis{min-width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;color:#6E7685;user-select:none}
+/* 每页条数选择区 */
+.yd-pager-size{position:relative}
+.yd-pager-size select{height:32px;padding:0 26px 0 10px;border:1px solid #DFE1E5;border-radius:4px;background:#fff url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236E7685' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>") no-repeat right 8px center;color:#3A3F4A;cursor:pointer;font:inherit;-webkit-appearance:none;appearance:none;outline:none}
+.yd-pager-size select:hover{border-color:#0066FF}
+.yd-pager-size select:focus{border-color:#0066FF;box-shadow:0 0 0 2px rgba(0,102,255,.12)}
+/* 跳转与数据统计区 */
+.yd-pager-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.yd-pager-jump{display:flex;align-items:center;gap:6px;color:#6E7685}
+.yd-pager-jump input{width:56px;height:32px;padding:0 8px;border:1px solid #DFE1E5;border-radius:4px;background:#fff;color:#3A3F4A;text-align:center;font:inherit;outline:none;font-family:'JetBrains Mono',monospace;box-sizing:border-box}
+.yd-pager-jump input:hover{border-color:#0066FF}
+.yd-pager-jump input:focus{border-color:#0066FF;box-shadow:0 0 0 2px rgba(0,102,255,.12)}
+.yd-pager-jump input.is-error{border-color:#D9001B;color:#D9001B}
+.yd-pager-stats{color:#6E7685;margin-left:4px;white-space:nowrap}
+.yd-pager-stats b{font-weight:500;color:#3A3F4A}
+.yd-pager-error-tip{color:#D9001B;min-width:0;transition:all .15s}
+/* 窄屏适配 */
+@media(max-width:720px){
+  .yd-pagination{gap:10px;justify-content:flex-start}
+  .yd-pager-right{order:3;width:100%;justify-content:flex-start}
+  .yd-pager-stats{margin-left:0}
+}
