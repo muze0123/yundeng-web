@@ -328,6 +328,8 @@
 - 右侧滑出；用于详情展示；宽度 **800px**（`max-width:100%` 响应式）；
 - 遮罩 `rgba(0,0,0,.3)`；阴影 `-4px 0 24px rgba(0,0,0,.1)`；入场动画 `ds-drawer-in .22s ease`；
 - 结构：标题栏（16px/600 + 关闭 ×）+ 内容区（`overflow-y:auto`）+ 底部按钮。
+- 默认业务 Drawer 仍由 ModuleFrame 在 iframe 视口内渲染。仅当模块 PRD 明确要求遮罩整个 App Shell 时，允许使用 SystemFrame 的受信全局 Drawer Portal：ModuleFrame 只传结构化视图模型，SystemFrame 校验消息来源与业务白名单后用受控 DOM 渲染，禁止传递原始 HTML 或直接操作父文档。
+- 全局业务 Drawer 的蒙版从 BrowserChrome 底部开始，覆盖 TopBar、Sidebar 与 MainContent；Drawer 面板顶部与 MainContent 顶部对齐、底部贴合视口底部，桌面宽 800px，小于 768px 时占满可用宽度。打开时背景必须 `inert` 并锁定滚动，关闭后恢复焦点、滚动及原有可交互状态。
 
 ### 5.7.1 在线客服会话窗 Chat Panel
 
@@ -453,7 +455,7 @@
 | hover | `transform: scale(1.2)` |
 | 定位 | `position: fixed`，动态计算目标元素右上角坐标（`rect.top - 10`, `rect.right - 10`） |
 
-**标准悬浮开关**：使用“tags 图标 + 状态文案”的 32px 高胶囊按钮，右侧间距 8px。标注默认隐藏，开关默认文案为“显示标注”；单击后显示标注并将文案切换为“隐藏标注”，再次单击恢复默认隐藏状态。长按 350ms 后可沿页面右侧上下拖拽，位置限制在视口安全区并持久化。拖拽完成不得误触发显隐切换。全局 Modal 由 iframe 承载业务内容时，开关挂载于 SystemFrame 顶层视口右侧、位于 Modal 面板之外，通过受控消息切换 iframe 内标注；窄视口可收敛为右缘图标按钮。
+**标准悬浮开关**：使用“tags 图标 + 状态文案”的 32px 高胶囊按钮，右侧间距 8px。标注默认隐藏，开关默认文案为“显示标注”；单击后显示标注并将文案切换为“隐藏标注”，再次单击恢复默认隐藏状态。长按 350ms 后可沿页面右侧上下拖拽，位置限制在视口安全区并持久化。拖拽完成不得误触发显隐切换。全局 Modal/Drawer 承载模块业务内容时，开关挂载于 SystemFrame 顶层视口右侧且必须位于面板之外；全局 Drawer 打开期间固定在 BrowserChrome 下方、Drawer 顶部上方的导航遮罩带内，并暂停拖拽，关闭后恢复原位置。窄视口可收敛为右缘图标按钮。
 
 **业务页面标注隔离**：复用 App Shell 的业务页面只渲染当前业务内容区及该页面固定操作栏的标注，侧栏、顶部导航和系统级浮层不显示编号。编号从 1 开始，按上→下、左→右连续排列；折叠区或子流程编号仅在对应内容可见时显示。任何会改变文档流高度的控件开合后必须重新计算标注位置。
 
@@ -507,7 +509,7 @@
 - MainContent 不再直接注入业务 DOM；Router Outlet iframe 无边框、无装饰圆角、占满剩余区域。壳层不为 iframe 外加卡片或第二层内边距，避免“卡片套卡片”和双重 16px 留白；
 - ModuleFrame 的业务根容器由公共层统一设置四边 16px 内边距，并保持 `width:100%`、`max-width:none`、`margin:0`；业务根内不得再使用页面级 `max-width` + `mx-auto` 收窄整个页面。表单、上传流程、协议正文等局部内容仍可按业务需要限宽；卡片内部继续使用 20px/24px 内边距，不与页面外层 16px 混用；
 - 业务模块在 `<head>` 直接加载同版本 `公共导航.css` 与 `公共导航.js`，公共 CSS 先于公共 JS。模块首帧在直开跳转或 iframe 壳层裁剪完成前保持不可见，适配完成后一次性显示，禁止短暂露出模块自带的旧侧栏或旧 TopBar；
-- SystemFrame 独占 BrowserChrome、TopBar、Sidebar、全局助手、全局 Toast / Popover / Dialog / Drawer 与全局标注；这些元素相对顶层视口定位。业务模块只渲染业务内容、业务弹层与业务标注，业务弹层相对 iframe 视口定位，不跨越 Sidebar 或 TopBar；
+- SystemFrame 独占 BrowserChrome、TopBar、Sidebar、全局助手、全局 Toast / Popover / Dialog / Drawer 与全局标注；这些元素相对顶层视口定位。业务模块默认只渲染业务内容、业务弹层与业务标注，业务弹层相对 iframe 视口定位、不跨越 Sidebar 或 TopBar；模块 PRD 明确要求全局遮罩的业务详情属于受控例外，只能通过结构化消息调用 SystemFrame 的全局 Drawer Portal，不得传 HTML、复制模块 DOM 或直接修改父页面；
 - iframe 加载态/失败态由 SystemFrame 覆盖 Router Outlet 展示，使用 `bg-page` + 居中状态组件；模块成功加载后完全移除遮罩。业务数据 Empty 只能在 iframe 内使用模块空状态，不与外层加载失败样式混用；
 - 侧栏容器无边框、无阴影；完整态 220px，紧凑态 68px，宽度过渡 220ms，`prefers-reduced-motion` 下取消动画；
 - 侧栏折叠把手使用 14×64px、圆角 8px、无边线，默认背景为 `#E5E6ED`，按钮 hover 背景为 `#ACB0BA`；箭头使用 10px 白色实心 Lucide `triangle`，完整态向左、紧凑态向右，并使用极轻暗色投影保证浅灰背景下可辨识。把手绝对定位于右边缘垂直中心；完整态与紧凑态默认透明且不接收鼠标事件，鼠标移入侧栏时以 180ms 线性透明度/位移动画显示并恢复点击，鼠标移出后以同一线性动画隐藏；键盘导航时仅在把手自身 `focus-visible` 时显示；

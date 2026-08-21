@@ -52,12 +52,13 @@
 | S-11 | 成员收起或展开侧栏 | 鼠标移入侧栏或键盘聚焦侧栏边缘把手后点击 | 侧栏在 220px 与 68px 间切换并持久化 | 紧凑态仅显示一级功能图标，主内容立即获得可用宽度 |
 | S-12 | 成员直接双击业务文件 | 顶层打开 `环境管理.html` 等模块文件 | 模块识别自身 key 并跳转相邻 `系统框架.html?page=<key>` | `file://` 下可预览且不发生重定向循环 |
 | S-13 | 成员使用浏览器前进、后退或刷新 | 改变顶层历史记录或刷新 SystemFrame | 根据顶层历史或当前 `?page=<key>` 恢复对应 iframe、BrowserChrome 标签标题与菜单高亮 | 当前模块完整恢复，不固定回到默认页，不产生嵌套壳层 |
+| S-14 | 成员查看需全局遮罩的模块详情 | 在受信 ModuleFrame 点击已登记的业务详情入口 | ModuleFrame 发送结构化视图模型，SystemFrame 渲染全局右侧 Drawer | 蒙版覆盖 TopBar、Sidebar 与 MainContent，面板从 MainContent 顶部开始；关闭后焦点回到模块触发入口 |
 
 ### 1.3 范围与非目标
 
-**本期包含**：置顶 BrowserChrome、可交互的标签切换/新增/关闭、搜索框/地址框、扩展程序/下载/更多的基础入口、全宽 TopBar 品牌与全局操作、TopBar 新手引导全局 Modal、原型级首次展示模拟、可配置左侧菜单、iframe Router Outlet、`?page=<key>` 路由与历史恢复、业务文件直开回框架、嵌入模式禁建壳、侧栏边缘折叠把手与响应式行为、全局通知与语言入口、全局智能助手、Toast / Popover / Dialog / Drawer 容器、页面级 Loading / Empty / Error 状态、Mock 会话与导航数据、父子页面职责隔离和 Portal 标注系统接入。
+**本期包含**：置顶 BrowserChrome、可交互的标签切换/新增/关闭、搜索框/地址框、扩展程序/下载/更多的基础入口、全宽 TopBar 品牌与全局操作、TopBar 新手引导全局 Modal、原型级首次展示模拟、可配置左侧菜单、iframe Router Outlet、`?page=<key>` 路由与历史恢复、业务文件直开回框架、嵌入模式禁建壳、侧栏边缘折叠把手与响应式行为、全局通知与语言入口、全局智能助手、Toast / Popover / Dialog / Drawer 容器、受信结构化业务 Drawer Portal、页面级 Loading / Empty / Error 状态、Mock 会话与导航数据、父子页面职责隔离和 Portal 标注系统接入。
 
-**本期不包含**：真实浏览器内核、网页渲染、网络请求、历史记录与真实搜索服务；扩展程序真实安装、启停、权限变更和管理能力；下载管理器、真实下载任务/进度/历史；“更多”菜单动作的真实系统能力；环境列表/详情、代理购买、商城下单、团队成员 CRUD、API 或 RPA 的业务逻辑；会员权益真实支付；通知中心真实消息数据；智能助手问答引擎；服务端鉴权接口。Router Outlet 只编排现有静态模块，不把模块 DOM 合并进 SystemFrame，也不跨 iframe 接管模块内部筛选、表单或弹层状态。
+**本期不包含**：真实浏览器内核、网页渲染、网络请求、历史记录与真实搜索服务；扩展程序真实安装、启停、权限变更和管理能力；下载管理器、真实下载任务/进度/历史；“更多”菜单动作的真实系统能力；环境列表/详情、代理购买、商城下单、团队成员 CRUD、API 或 RPA 的业务逻辑；会员权益真实支付；通知中心真实消息数据；智能助手问答引擎；服务端鉴权接口。Router Outlet 只编排现有静态模块，不把模块 DOM 合并进 SystemFrame，也不跨 iframe 接管模块内部筛选或表单状态；全局业务 Drawer 仅渲染已登记模块发来的结构化数据，不接受原始 HTML、脚本或父页面选择器。
 
 ---
 
@@ -195,8 +196,8 @@ AppShell
 
 | 主体 | 独占职责 | 禁止事项 |
 |---|---|---|
-| SystemFrame | BrowserChrome、TopBar、Sidebar、全局新手引导、全局助手、全局 Toast / Popover / Dialog / Drawer、顶层 `?page=` 历史、模块加载状态、全局标注 | 不实现业务表格/表单，不把普通模块业务弹层提升为全局弹层，不复制模块 DOM |
-| ModuleFrame | 当前模块业务内容、业务筛选/表单、业务弹窗/抽屉、业务 Mock 数据、业务标注与模块内部 query/hash；业务根使用四边 16px 内边距 | 不创建壳层、全局助手或全局弹层，不直接改写父页面菜单 DOM，不在 iframe 内嵌套 SystemFrame，不使用页面级限宽容器收窄整个业务区 |
+| SystemFrame | BrowserChrome、TopBar、Sidebar、全局新手引导、全局助手、全局 Toast / Popover / Dialog / Drawer、受信结构化业务 Drawer Portal、顶层 `?page=` 历史、模块加载状态、全局标注 | 不实现业务筛选/表单逻辑，不把普通模块业务弹层提升为全局弹层，不接受原始 HTML 或复制模块 DOM |
+| ModuleFrame | 当前模块业务内容、业务筛选/表单、默认业务弹窗/抽屉、业务 Mock 数据、业务标注与模块内部 query/hash；模块 PRD 明确要求时可向受信 Drawer Portal 发送结构化视图模型；业务根使用四边 16px 内边距 | 不创建壳层、全局助手或全局弹层，不直接改写父页面 DOM，不向父页面传 HTML/脚本/事件处理器，不在 iframe 内嵌套 SystemFrame，不使用页面级限宽容器收窄整个业务区 |
 | 公共脚本 | 顶层创建/绑定 SystemFrame；嵌入态只加载模块需要的公共 CSS、Lucide、分页和兼容增强 | iframe 内不得执行 `ensureShell`、`setupBrowserFrame`、`setupTopbar`、`setupAssistant` 等壳层创建逻辑 |
 
 - Router Outlet iframe 无边框、宽高占满 MainContent 可用区域；SystemFrame 的 MainContent 保持 0px 内边距，ModuleFrame 业务根由公共层统一设置四边 16px 内边距，且保持全宽、无页面级 `max-width` 或 `mx-auto`；SystemFrame 管理外层滚动边界，模块页面管理自身业务滚动，不出现双滚动条；
@@ -205,6 +206,7 @@ AppShell
 - ModuleFrame 内部 query/hash 发生变化时，通过受信父子消息同步为外层 `moduleSearch` / `moduleHash`，仅替换当前顶层历史项；刷新时再还原给 iframe，且任何模块参数都不得覆盖外层 `page`；
 - iframe `load` 前显示模块 Loading，成功后移除；文件缺失或加载失败显示 SystemFrame Error 与恢复入口，不把框架加载错误伪装成模块业务 Empty；
 - `file://` 下使用相对 URL 构造 iframe 地址和回框架地址，不依赖 HTTP origin。父子消息若用于导航或状态同步，必须校验 `event.source === moduleFrame.contentWindow`，不能仅依赖 `event.origin`。
+- 受信业务 Drawer 仅接受已登记 `drawer.id` 和结构化纯数据；SystemFrame 校验 `event.source` 后以 `textContent`/受控 DOM 渲染并限制区块、字段、列、行与文本长度。蒙版从 BrowserChrome 底部覆盖 TopBar、Sidebar 与 MainContent，面板顶部与 MainContent 顶部对齐并延伸至视口底部；打开时锁滚动并将背景设为 `inert`，关闭后通知原 ModuleFrame 恢复触发点焦点。
 
 ---
 
@@ -235,11 +237,11 @@ const shellState = {
 
 ## 5. Portal 标注要求
 
-`系统框架.html` 作为框架验收页，需要标注 BrowserChrome 标签切换、关闭标签、新增标签、地址提交、扩展程序入口、下载入口、更多入口、平台品牌跳转、侧栏折叠把手、新建浏览器和菜单展开/路由切换。本期 SystemFrame 全局标注使用 `#1–#20` 连续编号；其中 `#1` 仅覆盖标签切换，`#2` 独立覆盖关闭标签，禁止把两者合并到同一个标注目标。其余编号按页面从上到下、同层从左到右排列，并与实际 DOM 一一对应。
+`系统框架.html` 作为框架验收页，需要标注 BrowserChrome 标签切换、关闭标签、新增标签、地址提交、扩展程序入口、下载入口、更多入口、平台品牌跳转、侧栏折叠把手、新建浏览器、菜单展开/路由切换和受信全局业务 Drawer。本期 SystemFrame 全局标注使用 `#1–#23` 连续编号；其中 `#1` 仅覆盖标签切换，`#2` 独立覆盖关闭标签，`#21–#23` 分别覆盖全局订单详情、关闭入口与商品列表/子订单号规则。其余编号按页面从上到下、同层从左到右排列，并与实际 DOM 一一对应。
 
 扩展程序、下载与更多的标注文案必须明确当前为本地 Mock：扩展条目、权限说明、缩放和菜单动作不连接真实浏览器能力，下载不伪造任务/进度/历史。侧栏把手标注目标必须是按钮本身，不能标在全高侧栏容器上。
 
-SystemFrame 的全局标注只覆盖 BrowserChrome、TopBar、Sidebar、全局助手、全局弹层和 Router Outlet 状态；地址框标注同时覆盖搜索提交与书签星标。ModuleFrame 只显示当前业务内容、业务操作栏与业务弹层标注，编号从 1 独立连续排列，不继承系统框架页的全局编号。业务 Portal 保留在 iframe 文档内，父文档不得通过跨文档坐标复制徽标；切换、前进、后退或刷新模块后，外层与内层分别重算各自标注。
+SystemFrame 的全局标注只覆盖 BrowserChrome、TopBar、Sidebar、全局助手、全局弹层、受信全局业务 Drawer 和 Router Outlet 状态；地址框标注同时覆盖搜索提交与书签星标。ModuleFrame 只显示当前业务内容、业务操作栏与默认业务弹层标注，编号从 1 独立连续排列，不继承系统框架页的全局编号。业务标注默认保留在 iframe 文档内；受信全局业务 Drawer 是明确例外，其内容标注由父文档基于自身 DOM 渲染，不通过跨文档坐标复制徽标。切换、前进、后退或刷新模块后，外层与内层分别重算各自标注。
 
 ---
 
@@ -257,10 +259,11 @@ SystemFrame 的全局标注只覆盖 BrowserChrome、TopBar、Sidebar、全局�
 | AC-08 | 高度、间距与滚动 | 标签行 32px、工具行 52px（较原规格增加 16px）、标签行/工具行/TopBar 之间无额外垂直间距、TopBar 56px，总占高 140px；BrowserChrome 内部左右间距 8px；TopBar 与 Workspace 直接相邻；iframe 占满 Router Outlet 且无边框；壳层内边距为 0px、模块业务根四边内边距为 16px，宽屏不因页面级限宽产生额外留白；不出现重复壳层或无意义双滚动 |
 | AC-09 | 响应式 | 1280px 与 768px 均无重叠/裁切；标签溢出可滚动，新增标签按钮仍紧跟标签列表，地址框和扩展程序/下载/更多保持可用；移动侧栏使用遮罩抽屉 |
 | AC-10 | 无障碍 | 图标按钮有 `aria-label`，TopBar 纯图标入口有可见名称气泡；标签语义正确，键盘可完成切换/新增/关闭/提交/折叠，焦点态可见 |
-| AC-11 | 标注 | SystemFrame 全局标注与 ModuleFrame 业务标注分属各自文档、编号独立连续；开关默认隐藏；路由或弹层状态变化后分别重算 |
+| AC-11 | 标注 | SystemFrame 全局标注与 ModuleFrame 业务标注分属各自文档、编号独立连续；受信全局业务 Drawer 使用父文档 `#21–#23` 及父级作用域，不复制 iframe 坐标；开关默认隐藏；路由或弹层状态变化后分别重算 |
 | AC-12 | 唯一外壳 | 仅 SystemFrame 存在 BrowserChrome、TopBar、Sidebar、全局助手和全局弹层；任一 iframe 模块内均无第二套壳层节点 |
 | AC-13 | 直开与本地预览 | 双击任一业务文件自动进入 `系统框架.html?page=<key>`；双击 SystemFrame 可加载默认/指定模块；`file://` 下无循环跳转或空白 iframe |
 | AC-14 | 历史与恢复 | 菜单切换写入历史；BrowserChrome/浏览器前进后退、刷新后 iframe、URL、标签标题与唯一菜单高亮完全一致，TopBar 始终只显示平台级内容；非法 key 可回退 |
 | AC-15 | 工程一致性 | `系统框架.html`、公共导航层、所有引用页缓存参数、`AGENTS.md`、`design.md` 与 `Prototype/设计系统.html` 同步；控制台无 error |
 | AC-16 | 新手引导入口 | TopBar 使用 Lucide `compass`，尺寸、2px 描边、颜色和交互状态与通知 `bell` 保持一致；点击后直接打开全局新手引导 Modal，不再打开旧帮助 Popover；关闭后焦点返回入口，当前模块、筛选、滚动和草稿不变；侧栏“帮助”仍使用 `circle-help` 并进入独立帮助页 |
 | AC-17 | TopBar 图标反馈 | hover / focus-visible 新手引导、通知、界面语言图标时分别显示对应名称气泡，移出/失焦后隐藏；通知、语言与账号 Popover 在鼠标离开入口且未进入面板时 180ms 后关闭，进入面板保持打开，离开入口与面板后关闭；外部点击与 Escape 行为不回归 |
+| AC-18 | 受信全局业务 Drawer | 仅当前 `yundengModuleFrame.contentWindow` 且白名单 `drawer.id` 可打开；只渲染结构化纯数据。蒙版从 BrowserChrome 下方覆盖 TopBar、Sidebar 与 MainContent，面板顶部对齐 MainContent、底部贴合视口且桌面宽 800px；重复打开不破坏滚动快照，背景不可聚焦，关闭按钮/遮罩/Esc 可关闭并恢复 ModuleFrame 原触发点焦点 |

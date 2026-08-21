@@ -456,13 +456,13 @@ document.addEventListener('DOMContentLoaded', async function() {
     </style>
     <div class="yds-router-eyebrow">SystemFrame · Router Contract</div>
     <h2 id="yds-router-title" class="yds-router-title">唯一运行外壳与 iframe Router Outlet</h2>
-    <p class="yds-router-desc">除原型导航、设计系统和登录页外，后台模块统一通过 SystemFrame 运行。壳层与业务模块分别维护自己的 DOM、弹层和标注，公共脚本在 iframe 嵌入态不再创建第二套壳。</p>
+    <p class="yds-router-desc">除原型导航、设计系统和登录页外，后台模块统一通过 SystemFrame 运行。壳层与业务模块分别维护自己的 DOM 与标注；仅模块 PRD 明确要求全局遮罩时，由 SystemFrame 通过受信结构化 Drawer Portal 承载业务详情。</p>
     <div class="yds-router-flow" aria-label="SystemFrame 路由加载流程">
-      <div class="yds-router-node is-primary"><strong>SystemFrame</strong><span>独占 BrowserChrome、TopBar、Sidebar、全局助手、全局弹层与顶层历史。</span><div class="yds-router-url">系统框架.html?page=home</div></div>
+      <div class="yds-router-node is-primary"><strong>SystemFrame</strong><span>独占 BrowserChrome、TopBar、Sidebar、全局助手、全局弹层、受信结构化 Drawer Portal 与顶层历史。</span><div class="yds-router-url">系统框架.html?page=home</div></div>
       <div class="yds-router-arrow" aria-hidden="true">→</div>
       <div class="yds-router-node"><strong>Router Outlet</strong><span>解析稳定 page key，使用无边框 iframe 加载模块，并维护 Loading / Error 状态。</span><div class="yds-router-url">iframe src="首页.html"</div></div>
       <div class="yds-router-arrow" aria-hidden="true">→</div>
-      <div class="yds-router-node"><strong>ModuleFrame</strong><span>只负责业务内容、业务弹层、业务 Mock 数据和从 1 开始的业务标注。</span><div class="yds-router-url">embedded: no shell creation</div></div>
+      <div class="yds-router-node"><strong>ModuleFrame</strong><span>负责业务内容、默认业务弹层、业务 Mock 数据与独立标注；全局详情只发送结构化视图模型。</span><div class="yds-router-url">embedded: no shell creation</div></div>
     </div>
     <div class="yds-router-table-wrap">
       <table class="yds-router-table">
@@ -477,7 +477,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     </div>
     <div class="yds-router-foot">
       <div class="yds-router-rule"><strong>嵌入模式</strong><span>公共脚本保留公共样式、图标和分页增强，但不创建 BrowserChrome、TopBar、Sidebar、助手或全局弹层。</span></div>
-      <div class="yds-router-rule"><strong>标注与弹层</strong><span>全局能力留在顶层；业务标注与业务弹层留在 iframe 内，两个文档分别管理作用域和 z-index。iframe 承载全局 Modal 时，标注开关固定在 SystemFrame 视口右侧并通过消息控制弹窗内容标注。</span></div>
+      <div class="yds-router-rule"><strong>标注与弹层</strong><span>业务弹层默认留在 iframe；PRD 明确要求全局遮罩时，ModuleFrame 仅以受信消息发送结构化数据，SystemFrame 校验来源后渲染，禁止原始 HTML 与跨文档 DOM 操作。全局 Drawer 蒙版覆盖 TopBar、Sidebar、MainContent，面板从 MainContent 顶部开始。</span></div>
       <div class="yds-router-rule"><strong>本地预览</strong><span>相对 URL、page key 与 iframe src 必须兼容 file://；直接双击 SystemFrame 或业务文件均可进入正确模块。</span></div>
       <div class="yds-router-rule"><strong>首帧接入</strong><span>模块在 head 中先加载公共 CSS、再加载同版本公共 JS；直开跳转或嵌入裁剪完成前不显示旧壳，完成后一次性呈现业务内容。</span></div>
     </div>
