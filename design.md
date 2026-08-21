@@ -232,13 +232,13 @@
 |------|------|
 | 表格整体 | `width:100%; border-collapse:collapse; font-size:13px` |
 | 表头 | `line-lighter` 底色（`#F0F1F3`）+ `ink-sub` 字色（`#6E7685`），字重 600，字号 12px，padding `9px 12px`，下边框 `1px solid line`，不换行 |
-| 可排序表头 | 字段名与排序图标水平排列，间距 4px；图标固定 `10×14px`，由上下两个 `10×6px` 实心三角组成，中间间距 2px。未排序时上下三角均用 `ink-muted`（`#9DA2AC`）；升序仅上三角用 `primary`（`#0066FF`）；降序仅下三角用 `primary`。使用原生按钮并在所属 `th` 上同步 `aria-sort="none/ascending/descending"` |
-| 数据行 | 字号 13px，`ink-body` 字色，padding `9px 12px`，下边框 `1px solid line-lighter`，行高约 44–52px |
+| 可排序表头 | 字段名与排序图标水平排列，间距 4px；图标固定 `10×14px`，由上下两个 `10×6px` 实心三角组成，中间间距 2px。未排序时字段名与上下三角均用 `ink-sub` / `ink-muted`（`#6E7685` / `#9DA2AC`）；升序时字段名与上三角使用 `primary`（`#0066FF`），下三角保持 `ink-muted`；降序时字段名与下三角使用 `primary`，上三角保持 `ink-muted`。使用原生按钮并在所属 `th` 上同步 `aria-sort="none/ascending/descending"`。字段名与激活方向必须同步高亮，不得只高亮图标。 |
+| 数据行 | 字号 13px，`ink-body` 字色，padding `9px 12px`，下边框 `1px solid line-lighter`，行高约 44–52px；**最后一条数据行也必须保留下边框**，不得以 `:last-child`、`border-t` 或容器裁切移除 |
 | hover 行 | `bg-hover`（`#F3F4F6`）高亮底色；斑马纹可选 |
 | 对齐 | **所有列左对齐**（含数字列）；列头与数据水平 padding 一致，保持上下对齐 |
 | 数字列 | 使用 mono 字体（金额、数量、订单号等），与其他列保持左对齐 |
 | 响应式 | 表格外层容器 `overflow-x: auto`，窄屏横向滚动 |
-| 操作列 | 操作链接之间 12px 水平间距（如"编辑 删除"），危险操作（删除）用 danger 色 |
+| 操作列 | 表头、单元格及操作组均左对齐；操作组使用 `display:flex;align-items:center;justify-content:flex-start;gap:12px;white-space:nowrap`，不得依赖逐个链接的 margin 拼接间距；危险操作（删除）用 danger 色 |
 
 > **实现参考**：所有原型页面中表格使用 `.data-table` 类统一以上样式。新页面从框架模板复制后，表格 CSS 已内置。
 
@@ -246,6 +246,7 @@
 
 - 圆角标签（4px），主色字/描边 + 对应浅底；
 - 进行中 success / 临期超时 warning / 异常 danger / 终态 ink-muted 灰。
+- **数据表格状态文本特例**：订单、开票记录及同类高密度业务列表的“状态”列采用语义色纯文本，移除背景、描边、圆角和额外内边距；字号沿用表格正文 13px、字重 500、左对齐。独立详情页、汇总卡片等需要强化识别的低密度场景仍使用上述 Badge。
 
 ### 5.4 筛选区
 
@@ -264,11 +265,21 @@
 - focus 态：`border-color:#0066FF; box-shadow:0 0 0 2px rgba(0,102,255,.12);`
 - select 下拉箭头使用内联 SVG background-image 替代浏览器默认样式，`padding-right:24px;`
 
-**日期范围 `.date-range`**：`display:flex; align-items:center; gap:4px;`
+**日期范围 `.date-range`**：`display:flex; align-items:center; gap:4px;`（通用默认，仅适用于模块 PRD 未指定自定义日期面板的场景）。
 
 - 分隔符 `.date-sep`：`font-size:14px; color:#9DA2AC; flex-shrink:0; margin:0 2px;`
-- 日期输入框使用 `type="text"` + `placeholder` 展示提示文字，focus 时切换 `type="date"` 调用原生日期选择器，blur 无值时恢复 `type="text"` 显示 placeholder。
+- 通用日期输入框使用 `type="text"` + `placeholder` 展示提示文字；需要调用原生日期选择器的模块，可在 focus 时切换 `type="date"`，blur 无值时恢复 `type="text"`。
 - 空状态文字色 `#9DA2AC`，有值后切换为 `#3A3F4A`。
+
+**订单管理创建时间范围特例 `.order-date-control-wrap`**：当模块 PRD 要求双月范围下拉时，覆盖通用日期输入规则，不使用浏览器原生日期输入。
+
+- 触发器为一个连续的 `300px × 32px` 组合控件：外层 `background:#FFFFFF`、`border:1px solid #DFE1E5`、`border-radius:4px`、左右内边距 `12px/10px`；内部显示“开始时间 `~` 结束时间”，不得出现两个独立可见边框。空状态使用 `#9DA2AC`，已选日期使用 `#3A3F4A` 与 JetBrains Mono；右侧只放一个 `calendar-days` 线性图标，尺寸 `16×16px`。
+- hover 使用 `#F3F4F6`；focus-visible 使用 `border-color:#0066FF` 与 `#E6F0FF` 双像素聚焦环；逆序或无效范围使用 `#D9001B` 与 `#FFE8EB`。标签与触发器仍遵循订单页横向筛选特例，字段内部 `column-gap:0`。
+- 下拉面板宽 `620px`、最大宽度 `calc(100vw - 32px)`，白底、`1px #DFE1E5` 边框、`8px` 圆角、`0 6px 24px rgba(0,0,0,.12)` 阴影、内边距 `16px`。面板并列展示当前月和相邻月，月栏之间使用 `1px #E8EAED` 竖向分隔线与 `16px` 内侧间距。
+- 每个月标题与导航同一行，两个标题始终居中：左侧月份外侧依次放 `28×28px` 的 `chevrons-left`（上一年，`<<`）与 `chevron-left`（上个月，`<`）；右侧月份外侧依次放 `chevron-right`（下个月，`>`）与 `chevrons-right`（下一年，`>>`）。两个月内侧不显示可操作按钮，但保留等宽占位，避免标题跳动。星期行使用 `12px` `#9DA2AC`，日期格为 `30×30px`，日期数字使用 JetBrains Mono。
+- 非当前月日期使用 `#C7CAD1`；范围内日期使用 `#E6F0FF` 连续浅底；起止日期使用 `#0066FF` 白字，端点圆角保持连续范围视觉。参考图中的珊瑚色不直接复用商品价格色，业务页面统一遵循本系统 primary 语义色。
+- 交互保留“清空 / 取消 / 确定”操作：首次选择为开始日期，第二次为结束日期（含边界）；允许单侧日期；开始晚于结束时就地标红并阻止确定与查询；点击外部或 `Esc` 按取消处理。面板打开前保存已应用值，取消不得写回草稿。
+- 响应式：宽度不足时面板在触发器左侧对齐，`480px` 以下两个月纵向堆叠并移除月间竖线；触发器仍不超过筛选项可用宽度，页面不得出现横向滚动。
 
 **横向标签筛选特例**：仅在模块 PRD 明确指定标签与控件同排时使用。横向筛选项采用 `display:flex; align-items:flex-start; column-gap:0px;`，字段名称后的中文全角冒号紧贴控件，不在标签列与控件之间追加留白；标签列固定右对齐，普通控件宽度保持模块 PRD 规定值。筛选项之间仍由外层筛选流的 `column-gap:24px` 分隔，字段换行的 `row-gap` 仍为 16px。`column-gap:0px` 只描述单个字段内部的“标签—控件”间距，不得误用于不同筛选项之间。
 
@@ -286,7 +297,7 @@
 
 **容器**：`display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:16px;font-size:12px`。
 
-**位置**：分页器放在数据表格所在区块（`.bg-white.rounded-lg`，App Shell 内无外描边）内部，位于表格（`.overflow-x-auto`）的右下方，通过 `pt-5`（20px）与上方表格区域保持间距。分页器**不是**独立区块，而应与表格同属数据区。表格和分页控件自身的边线仍保留。
+**位置**：分页器放在数据表格所在区块（`.bg-white.rounded-lg`，App Shell 内无外描边）内部，位于表格（`.overflow-x-auto`）的右下方，通过 `pt-5`（20px）与上方表格区域保持间距。该 20px 从**最后一条数据行的下边框底部**量到分页器区域顶部；禁止使用 `pt-4`（16px）、额外 margin 或移除末行边框来制造视觉间距。分页器**不是**独立区块，而应与表格同属数据区。表格和分页控件自身的边线仍保留。
 
 **布局（三区，居右）**：
 
@@ -329,7 +340,18 @@
 - 遮罩 `rgba(0,0,0,.3)`；阴影 `-4px 0 24px rgba(0,0,0,.1)`；入场动画 `ds-drawer-in .22s ease`；
 - 结构：标题栏（16px/600 + 关闭 ×）+ 内容区（`overflow-y:auto`）+ 底部按钮。
 - 默认业务 Drawer 仍由 ModuleFrame 在 iframe 视口内渲染。仅当模块 PRD 明确要求遮罩整个 App Shell 时，允许使用 SystemFrame 的受信全局 Drawer Portal：ModuleFrame 只传结构化视图模型，SystemFrame 校验消息来源与业务白名单后用受控 DOM 渲染，禁止传递原始 HTML 或直接操作父文档。
-- 全局业务 Drawer 的蒙版从 BrowserChrome 底部开始，覆盖 TopBar、Sidebar 与 MainContent；Drawer 面板顶部与 MainContent 顶部对齐、底部贴合视口底部，桌面宽 800px，小于 768px 时占满可用宽度。打开时背景必须 `inert` 并锁定滚动，关闭后恢复焦点、滚动及原有可交互状态。
+- 全局业务 Drawer 的蒙版与 Drawer 面板均从 BrowserChrome 底部开始，覆盖 TopBar、Sidebar 与 MainContent，并贴合视口底部，使面板与网页可用高度齐平且顶部不留空；桌面宽 800px，小于 768px 时占满可用宽度。打开时背景必须 `inert` 并锁定滚动，关闭后恢复焦点、滚动及原有可交互状态。
+
+**标准业务详情 Drawer（以订单详情为基准）**：
+
+- ModuleFrame 内默认使用 `position:fixed;inset:0` 的本地遮罩，遮罩本身不留内边距；面板贴右、贴顶、满高，`width:800px;max-width:100%`，采用纵向 Flex 布局。不得改造成居中 Modal，也不得在面板外再套卡片边框。
+- 标题栏固定高 `56px`，左右内边距 `24px`，白底，可使用 `line-light` 下分隔线；标题为 16px/600，关闭按钮为 `32×32px`，图标使用 `x`、18px、`ink-sub`。
+- 内容区使用 `flex:1;overflow-y:auto;padding:16px;background:page`。详情分区为白底、8px 圆角、16px 内边距、无外描边，分区之间保持 16px 垂直间距；分区标题为 16px/600，标题下间距 16px。
+- 信息项默认两列网格，列间距 24px、行间距 12px；每项内部标签列宽 96px、右对齐且带中文冒号，值沿用正文色。小于 768px 时降为单列。金额、编号、账号、时间使用 mono 字体。
+- 分区内的明细表格允许横向滚动，并继续保留表头底色、行分隔线等表格自身边线；“无外描边”仅指详情分区容器。
+- 可选底部操作栏固定高 `64px`，白底、`line-light` 上分隔线、左右内边距 `24px`，按钮组居右并保持 12px 间距；无业务操作时可省略底部栏。
+- 八列及以上的数据维护型 Drawer 可使用 `1200px` 宽屏规格（`max-width:100vw`）；表格继续在内容区横向滚动，操作列必须 `position:sticky;right:0` 固定在右侧，并为表头、普通行和 hover 行分别补齐对应背景色，避免滚动内容透出。该宽屏规格仅用于多字段维护清单，普通详情 Drawer 仍保持 800px。
+- 打开后必须锁定背景滚动、将焦点移入面板并约束 Tab；支持关闭按钮、点击遮罩和 `Escape` 关闭，关闭后恢复触发控件焦点。业务标注必须以同一个稳定面板引用成对调用 `pushAnnoScope()` / `popAnnoScope()`。
 
 ### 5.7.1 在线客服会话窗 Chat Panel
 
@@ -379,9 +401,18 @@
 | warning | `!` | `#E7772D` | `#FDF2E9` | 警告提示 |
 | danger | `✕` | `#D9001B` | `#FFE8EB` | 错误提示（操作失败、系统异常等已发生的错误） |
 | confirm | `?` | `#E7772D` | `#FDF2E9` | 操作确认（删除确认、标记异常等需用户二次确认的操作） |
+| system | `ⓘ` | `#0091D5` | `#E4F4FB` | 系统通知 |
 
 > **删除确认**使用 `confirm` 类型（ICO `?`），因为本质是"确认是否执行"的询问，而非已发生的错误。确定按钮可使用 `danger` 红底强调破坏性操作。
-| system | `ⓘ` | `#0091D5` | `#E4F4FB` | 系统通知 |
+
+### 5.8.1 轻量提示 Toast
+
+- Toast 用于无需用户决策的即时反馈；默认由 SystemFrame 的全局 Toast 承载，ModuleFrame 无法调用全局能力时可在当前 iframe 内按同一规范降级渲染。
+- 固定于业务视口顶部 24px 水平居中：`left:50%;transform:translateX(-50%)`；宽度自适应，`min-width:320px;max-width:min(480px,calc(100vw - 32px));min-height:44px`。
+- 白底、8px 圆角、无描边，阴影 `0 6px 24px rgba(0,0,0,.12)`；内容区使用 `padding:10px 14px`、水平 Flex、10px 间距，正文 13px、`ink-body`。禁止使用黑色实底胶囊作为默认 Toast。
+- 左侧使用 18px Lucide 语义图标：成功 `circle-check / success`、信息 `info / info`、警告 `triangle-alert / warning`、错误 `circle-x / danger`；同一条提示只使用一种语义色，正文保持 `ink-body`。
+- 默认展示 3000ms；连续触发时更新文案并重新计时。入场使用 150ms 的淡入与轻微下移复位，离场使用 180ms 淡出；`prefers-reduced-motion` 时关闭位移动画。
+- 成功/信息提示使用 `role="status"` 与 `aria-live="polite"`，错误提示使用 `role="alert"`；展示时不得强制转移焦点。Toast 层级高于普通业务弹层，但低于交互标注说明弹窗。
 
 ### 5.9 表单
 
@@ -455,7 +486,7 @@
 | hover | `transform: scale(1.2)` |
 | 定位 | `position: fixed`，动态计算目标元素右上角坐标（`rect.top - 10`, `rect.right - 10`） |
 
-**标准悬浮开关**：使用“tags 图标 + 状态文案”的 32px 高胶囊按钮，右侧间距 8px。标注默认隐藏，开关默认文案为“显示标注”；单击后显示标注并将文案切换为“隐藏标注”，再次单击恢复默认隐藏状态。长按 350ms 后可沿页面右侧上下拖拽，位置限制在视口安全区并持久化。拖拽完成不得误触发显隐切换。全局 Modal/Drawer 承载模块业务内容时，开关挂载于 SystemFrame 顶层视口右侧且必须位于面板之外；全局 Drawer 打开期间固定在 BrowserChrome 下方、Drawer 顶部上方的导航遮罩带内，并暂停拖拽，关闭后恢复原位置。窄视口可收敛为右缘图标按钮。
+**标准悬浮开关**：使用“tags 图标 + 状态文案”的 32px 高胶囊按钮，右侧间距 8px。标注默认隐藏，开关默认文案为“显示标注”；单击后显示标注并将文案切换为“隐藏标注”，再次单击恢复默认隐藏状态。长按 350ms 后可沿页面右侧上下拖拽，位置限制在视口安全区并持久化。拖拽完成不得误触发显隐切换。全局 Modal/Drawer 承载模块业务内容时，开关挂载于 SystemFrame 顶层视口右侧且必须位于面板之外；全局 Drawer 打开期间固定在 BrowserChrome 下方、Drawer 左侧的遮罩区域内并暂停拖拽，关闭后恢复原位置。窄视口无外侧空间时可收敛为右缘图标按钮。
 
 **业务页面标注隔离**：复用 App Shell 的业务页面只渲染当前业务内容区及该页面固定操作栏的标注，侧栏、顶部导航和系统级浮层不显示编号。编号从 1 开始，按上→下、左→右连续排列；折叠区或子流程编号仅在对应内容可见时显示。任何会改变文档流高度的控件开合后必须重新计算标注位置。
 

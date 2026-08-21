@@ -398,6 +398,7 @@ document.addEventListener('DOMContentLoaded', async function() {
       .yds-table-sort-caret { width:10px; height:6px; display:block; flex:none; color:#9DA2AC; background:currentColor; }
       .yds-table-sort-caret.is-up { clip-path:polygon(50% 0,100% 100%,0 100%); }
       .yds-table-sort-caret.is-down { clip-path:polygon(0 0,100% 0,50% 100%); }
+      .yds-table-sort-label.is-asc,.yds-table-sort-label.is-desc { color:#0066FF; }
       .yds-table-sort-label.is-asc .yds-table-sort-caret.is-up,.yds-table-sort-label.is-desc .yds-table-sort-caret.is-down { color:#0066FF; }
       .yds-table-sort-notes { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; margin-top:16px; }
       .yds-table-sort-note { padding-top:12px; border-top:2px solid #E8EAED; }
@@ -407,7 +408,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     </style>
     <div class="yds-table-sort-eyebrow">Table · Sort Indicator</div>
     <h2 id="yds-table-sort-title" class="yds-table-sort-title">数据表格排序图标</h2>
-    <p class="yds-table-sort-desc">可排序字段在名称右侧常驻显示双三角图标。图标尺寸与状态色保持稳定，切换排序不会改变表头宽度或引起列表布局跳动。</p>
+    <p class="yds-table-sort-desc">可排序字段在名称右侧常驻显示双三角图标。激活字段的文字与当前方向图标同步使用主色，未激活字段保持灰色；图标尺寸与状态色保持稳定，切换排序不会改变表头宽度或引起列表布局跳动。</p>
     <div class="yds-table-sort-demo">
       <table class="yds-table-sort-table" aria-label="排序图标三态示例">
         <thead><tr>
@@ -420,9 +421,32 @@ document.addEventListener('DOMContentLoaded', async function() {
     </div>
     <div class="yds-table-sort-notes">
       <div class="yds-table-sort-note"><strong>未排序</strong><span>上下三角均使用 ink-muted #9DA2AC，表示该字段可排序但当前未生效。</span></div>
-      <div class="yds-table-sort-note"><strong>升序</strong><span>仅上三角使用 primary #0066FF，下三角保持 ink-muted。</span></div>
-      <div class="yds-table-sort-note"><strong>降序</strong><span>仅下三角使用 primary #0066FF，上三角保持 ink-muted。</span></div>
+      <div class="yds-table-sort-note"><strong>升序</strong><span>字段名与上三角使用 primary #0066FF，下三角保持 ink-muted。</span></div>
+      <div class="yds-table-sort-note"><strong>降序</strong><span>字段名与下三角使用 primary #0066FF，上三角保持 ink-muted。</span></div>
     </div>
+  </section>
+
+  <section data-yundeng-spec="order-date-range-20260821" class="yds-order-date-spec" aria-labelledby="yds-order-date-title">
+    <style>
+      .yds-order-date-spec{width:calc(100% - 40px);max-width:1180px;margin:0 auto 64px;color:#3A3F4A;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Helvetica Neue",Helvetica,Arial,sans-serif;letter-spacing:0}
+      .yds-order-date-title{margin:0;color:#1A1D24;font-size:20px;font-weight:600;line-height:1.4}
+      .yds-order-date-desc{max-width:900px;margin:8px 0 20px;color:#6E7685;font-size:13px;line-height:1.7}
+      .yds-order-date-trigger{display:flex;align-items:center;justify-content:space-between;width:300px;height:32px;padding:0 10px 0 12px;border:1px solid #DFE1E5;border-radius:4px;background:#FFFFFF;color:#9DA2AC;font-size:13px}
+      .yds-order-date-values{display:flex;align-items:center;white-space:nowrap}.yds-order-date-values em{margin:0 10px;color:#9DA2AC;font-style:normal}.yds-order-date-values strong{color:#3A3F4A;font:13px "JetBrains Mono",monospace;font-weight:400}.yds-order-date-trigger svg{width:16px;height:16px;color:#9DA2AC}
+      .yds-order-date-popover{width:620px;max-width:100%;margin-top:12px;padding:16px;border:1px solid #DFE1E5;border-radius:8px;background:#FFFFFF;box-shadow:0 6px 24px rgba(0,0,0,.12)}
+      .yds-order-date-months{display:grid;grid-template-columns:1fr 1fr;gap:16px}.yds-order-date-month{min-width:0}.yds-order-date-month+.yds-order-date-month{padding-left:16px;border-left:1px solid #E8EAED}.yds-order-date-month-head{display:grid;grid-template-columns:58px minmax(0,1fr) 58px;align-items:center;margin-bottom:8px}.yds-order-date-nav-group{display:flex;align-items:center;gap:2px}.yds-order-date-nav-spacer{display:block;width:58px;height:28px}.yds-order-date-month-head button{width:28px;height:28px;border:0;border-radius:4px;background:transparent;color:#6E7685;display:inline-flex;align-items:center;justify-content:center}.yds-order-date-month-head button:hover{background:#F3F4F6;color:#0066FF}.yds-order-date-month-head h3{margin:0;text-align:center;color:#3A3F4A;font-size:14px;font-weight:500}.yds-order-date-week,.yds-order-date-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:2px;text-align:center}.yds-order-date-week{margin-bottom:4px;color:#9DA2AC;font-size:11px}.yds-order-date-grid span{height:30px;display:flex;align-items:center;justify-content:center;color:#3A3F4A;font:12px "JetBrains Mono",monospace}.yds-order-date-grid .other{color:#C7CAD1}.yds-order-date-grid .range{background:#E6F0FF}.yds-order-date-grid .start{background:#0066FF;color:#FFFFFF;border-radius:4px 0 0 4px}.yds-order-date-grid .end{background:#0066FF;color:#FFFFFF;border-radius:0 4px 4px 0}.yds-order-date-foot{display:flex;align-items:center;justify-content:space-between;margin-top:14px;padding-top:12px;border-top:1px solid #E8EAED;color:#6E7685;font-size:12px}.yds-order-date-actions{display:flex;gap:8px}.yds-order-date-actions button{height:32px;padding:0 12px;border:1px solid #DFE1E5;border-radius:4px;background:#FFFFFF;color:#3A3F4A}.yds-order-date-actions .primary{border-color:#0066FF;background:#0066FF;color:#FFFFFF}
+      .yds-order-date-note{margin-top:12px;color:#6E7685;font-size:12px;line-height:1.65}.yds-order-date-note strong{color:#1A1D24}
+      @media(max-width:640px){.yds-order-date-spec{width:calc(100% - 24px)}.yds-order-date-popover{width:100%}}@media(max-width:480px){.yds-order-date-months{grid-template-columns:1fr}.yds-order-date-month+.yds-order-date-month{padding:14px 0 0;border-top:1px solid #E8EAED;border-left:0}}
+    </style>
+    <div class="yds-table-sort-eyebrow">Filter · Date Range</div>
+    <h2 id="yds-order-date-title" class="yds-order-date-title">订单创建时间范围选择器</h2>
+    <p class="yds-order-date-desc">订单管理采用模块专用双月范围选择器：触发器为单一 300px 外框，双月面板使用月份内导航和月间分隔线。左侧月份外侧为“上一年（&lt;&lt;）/上个月（&lt;）”，右侧月份外侧为“下个月（&gt;）/下一年（&gt;&gt;）”。该特例覆盖通用原生日期输入规则，保留清空、取消、确定及逆序校验。</p>
+    <div class="yds-order-date-trigger" aria-label="选择订单创建时间范围"><span class="yds-order-date-values"><span>开始时间</span><em>~</em><span>结束时间</span></span><i data-lucide="calendar-days"></i></div>
+    <div class="yds-order-date-popover" aria-label="双月日期范围面板"><div class="yds-order-date-months">
+      <section class="yds-order-date-month"><div class="yds-order-date-month-head"><div class="yds-order-date-nav-group"><button type="button" aria-label="上一年" title="上一年"><i data-lucide="chevrons-left"></i></button><button type="button" aria-label="上个月" title="上个月"><i data-lucide="chevron-left"></i></button></div><h3>2026 年 8 月</h3><span class="yds-order-date-nav-spacer" aria-hidden="true"></span></div><div class="yds-order-date-week"><span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span></div><div class="yds-order-date-grid"><span class="other">26</span><span class="other">27</span><span class="other">28</span><span class="other">29</span><span class="other">30</span><span class="other">31</span><span>1</span><span>2</span><span>3</span><span>4</span><span class="start">5</span><span class="range">6</span><span class="range">7</span><span class="range">8</span><span class="range">9</span><span class="range">10</span><span class="end">11</span><span>12</span><span>13</span><span>14</span><span>15</span><span>16</span><span>17</span><span>18</span><span>19</span><span>20</span><span>21</span><span>22</span><span>23</span><span>24</span><span>25</span><span>26</span><span>27</span><span>28</span><span>29</span></div></section>
+      <section class="yds-order-date-month"><div class="yds-order-date-month-head"><span class="yds-order-date-nav-spacer" aria-hidden="true"></span><h3>2026 年 9 月</h3><div class="yds-order-date-nav-group"><button type="button" aria-label="下个月" title="下个月"><i data-lucide="chevron-right"></i></button><button type="button" aria-label="下一年" title="下一年"><i data-lucide="chevrons-right"></i></button></div></div><div class="yds-order-date-week"><span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span></div><div class="yds-order-date-grid"><span class="other">30</span><span class="other">31</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span><span>13</span><span>14</span><span>15</span><span>16</span><span>17</span><span>18</span><span>19</span><span>20</span><span>21</span><span>22</span><span>23</span><span>24</span><span>25</span><span>26</span><span>27</span><span>28</span><span>29</span></div></section>
+    </div><div class="yds-order-date-foot"><span>2026-08-05 至 2026-08-11</span><div class="yds-order-date-actions"><button>清空</button><button>取消</button><button class="primary">确定</button></div></div></div>
+    <p class="yds-order-date-note"><strong>Token：</strong>边框 #DFE1E5、范围底 #E6F0FF、主色 #0066FF、禁用/跨月文字 #C7CAD1；480px 以下月份纵向堆叠并移除月间竖线。</p>
   </section>
 
   <section data-yundeng-spec="systemframe-router-20260817" class="yds-router-spec" aria-labelledby="yds-router-title">

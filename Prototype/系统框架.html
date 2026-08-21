@@ -147,7 +147,7 @@
 
   <!-- 受信业务模块可通过结构化消息调用的 SystemFrame 全局抽屉。 -->
   <div id="moduleGlobalDrawer" class="module-global-drawer-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="moduleGlobalDrawerTitle" aria-hidden="true">
-    <section id="moduleGlobalDrawerPanel" class="module-global-drawer-panel" tabindex="-1">
+    <section id="moduleGlobalDrawerPanel" class="module-global-drawer-panel outline-none" tabindex="-1">
       <header class="module-global-drawer-header">
         <h2 id="moduleGlobalDrawerTitle" data-anno="21" class="inline-block text-[16px] font-semibold text-ink-title">详情</h2>
         <button id="moduleGlobalDrawerClose" data-anno="22" type="button" class="module-global-drawer-close" aria-label="关闭详情"><i data-lucide="x" class="w-5 h-5"></i></button>
@@ -236,7 +236,7 @@
       18:{ title:'智能助手入口', desc:['触发：点击右下角悬浮按钮。','响应：从右侧打开 800px 抽屉，并将标注范围限定在抽屉内。','规则：智能问答引擎不在本期范围内，保留入口与交互容器。'] },
       19:{ title:'路由承载区', desc:['触发：首屏加载或切换业务模块。','响应：显示业务模块注入的内容承载占位、加载、无权限、空或失败状态。','规则：框架层不将路由插槽误作业务空状态。'] },
       20:{ title:'恢复入口', desc:['触发：路由加载失败或权限不足时点击恢复操作。','响应：模拟重试、申请权限或返回环境管理。','规则：保留当前菜单与会话上下文，并给出明确下一步。'] },
-      21:{ title:'全局订单详情抽屉', desc:['触发：在费用管理点击订单号或“详情”。','响应：SystemFrame 从右侧打开订单详情，蒙版覆盖 TopBar、Sidebar 与内容区。','规则：抽屉主体从主内容区顶部开始，BrowserChrome 不属于网页蒙版范围。'] },
+      21:{ title:'全局订单详情抽屉', desc:['触发：在费用管理点击订单号或“详情”。','响应：SystemFrame 从右侧打开订单详情，蒙版覆盖 TopBar、Sidebar 与内容区。','规则：抽屉从 BrowserChrome 下方延伸至视口底部，与网页可用高度齐平。'] },
       22:{ title:'关闭全局订单详情', desc:['触发：点击关闭按钮、蒙版或按 Escape。','响应：关闭抽屉并通知费用模块恢复原触发入口焦点。','规则：关闭时退出全局抽屉标注作用域，不清空订单筛选或分页。'] },
       23:{ title:'商品列表与子订单号', desc:['触发：打开订单详情抽屉。','响应：展示商品明细，首列显示“子订单号”。','规则：当前单商品 Mock 使用完整订单号追加 -01。'] }
     };
@@ -337,15 +337,14 @@
       const overlay = $('moduleGlobalDrawer'), panel = $('moduleGlobalDrawerPanel');
       if (!overlay || !panel || overlay.classList.contains('hidden')) return;
       const browserBottom = Math.max(0, Math.round(document.getElementById('yundeng-browser-frame')?.getBoundingClientRect().bottom || 0));
-      const contentTop = Math.max(browserBottom, Math.round($('mainContent')?.getBoundingClientRect().top || browserBottom));
       overlay.style.top = browserBottom + 'px';
-      panel.style.marginTop = Math.max(0, contentTop - browserBottom) + 'px';
-      panel.style.height = Math.max(0, window.innerHeight - contentTop) + 'px';
+      panel.style.marginTop = '0px';
+      panel.style.height = Math.max(0, window.innerHeight - browserBottom) + 'px';
       const toggle = $('annoToggle');
       if (toggle) {
-        const stripHeight = Math.max(0, contentTop - browserBottom);
-        toggle.style.top = Math.max(browserBottom, browserBottom + Math.round((stripHeight - toggle.offsetHeight) / 2)) + 'px';
-        toggle.style.right = '8px';
+        const panelWidth = Math.round(panel.getBoundingClientRect().width);
+        toggle.style.top = Math.min(window.innerHeight - toggle.offsetHeight - 8, browserBottom + 12) + 'px';
+        toggle.style.right = window.innerWidth > panelWidth + toggle.offsetWidth + 24 ? panelWidth + 8 + 'px' : '8px';
       }
     }
     function openModuleGlobalDrawer(payload, source) {
@@ -384,7 +383,7 @@
       overlay.setAttribute('aria-hidden', 'false');
       syncModuleGlobalDrawerLayout();
       pushAnnoScope(panel);
-      requestAnimationFrame(() => $('moduleGlobalDrawerClose').focus({ preventScroll:true }));
+      requestAnimationFrame(() => panel.focus({ preventScroll:true }));
       lucide.createIcons();
     }
     function closeModuleGlobalDrawer(notifyModule = true) {
