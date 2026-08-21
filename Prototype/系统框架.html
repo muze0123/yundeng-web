@@ -44,10 +44,34 @@
     @keyframes toast-in { from { transform:translateY(-8px); opacity:0; } to { transform:translateY(0); opacity:1; } }
     @keyframes drawer-in { from { transform:translateX(100%); } to { transform:translateX(0); } }
     .drawer-panel { animation:drawer-in .22s ease; }
+    .module-global-drawer-overlay { position:fixed; left:0; right:0; bottom:0; z-index:1500; display:flex; align-items:flex-start; justify-content:flex-end; background:rgba(0,0,0,.3); }
+    .module-global-drawer-panel { width:800px; max-width:100%; min-height:240px; display:flex; flex-direction:column; overflow:hidden; background:#fff; box-shadow:-4px 0 24px rgba(0,0,0,.1); animation:drawer-in .22s ease; }
+    .module-global-drawer-header { width:100%; height:56px; padding:0 24px; flex:0 0 56px; display:flex; align-items:center; justify-content:space-between; background:#fff; }
+    .module-global-drawer-close { width:32px; height:32px; border:0; border-radius:4px; display:inline-flex; align-items:center; justify-content:center; color:#9DA2AC; background:transparent; }
+    .module-global-drawer-close:hover { color:#3A3F4A; background:#F3F4F6; }
+    .module-global-drawer-body { min-height:0; padding:16px; flex:1; overflow:auto; background:#F7F8FA; }
+    .module-global-drawer-section { margin:0 0 16px; padding:16px; border:0; border-radius:8px; background:#fff; }
+    .module-global-drawer-section:last-child { margin-bottom:0; }
+    .module-global-drawer-section h3 { display:inline-block; margin:0 0 16px; color:#1A1D24; font-size:16px; font-weight:600; }
+    .module-global-drawer-info { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px 24px; }
+    .module-global-drawer-field { min-width:0; display:grid; grid-template-columns:96px minmax(0,1fr); gap:10px; align-items:start; }
+    .module-global-drawer-field dt { color:#6E7685; font-size:12px; text-align:right; white-space:nowrap; }
+    .module-global-drawer-field dt::after { content:'：'; }
+    .module-global-drawer-field dd { min-width:0; margin:0; overflow-wrap:anywhere; color:#3A3F4A; }
+    .module-global-drawer-table-wrap { width:100%; overflow-x:auto; }
+    .module-global-drawer-table { min-width:1080px; width:100%; border-collapse:collapse; font-size:12px; }
+    .module-global-drawer-table th { padding:9px 10px; border-bottom:1px solid #DFE1E5; color:#6E7685; background:#F0F1F3; font-weight:500; text-align:left; white-space:nowrap; }
+    .module-global-drawer-table td { padding:10px; border-bottom:1px solid #F0F1F3; color:#3A3F4A; white-space:nowrap; }
+    .module-global-drawer-table tbody tr:hover { background:#F3F4F6; }
+    .module-global-drawer-value[data-mono="true"] { font-family:'JetBrains Mono',monospace; font-variant-numeric:tabular-nums; }
+    .module-global-drawer-value[data-tone="success"] { color:#0FC060; }
+    .module-global-drawer-value[data-tone="warning"] { color:#E7772D; }
+    .module-global-drawer-value[data-tone="danger"] { color:#D9001B; }
+    .module-global-drawer-value[data-tone="muted"] { color:#9DA2AC; }
     .anno-badge { position:fixed; width:20px; height:20px; border-radius:50%; background:#0066FF; color:#fff; font:700 11px/20px 'JetBrains Mono',monospace; text-align:center; box-shadow:0 2px 6px rgba(0,0,0,.15); pointer-events:auto; cursor:pointer; transition:transform .15s; }
     .anno-badge:hover { transform:scale(1.2); }
     .status-dot { width:8px; height:8px; border-radius:50%; display:inline-block; }
-    @media (max-width: 767px) { .sidebar { position:fixed; z-index:50; height:100vh; box-shadow:0 6px 24px rgba(0,0,0,.12); } .sidebar.compact { width:0; overflow:hidden; } }
+    @media (max-width: 767px) { .sidebar { position:fixed; z-index:50; height:100vh; box-shadow:0 6px 24px rgba(0,0,0,.12); } .sidebar.compact { width:0; overflow:hidden; } .module-global-drawer-panel { width:100%; } .module-global-drawer-info { grid-template-columns:1fr; } }
   </style>
   <script src="公共导航.js?v=20260821a"></script>
 </head>
@@ -119,6 +143,17 @@
   <div id="languagePopover" class="hidden fixed right-14 top-12 z-40 w-40 bg-card border border-line rounded-lg popover p-1"></div>
   <div id="helpPopover" class="hidden fixed right-28 top-12 z-40 w-64 bg-card border border-line rounded-lg popover p-2"></div>
   <div id="accountPopover" class="hidden fixed right-4 top-12 z-40 w-44 bg-card border border-line rounded-lg popover p-1"></div>
+
+  <!-- 受信业务模块可通过结构化消息调用的 SystemFrame 全局抽屉。 -->
+  <div id="moduleGlobalDrawer" class="module-global-drawer-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="moduleGlobalDrawerTitle" aria-hidden="true">
+    <section id="moduleGlobalDrawerPanel" class="module-global-drawer-panel" tabindex="-1">
+      <header class="module-global-drawer-header">
+        <h2 id="moduleGlobalDrawerTitle" data-anno="21" class="inline-block text-[16px] font-semibold text-ink-title">详情</h2>
+        <button id="moduleGlobalDrawerClose" data-anno="22" type="button" class="module-global-drawer-close" aria-label="关闭详情"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </header>
+      <div id="moduleGlobalDrawerBody" class="module-global-drawer-body"></div>
+    </section>
+  </div>
 
   <!-- 创建流程确认弹窗 -->
   <div id="createDialog" class="hidden fixed inset-0 z-50 bg-black/30 flex items-center justify-center p-4">
@@ -199,7 +234,10 @@
       17:{ title:'账号菜单', desc:['触发：点击头像或账号名称。','响应：打开账号相关入口菜单。','规则：鼠标离开账号入口且未进入菜单时延迟关闭；离开入口与菜单后关闭，键盘仍可用 Escape 关闭并返回焦点。'] },
       18:{ title:'智能助手入口', desc:['触发：点击右下角悬浮按钮。','响应：从右侧打开 800px 抽屉，并将标注范围限定在抽屉内。','规则：智能问答引擎不在本期范围内，保留入口与交互容器。'] },
       19:{ title:'路由承载区', desc:['触发：首屏加载或切换业务模块。','响应：显示业务模块注入的内容承载占位、加载、无权限、空或失败状态。','规则：框架层不将路由插槽误作业务空状态。'] },
-      20:{ title:'恢复入口', desc:['触发：路由加载失败或权限不足时点击恢复操作。','响应：模拟重试、申请权限或返回环境管理。','规则：保留当前菜单与会话上下文，并给出明确下一步。'] }
+      20:{ title:'恢复入口', desc:['触发：路由加载失败或权限不足时点击恢复操作。','响应：模拟重试、申请权限或返回环境管理。','规则：保留当前菜单与会话上下文，并给出明确下一步。'] },
+      21:{ title:'全局订单详情抽屉', desc:['触发：在费用管理点击订单号或“详情”。','响应：SystemFrame 从右侧打开订单详情，蒙版覆盖 TopBar、Sidebar 与内容区。','规则：抽屉主体从主内容区顶部开始，BrowserChrome 不属于网页蒙版范围。'] },
+      22:{ title:'关闭全局订单详情', desc:['触发：点击关闭按钮、蒙版或按 Escape。','响应：关闭抽屉并通知费用模块恢复原触发入口焦点。','规则：关闭时退出全局抽屉标注作用域，不清空订单筛选或分页。'] },
+      23:{ title:'商品列表与子订单号', desc:['触发：打开订单详情抽屉。','响应：展示商品明细，首列显示“子订单号”。','规则：当前单商品 Mock 使用完整订单号追加 -01。'] }
     };
 
     const $ = id => document.getElementById(id);
@@ -231,6 +269,117 @@
     function closeCreateDialog(shouldRestoreFocus = true) { if ($('createDialog').classList.contains('hidden')) return; $('createDialog').classList.add('hidden'); popAnnoScope($('createPanel')); if (shouldRestoreFocus) restoreFocus(createReturnFocus, document.querySelector('.yundeng-create') || $('createBrowserBtn') || $('mainContent')); }
     function openAssistant() { assistantReturnFocus = document.activeElement; $('assistantDrawer').classList.remove('hidden'); pushAnnoScope($('assistantPanel')); requestAnimationFrame(() => $('assistantInput').focus()); }
     function closeDrawer() { if ($('assistantDrawer').classList.contains('hidden')) return; $('assistantDrawer').classList.add('hidden'); popAnnoScope($('assistantPanel')); restoreFocus(assistantReturnFocus, $('assistantBtn')); }
+    let moduleGlobalDrawerId = '', moduleGlobalDrawerSource = null, moduleGlobalDrawerOverflow = '';
+    function moduleDrawerText(value, maxLength = 200) { return String(value == null || value === '' ? '—' : value).slice(0, maxLength); }
+    function appendModuleDrawerValue(parent, rawValue, column = {}) {
+      const spec = rawValue && typeof rawValue === 'object' && !Array.isArray(rawValue) ? rawValue : { value: rawValue };
+      const value = document.createElement('span');
+      value.className = 'module-global-drawer-value';
+      value.textContent = moduleDrawerText(spec.value);
+      if (spec.mono === true || column.mono === true) value.dataset.mono = 'true';
+      if (['success','warning','danger','muted'].includes(spec.tone)) value.dataset.tone = spec.tone;
+      parent.append(value);
+    }
+    function renderModuleGlobalDrawerSection(section, tableIndex) {
+      if (!section || !['description-list','table'].includes(section.type)) return null;
+      const container = document.createElement('section');
+      container.className = 'module-global-drawer-section';
+      const heading = document.createElement('h3');
+      heading.textContent = moduleDrawerText(section.title || '详情', 40);
+      if (section.type === 'table' && tableIndex === 0) heading.dataset.anno = '23';
+      container.append(heading);
+      if (section.type === 'description-list') {
+        const list = document.createElement('dl');
+        list.className = 'module-global-drawer-info';
+        (Array.isArray(section.items) ? section.items.slice(0, 24) : []).forEach(item => {
+          if (!item || typeof item !== 'object') return;
+          const field = document.createElement('div');
+          field.className = 'module-global-drawer-field';
+          const label = document.createElement('dt');
+          label.textContent = moduleDrawerText(item.label, 30);
+          const value = document.createElement('dd');
+          appendModuleDrawerValue(value, item);
+          field.append(label, value);
+          list.append(field);
+        });
+        container.append(list);
+        return container;
+      }
+      const columns = (Array.isArray(section.columns) ? section.columns : []).slice(0, 15).filter(column => column && typeof column === 'object');
+      const rows = (Array.isArray(section.rows) ? section.rows : []).slice(0, 50);
+      const wrap = document.createElement('div');
+      wrap.className = 'module-global-drawer-table-wrap';
+      const table = document.createElement('table');
+      table.className = 'module-global-drawer-table';
+      const thead = document.createElement('thead');
+      const headerRow = document.createElement('tr');
+      columns.forEach(column => { const th = document.createElement('th'); th.textContent = moduleDrawerText(column.label, 30); headerRow.append(th); });
+      thead.append(headerRow);
+      const tbody = document.createElement('tbody');
+      rows.forEach(row => {
+        const tr = document.createElement('tr');
+        columns.forEach((column, index) => {
+          const td = document.createElement('td');
+          const rawValue = Array.isArray(row) ? row[index] : row?.[column.key];
+          appendModuleDrawerValue(td, rawValue, column);
+          tr.append(td);
+        });
+        tbody.append(tr);
+      });
+      table.append(thead, tbody);
+      wrap.append(table);
+      container.append(wrap);
+      return container;
+    }
+    function syncModuleGlobalDrawerLayout() {
+      const overlay = $('moduleGlobalDrawer'), panel = $('moduleGlobalDrawerPanel');
+      if (!overlay || !panel || overlay.classList.contains('hidden')) return;
+      const browserBottom = Math.max(0, Math.round(document.getElementById('yundeng-browser-frame')?.getBoundingClientRect().bottom || 0));
+      const contentTop = Math.max(browserBottom, Math.round($('mainContent')?.getBoundingClientRect().top || browserBottom));
+      overlay.style.top = browserBottom + 'px';
+      panel.style.marginTop = Math.max(0, contentTop - browserBottom) + 'px';
+      panel.style.height = Math.max(240, window.innerHeight - contentTop) + 'px';
+    }
+    function openModuleGlobalDrawer(payload, source) {
+      if (!payload || typeof payload !== 'object' || payload.id !== 'billing-order-detail') return;
+      const overlay = $('moduleGlobalDrawer'), panel = $('moduleGlobalDrawerPanel'), body = $('moduleGlobalDrawerBody');
+      if (!overlay || !panel || !body) return;
+      moduleGlobalDrawerId = payload.id;
+      moduleGlobalDrawerSource = source;
+      $('moduleGlobalDrawerTitle').textContent = moduleDrawerText(payload.title || '详情', 40);
+      $('moduleGlobalDrawerClose').setAttribute('aria-label', '关闭' + moduleDrawerText(payload.title || '详情', 40));
+      body.replaceChildren();
+      let tableIndex = 0;
+      (Array.isArray(payload.sections) ? payload.sections.slice(0, 6) : []).forEach(section => {
+        const rendered = renderModuleGlobalDrawerSection(section, tableIndex);
+        if (!rendered) return;
+        if (section.type === 'table') tableIndex += 1;
+        body.append(rendered);
+      });
+      const width = Math.max(480, Math.min(1000, Number(payload.width) || 800));
+      panel.style.width = width + 'px';
+      closeOverlays();
+      moduleGlobalDrawerOverflow = document.documentElement.style.overflow;
+      document.documentElement.style.overflow = 'hidden';
+      overlay.classList.remove('hidden');
+      overlay.setAttribute('aria-hidden', 'false');
+      syncModuleGlobalDrawerLayout();
+      pushAnnoScope(panel);
+      requestAnimationFrame(() => $('moduleGlobalDrawerClose').focus({ preventScroll:true }));
+      lucide.createIcons();
+    }
+    function closeModuleGlobalDrawer(notifyModule = true) {
+      const overlay = $('moduleGlobalDrawer'), panel = $('moduleGlobalDrawerPanel');
+      if (!overlay || overlay.classList.contains('hidden')) return;
+      overlay.classList.add('hidden');
+      overlay.setAttribute('aria-hidden', 'true');
+      document.documentElement.style.overflow = moduleGlobalDrawerOverflow;
+      popAnnoScope(panel);
+      const source = moduleGlobalDrawerSource, drawerId = moduleGlobalDrawerId;
+      moduleGlobalDrawerSource = null;
+      moduleGlobalDrawerId = '';
+      if (notifyModule) source?.postMessage({ type:'yundeng:global-drawer-closed', id:drawerId }, '*');
+    }
     function pushAnnoScope(el) { const index=annoScopeStack.indexOf(el); if(index>=0) annoScopeStack.splice(index,1); annoScopeStack.push(el); renderAnnoBadges(); }
     function popAnnoScope(el) { const index=annoScopeStack.indexOf(el); if(index>=0) annoScopeStack.splice(index,1); renderAnnoBadges(); }
     function resolveAnnoTarget(el) { const rect=el.getBoundingClientRect(); return (rect.width>800 || rect.width>window.innerWidth*.7) ? el.querySelector('h1,h2,h3,button,input') || el : el; }
@@ -266,6 +415,14 @@
     document.addEventListener('click',e=>{ if(!e.target.closest('.popover, #noticeBtn, #languageBtn, #helpBtn, #accountBtn, [data-global="help"]')) closeOverlays(); });
     $('assistantDrawer').onclick=e=>{ if(e.target===$('assistantDrawer')) closeDrawer(); };
     $('createDialog').onclick=e=>{ if(e.target===$('createDialog')) closeCreateDialog(); };
+    $('moduleGlobalDrawerClose').onclick=()=>closeModuleGlobalDrawer();
+    $('moduleGlobalDrawer').onclick=e=>{ if(e.target===$('moduleGlobalDrawer')) closeModuleGlobalDrawer(); };
+    window.addEventListener('message',event=>{
+      const frame=document.getElementById('yundengModuleFrame');
+      if(!frame||event.source!==frame.contentWindow||!event.data)return;
+      if(event.data.type==='yundeng:global-drawer-open')openModuleGlobalDrawer(event.data.drawer,event.source);
+      else if(event.data.type==='yundeng:global-drawer-close')closeModuleGlobalDrawer(false);
+    });
     let annoToggleDragged=false;
     $('annoToggle').onclick=()=>{ if(annoToggleDragged){ annoToggleDragged=false; return; } annoVisible=!annoVisible; $('annoToggle').classList.toggle('bg-primary',annoVisible); $('annoToggle').classList.toggle('bg-ink-muted',!annoVisible); $('annoToggle').setAttribute('aria-pressed',String(annoVisible)); $('annoToggle').querySelector('span').textContent=annoVisible?'隐藏标注':'显示标注'; renderAnnoBadges(); };
     $('closeAnno').onclick=e=>{ e.stopPropagation(); closeAnnoPopup(); };
@@ -277,8 +434,8 @@
     $('annoDrag').addEventListener('pointerup',()=>{ dragState=null; });
     // 长按后仅沿页面右侧上下拖拽，避免普通点击误触移动。
     function setupAnnoToggleDrag(){ const toggle=$('annoToggle'); toggle.style.touchAction='none'; const savedTop=Number(localStorage.getItem('yundeng-anno-toggle-top')); if(Number.isFinite(savedTop)&&savedTop>0) toggle.style.top=Math.max(8,Math.min(innerHeight-toggle.offsetHeight-8,savedTop))+'px'; let state=null,timer=null; const moveTo=y=>{ if(!state)return; toggle.style.top=Math.max(8,Math.min(innerHeight-toggle.offsetHeight-8,state.top+y-state.startY))+'px'; }; const finish=e=>{ clearTimeout(timer); if(!state)return; if(state.active){ annoToggleDragged=true; moveTo(state.latestY); toggle.classList.remove('cursor-grabbing','scale-105'); toggle.classList.add('cursor-grab'); localStorage.setItem('yundeng-anno-toggle-top',parseInt(toggle.style.top,10)); } if(toggle.hasPointerCapture(e.pointerId))toggle.releasePointerCapture(e.pointerId); state=null; }; toggle.addEventListener('pointerdown',e=>{ if(e.pointerType==='mouse'&&e.button!==0)return; state={pointerId:e.pointerId,startY:e.clientY,latestY:e.clientY,top:toggle.getBoundingClientRect().top,active:false}; toggle.setPointerCapture(e.pointerId); timer=setTimeout(()=>{ if(!state)return; state.active=true; annoToggleDragged=true; toggle.classList.remove('cursor-grab'); toggle.classList.add('cursor-grabbing','scale-105'); moveTo(state.latestY); },350); }); toggle.addEventListener('pointermove',e=>{ if(!state||e.pointerId!==state.pointerId)return; state.latestY=e.clientY; if(!state.active)return; e.preventDefault(); moveTo(e.clientY); }); toggle.addEventListener('pointerup',finish); toggle.addEventListener('pointercancel',finish); }
-    $('mainContent').addEventListener('scroll',renderAnnoBadges); window.addEventListener('resize',renderAnnoBadges);
-    document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ if(!$('annoPopup').classList.contains('hidden')) closeAnnoPopup(); else if(!$('createDialog').classList.contains('hidden')) closeCreateDialog(); else if(!$('assistantDrawer').classList.contains('hidden')) closeDrawer(); else closeOverlays(); return; } if(!$('annoPopup').classList.contains('hidden')) trapDialogFocus(e,$('annoPanel')); else if(!$('createDialog').classList.contains('hidden')) trapDialogFocus(e,$('createPanel')); else if(!$('assistantDrawer').classList.contains('hidden')) trapDialogFocus(e,$('assistantPanel')); });
+    $('mainContent').addEventListener('scroll',renderAnnoBadges); window.addEventListener('resize',()=>{renderAnnoBadges();syncModuleGlobalDrawerLayout()});
+    document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ if(!$('annoPopup').classList.contains('hidden')) closeAnnoPopup(); else if(!$('moduleGlobalDrawer').classList.contains('hidden')) closeModuleGlobalDrawer(); else if(!$('createDialog').classList.contains('hidden')) closeCreateDialog(); else if(!$('assistantDrawer').classList.contains('hidden')) closeDrawer(); else closeOverlays(); return; } if(!$('annoPopup').classList.contains('hidden')) trapDialogFocus(e,$('annoPanel')); else if(!$('moduleGlobalDrawer').classList.contains('hidden')) trapDialogFocus(e,$('moduleGlobalDrawerPanel')); else if(!$('createDialog').classList.contains('hidden')) trapDialogFocus(e,$('createPanel')); else if(!$('assistantDrawer').classList.contains('hidden')) trapDialogFocus(e,$('assistantPanel')); });
     renderNav(); renderNotices(); renderRoute(); lucide.createIcons(); setupAnnoToggleDrag();
   </script>
 
