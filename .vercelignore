@@ -1,0 +1,24 @@
+# 仅排除构建不需要的内部资料与本机配置。
+# Vercel 构建读取 Prototype、src/assets 与 scripts，最终只公开 dist。
+.git/
+.vercel/
+dist/
+.dist-build.*/
+node_modules/
+.DS_Store
+**/.DS_Store
+.agents/
+.claude/
+.codex/
+.workbuddy/
+.env*
+.mcp.json
+.tmp-font-contract.mjs
+AGENTS.md
+claude.md
+design.md
+README.md
+DEPLOYMENT.md
+skills-lock.json
+PRD/
+产品分析/

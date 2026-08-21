@@ -1,100 +1,125 @@
 (function () {
+  'use strict';
+
   const toggle = document.getElementById('annoToggle');
-  if (!toggle || typeof renderAnno !== 'function') return;
+  const getRender = () => {
+    if (typeof renderAnnoBadges === 'function') return renderAnnoBadges;
+    if (typeof renderAnno === 'function') return renderAnno;
+    return null;
+  };
+  if (!toggle || !getRender()) return;
 
   const storageKey = `yundeng-annotation-toggle:${location.pathname.split('/').pop()}`;
-  const dragThreshold = 5;
+  const longPressDelay = 350;
+  const moveTolerance = 6;
   let pointerId = null;
-  let startX = 0;
   let startY = 0;
-  let startLeft = 0;
   let startTop = 0;
-  let dragged = false;
+  let pressTimer = null;
+  let dragging = false;
+  let suppressClick = false;
 
   toggle.style.touchAction = 'none';
   toggle.style.userSelect = 'none';
   toggle.style.cursor = 'grab';
-  toggle.setAttribute('aria-label', '显示或隐藏标注；可拖拽移动');
+  toggle.setAttribute('aria-label', '显示交互标注，长按可调整纵向位置');
+  toggle.title = '点击显示标注，长按调整位置';
+
+  function render() {
+    getRender()?.();
+  }
 
   function clamp(value, min, max) {
     return Math.min(Math.max(value, min), Math.max(min, max));
   }
 
-  function place(left, top) {
+  function place(top) {
     const rect = toggle.getBoundingClientRect();
-    const safeLeft = clamp(left, 8, innerWidth - rect.width - 8);
     const safeTop = clamp(top, 8, innerHeight - rect.height - 8);
-    toggle.style.left = `${safeLeft}px`;
+    toggle.style.left = 'auto';
+    toggle.style.right = '8px';
     toggle.style.top = `${safeTop}px`;
-    toggle.style.right = 'auto';
-    return { left: safeLeft, top: safeTop };
+    return safeTop;
   }
 
   function syncState() {
     toggle.setAttribute('aria-pressed', String(annoVisible));
     toggle.dataset.annotationVisible = String(annoVisible);
-    toggle.classList.toggle('opacity-60', !annoVisible);
-    toggle.classList.toggle('shadow-lg', annoVisible);
-    toggle.title = annoVisible ? '隐藏标注（可拖拽）' : '显示标注（可拖拽）';
+    toggle.title = annoVisible ? '点击隐藏标注，长按调整位置' : '点击显示标注，长按调整位置';
     const label = toggle.querySelector('span');
     if (label) label.textContent = annoVisible ? '隐藏标注' : '显示标注';
   }
 
   function restorePosition() {
     try {
-      const saved = JSON.parse(localStorage.getItem(storageKey));
-      if (Number.isFinite(saved?.left) && Number.isFinite(saved?.top)) place(saved.left, saved.top);
+      const saved = JSON.parse(localStorage.getItem(storageKey) || '{}');
+      if (Number.isFinite(saved.top)) place(saved.top);
     } catch (_) {}
+  }
+
+  function clearPressTimer() {
+    clearTimeout(pressTimer);
+    pressTimer = null;
   }
 
   toggle.onclick = null;
   toggle.addEventListener('pointerdown', event => {
     if (event.button !== undefined && event.button !== 0) return;
     pointerId = event.pointerId;
-    const rect = toggle.getBoundingClientRect();
-    startX = event.clientX;
     startY = event.clientY;
-    startLeft = rect.left;
-    startTop = rect.top;
-    dragged = false;
-    toggle.style.cursor = 'grabbing';
-    toggle.setPointerCapture?.(pointerId);
-    event.preventDefault();
+    startTop = toggle.getBoundingClientRect().top;
+    dragging = false;
+    suppressClick = false;
+    clearPressTimer();
+    pressTimer = setTimeout(() => {
+      if (pointerId !== event.pointerId) return;
+      dragging = true;
+      toggle.style.cursor = 'grabbing';
+      toggle.setPointerCapture?.(pointerId);
+    }, longPressDelay);
   });
 
   toggle.addEventListener('pointermove', event => {
     if (event.pointerId !== pointerId) return;
-    const dx = event.clientX - startX;
-    const dy = event.clientY - startY;
-    if (!dragged && Math.hypot(dx, dy) < dragThreshold) return;
-    dragged = true;
-    place(startLeft + dx, startTop + dy);
-    renderAnno();
+    const deltaY = event.clientY - startY;
+    if (!dragging) {
+      if (Math.abs(deltaY) > moveTolerance) {
+        clearPressTimer();
+        suppressClick = true;
+      }
+      return;
+    }
+    event.preventDefault();
+    place(startTop + deltaY);
+    render();
   });
 
-  function finishDrag(event) {
+  function finishPointer(event) {
     if (event.pointerId !== pointerId) return;
+    clearPressTimer();
+    if (dragging) {
+      const top = place(toggle.getBoundingClientRect().top);
+      try { localStorage.setItem(storageKey, JSON.stringify({ top })); } catch (_) {}
+      suppressClick = true;
+    }
     toggle.releasePointerCapture?.(pointerId);
     pointerId = null;
+    dragging = false;
     toggle.style.cursor = 'grab';
-    if (dragged) {
-      const rect = toggle.getBoundingClientRect();
-      try { localStorage.setItem(storageKey, JSON.stringify({ left: rect.left, top: rect.top })); } catch (_) {}
-    }
   }
 
-  toggle.addEventListener('pointerup', finishDrag);
-  toggle.addEventListener('pointercancel', finishDrag);
+  toggle.addEventListener('pointerup', finishPointer);
+  toggle.addEventListener('pointercancel', finishPointer);
   toggle.addEventListener('click', event => {
     event.preventDefault();
     event.stopImmediatePropagation();
-    if (dragged) {
-      dragged = false;
+    if (suppressClick) {
+      suppressClick = false;
       return;
     }
     annoVisible = !annoVisible;
     syncState();
-    renderAnno();
+    render();
   }, true);
 
   toggle.addEventListener('keydown', event => {
@@ -102,16 +127,16 @@
     event.preventDefault();
     annoVisible = !annoVisible;
     syncState();
-    renderAnno();
+    render();
   });
 
   addEventListener('resize', () => {
-    const rect = toggle.getBoundingClientRect();
-    place(rect.left, rect.top);
-    renderAnno();
+    place(toggle.getBoundingClientRect().top);
+    render();
   });
 
+  annoVisible = false;
   restorePosition();
   syncState();
-  requestAnimationFrame(renderAnno);
+  requestAnimationFrame(render);
 })();

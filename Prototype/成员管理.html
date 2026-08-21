@@ -7,60 +7,57 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="筛选布局.css?v=20260814">
+  <link rel="stylesheet" href="分页器.css?v=20260814">
   <script>
     tailwind.config={theme:{extend:{colors:{primary:{DEFAULT:'#0066FF',hover:'#0052CC',bg:'#E6F0FF'},ink:{title:'#1A1D24',body:'#3A3F4A',sub:'#6E7685',muted:'#9DA2AC'},line:{DEFAULT:'#DFE1E5',light:'#E8EAED',lighter:'#F0F1F3'},page:'#F7F8FA',card:'#FFFFFF',hover:'#F3F4F6',success:{DEFAULT:'#0FC060',bg:'#E7F9F0'},warning:{DEFAULT:'#E7772D',bg:'#FDF2E9'},danger:{DEFAULT:'#D9001B',bg:'#FFE8EB'}}}}};
   </script>
   <style>
-    *{box-sizing:border-box}body{margin:0;font:13px/1.5 -apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei','Segoe UI',system-ui,sans-serif}.mono{font-family:'JetBrains Mono',monospace;font-variant-numeric:tabular-nums}.field{height:32px;border:1px solid #DFE1E5;border-radius:4px;padding:0 10px;background:#fff;outline:none}.field:focus{border-color:#0066FF;box-shadow:0 0 0 2px #E6F0FF}.btn{height:32px;padding:0 12px;border-radius:4px;display:inline-flex;align-items:center;justify-content:center;gap:6px;font-weight:500}.btn-primary{background:#0066FF;color:#fff}.btn-primary:hover{background:#0052CC}.btn-default{background:#fff;border:1px solid #DFE1E5;color:#3A3F4A}.btn-default:hover{background:#F3F4F6}.card{background:#fff;border-radius:8px}.tag{height:22px;padding:0 8px;border-radius:4px;display:inline-flex;align-items:center;font-size:12px}.modal-bg{position:fixed;inset:0;background:#0006;z-index:1100;display:flex;align-items:center;justify-content:center}.hidden{display:none!important}.toast{position:fixed;right:24px;top:72px;z-index:1300;background:#1A1D24;color:#fff;padding:10px 16px;border-radius:4px;box-shadow:0 4px 18px #0003}th,td{white-space:nowrap}
+    *{box-sizing:border-box}body{margin:0;font:13px/1.5 -apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei','Segoe UI',system-ui,sans-serif}.mono{font-family:'JetBrains Mono',monospace;font-variant-numeric:tabular-nums}.field{height:32px;border:1px solid #DFE1E5;border-radius:4px;padding:0 10px;background:#fff;outline:none}.field:focus{border-color:#0066FF;box-shadow:0 0 0 2px #E6F0FF}.field[aria-invalid="true"]{border-color:#D9001B}.btn{height:32px;padding:0 12px;border-radius:4px;display:inline-flex;align-items:center;justify-content:center;gap:6px;font-weight:500}.btn-primary{background:#0066FF;color:#fff}.btn-primary:hover{background:#0052CC}.btn-default{background:#fff;border:1px solid #DFE1E5;color:#3A3F4A}.btn-default:hover{background:#F3F4F6}.card{background:#fff;border-radius:8px}.tag{height:22px;padding:0 8px;border-radius:4px;display:inline-flex;align-items:center;font-size:12px}.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:1100;display:flex;align-items:center;justify-content:center;padding:16px}.hidden{display:none!important}.toast{position:fixed;right:24px;top:72px;z-index:1300;background:#1A1D24;color:#fff;padding:10px 16px;border-radius:4px;box-shadow:0 4px 18px #0003}.anno-badge{position:fixed;width:20px;height:20px;border:0;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;background:#0066FF;font:600 11px/1 'JetBrains Mono',monospace;pointer-events:auto;box-shadow:0 2px 8px rgba(0,0,0,.12)}.member-form-grid{display:grid;grid-template-columns:90px minmax(0,400px);align-items:center;justify-content:center;gap:18px 14px}.member-form-grid>label{text-align:right;color:#6E7685}.member-form-grid .span-all{grid-column:1/-1}th,td{white-space:nowrap}@media(max-width:720px){.member-form-grid{grid-template-columns:1fr}.member-form-grid>label{text-align:left}.member-form-grid .span-all{grid-column:auto}}
   </style>
+  <link rel="stylesheet" href="公共导航.css?v=20260821a">
+  <script src="公共导航.js?v=20260821a"></script>
 </head>
 <body class="bg-page text-ink-body overflow-hidden">
   <div class="h-screen flex">
     <aside id="sidebar"></aside>
     <div class="min-w-0 flex-1 flex flex-col h-screen">
       <header></header>
-      <main id="mainContent" class="flex-1 min-h-0 overflow-auto p-4 md:p-6" tabindex="-1">
-        <div class="max-w-[1540px] mx-auto">
-          <section class="flex flex-wrap items-start justify-between gap-4 mb-4">
-            <div><h1 class="text-[24px] leading-8 font-bold text-ink-title">成员管理</h1><p class="mt-1 text-ink-sub">维护团队成员、部门、角色、账号状态和环境授权范围</p></div>
-            <div class="flex gap-2"><button id="inviteBtn" class="btn btn-default"><i data-lucide="link" class="w-4"></i>邀请链接</button><button id="addBtn" class="btn btn-primary"><i data-lucide="user-plus" class="w-4"></i>添加成员</button></div>
-          </section>
-
-          <section class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
-            <div class="card p-4"><span class="text-ink-sub">成员总数</span><div class="mt-2 text-[26px] font-semibold text-ink-title mono">8</div><span class="text-[12px] text-success">7 位正常使用</span></div>
-            <div class="card p-4"><span class="text-ink-sub">在线成员</span><div class="mt-2 text-[26px] font-semibold text-ink-title mono">4</div><span class="text-[12px] text-ink-muted">最近 15 分钟有活动</span></div>
-            <div class="card p-4"><span class="text-ink-sub">待处理申请</span><div class="mt-2 text-[26px] font-semibold text-warning mono">1</div><span class="text-[12px] text-ink-muted">需团队管理员审批</span></div>
-          </section>
-
-          <section class="card p-4 mb-4">
-            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-[minmax(220px,1fr)_180px_180px_180px_auto] gap-3 items-end">
-              <label><span class="block text-ink-sub mb-1">姓名 / 账号</span><input id="keyword" class="field w-full" placeholder="搜索昵称、手机号或账号"></label>
-              <label><span class="block text-ink-sub mb-1">所在部门</span><select id="department" class="field w-full"><option>全部</option><option>默认部门</option><option>跨境运营</option><option>内容增长</option></select></label>
-              <label><span class="block text-ink-sub mb-1">角色</span><select id="role" class="field w-full"><option>全部</option><option>创始人</option><option>经理</option><option>财务</option><option>环境配置员</option><option>环境操作员</option></select></label>
-              <label><span class="block text-ink-sub mb-1">状态</span><select id="status" class="field w-full"><option>全部</option><option>正常</option><option>已禁用</option></select></label>
-              <div class="flex gap-2"><button id="searchBtn" class="btn btn-primary">查询</button><button id="resetBtn" class="btn btn-default">重置</button></div>
+      <main id="mainContent" class="flex-1 min-h-0 overflow-auto p-4" tabindex="-1">
+        <div>
+          <section class="card p-5 md:p-6 mb-4">
+            <div class="filter-flow">
+              <label class="filter-item"><span class="block text-ink-sub mb-1">姓名 / 账号</span><input id="keyword" data-anno="1" class="field w-full" placeholder="搜索昵称、手机号或账号"></label>
+              <label class="filter-item"><span class="block text-ink-sub mb-1">所在部门</span><select id="department" class="field w-full"><option>全部</option><option>默认部门</option><option>跨境运营</option><option>内容增长</option></select></label>
+              <label class="filter-item"><span class="block text-ink-sub mb-1">角色</span><select id="role" class="field w-full"><option>全部</option><option>创始人</option><option>经理</option><option>财务</option><option>环境配置员</option><option>环境操作员</option></select></label>
+              <label class="filter-item"><span class="block text-ink-sub mb-1">状态</span><select id="status" class="field w-full"><option>全部</option><option>正常</option><option>已禁用</option></select></label>
+              <div class="filter-actions"><button id="searchBtn" class="btn btn-primary">查询</button><button id="resetBtn" class="btn btn-default">重置</button></div>
             </div>
           </section>
 
           <section class="card overflow-hidden">
-            <div class="h-12 px-5 flex items-center justify-between border-b border-line-lighter"><div><strong class="text-ink-title">团队成员</strong><span id="count" class="ml-2 text-ink-sub mono"></span></div><button id="refreshBtn" class="w-8 h-8 rounded hover:bg-hover text-ink-sub" aria-label="刷新成员"><i data-lucide="refresh-cw" class="w-4 mx-auto"></i></button></div>
-            <div class="overflow-x-auto"><table class="w-full min-w-[1120px]"><thead class="bg-page text-ink-sub"><tr><th class="h-10 px-4 text-left font-medium">成员</th><th class="px-4 text-left font-medium">部门</th><th class="px-4 text-left font-medium">角色</th><th class="px-4 text-left font-medium">状态</th><th class="px-4 text-left font-medium">环境授权</th><th class="px-4 text-left font-medium">最近登录</th><th class="px-4 text-left font-medium">在线</th><th class="px-4 text-right font-medium">操作</th></tr></thead><tbody id="memberBody"></tbody></table></div>
-            <div class="min-h-12 px-4 flex items-center justify-between border-t border-line-lighter text-[12px] text-ink-sub"><span>仅创始人和授权管理员可调整成员角色</span><span class="mono">1 / 1</span></div>
+            <div class="min-h-14 px-5 py-3 flex flex-wrap items-center justify-between gap-3 border-b border-line-lighter"><div><h2 data-anno="2" class="inline-block text-[16px] font-semibold text-ink-title">团队成员</h2><span id="count" class="text-ink-sub mono"></span></div><div class="flex gap-2"><button id="inviteBtn" data-anno="3" class="btn btn-default"><i data-lucide="link" class="w-4"></i>邀请链接</button><button id="addBtn" data-anno="4" class="btn btn-primary"><i data-lucide="user-plus" class="w-4"></i>添加成员</button><button id="refreshBtn" class="w-8 h-8 rounded hover:bg-hover text-ink-sub" aria-label="刷新成员"><i data-lucide="refresh-cw" class="w-4 mx-auto"></i></button></div></div>
+            <div class="grid grid-cols-1 md:grid-cols-3 border-b border-line-lighter"><div class="p-4"><span class="text-ink-sub">成员总数</span><strong id="memberTotal" class="block mt-1 text-[20px] text-ink-title mono"></strong></div><div class="p-4"><span class="text-ink-sub">正常成员</span><strong id="memberEnabled" class="block mt-1 text-[20px] text-success mono"></strong></div><div class="p-4"><span class="text-ink-sub">当前在线</span><strong id="memberOnline" class="block mt-1 text-[20px] text-ink-title mono"></strong></div></div>
+            <div class="overflow-x-auto"><table class="w-full min-w-[1120px]"><thead class="bg-page text-ink-sub"><tr><th class="h-10 px-4 text-left font-medium">成员</th><th class="px-4 text-left font-medium">部门</th><th class="px-4 text-left font-medium">角色</th><th class="px-4 text-left font-medium">状态</th><th class="px-4 text-left font-medium">环境授权</th><th class="px-4 text-left font-medium">最近登录</th><th class="px-4 text-left font-medium">在线</th><th class="px-4 text-left font-medium">操作</th></tr></thead><tbody id="memberBody"></tbody></table></div>
+            <div id="memberPagination" data-anno="5" class="px-4 pt-5 pb-4" aria-label="成员列表分页"></div>
           </section>
         </div>
       </main>
     </div>
   </div>
 
-  <div id="memberModal" class="modal-bg hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-    <section class="w-[600px] max-w-[calc(100vw-32px)] bg-card rounded-lg shadow-[0_6px_24px_rgba(0,0,0,.14)] overflow-hidden">
+  <div id="memberModal" class="modal-bg hidden" aria-hidden="true">
+    <section id="memberModalPanel" data-anno="6" class="w-[760px] max-w-[92vw] bg-card rounded-lg shadow-[0_6px_24px_rgba(0,0,0,.12)] overflow-hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-describedby="modalHelp" tabindex="-1">
       <header class="h-14 px-5 border-b border-line flex items-center justify-between"><h2 id="modalTitle" class="text-[16px] font-semibold text-ink-title"></h2><button id="closeModal" class="w-8 h-8 rounded hover:bg-hover" aria-label="关闭"><i data-lucide="x" class="w-4 mx-auto"></i></button></header>
-      <div id="modalBody" class="p-5"></div>
-      <footer class="px-5 pb-5 flex justify-end gap-2"><button id="cancelModal" class="btn btn-default">取消</button><button id="saveModal" class="btn btn-primary">保存</button></footer>
+      <div id="modalBody" class="px-6 py-8"></div>
+      <footer class="px-6 py-4 border-t border-line flex justify-end gap-3"><button id="cancelModal" type="button" class="btn btn-default">取消</button><button id="saveModal" type="submit" form="memberForm" class="btn btn-primary">保存</button></footer>
     </section>
   </div>
-  <div id="toast" class="toast hidden"></div>
+  <div id="toast" class="toast hidden" role="status" aria-live="polite" aria-atomic="true"></div>
+  <div id="annoLayer" class="fixed inset-0 pointer-events-none z-[9998]"></div><button id="annoToggle" type="button" class="fixed right-2 top-[120px] z-[9997] h-8 px-3 rounded-full bg-ink-muted text-white shadow-[0_2px_8px_rgba(0,0,0,.12)] flex items-center justify-center gap-1.5" aria-pressed="false"><i data-lucide="tags" class="w-4 h-4"></i><span class="text-[12px] font-medium">显示标注</span></button>
+  <div id="annoPopup" class="modal-bg hidden !z-[9999]" role="dialog" aria-modal="true" aria-labelledby="annoTitle"><section id="annoPanel" class="w-[520px] max-w-[92vw] rounded-lg bg-white shadow-[0_6px_24px_rgba(0,0,0,.12)]" tabindex="-1"><header class="h-14 px-5 border-b border-line flex items-center justify-between"><h2 id="annoTitle" class="text-[16px] font-semibold text-ink-title"></h2><button id="closeAnno" type="button" class="w-8 h-8 rounded hover:bg-hover" aria-label="关闭标注说明"><i data-lucide="x" class="w-4 mx-auto"></i></button></header><div id="annoDesc" class="p-5 leading-7 text-ink-body"></div></section></div>
 
+  <script src="分页器.js?v=20260814"></script>
   <script>
     const members=[
       {name:'张小登',account:'177****0832',department:'默认部门',role:'创始人',status:'正常',env:'全部环境',login:'2026-08-13 10:32',online:true},
@@ -70,15 +67,143 @@
       {name:'赵执行',account:'133****9051',department:'内容增长',role:'环境操作员',status:'正常',env:'8 个环境',login:'2026-08-10 16:31',online:false},
       {name:'孙运营',account:'188****4421',department:'跨境运营',role:'环境操作员',status:'已禁用',env:'0 个环境',login:'2026-08-01 14:12',online:false},
       {name:'周内容',account:'159****3708',department:'内容增长',role:'环境操作员',status:'正常',env:'6 个环境',login:'2026-08-13 10:08',online:true},
-      {name:'吴协作',account:'137****1196',department:'默认部门',role:'环境操作员',status:'正常',env:'3 个环境',login:'2026-08-09 19:22',online:false}
+      {name:'吴协作',account:'137****1196',department:'默认部门',role:'环境操作员',status:'正常',env:'3 个环境',login:'2026-08-09 19:22',online:false},
+      {name:'郑投放',account:'136****2840',department:'内容增长',role:'经理',status:'正常',env:'11 个环境',login:'2026-08-08 13:46',online:false},
+      {name:'何审核',account:'182****6935',department:'默认部门',role:'环境配置员',status:'正常',env:'9 个环境',login:'2026-08-07 17:12',online:false},
+      {name:'郭客服',account:'151****4476',department:'跨境运营',role:'环境操作员',status:'正常',env:'5 个环境',login:'2026-08-06 09:55',online:false},
+      {name:'马增长',account:'189****7312',department:'内容增长',role:'环境操作员',status:'已禁用',env:'0 个环境',login:'2026-07-29 11:20',online:false}
     ];
-    const $=id=>document.getElementById(id); let shown=members.slice(),editing=-1;
-    function render(){const q=$('keyword').value.trim().toLowerCase(),d=$('department').value,r=$('role').value,s=$('status').value;shown=members.filter(x=>(!q||(x.name+x.account).toLowerCase().includes(q))&&(d==='全部'||x.department===d)&&(r==='全部'||x.role===r)&&(s==='全部'||x.status===s));$('memberBody').innerHTML=shown.map(x=>{const i=members.indexOf(x);return `<tr class="border-t border-line-lighter hover:bg-hover"><td class="h-13 px-4"><strong class="text-ink-title">${x.name}</strong><div class="mono text-[11px] text-ink-sub">${x.account}</div></td><td class="px-4">${x.department}</td><td class="px-4">${x.role}</td><td class="px-4"><span class="tag ${x.status==='正常'?'bg-success-bg text-success':'bg-danger-bg text-danger'}">${x.status}</span></td><td class="px-4">${x.env}</td><td class="px-4 mono text-[12px]">${x.login}</td><td class="px-4 ${x.online?'text-success':'text-ink-muted'}">${x.online?'在线':'离线'}</td><td class="px-4 text-right"><button data-edit="${i}" class="text-primary hover:underline">${x.role==='创始人'?'查看':'编辑'}</button></td></tr>`}).join('')||'<tr><td colspan="8" class="py-20 text-center text-ink-sub">暂无符合条件的成员</td></tr>';$('count').textContent=`${shown.length} 人`;lucide.createIcons()}
-    function toast(message){$('toast').textContent=message;$('toast').classList.remove('hidden');clearTimeout($('toast').timer);$('toast').timer=setTimeout(()=>$('toast').classList.add('hidden'),1800)}
-    function closeModal(){$('memberModal').classList.add('hidden')}
-    function openEditor(index){editing=index;const x=members[index];$('modalTitle').textContent=x.role==='创始人'?'查看成员':'编辑成员';$('modalBody').innerHTML=`<div class="grid grid-cols-[100px_1fr] gap-x-4 gap-y-4 items-center"><span class="text-ink-sub">成员账号</span><span class="mono">${x.account}</span><label for="editDepartment" class="text-ink-sub">所在部门</label><select id="editDepartment" class="field" ${x.role==='创始人'?'disabled':''}><option ${x.department==='默认部门'?'selected':''}>默认部门</option><option ${x.department==='跨境运营'?'selected':''}>跨境运营</option><option ${x.department==='内容增长'?'selected':''}>内容增长</option></select><label for="editRole" class="text-ink-sub">成员角色</label><select id="editRole" class="field" ${x.role==='创始人'?'disabled':''}><option ${x.role==='经理'?'selected':''}>经理</option><option ${x.role==='财务'?'selected':''}>财务</option><option ${x.role==='环境配置员'?'selected':''}>环境配置员</option><option ${x.role==='环境操作员'?'selected':''}>环境操作员</option>${x.role==='创始人'?'<option selected>创始人</option>':''}</select><span class="text-ink-sub">账号状态</span><label class="flex items-center gap-2"><input id="editEnabled" type="checkbox" ${x.status==='正常'?'checked':''} ${x.role==='创始人'?'disabled':''}>允许登录和使用已授权环境</label></div>`;$('saveModal').classList.toggle('hidden',x.role==='创始人');$('memberModal').classList.remove('hidden');lucide.createIcons()}
-    $('searchBtn').onclick=render;$('resetBtn').onclick=()=>{$('keyword').value='';$('department').value=$('role').value=$('status').value='全部';render()};$('refreshBtn').onclick=()=>{render();toast('成员列表已刷新')};$('inviteBtn').onclick=()=>toast('演示邀请链接已复制');$('addBtn').onclick=()=>toast('请通过团队管理的邀请流程添加成员');$('memberBody').onclick=e=>{const button=e.target.closest('[data-edit]');if(button)openEditor(Number(button.dataset.edit))};$('closeModal').onclick=$('cancelModal').onclick=closeModal;$('memberModal').onclick=e=>{if(e.target===$('memberModal'))closeModal()};$('saveModal').onclick=()=>{const x=members[editing];x.department=$('editDepartment').value;x.role=$('editRole').value;x.status=$('editEnabled').checked?'正常':'已禁用';closeModal();render();toast('成员信息已更新（演示）')};render();lucide.createIcons();
+    const $=id=>document.getElementById(id);
+    const escapeHtml=value=>String(value).replace(/[&<>'"]/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
+    const annotations={1:{title:'成员搜索',desc:'按昵称、手机号或账号搜索团队成员。'},2:{title:'成员列表',desc:'展示成员部门、角色、状态、授权与最近登录信息。'},3:{title:'邀请链接',desc:'原型模拟复制邀请链接，不发送真实邀请。'},4:{title:'添加成员',desc:'填写成员名称、账号、部门与角色后加入当前演示列表。'},5:{title:'成员分页',desc:'默认每页 10 条，支持页码、页大小和跳转。'},6:{title:'成员表单',desc:'新增、编辑和创始人只读查看共用此弹窗。'}};
+    let shown=members.slice(),page=1,pageSize=10,editing=-1,modalMode='edit',lastFocused=null,memberPager,annoVisible=false,lastAnnoFocus=null;
+    const annoScope=[];
+
+    function toast(message){
+      $('toast').textContent=message;
+      $('toast').classList.remove('hidden');
+      clearTimeout($('toast').timer);
+      $('toast').timer=setTimeout(()=>$('toast').classList.add('hidden'),1800);
+    }
+
+    function renderRows(){
+      const rows=shown.slice((page-1)*pageSize,page*pageSize);
+      $('memberBody').innerHTML=rows.map(member=>{
+        const index=members.indexOf(member);
+        return `<tr class="border-t border-line-lighter hover:bg-hover"><td class="h-13 px-4"><strong class="text-ink-title">${escapeHtml(member.name)}</strong><div class="mono text-[11px] text-ink-sub">${escapeHtml(member.account)}</div></td><td class="px-4">${escapeHtml(member.department)}</td><td class="px-4">${escapeHtml(member.role)}</td><td class="px-4"><span class="tag ${member.status==='正常'?'bg-success-bg text-success':'bg-danger-bg text-danger'}">${member.status}</span></td><td class="px-4">${escapeHtml(member.env)}</td><td class="px-4 mono text-[12px]">${escapeHtml(member.login)}</td><td class="px-4 ${member.online?'text-success':'text-ink-muted'}">${member.online?'在线':'离线'}</td><td class="px-4 text-left"><button type="button" data-edit="${index}" class="text-primary hover:underline">${member.role==='创始人'?'查看':'编辑'}</button></td></tr>`;
+      }).join('')||'<tr><td colspan="8" class="py-20 text-center text-ink-sub">暂无符合条件的成员</td></tr>';
+      $('count').textContent=`${shown.length} 人`;
+      $('memberTotal').textContent=members.length;
+      $('memberEnabled').textContent=members.filter(member=>member.status==='正常').length;
+      $('memberOnline').textContent=members.filter(member=>member.online).length;
+      lucide.createIcons();
+      requestAnimationFrame(renderAnnoBadges);
+    }
+
+    function applyFilters(resetPage=false){
+      const keyword=$('keyword').value.trim().toLowerCase(),department=$('department').value,role=$('role').value,status=$('status').value;
+      shown=members.filter(member=>(!keyword||(member.name+member.account).toLowerCase().includes(keyword))&&(department==='全部'||member.department===department)&&(role==='全部'||member.role===role)&&(status==='全部'||member.status===status));
+      if(resetPage)page=1;
+      memberPager.setState({total_count:shown.length,current_page:page,page_size:pageSize},{silent:true});
+      ({current_page:page,page_size:pageSize}=memberPager.getState());
+      renderRows();
+    }
+
+    function maskAccount(value){
+      const account=value.trim();
+      if(/^1\d{10}$/.test(account))return `${account.slice(0,3)}****${account.slice(-4)}`;
+      const [name,domain]=account.split('@');
+      return `${name.slice(0,2)}***@${domain}`;
+    }
+
+    function formMarkup(member){
+      const isAdd=modalMode==='add';
+      return `<form id="memberForm" novalidate><div class="member-form-grid">
+        <label for="memberName">成员名称：</label><input id="memberName" class="field w-full" maxlength="20" value="${isAdd?'':escapeHtml(member.name)}" autocomplete="off" required>
+        ${isAdd?'<label for="memberAccount">手机号 / 邮箱：</label><input id="memberAccount" class="field w-full mono" placeholder="输入 11 位手机号或邮箱" autocomplete="off" required>':'<span class="text-ink-sub text-right">成员账号：</span><span class="mono">'+escapeHtml(member.account)+'</span>'}
+        <label for="editDepartment">所在部门：</label><select id="editDepartment" class="field w-full"><option ${member.department==='默认部门'?'selected':''}>默认部门</option><option ${member.department==='跨境运营'?'selected':''}>跨境运营</option><option ${member.department==='内容增长'?'selected':''}>内容增长</option></select>
+        <label for="editRole">成员角色：</label><select id="editRole" class="field w-full"><option ${member.role==='经理'?'selected':''}>经理</option><option ${member.role==='财务'?'selected':''}>财务</option><option ${member.role==='环境配置员'?'selected':''}>环境配置员</option><option ${member.role==='环境操作员'?'selected':''}>环境操作员</option></select>
+        <span class="text-ink-sub text-right">账号状态：</span><label class="!text-left flex items-center gap-2"><input id="editEnabled" type="checkbox" ${member.status==='正常'?'checked':''}>允许登录和使用已授权环境</label>
+        <p id="modalHelp" class="span-all text-[12px] text-ink-sub text-center">保存后将立即更新本页演示数据，不会发送真实邀请。</p>
+        <p id="modalError" class="span-all min-h-[18px] text-[12px] text-danger text-center" role="alert" aria-live="assertive"></p>
+      </div></form>`;
+    }
+
+    function viewMarkup(member){
+      return `<div class="member-form-grid"><span class="text-ink-sub text-right">成员账号：</span><span class="mono">${escapeHtml(member.account)}</span><span class="text-ink-sub text-right">所在部门：</span><span>${escapeHtml(member.department)}</span><span class="text-ink-sub text-right">成员角色：</span><span>${escapeHtml(member.role)}</span><p id="modalHelp" class="span-all text-[12px] text-ink-sub text-center">创始人账号仅支持查看，不能在此修改角色或状态。</p></div>`;
+    }
+
+    function openMemberModal(mode,index=-1){
+      modalMode=mode;editing=index;lastFocused=document.activeElement;
+      const member=mode==='add'?{name:'',department:'默认部门',role:'环境操作员',status:'正常'}:members[index];
+      const isView=mode==='view';
+      $('modalTitle').textContent=mode==='add'?'添加成员':isView?'查看成员':'编辑成员';
+      $('modalBody').innerHTML=isView?viewMarkup(member):formMarkup(member);
+      $('saveModal').classList.toggle('hidden',isView);
+      $('cancelModal').textContent=isView?'关闭':'取消';
+      $('memberModal').classList.remove('hidden');
+      $('memberModal').setAttribute('aria-hidden','false');
+      annoScope.push($('memberModalPanel'));
+      if(!isView)$('memberForm').addEventListener('submit',saveMember);
+      lucide.createIcons();
+      $(isView?'closeModal':'memberName').focus();
+    }
+
+    function closeModal(){
+      if($('memberModal').classList.contains('hidden'))return;
+      $('memberModal').classList.add('hidden');
+      $('memberModal').setAttribute('aria-hidden','true');
+      if(annoScope.at(-1)===$('memberModalPanel'))annoScope.pop();
+      renderAnnoBadges();
+      lastFocused?.focus();
+      lastFocused=null;
+    }
+
+    function saveMember(event){
+      event.preventDefault();
+      const name=$('memberName').value.trim(),account=$('memberAccount')?.value.trim()||'';
+      document.querySelectorAll('#memberForm [aria-invalid]').forEach(field=>field.removeAttribute('aria-invalid'));
+      if(name.length<2){$('memberName').setAttribute('aria-invalid','true');$('modalError').textContent='请输入 2-20 个字符的成员名称';$('memberName').focus();return;}
+      if(modalMode==='add'&&!(/^1\d{10}$/.test(account)||/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(account))){$('memberAccount').setAttribute('aria-invalid','true');$('modalError').textContent='请输入有效的 11 位手机号或邮箱';$('memberAccount').focus();return;}
+      if(modalMode==='add'){
+        members.splice(1,0,{name,account:maskAccount(account),department:$('editDepartment').value,role:$('editRole').value,status:$('editEnabled').checked?'正常':'已禁用',env:'0 个环境',login:'尚未登录',online:false});
+        $('keyword').value='';$('department').value=$('role').value=$('status').value='全部';
+        closeModal();applyFilters(true);toast('成员已添加（演示）');
+      }else{
+        Object.assign(members[editing],{name,department:$('editDepartment').value,role:$('editRole').value,status:$('editEnabled').checked?'正常':'已禁用'});
+        closeModal();applyFilters(false);toast('成员信息已更新（演示）');
+      }
+    }
+
+    function trapFocus(event,panel){
+      if(event.key!=='Tab')return;
+      const focusable=[...panel.querySelectorAll('button:not([disabled]):not(.hidden),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])')].filter(node=>node.offsetParent!==null);
+      if(!focusable.length){event.preventDefault();panel.focus();return;}
+      const first=focusable[0],last=focusable[focusable.length-1];
+      if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}
+      else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}
+    }
+
+    function renderAnnoBadges(){const layer=$('annoLayer');layer.innerHTML='';if(!annoVisible)return;(annoScope.at(-1)||document).querySelectorAll('[data-anno]').forEach(element=>{if(element.closest('.hidden'))return;const rect=element.getBoundingClientRect();if(!rect.width||!rect.height)return;const badge=document.createElement('button');badge.type='button';badge.className='anno-badge';badge.textContent=element.dataset.anno;badge.style.left=`${Math.min(innerWidth-24,Math.max(2,rect.right-10))}px`;badge.style.top=`${Math.min(innerHeight-24,Math.max(2,rect.top-10))}px`;badge.setAttribute('aria-label',`查看交互说明 ${element.dataset.anno}`);badge.onclick=()=>openAnno(element.dataset.anno);layer.appendChild(badge)})}
+    function openAnno(id){const item=annotations[id];if(!item)return;lastAnnoFocus=document.querySelector(`[data-anno="${id}"]`)||document.activeElement;$('annoTitle').textContent=`${id}. ${item.title}`;$('annoDesc').textContent=item.desc;$('annoPopup').classList.remove('hidden');$('closeAnno').focus()}
+    function closeAnno(){if($('annoPopup').classList.contains('hidden'))return;$('annoPopup').classList.add('hidden');lastAnnoFocus?.focus?.({preventScroll:true});lastAnnoFocus=null}
+
+    memberPager=new YDPager($('memberPagination'),{total_count:members.length,current_page:1,page_size:10,page_size_options:[10,20,50],toast,onChange(next){page=next.current_page;pageSize=next.page_size;renderRows();}});
+    $('searchBtn').onclick=()=>applyFilters(true);
+    $('resetBtn').onclick=()=>{$('keyword').value='';$('department').value=$('role').value=$('status').value='全部';applyFilters(true);};
+    $('refreshBtn').onclick=()=>{applyFilters(false);toast('成员列表已刷新');};
+    $('inviteBtn').onclick=()=>toast('演示邀请链接已复制');
+    $('addBtn').onclick=()=>openMemberModal('add');
+    $('memberBody').onclick=event=>{const button=event.target.closest('[data-edit]');if(button){const index=Number(button.dataset.edit);openMemberModal(members[index].role==='创始人'?'view':'edit',index);}};
+    $('closeModal').onclick=$('cancelModal').onclick=closeModal;
+    $('memberModal').onclick=event=>{if(event.target===$('memberModal'))closeModal();};
+    $('closeAnno').onclick=closeAnno;$('annoPopup').onclick=event=>{if(event.target===$('annoPopup'))closeAnno()};
+    document.addEventListener('keydown',event=>{if(!$('annoPopup').classList.contains('hidden')){if(event.key==='Escape'){event.preventDefault();closeAnno();return;}trapFocus(event,$('annoPanel'));return}if($('memberModal').classList.contains('hidden'))return;if(event.key==='Escape'){event.preventDefault();closeModal();return;}trapFocus(event,$('memberModalPanel'));});
+    addEventListener('resize',renderAnnoBadges);addEventListener('scroll',renderAnnoBadges,true);
+    applyFilters(true);
+    lucide.createIcons();
   </script>
-  <script src="公共导航.js?v=20260813"></script>
+  <script src="标注交互.js?v=20260814"></script>
+
 </body>
 </html>

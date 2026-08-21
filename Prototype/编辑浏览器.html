@@ -8,20 +8,20 @@
   <script src="https://unpkg.com/lucide@latest"></script>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
   <script>
-    tailwind.config={theme:{extend:{colors:{primary:{DEFAULT:'#0066FF',hover:'#0052CC',active:'#0047B3',bg:'#E6F0FF'},ink:{title:'#1A1D24',body:'#3A3F4A',sub:'#6E7685',muted:'#9DA2AC'},line:{DEFAULT:'#DFE1E5',light:'#E8EAED',lighter:'#F0F1F3'},page:'#F7F8FA',card:'#FFFFFF',hover:'#F3F4F6',success:{DEFAULT:'#0FC060',bg:'#E7F9F0'},warning:{DEFAULT:'#E7772D',bg:'#FDF2E9'},danger:{DEFAULT:'#D9001B',bg:'#FFE8EB'},info:{DEFAULT:'#0091D5',bg:'#E4F4FB'}},borderRadius:{DEFAULT:'4px',md:'6px',lg:'8px'},fontFamily:{sans:['-apple-system','BlinkMacSystemFont','PingFang SC','Microsoft YaHei','Hiragino Sans GB','Segoe UI','system-ui','sans-serif'],mono:['JetBrains Mono','monospace']}}}};
+    tailwind.config={theme:{extend:{colors:{primary:{DEFAULT:'#0066FF',hover:'#0052CC',active:'#0047B3',bg:'#E6F0FF'},ink:{title:'#1A1D24',body:'#3A3F4A',sub:'#6E7685',muted:'#9DA2AC'},line:{DEFAULT:'#DFE1E5',light:'#E8EAED',lighter:'#F0F1F3'},page:'#F7F8FA',card:'#FFFFFF',hover:'#F3F4F6','block-hover':'#F0F1F3',success:{DEFAULT:'#0FC060',bg:'#E7F9F0'},warning:{DEFAULT:'#E7772D',bg:'#FDF2E9'},danger:{DEFAULT:'#D9001B',bg:'#FFE8EB'},info:{DEFAULT:'#0091D5',bg:'#E4F4FB'}},borderRadius:{DEFAULT:'4px',md:'6px',lg:'8px'},fontFamily:{sans:['-apple-system','BlinkMacSystemFont','PingFang SC','Hiragino Sans GB','Microsoft YaHei','Helvetica Neue','Helvetica','Arial','sans-serif'],mono:['JetBrains Mono','monospace']}}}};
   </script>
   <style>
-    *{box-sizing:border-box} html{scroll-behavior:smooth} body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei','Hiragino Sans GB','Segoe UI',system-ui,sans-serif;color:#3A3F4A;background:#F7F8FA}.mono{font-family:'JetBrains Mono',monospace;font-variant-numeric:tabular-nums}.sidebar{width:220px;transition:width .22s ease}.sidebar.compact{width:68px}.sidebar.compact .brand-copy,.sidebar.compact .menu-label,.sidebar.compact .group-chevron,.sidebar.compact .create-label,.sidebar.compact .bottom-label{display:none}.sidebar.compact .menu-link,.sidebar.compact .bottom-link{justify-content:center;padding-left:0;padding-right:0}.sidebar.compact .create-button{padding-left:0;padding-right:0;justify-content:center}.sidebar.compact .submenu{display:none!important}.menu-link{min-height:38px;border-radius:4px;color:#3A3F4A;transition:background .15s,color .15s}.menu-link:hover,.bottom-link:hover{background:#F3F4F6}.menu-link.active-leaf{color:#0066FF;background:#E6F0FF;font-weight:600}.menu-link.active-group{color:#0066FF;font-weight:600}.submenu .menu-link{min-height:34px;font-size:12px}.menu-icon{width:18px;height:18px;flex:0 0 18px}.popover{box-shadow:0 6px 24px rgba(0,0,0,.12)}.field{display:grid;grid-template-columns:112px minmax(0,1fr);gap:12px;align-items:start}.field-label{font-size:13px;color:#3A3F4A;text-align:right;line-height:32px;white-space:nowrap}.control{width:100%;height:32px;border:1px solid #DFE1E5;border-radius:4px;background:#fff;padding:0 10px;font-size:13px;color:#3A3F4A;outline:none;transition:border-color .15s,box-shadow .15s}.control:focus{border-color:#0066FF;box-shadow:0 0 0 2px rgba(0,102,255,.12)}textarea.control{height:auto;min-height:74px;padding:8px 10px;resize:vertical;line-height:1.6}.control.invalid{border-color:#D9001B;box-shadow:0 0 0 2px rgba(217,0,27,.08)}.btn{height:32px;padding:0 14px;border-radius:4px;font-size:13px;font-weight:500;display:inline-flex;align-items:center;justify-content:center;gap:6px;transition:.15s;white-space:nowrap}.btn-primary{background:#0066FF;color:#fff}.btn-primary:hover{background:#0052CC}.btn-secondary{background:#fff;color:#3A3F4A;border:1px solid #DFE1E5}.btn-secondary:hover{background:#F3F4F6;border-color:#C7CAD1}.btn-ghost{color:#0066FF}.btn-ghost:hover{background:#E6F0FF}.btn:disabled{background:#F0F1F3;color:#9DA2AC;border-color:#DFE1E5;cursor:not-allowed}.section-card{background:#fff;border:1px solid #DFE1E5;border-radius:8px;overflow:hidden}.section-head{width:100%;min-height:52px;padding:0 16px;display:flex;align-items:center;justify-content:space-between;text-align:left;transition:background .15s}.section-head:hover{background:#F7F8FA}.section-body{padding:20px;border-top:1px solid #F0F1F3}.section-body.hidden{display:none}.segment{display:inline-flex;border:1px solid #DFE1E5;border-radius:4px;overflow:hidden;background:#fff}.segment button{height:30px;min-width:100px;padding:0 14px;font-size:12px;color:#6E7685;border-right:1px solid #DFE1E5;width:auto;flex:none}.segment button:last-child{border-right:0}.segment button.active{background:#0066FF;color:#fff}.risk-dot,.safe-dot{width:14px;height:14px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700}.risk-dot{color:#D9001B;background:#FFE8EB}.safe-dot{color:#0FC060;background:#E7F9F0}.summary-rail{position:sticky;top:16px;background:#fff;border:1px solid #DFE1E5;border-radius:8px;overflow:hidden}.summary-rail:before{content:'';display:block;height:4px;background:#0066FF}.summary-row{display:grid;grid-template-columns:92px minmax(0,1fr);gap:8px;padding:7px 0;border-bottom:1px solid #F0F1F3}.summary-row:last-child{border-bottom:0}.summary-key{font-size:11px;color:#9DA2AC}.summary-val{font-size:12px;color:#3A3F4A;text-align:right;overflow-wrap:anywhere}.data-table{width:100%;border-collapse:collapse;font-size:13px}.data-table th{background:#F0F1F3;color:#6E7685;font-size:12px;font-weight:600;text-align:left;padding:9px 12px;border-bottom:1px solid #DFE1E5;white-space:nowrap}.data-table td{padding:9px 12px;border-bottom:1px solid #F0F1F3;white-space:nowrap}.data-table tbody tr:hover{background:#F3F4F6}.data-table tr.selected{background:#E6F0FF}.inline-editor{border:1px solid #DFE1E5;border-radius:8px;background:#F7F8FA;padding:16px;margin-top:12px}.switch{position:relative;width:40px;height:22px;border-radius:11px;background:#C7CAD1;transition:.2s;flex:none}.switch:after{content:'';position:absolute;left:2px;top:2px;width:18px;height:18px;border-radius:50%;background:#fff;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.15)}.switch.on{background:#0066FF}.switch.on:after{transform:translateX(18px)}.toast{animation:toast-in .2s ease both}@keyframes toast-in{from{transform:translateY(-8px);opacity:0}to{transform:translateY(0);opacity:1}}@keyframes drawer-in{from{transform:translateX(100%)}to{transform:translateX(0)}}.drawer-panel{animation:drawer-in .22s ease}@keyframes spin{to{transform:rotate(360deg)}}.spin{animation:spin .65s linear infinite}.modal-in{animation:modal-in .16s ease both}@keyframes modal-in{from{transform:scale(.98);opacity:0}to{transform:scale(1);opacity:1}}.anno-badge{position:fixed;width:20px;height:20px;border-radius:50%;background:#0066FF;color:#fff;font:700 11px/20px 'JetBrains Mono',monospace;text-align:center;box-shadow:0 2px 6px rgba(0,0,0,.15);pointer-events:auto;cursor:pointer;transition:transform .15s}.anno-badge:hover{transform:scale(1.2)}.scrollbar::-webkit-scrollbar{width:6px;height:6px}.scrollbar::-webkit-scrollbar-thumb{background:#C7CAD1;border-radius:4px}.focus-visible:focus-visible,button:focus-visible{outline:2px solid #0066FF;outline-offset:2px}.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 20px}.preference-row{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 0;border-bottom:1px solid #F0F1F3}.preference-row:last-child{border-bottom:0}@media(max-width:1180px){.workspace-grid{grid-template-columns:minmax(0,1fr)!important}.summary-rail{position:relative;top:0}.summary-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));column-gap:20px}}@media(max-width:900px){.form-grid{grid-template-columns:1fr}.field{grid-template-columns:96px minmax(0,1fr)}.summary-list{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:767px){.sidebar{position:fixed;z-index:50;height:100vh;box-shadow:0 6px 24px rgba(0,0,0,.12)}.sidebar.compact{width:0;overflow:hidden}.field{grid-template-columns:1fr;gap:4px}.field-label{text-align:left}.summary-list{grid-template-columns:1fr}.hide-mobile{display:none!important}}@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+    *{box-sizing:border-box} html{scroll-behavior:smooth} body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei','Hiragino Sans GB','Segoe UI',system-ui,sans-serif;color:#3A3F4A;background:#F7F8FA}.mono{font-family:'JetBrains Mono',monospace;font-variant-numeric:tabular-nums}.sidebar{width:220px;transition:width .22s ease}.sidebar.compact{width:68px}.sidebar.compact .brand-copy,.sidebar.compact .menu-label,.sidebar.compact .group-chevron,.sidebar.compact .create-label,.sidebar.compact .bottom-label{display:none}.sidebar.compact .menu-link,.sidebar.compact .bottom-link{justify-content:center;padding-left:0;padding-right:0}.sidebar.compact .create-button{padding-left:0;padding-right:0;justify-content:center}.sidebar.compact .submenu{display:none!important}.menu-link{min-height:38px;border-radius:4px;color:#3A3F4A;transition:background .15s,color .15s}.menu-link:hover,.bottom-link:hover{background:#F3F4F6}.menu-link.active-leaf{color:#0066FF;background:#E6F0FF;font-weight:600}.menu-link.active-group{color:#0066FF;font-weight:600}.submenu .menu-link{min-height:34px;font-size:12px}.menu-icon{width:18px;height:18px;flex:0 0 18px}.popover{box-shadow:0 6px 24px rgba(0,0,0,.12)}.field{display:grid;grid-template-columns:112px minmax(0,1fr);gap:12px;align-items:start}.field-label{font-size:13px;color:#3A3F4A;text-align:right;line-height:32px;white-space:nowrap}.control{width:100%;height:32px;border:1px solid #DFE1E5;border-radius:4px;background:#fff;padding:0 10px;font-size:13px;color:#3A3F4A;outline:none;transition:border-color .15s,box-shadow .15s}.control:focus{border-color:#0066FF;box-shadow:0 0 0 2px rgba(0,102,255,.12)}textarea.control{height:auto;min-height:74px;padding:8px 10px;resize:vertical;line-height:1.6}.control.invalid{border-color:#D9001B;box-shadow:0 0 0 2px rgba(217,0,27,.08)}.btn{height:32px;padding:0 14px;border-radius:4px;font-size:13px;font-weight:500;display:inline-flex;align-items:center;justify-content:center;gap:6px;transition:.15s;white-space:nowrap}.btn-primary{background:#0066FF;color:#fff}.btn-primary:hover{background:#0052CC}.btn-secondary{background:#fff;color:#3A3F4A;border:1px solid #DFE1E5}.btn-secondary:hover{background:#F3F4F6;border-color:#C7CAD1}.btn-ghost{color:#0066FF}.btn-ghost:hover{background:#E6F0FF}.btn:disabled{background:#F0F1F3;color:#9DA2AC;border-color:#DFE1E5;cursor:not-allowed}.section-card{background:#fff;border:1px solid #DFE1E5;border-radius:8px;overflow:hidden}.section-head{width:100%;min-height:52px;padding:0 16px;display:flex;align-items:center;justify-content:space-between;text-align:left;transition:background .15s}.section-head:hover{background:#F0F1F3}.section-body{padding:20px;border-top:1px solid #F0F1F3}.section-body.hidden{display:none}.segment{display:inline-flex;border:1px solid #DFE1E5;border-radius:4px;overflow:hidden;background:#fff}.segment button{height:30px;min-width:100px;padding:0 14px;font-size:12px;color:#6E7685;border-right:1px solid #DFE1E5;width:auto;flex:none}.segment button:last-child{border-right:0}.segment button.active{background:#0066FF;color:#fff}.risk-dot,.safe-dot{width:14px;height:14px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700}.risk-dot{color:#D9001B;background:#FFE8EB}.safe-dot{color:#0FC060;background:#E7F9F0}.summary-rail{position:sticky;top:16px;background:#fff;border:1px solid #DFE1E5;border-radius:8px;overflow:hidden}.summary-rail:before{content:'';display:block;height:4px;background:#0066FF}.summary-row{display:grid;grid-template-columns:92px minmax(0,1fr);gap:8px;padding:7px 0;border-bottom:1px solid #F0F1F3}.summary-row:last-child{border-bottom:0}.summary-key{font-size:11px;color:#9DA2AC}.summary-val{font-size:12px;color:#3A3F4A;text-align:right;overflow-wrap:anywhere}.data-table{width:100%;border-collapse:collapse;font-size:13px}.data-table th{background:#F0F1F3;color:#6E7685;font-size:12px;font-weight:600;text-align:left;padding:9px 12px;border-bottom:1px solid #DFE1E5;white-space:nowrap}.data-table td{padding:9px 12px;border-bottom:1px solid #F0F1F3;white-space:nowrap}.data-table tbody tr:hover{background:#F3F4F6}.data-table tr.selected{background:#E6F0FF}.inline-editor{border:1px solid #DFE1E5;border-radius:8px;background:#F7F8FA;padding:16px;margin-top:12px}.switch{position:relative;width:40px;height:22px;border-radius:11px;background:#C7CAD1;transition:.2s;flex:none}.switch:after{content:'';position:absolute;left:2px;top:2px;width:18px;height:18px;border-radius:50%;background:#fff;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.15)}.switch.on{background:#0066FF}.switch.on:after{transform:translateX(18px)}.toast{animation:toast-in .2s ease both}@keyframes toast-in{from{transform:translateY(-8px);opacity:0}to{transform:translateY(0);opacity:1}}@keyframes drawer-in{from{transform:translateX(100%)}to{transform:translateX(0)}}.drawer-panel{animation:drawer-in .22s ease}@keyframes spin{to{transform:rotate(360deg)}}.spin{animation:spin .65s linear infinite}.modal-in{animation:modal-in .16s ease both}@keyframes modal-in{from{transform:scale(.98);opacity:0}to{transform:scale(1);opacity:1}}.anno-badge{position:fixed;width:20px;height:20px;border-radius:50%;background:#0066FF;color:#fff;font:700 11px/20px 'JetBrains Mono',monospace;text-align:center;box-shadow:0 2px 6px rgba(0,0,0,.15);pointer-events:auto;cursor:pointer;transition:transform .15s}.anno-badge:hover{transform:scale(1.2)}.scrollbar::-webkit-scrollbar{width:6px;height:6px}.scrollbar::-webkit-scrollbar-thumb{background:#C7CAD1;border-radius:4px}.focus-visible:focus-visible,button:focus-visible{outline:2px solid #0066FF;outline-offset:2px}.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 20px}.preference-row{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 0;border-bottom:1px solid #F0F1F3}.preference-row:last-child{border-bottom:0}@media(max-width:1180px){.workspace-grid{grid-template-columns:minmax(0,1fr)!important}.summary-rail{position:relative;top:0}.summary-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));column-gap:20px}}@media(max-width:900px){.form-grid{grid-template-columns:1fr}.field{grid-template-columns:96px minmax(0,1fr)}.summary-list{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:767px){.sidebar{position:fixed;z-index:50;height:100vh;box-shadow:0 6px 24px rgba(0,0,0,.12)}.sidebar.compact{width:0;overflow:hidden}.field{grid-template-columns:1fr;gap:4px}.field-label{text-align:left}.summary-list{grid-template-columns:1fr}.hide-mobile{display:none!important}}@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
   </style>
   <style>
     /* 编辑浏览器业务区：环境先行、配置居中、生效结果常驻 */
     .edit-page{display:flex;flex-direction:column;gap:12px}
-    .page-identity{background:#DCEAFF;border:1px solid #C9DEFF;border-radius:8px;padding:18px 26px}
+    .page-identity{background:#E6F0FF;border:0;border-radius:8px;padding:18px 26px}
     .identity-guide{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-items:center;gap:24px}
     .identity-guide-item{display:flex;align-items:center;gap:10px;min-height:28px;color:#3A3F4A;font-size:13px;font-weight:500}
     .identity-guide-icon{width:16px;height:16px;border:1.5px solid currentColor;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;flex:none;background:transparent;font-size:10px;font-weight:700}
-    .identity-guide-icon.safe{color:#22B573}.identity-guide-icon.risk{color:#FF6B72}.identity-guide-required{width:16px;text-align:center;color:#D9001B;font-size:18px;font-weight:700;flex:none}
-    .generation-chip{height:26px;padding:0 10px;border:1px solid #B8D2FF;border-radius:999px;background:#F4F8FF;color:#0052CC;display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600}
+    .identity-guide-icon.safe{color:#0FC060}.identity-guide-icon.risk{color:#D9001B}.identity-guide-required{width:16px;text-align:center;color:#D9001B;font-size:18px;font-weight:700;flex:none}
+    .generation-chip{height:26px;padding:0 10px;border:1px solid #0066FF;border-radius:999px;background:#E6F0FF;color:#0052CC;display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600}
     .environment-panel{background:#fff;border:1px solid #E8EAED;border-radius:8px;padding:18px 20px;margin-bottom:12px}
     .environment-panel-title{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding-bottom:14px;margin-bottom:16px;border-bottom:1px solid #F0F1F3}
     .environment-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 20px}
@@ -29,30 +29,30 @@
     .environment-fields>.field .field-label{text-align:left;line-height:20px;font-weight:500;color:#3A3F4A}
     .environment-fields>.field:has(#proxySummary),.environment-fields>.field:has(#addAccountBtn),.environment-fields>.inline-editor{grid-column:1/-1}
     .environment-fields>.inline-editor{margin:0!important}
-    .config-command{position:relative;overflow:hidden;background:#F4F8FF;border:1px solid #CFE0FF;border-radius:8px;padding:16px 18px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+    .config-command{position:relative;overflow:hidden;background:#E6F0FF;border:0;border-radius:8px;padding:16px 18px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;gap:20px}
     .config-progress{display:flex;align-items:center;gap:6px;margin-top:10px}
-    .config-progress span{height:3px;width:28px;border-radius:2px;background:#B8D2FF}
+    .config-progress span{height:3px;width:28px;border-radius:2px;background:#DFE1E5}
     .config-progress span:first-child{background:#0066FF;width:48px}
     .section-card{border-color:#E8EAED;box-shadow:0 1px 1px rgba(26,29,36,.02)}
     .section-head{min-height:56px;padding:0 18px}
     .section-head>span>.safe-dot,.section-head>span>.risk-dot{display:none}
     .section-head-copy{display:flex;flex-direction:column;gap:2px}
     .section-caption{font-size:11px;color:#9DA2AC;font-weight:400}
-    .summary-rail{border-color:#DCE6F5;box-shadow:0 8px 24px rgba(34,73,131,.08)}
-    .summary-rail:before{height:5px;background:linear-gradient(90deg,#0066FF 0 72%,#73A7FF 72%)}
-    .summary-hero{padding:16px;background:linear-gradient(180deg,#F7FAFF 0,#fff 100%);border-bottom:1px solid #E8EAED}
-    .summary-meta{display:grid;grid-template-columns:1fr auto;gap:5px 12px;margin-top:12px;padding-top:12px;border-top:1px dashed #DCE6F5;font-size:11px}
+    .summary-rail{border-color:#DFE1E5;box-shadow:0 6px 24px rgba(0,0,0,.08)}
+    .summary-rail:before{height:5px;background:#0066FF}
+    .summary-hero{padding:16px;background:#FFFFFF;border-bottom:1px solid #E8EAED}
+    .summary-meta{display:grid;grid-template-columns:1fr auto;gap:5px 12px;margin-top:12px;padding-top:12px;border-top:1px dashed #DFE1E5;font-size:11px}
     .summary-row{grid-template-columns:96px minmax(0,1fr);padding:8px 0}
-    .summary-val{font-weight:500;color:#262B34}
+    .summary-val{font-weight:500;color:#1A1D24}
     /* 字段规范：单行单字段，控件区 500px；按钮和说明不计入控件宽度 */
     #browserForm{--field-label-width:120px;--field-control-width:500px}
     #browserForm .form-grid{grid-template-columns:minmax(0,1fr);gap:16px}
     #browserForm .form-grid>.field{grid-column:1!important}
     #browserForm .field,#browserForm .environment-fields>.field{display:grid;grid-template-columns:var(--field-label-width) minmax(0,1fr);gap:12px;align-items:start;margin:0!important}
-    #browserForm .field-label,#browserForm .environment-fields>.field .field-label{display:flex;align-items:center;justify-content:flex-end;gap:6px;min-height:32px;text-align:right;line-height:20px;font-size:14px;font-weight:500;color:#262B34;white-space:nowrap}
-    .field-safety{width:16px;height:16px;border:1.5px solid #22B573;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;color:#22B573;font-size:10px;font-weight:700;flex:none}
-    #browserForm .field-label[data-semantic="safe"]:after,#browserForm .preference-row[data-semantic="safe"] strong:after{content:'✓';width:16px;height:16px;border:1.5px solid #22B573;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;color:#22B573;font-size:10px;font-weight:700;flex:none}
-    #browserForm .field-label[data-semantic="risk"]:after,#browserForm .preference-row[data-semantic="risk"] strong:after{content:'!';width:16px;height:16px;border:1.5px solid #FF6B72;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;color:#FF6B72;font-size:10px;font-weight:700;flex:none}
+    #browserForm .field-label,#browserForm .environment-fields>.field .field-label{display:flex;align-items:center;justify-content:flex-end;gap:6px;min-height:32px;text-align:right;line-height:20px;font-size:14px;font-weight:500;color:#1A1D24;white-space:nowrap}
+    .field-safety{width:16px;height:16px;border:1.5px solid #0FC060;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;color:#0FC060;font-size:10px;font-weight:700;flex:none}
+    #browserForm .field-label[data-semantic="safe"]:after,#browserForm .preference-row[data-semantic="safe"] strong:after{content:'可';width:16px;height:16px;border:1.5px solid #0FC060;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;color:#0FC060;font-size:9px;font-weight:700;flex:none}
+    #browserForm .field-label[data-semantic="risk"]:after,#browserForm .preference-row[data-semantic="risk"] strong:after{content:'!';width:16px;height:16px;border:1.5px solid #D9001B;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;color:#D9001B;font-size:10px;font-weight:700;flex:none}
     #browserForm .preference-row strong{display:inline-flex;align-items:center;justify-content:flex-end;gap:6px}
     #browserForm .control{width:var(--field-control-width);max-width:100%}
     #browserForm .field>div>.relative,#browserForm .field>div>textarea.control,#browserForm .field>div>select.control{width:var(--field-control-width);max-width:100%}
@@ -84,7 +84,7 @@
     #proxyEditor .proxy-local-empty.hidden{display:none}
     #proxyEditor .proxy-list-section{min-height:0;display:grid;grid-template-columns:var(--proxy-dialog-label-width) minmax(0,1fr);grid-template-rows:auto minmax(0,1fr);column-gap:14px;row-gap:12px;flex:1;padding:0 32px 24px}
     #proxyEditor .proxy-list-section.hidden{display:none}
-    #proxyEditor .proxy-list-label{grid-column:1;grid-row:1;height:32px;display:flex;align-items:center;justify-content:flex-end;color:#262B34;font-size:14px;font-weight:500;white-space:nowrap}
+    #proxyEditor .proxy-list-label{grid-column:1;grid-row:1;height:32px;display:flex;align-items:center;justify-content:flex-end;color:#1A1D24;font-size:14px;font-weight:500;white-space:nowrap}
     #proxyEditor .proxy-list-actions{grid-column:2;grid-row:1;display:flex;align-items:center;gap:10px;min-width:0}
     #proxyEditor .proxy-list-shell{grid-column:2;grid-row:2;min-height:320px;border:1px solid #DFE1E5;border-radius:4px;display:flex;flex-direction:column;overflow:hidden;background:#fff}
     #proxyEditor .proxy-list-toolbar{display:grid;grid-template-columns:minmax(140px,180px) minmax(120px,160px) minmax(120px,160px) 400px auto;gap:10px;padding:14px;background:#F7F8FA;border-bottom:1px solid #E8EAED}
@@ -103,10 +103,10 @@
     #proxyEditor .proxy-info-refresh:hover{color:#0066FF;background:#E6F0FF}
     #proxyEditor .proxy-data-table .row-action{color:#0066FF;font-weight:500}
     #proxyEditor .proxy-status{display:inline-flex;align-items:center;height:22px;padding:0 8px;border-radius:999px;font-size:11px;font-weight:500}
-    #proxyEditor .proxy-status.available{background:#E7F9F0;color:#098746}
+    #proxyEditor .proxy-status.available{background:#E7F9F0;color:#0FC060}
     #proxyEditor .proxy-status.bound{background:#E6F0FF;color:#0052CC}
-    #proxyEditor .proxy-status.expiring{background:#FDF2E9;color:#B85A1E}
-    #proxyEditor .proxy-status.unavailable{background:#FFE8EB;color:#B80017}
+    #proxyEditor .proxy-status.expiring{background:#FDF2E9;color:#E7772D}
+    #proxyEditor .proxy-status.unavailable{background:#FFE8EB;color:#D9001B}
     #proxyEditor .proxy-list-empty{min-height:180px;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#9DA2AC;font-size:13px}
     #proxyEditor .proxy-list-empty.hidden{display:none}
     #proxyEditor .proxy-pagination{min-height:52px;padding:9px 14px;border-top:1px solid #E8EAED;display:flex;align-items:center;justify-content:flex-end;gap:12px;flex-wrap:wrap}
@@ -117,7 +117,7 @@
     #proxyEditor .proxy-page-button:disabled{color:#C7CAD1;background:#F7F8FA;cursor:not-allowed}
     #browserForm #proxyEditor #proxyPageSize{width:96px;max-width:96px}
     #proxyEditor .proxy-selected-summary{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#6E7685;font-size:12px}
-    #proxyEditor .proxy-selected-summary strong{color:#262B34;font-weight:600}
+    #proxyEditor .proxy-selected-summary strong{color:#1A1D24;font-weight:600}
     .proxy-submodal{position:fixed;inset:0;z-index:1200;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(0,0,0,.36)}
     .proxy-submodal.hidden{display:none}
     .proxy-form-panel{width:760px;max-width:94vw;max-height:92vh;background:#fff;border-radius:8px;box-shadow:0 10px 32px rgba(26,29,36,.18);display:flex;flex-direction:column;overflow:hidden}
@@ -130,7 +130,7 @@
     .proxy-form-control{width:100%;min-width:0}
     .proxy-form-count{position:absolute;right:10px;top:8px;color:#9DA2AC;font:12px/1.4 'JetBrains Mono',monospace}
     .proxy-host-row{display:grid;grid-template-columns:minmax(0,1fr) 14px 150px;gap:8px;align-items:center}
-    .proxy-test-result{min-height:32px;display:flex;align-items:center;color:#098746;font-size:12px}
+    .proxy-test-result{min-height:32px;display:flex;align-items:center;color:#0FC060;font-size:12px}
     .proxy-api-notice{margin-top:8px;padding:14px 16px;border-left:3px solid #0066FF;background:#F7F8FA;color:#6E7685;font-size:12px;line-height:1.7}
     .proxy-support-qr{width:104px;height:104px;margin-top:12px;border:1px solid #DFE1E5;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#0066FF}
     .account-bound-table{width:min(920px,100%);margin-top:12px;border:1px solid #E8EAED;border-radius:4px;overflow:hidden;background:#fff}
@@ -140,7 +140,7 @@
     .account-bound-table th:nth-child(1){width:32%}.account-bound-table th:nth-child(2){width:24%}.account-bound-table th:nth-child(3){width:28%}.account-bound-table th:nth-child(4){width:16%}
     .account-platform-cell{display:flex;align-items:center;gap:9px;min-width:0}
     .account-platform-mark{width:28px;height:28px;border-radius:4px;display:inline-flex;align-items:center;justify-content:center;flex:none}
-    .account-platform-mark.commerce{color:#0052CC;background:#E6F0FF}.account-platform-mark.social{color:#B80017;background:#FFE8EB}.account-platform-mark.ads{color:#B85A1E;background:#FDF2E9}.account-platform-mark.custom{color:#098746;background:#E7F9F0}
+    .account-platform-mark.commerce{color:#0052CC;background:#E6F0FF}.account-platform-mark.social{color:#D9001B;background:#FFE8EB}.account-platform-mark.ads{color:#E7772D;background:#FDF2E9}.account-platform-mark.custom{color:#0FC060;background:#E7F9F0}
     .account-row-actions{display:flex;align-items:center;gap:14px}
     .account-row-action{color:#0066FF;font-size:13px;font-weight:500}.account-row-action:hover{text-decoration:underline}.account-row-action.danger{color:#D9001B}
     .account-modal{position:fixed;inset:0;z-index:1150;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(0,0,0,.36)}
@@ -174,7 +174,7 @@
     .account-data-table td{height:50px}
     .account-data-table tbody tr{cursor:pointer}
     .account-lock-status{display:inline-flex;align-items:center;height:22px;padding:0 8px;border-radius:999px;font-size:11px;font-weight:500}
-    .account-lock-status.locked{color:#B85A1E;background:#FDF2E9}.account-lock-status.unlocked{color:#098746;background:#E7F9F0}
+    .account-lock-status.locked{color:#E7772D;background:#FDF2E9}.account-lock-status.unlocked{color:#0FC060;background:#E7F9F0}
     .account-list-empty{min-height:180px;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#9DA2AC;font-size:13px}
     .account-list-empty.hidden{display:none}
     .account-pagination{min-height:52px;padding:9px 14px;border-top:1px solid #E8EAED;display:flex;align-items:center;justify-content:flex-end;gap:12px;flex-wrap:wrap}
@@ -183,7 +183,7 @@
     .account-page-button:hover:not(:disabled){border-color:#0066FF;color:#0066FF}.account-page-button.active{border-color:#0066FF;background:#0066FF;color:#fff}.account-page-button:disabled{color:#C7CAD1;background:#F7F8FA;cursor:not-allowed}
     #browserForm #accountPageSize{width:96px;max-width:96px}
     .account-selected-summary{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#6E7685;font-size:12px}
-    .account-selected-summary strong{color:#262B34;font-weight:600}
+    .account-selected-summary strong{color:#1A1D24;font-weight:600}
     #ownedProxyDialog footer{flex-wrap:wrap}
     @media(max-width:1180px){#proxyEditor .proxy-list-toolbar{grid-template-columns:repeat(3,minmax(0,1fr))}#proxyEditor .proxy-search{grid-column:1/span 2;width:400px}#proxyEditor #refreshProxyList{justify-self:start}.proxy-form-panel{width:680px}}
     @media(max-width:767px){#proxyEditor{padding:8px}#proxyEditor .proxy-dialog-panel{--proxy-dialog-label-width:100%;--proxy-dialog-control-width:100%;width:100%;height:calc(100vh - 16px)}#proxyEditor .proxy-dialog-body{overflow:auto}#proxyEditor .proxy-dialog-settings{padding:18px 16px 12px}#proxyEditor .proxy-dialog-field{grid-template-columns:1fr;gap:6px;margin-bottom:12px!important}#proxyEditor .proxy-dialog-field .field-label{justify-content:flex-start;text-align:left}#proxyEditor .proxy-list-section{flex:none;grid-template-columns:1fr;grid-template-rows:auto auto minmax(0,1fr);min-height:720px;padding:0 16px 16px;row-gap:8px}#proxyEditor .proxy-list-label{grid-column:1;grid-row:1;justify-content:flex-start}#proxyEditor .proxy-list-actions{grid-column:1;grid-row:2;flex-wrap:wrap}#proxyEditor .proxy-list-shell{grid-column:1;grid-row:3;min-height:560px}#proxyEditor .proxy-list-toolbar{grid-template-columns:1fr}#proxyEditor .proxy-search{grid-column:auto}#proxyEditor .proxy-pagination{justify-content:flex-start}.proxy-form-body{padding:20px 16px}.proxy-form-row{grid-template-columns:1fr;gap:6px}.proxy-form-label{justify-content:flex-start;text-align:left}.proxy-host-row{grid-template-columns:minmax(0,1fr) 10px 100px}#ownedProxyDialog footer label{width:100%;margin-right:0}#ownedProxyDialog footer .btn{flex:1;min-width:88px}}
@@ -201,7 +201,7 @@
     .plugin-group-panel.hidden{display:none}
     .plugin-group-nav{padding:16px;border-right:1px solid #E8EAED;display:flex;flex-direction:column;gap:4px}
     .plugin-group-scope{width:100%;height:32px;padding:0 10px;border-radius:4px;color:#3A3F4A;font-size:13px;text-align:left}
-    .plugin-group-scope:hover,.plugin-group-scope.active{background:#F3F4F6;color:#262B34}
+    .plugin-group-scope:hover,.plugin-group-scope.active{background:#F3F4F6;color:#1A1D24}
     .plugin-group-content{padding:18px 16px;color:#9DA2AC;font-size:13px}
     #browserForm #section-plugins>.field+.field{margin-top:16px!important}
     .global-plugin-control{min-height:32px;width:var(--field-control-width);max-width:100%;display:grid;grid-template-columns:24px 24px minmax(0,1fr);grid-auto-rows:auto;align-items:center;gap:8px 10px}
@@ -209,7 +209,7 @@
     .global-plugin-more{width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;color:#6E7685;background:#F3F4F6}
     .global-plugin-more:hover{color:#3A3F4A;background:#E8EAED}
     .global-plugin-menu{grid-column:1/-1;justify-self:start;width:210px;max-width:100%;padding:10px;background:#fff;border:1px solid #E8EAED;border-radius:8px;box-shadow:0 6px 20px rgba(26,29,36,.14)}
-    .global-plugin-menu button{width:100%;height:40px;padding:0 12px;border-radius:4px;display:flex;align-items:center;gap:10px;color:#262B34;font-size:13px;font-weight:500;text-align:left;white-space:nowrap}
+    .global-plugin-menu button{width:100%;height:40px;padding:0 12px;border-radius:4px;display:flex;align-items:center;gap:10px;color:#1A1D24;font-size:13px;font-weight:500;text-align:left;white-space:nowrap}
     .global-plugin-menu button:hover{background:#F3F4F6}
     #browserForm .preference-row{display:grid;grid-template-columns:var(--field-label-width) var(--field-control-width);justify-content:start;gap:12px;border-bottom:0}
     #browserForm .preference-row>div:first-child{text-align:right}
@@ -230,7 +230,7 @@
     .field-help-popover{width:440px;max-width:calc(100vw - 24px);box-shadow:0 8px 28px rgba(26,29,36,.14)}
     .field-help-popover p{margin-top:8px}
     .field-help-popover p:first-child{margin-top:0}
-    .field-help-popover strong{color:#262B34;font-weight:600}
+    .field-help-popover strong{color:#1A1D24;font-weight:600}
     .help-center-link{color:#0066FF;font-weight:500}
     .help-center-link:hover{text-decoration:underline}
     .page-identity,.environment-panel,.section-card,.summary-rail{border:0}
@@ -242,14 +242,14 @@
     .os-selector{display:grid;grid-template-columns:repeat(3,auto);gap:10px 10px;align-items:center;width:var(--field-control-width);max-width:100%}
     .os-selector .os-row-2{grid-column:1 / span 2;display:grid;grid-template-columns:repeat(2,auto);gap:10px}
     .os-btn{position:relative;display:inline-flex;align-items:center;height:32px;padding:0 10px 0 8px;border:1px solid #DFE1E5;border-radius:6px;background:#fff;cursor:pointer;gap:6px;transition:border-color .15s,box-shadow .15s;min-width:0;max-width:100%}
-    .os-btn:hover{border-color:#C7CAD1;background:#FAFBFC}
+    .os-btn:hover{border-color:#C7CAD1;background:#F7F8FA}
     .os-btn.open{border-color:#0066FF;box-shadow:0 0 0 3px rgba(0,102,255,.10)}
     .os-btn input[type="checkbox"]{width:16px;height:16px;accent-color:#0066FF;cursor:pointer;flex:none}
-    .os-icon{width:18px;height:18px;display:inline-flex;align-items:center;justify-content:center;color:#4C7DF0;flex:none}
+    .os-icon{width:18px;height:18px;display:inline-flex;align-items:center;justify-content:center;color:#0066FF;flex:none}
     .os-icon .iconfont{width:15px;height:15px;display:inline-flex;color:inherit}
     .os-icon .iconfont svg{width:100%;height:100%;stroke-width:2.2}
     .os-icon.windows,.os-icon.macos,.os-icon.linux,.os-icon.android,.os-icon.ios{background:transparent}
-    .os-label{font-size:13px;color:#262B34;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:120px;font-weight:500}
+    .os-label{font-size:13px;color:#1A1D24;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:120px;font-weight:500}
     .os-caret{margin-left:auto;color:#9DA2AC;flex:none}
     .os-btn.open .os-caret{transform:rotate(180deg);color:#0066FF}
     .os-panel{position:absolute;z-index:60;top:calc(100% + 6px);left:0;min-width:200px;background:#fff;border:1px solid #E8EAED;border-radius:8px;box-shadow:0 10px 30px rgba(26,29,36,.14);padding:6px;display:none}
@@ -258,7 +258,7 @@
     #section-basic{overflow:visible}
     form#browserForm .section-card{overflow:visible}
     form#browserForm .section-body{overflow:visible}
-    .os-item{display:flex;align-items:center;gap:10px;height:36px;padding:0 10px;border-radius:5px;cursor:pointer;font-size:13px;color:#262B34;font-weight:500;transition:background .12s}
+    .os-item{display:flex;align-items:center;gap:10px;height:36px;padding:0 10px;border-radius:5px;cursor:pointer;font-size:13px;color:#1A1D24;font-weight:500;transition:background .12s}
     .os-item:hover{background:#F3F4F6}
     .os-item.selected{background:#0066FF;color:#fff}
     .os-item.selected:hover{background:#0052CC}
@@ -266,18 +266,18 @@
     /* ===== UA版本多选组件 ===== */
     .uav-wrap{position:relative;display:inline-flex;width:var(--uav-width,240px);max-width:100%}
     .uav-control{position:relative;z-index:1;display:inline-flex;align-items:center;flex-wrap:nowrap;gap:4px;min-height:32px;width:100%;padding:4px 30px 4px 8px;border:1px solid #DFE1E5;border-radius:6px;background:#fff;cursor:pointer;overflow:hidden;transition:border-color .15s,box-shadow .15s}
-    .uav-control:hover{border-color:#C7CAD1;background:#FAFBFC}
+    .uav-control:hover{border-color:#C7CAD1;background:#F7F8FA}
     .uav-control.open{border-color:#0066FF;box-shadow:0 0 0 3px rgba(0,102,255,.10)}
     .uav-placeholder{color:#9DA2AC;font-size:13px;padding:0 4px}
     .uav-tag{display:inline-flex;align-items:center;height:24px;min-width:0;padding:0 0 0 8px;border-radius:4px;background:#0066FF;color:#fff;font-size:12px;font-weight:500;gap:3px;white-space:nowrap;flex:none}
     .uav-tag .uav-tag-x{display:inline-flex;align-items:center;justify-content:center;width:22px;height:24px;border-radius:0 4px 4px 0;cursor:pointer;background:rgba(255,255,255,.14);transition:background .12s}
     .uav-tag .uav-tag-x:hover{background:rgba(255,255,255,.28)}
-    .uav-more{display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:4px;background:#F3F4F6;color:#262B34;font-size:12px;font-weight:600;white-space:nowrap;cursor:default}
+    .uav-more{display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:4px;background:#F3F4F6;color:#1A1D24;font-size:12px;font-weight:600;white-space:nowrap;cursor:default}
     .uav-caret{position:absolute;top:50%;right:10px;transform:translateY(-50%);color:#9DA2AC;pointer-events:none}
     .uav-control.open .uav-caret{transform:translateY(-50%) rotate(180deg);color:#0066FF}
     .uav-panel{position:absolute;z-index:70;top:calc(100% + 6px);left:0;min-width:180px;max-height:280px;overflow-y:auto;background:#fff;border:1px solid #E8EAED;border-radius:8px;box-shadow:0 10px 30px rgba(26,29,36,.14);padding:6px;display:none;scrollbar-width:thin}
     .uav-panel.show{display:block}
-    .uav-opt{display:flex;align-items:center;gap:10px;height:34px;padding:0 10px;border-radius:5px;cursor:pointer;font-size:13px;color:#262B34;font-weight:500;transition:background .12s;user-select:none}
+    .uav-opt{display:flex;align-items:center;gap:10px;height:34px;padding:0 10px;border-radius:5px;cursor:pointer;font-size:13px;color:#1A1D24;font-weight:500;transition:background .12s;user-select:none}
     .uav-opt:hover{background:#F3F4F6}
     .uav-opt.selected{color:#0066FF}
     .uav-opt.selected .uav-opt-chk{background:#0066FF;border-color:#0066FF}
@@ -286,34 +286,34 @@
     .uav-opt-chk svg{display:none;width:10px;height:10px;stroke:#fff;stroke-width:3;fill:none;stroke-linecap:round;stroke-linejoin:round}
     /* ===== 分组自定义下拉组件 ===== */
     .grp-wrap{position:relative;display:inline-flex;width:var(--grp-width,500px);max-width:100%}
-    .grp-control{position:relative;z-index:1;display:inline-flex;align-items:center;height:32px;width:100%;padding:0 30px 0 12px;border:1px solid #DFE1E5;border-radius:6px;background:#fff;cursor:pointer;transition:border-color .15s,box-shadow .15s;font-size:13px;color:#262B34;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .grp-control:hover{border-color:#C7CAD1;background:#FAFBFC}
+    .grp-control{position:relative;z-index:1;display:inline-flex;align-items:center;height:32px;width:100%;padding:0 30px 0 12px;border:1px solid #DFE1E5;border-radius:6px;background:#fff;cursor:pointer;transition:border-color .15s,box-shadow .15s;font-size:13px;color:#1A1D24;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .grp-control:hover{border-color:#C7CAD1;background:#F7F8FA}
     .grp-control.open{border-color:#0066FF;box-shadow:0 0 0 3px rgba(0,102,255,.10)}
     .grp-caret{position:absolute;top:50%;right:10px;transform:translateY(-50%);color:#9DA2AC;pointer-events:none}
     .grp-control.open .grp-caret{transform:translateY(-50%) rotate(180deg);color:#0066FF}
     .grp-panel{position:absolute;z-index:70;top:calc(100% + 6px);left:0;min-width:280px;background:#fff;border:1px solid #E8EAED;border-radius:8px;box-shadow:0 10px 30px rgba(26,29,36,.14);padding:8px;display:none}
     .grp-panel.show{display:block}
     .grp-new-row{display:flex;align-items:center;gap:6px;padding:4px 4px 8px;margin-bottom:4px;border-bottom:1px solid #F0F1F3}
-    .grp-input{flex:1;min-width:0;height:28px;padding:0 10px;border:1px solid #DFE1E5;border-radius:5px;background:#fff;font-size:12px;color:#262B34;outline:none;transition:border-color .12s,box-shadow .12s}
+    .grp-input{flex:1;min-width:0;height:28px;padding:0 10px;border:1px solid #DFE1E5;border-radius:5px;background:#fff;font-size:12px;color:#1A1D24;outline:none;transition:border-color .12s,box-shadow .12s}
     .grp-input:focus{border-color:#0066FF;box-shadow:0 0 0 2px rgba(0,102,255,.10)}
     .grp-count{color:#9DA2AC;font-size:11px;min-width:32px;text-align:right;flex:none;font-variant-numeric:tabular-nums}
     .grp-add{height:28px;padding:0 12px;border:none;border-radius:5px;background:transparent;color:#0066FF;font-size:12px;font-weight:600;cursor:pointer;transition:background .12s;flex:none;white-space:nowrap}
     .grp-add:hover:not(:disabled){background:rgba(0,102,255,.08)}
     .grp-add:disabled{color:#C7CAD1;cursor:not-allowed}
     .grp-list{max-height:220px;overflow-y:auto;margin-top:4px;scrollbar-width:thin}
-    .grp-item{display:flex;align-items:center;justify-content:space-between;gap:8px;height:34px;padding:0 10px;border-radius:5px;cursor:pointer;font-size:13px;color:#262B34;font-weight:500;transition:background .12s}
+    .grp-item{display:flex;align-items:center;justify-content:space-between;gap:8px;height:34px;padding:0 10px;border-radius:5px;cursor:pointer;font-size:13px;color:#1A1D24;font-weight:500;transition:background .12s}
     .grp-item:hover{background:#F3F4F6}
     .grp-item.selected{color:#0066FF;background:rgba(0,102,255,.06)}
     .grp-item .grp-item-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
     .grp-item .grp-item-del{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:4px;cursor:pointer;color:#9DA2AC;opacity:0;transition:all .12s;flex:none}
     .grp-item:hover .grp-item-del{opacity:1}
-    .grp-item .grp-item-del:hover{color:#FFF;background:#F87171;opacity:1!important}
+    .grp-item .grp-item-del:hover{color:#FFF;background:#D9001B;opacity:1!important}
     .grp-item.default-grp .grp-item-del{display:none}
     .grp-empty{padding:16px;text-align:center;color:#9DA2AC;font-size:12px}
     /* ===== 标签自定义下拉组件 ===== */
     .tag-wrap{position:relative;display:inline-flex;width:var(--tag-width,500px);max-width:100%}
     .tag-control{position:relative;z-index:1;display:inline-flex;align-items:center;gap:6px;min-height:32px;height:auto;width:100%;padding:4px 30px 4px 8px;border:1px solid #DFE1E5;border-radius:6px;background:#fff;cursor:pointer;transition:border-color .15s,box-shadow .15s;font-size:13px;flex-wrap:wrap}
-    .tag-control:hover{border-color:#C7CAD1;background:#FAFBFC}
+    .tag-control:hover{border-color:#C7CAD1;background:#F7F8FA}
     .tag-control.open{border-color:#0066FF;box-shadow:0 0 0 3px rgba(0,102,255,.10)}
     .tag-placeholder{color:#9DA2AC;font-weight:500;white-space:nowrap}
     .tag-control-cur{display:inline-flex;align-items:center;height:24px;padding:0 12px;border-radius:20px;font-size:12px;font-weight:600;white-space:nowrap}
@@ -322,7 +322,7 @@
     .tag-panel{position:absolute;z-index:70;top:calc(100% + 6px);left:0;min-width:320px;background:#fff;border:1px solid #E8EAED;border-radius:8px;box-shadow:0 10px 30px rgba(26,29,36,.14);padding:8px;display:none}
     .tag-panel.show{display:block}
     .tag-new-row{display:flex;align-items:center;gap:6px;padding:4px 4px 8px;margin-bottom:6px;border-bottom:1px solid #F0F1F3}
-    .tag-input{flex:1;min-width:0;height:28px;padding:0 10px;border:1px solid #DFE1E5;border-radius:5px;background:#fff;font-size:12px;color:#262B34;outline:none;transition:border-color .12s,box-shadow .12s}
+    .tag-input{flex:1;min-width:0;height:28px;padding:0 10px;border:1px solid #DFE1E5;border-radius:5px;background:#fff;font-size:12px;color:#1A1D24;outline:none;transition:border-color .12s,box-shadow .12s}
     .tag-input:focus{border-color:#0066FF;box-shadow:0 0 0 2px rgba(0,102,255,.10)}
     .tag-count{color:#9DA2AC;font-size:11px;min-width:32px;text-align:right;flex:none;font-variant-numeric:tabular-nums}
     .tag-add{height:28px;padding:0 12px;border:none;border-radius:5px;background:transparent;color:#0066FF;font-size:12px;font-weight:600;cursor:pointer;transition:background .12s;flex:none;white-space:nowrap}
@@ -335,19 +335,32 @@
     .tag-pill{display:inline-flex;align-items:center;height:26px;padding:0 14px;border-radius:20px;font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;max-width:calc(100% - 40px);flex-shrink:1}
     .tag-row-del{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:4px;cursor:pointer;color:#9DA2AC;opacity:0;transition:all .12s;flex:none}
     .tag-row:hover .tag-row-del{opacity:1}
-    .tag-row-del:hover{color:#FFF;background:#F87171;opacity:1!important}
+    .tag-row-del:hover{color:#FFF;background:#D9001B;opacity:1!important}
     .tag-empty{padding:18px;text-align:center;color:#9DA2AC;font-size:12px}
     /* 标签颜色方案：9组，深浅搭配（背景白字深色系） */
-    .tag-c-1{background:#ECFDF5;color:#065F46} /* 绿 */
-    .tag-c-2{background:#FFF7ED;color:#9A3412} /* 橙 */
-    .tag-c-3{background:#EFF6FF;color:#1E40AF} /* 蓝 */
-    .tag-c-4{background:#FDF4FF;color:#86198F} /* 紫 */
-    .tag-c-5{background:#FEF3C7;color:#92400E} /* 琥珀 */
-    .tag-c-6{background:#FCE7F3;color:#9D174D} /* 粉 */
-    .tag-c-7{background:#ECFEFF;color:#164E63} /* 青 */
-    .tag-c-8{background:#F0FDF4;color:#166534} /* 翠绿 */
-    .tag-c-9{background:#EEF2FF;color:#3730A3} /* 靛蓝 */
+    .tag-c-1{background:#E7F9F0;color:#0FC060}
+    .tag-c-2{background:#FDF2E9;color:#E7772D}
+    .tag-c-3{background:#E6F0FF;color:#0066FF}
+    .tag-c-4{background:#E4F4FB;color:#0091D5}
+    .tag-c-5{background:#FDF2E9;color:#E7772D}
+    .tag-c-6{background:#FFE8EB;color:#D9001B}
+    .tag-c-7{background:#E4F4FB;color:#0091D5}
+    .tag-c-8{background:#E7F9F0;color:#0FC060}
+    .tag-c-9{background:#E6F0FF;color:#0066FF}
+    @media(max-width:767px){
+      #browserForm .field,#browserForm .field>*,#browserForm .environment-fields>.field,#browserForm .environment-fields>.field>*{min-width:0;max-width:100%}
+      #browserForm .field-label,#browserForm .environment-fields>.field .field-label{width:auto;white-space:normal}
+      #browserForm .field>div>.flex,#browserForm .field>div>.relative,#browserForm .account-entry-buttons,#browserForm .grp-wrap,#browserForm .tag-wrap{width:100%!important;min-width:0;max-width:100%}
+      #browserForm #proxySummary{flex:1 1 220px;width:auto;max-width:100%}
+      #browserForm .field>div:has(#ua){display:grid!important;grid-template-columns:minmax(0,1fr) 42px;gap:8px}
+      #browserForm #uavWrap{width:100%;grid-column:1/-1}
+      #browserForm #ua{width:100%!important;min-width:0;grid-column:1}
+      #browserForm #refreshUa{grid-column:2}
+      #browserForm .field-help-trigger{white-space:normal;text-align:left}
+    }
   </style>
+  <link rel="stylesheet" href="公共导航.css?v=20260821a">
+  <script src="公共导航.js?v=20260821a"></script>
 </head>
 <body class="text-[13px] overflow-hidden">
   <div class="flex h-screen overflow-hidden">
@@ -365,10 +378,10 @@
 
       <!-- 路由内容承载区 -->
       <main id="mainContent" class="flex-1 min-h-0 overflow-auto p-4 scrollbar" tabindex="-1">
-        <section id="routeOutlet" aria-live="polite"><div class="max-w-[1540px] mx-auto edit-page">
+        <section id="routeOutlet" aria-live="polite"><div class="edit-page">
           <!-- 页面主配置 -->
           <section class="page-identity" data-anno="1" aria-labelledby="pageTitle">
-            <h1 id="pageTitle" class="sr-only">编辑浏览器</h1><span id="fingerprintSource" class="sr-only">系统已生成默认指纹</span><div class="identity-guide"><div class="identity-guide-item"><span class="identity-guide-icon safe">✓</span><span>可安全修改项，可根据需要随意修改</span></div><div class="identity-guide-item"><span class="identity-guide-icon risk">!</span><span>风险项，建议非专业人士不要修改</span></div><div class="identity-guide-item"><span class="identity-guide-required">*</span><span>必填项，请确保信息准确</span></div></div>
+            <h1 id="pageTitle" class="sr-only">编辑浏览器</h1><span id="fingerprintSource" class="sr-only">系统已生成默认指纹</span><div class="identity-guide"><div class="identity-guide-item"><span class="identity-guide-icon safe"><i data-lucide="check" class="w-3 h-3"></i></span><span>可安全修改项，可根据需要随意修改</span></div><div class="identity-guide-item"><span class="identity-guide-icon risk"><i data-lucide="triangle-alert" class="w-3 h-3"></i></span><span>风险项，建议非专业人士不要修改</span></div><div class="identity-guide-item"><span class="identity-guide-required">*</span><span>必填项，请确保信息准确</span></div></div>
           </section>
 
           <section class="bg-transparent" aria-label="浏览器编辑内容">
@@ -475,7 +488,7 @@
                 </div>
 
                 <!-- IP 检测 -->
-                <div class="field mb-4"><label class="field-label" for="ipProvider">IP 查询渠道：</label><div class="flex flex-wrap items-center gap-2"><select id="ipProvider" class="control max-w-[260px]"><option>IP2Location</option><option>IPData</option></select><button type="button" id="networkBtn" data-anno="6" class="btn btn-secondary"><i data-lucide="activity" class="w-4"></i><span>检查网络</span></button><button type="button" class="field-help-trigger field-help-icon" data-help="ip" aria-label="查看 IP 查询渠道说明">?</button><div id="networkResult" class="hidden text-[12px] px-3 h-8 rounded bg-success-bg text-success items-center gap-2"><i data-lucide="circle-check" class="w-4"></i><span>检测成功</span><span class="mono">203.0.113.24</span><span>中国 · 杭州</span><span class="mono">42ms</span></div></div></div>
+                <div class="field mb-4"><label class="field-label" for="ipProvider">IP 查询渠道：</label><div class="flex flex-wrap items-center gap-2"><select id="ipProvider" class="control max-w-[260px]"><option>IP2Location</option><option>IPData</option></select><button type="button" id="networkBtn" data-anno="6" class="btn btn-secondary"><i data-lucide="activity" class="w-4"></i><span>检查网络</span></button><button type="button" class="field-help-trigger field-help-icon" data-help="ip" aria-label="查看 IP 查询渠道说明"><i data-lucide="circle-help" class="w-3 h-3"></i></button><div id="networkResult" class="hidden text-[12px] px-3 h-8 rounded bg-success-bg text-success items-center gap-2"><i data-lucide="circle-check" class="w-4"></i><span>检测成功</span><span class="mono">203.0.113.24</span><span>中国 · 杭州</span><span class="mono">42ms</span></div></div></div>
 
                 <!-- 账号平台 -->
                 <div class="field mb-5"><div class="field-label">账号平台：</div><div><div class="flex flex-wrap items-center gap-2"><div class="account-entry-buttons grid grid-cols-1 sm:grid-cols-2 gap-2"><button type="button" id="addAccountBtn" data-anno="7" class="btn btn-secondary"><i data-lucide="user-plus" class="w-4"></i>添加新账号</button><button type="button" id="selectAccountBtn" data-anno="8" class="btn btn-secondary"><i data-lucide="list-checks" class="w-4"></i>选择已有账号</button></div><button type="button" class="field-help-trigger" data-help="account">账号平台有什么用？</button></div><div id="boundAccounts" class="account-bound-table hidden" aria-live="polite"><table><thead><tr><th>平台</th><th>名称</th><th>账号</th><th>操作</th></tr></thead><tbody id="boundAccountRows"></tbody></table></div></div></div>
@@ -523,7 +536,7 @@
                 <section class="config-command" aria-labelledby="configTitle"><div class="relative z-[1]"><div class="flex flex-wrap items-center gap-2"><span class="w-7 h-7 rounded bg-primary text-white flex items-center justify-center"><i data-lucide="fingerprint" class="w-4"></i></span><div><h2 id="configTitle" class="text-[16px] font-semibold text-ink-title">自定义指纹配置</h2><p class="text-[11px] text-ink-sub mt-0.5">可编辑基础、指纹、插件和偏好设置；右侧始终展示最终生效值。</p></div><span id="configEditBadge" class="hidden px-2 py-0.5 rounded bg-warning-bg text-warning text-[11px]">已自定义</span></div></div><button type="button" id="randomFingerprint" data-anno="14" class="btn btn-primary relative z-[1] min-w-[150px]"><i data-lucide="shuffle" class="w-3.5"></i>随机生成新指纹</button></section>
 
                 <!-- 基础设置 -->
-                <section class="section-card mb-3"><button type="button" class="section-head" data-section="basic" data-anno="9" aria-expanded="true"><span class="flex items-center gap-3"><span class="w-8 h-8 rounded bg-primary-bg text-primary flex items-center justify-center"><i data-lucide="settings" class="w-4"></i></span><span class="section-head-copy"><strong class="text-[14px] text-ink-title">基础设置</strong><span class="section-caption">内核、操作系统、UA 与启动信息</span></span><span class="safe-dot">✓</span></span><i data-lucide="chevron-up" class="section-chevron w-4 text-ink-muted"></i></button><div id="section-basic" class="section-body"><div class="form-grid">
+                <section class="section-card mb-3"><button type="button" class="section-head" data-section="basic" data-anno="9" aria-expanded="true"><span class="flex items-center gap-3"><span class="w-8 h-8 rounded bg-primary-bg text-primary flex items-center justify-center"><i data-lucide="settings" class="w-4"></i></span><span class="section-head-copy"><strong class="text-[14px] text-ink-title">基础设置</strong><span class="section-caption">内核、操作系统、UA 与启动信息</span></span><span class="safe-dot" aria-label="配置完整"><i data-lucide="check" class="w-3 h-3"></i></span></span><i data-lucide="chevron-up" class="section-chevron w-4 text-ink-muted"></i></button><div id="section-basic" class="section-body"><div class="form-grid">
                   <div class="field"><label class="field-label">浏览器内核：</label><select id="kernel" data-summary="kernel" class="control"><option>Chromium147 (beta)</option><option>Chromium146</option><option>Chromium145</option><option>Chromium144</option><option>Chromium143</option><option>Chromium142</option><option>Chromium141</option><option>Chromium140</option><option selected>Chromium134</option><option>Chromium131</option><option>Chromium127</option><option>Chromium107</option></select></div>
                   <div class="field"><label class="field-label">操作系统：</label>
                     <div>
@@ -700,7 +713,7 @@
   </div>
 
   <!-- Dialog -->
-  <div id="dialogOverlay" class="hidden fixed inset-0 z-[1200] bg-black/30 flex items-center justify-center p-4" role="dialog" aria-modal="true"><div id="dialogPanel" class="modal-in w-[600px] max-w-[92vw] h-[250px] bg-card rounded-lg shadow-[0_6px_24px_rgba(0,0,0,.12)] flex flex-col relative"><button id="dialogClose" class="absolute top-3 right-4 text-[20px] text-ink-muted hover:text-ink-body" aria-label="关闭">×</button><div class="flex-1 flex items-start px-6 pt-10"><span id="dialogIcon" class="w-5 h-5 rounded-full bg-warning-bg text-warning flex items-center justify-center mr-3 font-semibold mt-0.5">?</span><div><h2 id="dialogTitle" class="text-[16px] font-semibold text-ink-title"></h2><p id="dialogDesc" class="text-[14px] text-ink-sub mt-1.5"></p></div></div><div class="px-6 pb-5 flex justify-end gap-3"><button id="dialogCancel" class="btn btn-secondary">继续编辑</button><button id="dialogConfirm" class="btn btn-primary">确定</button></div></div></div>
+  <div id="dialogOverlay" class="hidden fixed inset-0 z-[1200] bg-black/30 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="dialogTitle"><div id="dialogPanel" class="modal-in w-[600px] max-w-[92vw] h-[250px] bg-card rounded-lg shadow-[0_6px_24px_rgba(0,0,0,.12)] flex flex-col relative"><button id="dialogClose" class="absolute top-3 right-4 w-8 h-8 flex items-center justify-center text-ink-muted hover:text-ink-body" aria-label="关闭"><i data-lucide="x" class="w-5 h-5"></i></button><div class="flex-1 flex items-start px-6 pt-10"><span id="dialogIcon" class="w-8 h-8 rounded bg-warning-bg text-warning flex items-center justify-center mr-3 mt-0.5"><i data-lucide="triangle-alert" class="w-4 h-4"></i></span><div><h2 id="dialogTitle" class="text-[16px] font-semibold text-ink-title"></h2><p id="dialogDesc" class="text-[14px] text-ink-sub mt-1.5"></p></div></div><div class="px-6 pb-5 flex justify-end gap-3"><button id="dialogCancel" class="btn btn-secondary">继续编辑</button><button id="dialogConfirm" class="btn btn-primary">确定</button></div></div></div>
 
   <!-- 系统框架全局入口与浮层 -->
   <button id="assistantBtn" data-anno="8" class="fixed right-5 bottom-20 z-30 w-11 h-11 rounded-full bg-primary hover:bg-primary-hover text-white shadow-[0_6px_24px_rgba(0,0,0,.12)] flex items-center justify-center" aria-label="打开智能助手"><i data-lucide="sparkles" class="w-5 h-5"></i></button>
@@ -709,9 +722,9 @@
   <div id="helpPopover" class="hidden fixed right-28 top-12 z-40 w-64 bg-card border border-line rounded-lg popover p-2"></div>
   <div id="accountPopover" class="hidden fixed right-4 top-12 z-40 w-44 bg-card border border-line rounded-lg popover p-1"></div>
 
-  <div id="createDialog" class="hidden fixed inset-0 z-50 bg-black/30 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="createTitle"><div id="createPanel" class="modal-in w-[600px] max-w-[92vw] h-[250px] bg-card rounded-lg shadow-[0_6px_24px_rgba(0,0,0,.12)] flex flex-col relative"><button class="absolute top-3 right-4 text-[20px] text-ink-muted hover:text-ink-body" data-close="createDialog" aria-label="关闭">×</button><div class="flex-1 flex items-center p-6"><span class="w-5 h-5 rounded-full bg-info-bg text-info flex items-center justify-center mr-3 font-semibold">i</span><div><h2 id="createTitle" class="text-[16px] font-semibold text-ink-title">创建浏览器</h2><p class="text-[14px] text-ink-sub mt-1.5">将进入环境管理的新建流程；当前编辑草稿会继续保留。</p></div></div><div class="px-6 pb-5 flex justify-end gap-3"><button class="btn btn-secondary" data-close="createDialog">取消</button><button id="handoffCreate" class="btn btn-primary">进入创建流程</button></div></div></div>
+  <div id="createDialog" class="hidden fixed inset-0 z-50 bg-black/30 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="createTitle"><div id="createPanel" class="modal-in w-[600px] max-w-[92vw] h-[250px] bg-card rounded-lg shadow-[0_6px_24px_rgba(0,0,0,.12)] flex flex-col relative"><button class="absolute top-3 right-4 w-8 h-8 flex items-center justify-center text-ink-muted hover:text-ink-body" data-close="createDialog" aria-label="关闭"><i data-lucide="x" class="w-5 h-5"></i></button><div class="flex-1 flex items-center p-6"><span class="w-8 h-8 rounded bg-info-bg text-info flex items-center justify-center mr-3"><i data-lucide="info" class="w-4 h-4"></i></span><div><h2 id="createTitle" class="text-[16px] font-semibold text-ink-title">创建浏览器</h2><p class="text-[14px] text-ink-sub mt-1.5">将进入环境管理的新建流程；当前编辑草稿会继续保留。</p></div></div><div class="px-6 pb-5 flex justify-end gap-3"><button class="btn btn-secondary" data-close="createDialog">取消</button><button id="handoffCreate" class="btn btn-primary">进入创建流程</button></div></div></div>
 
-  <div id="assistantDrawer" class="hidden fixed inset-0 z-50 bg-black/30" role="dialog" aria-modal="true"><section id="assistantPanel" class="drawer-panel ml-auto h-full w-[800px] max-w-full bg-card shadow-[-4px_0_24px_rgba(0,0,0,.1)] flex flex-col"><header class="h-14 px-6 border-b border-line flex items-center justify-between"><div class="flex items-center gap-2"><span class="w-7 h-7 rounded bg-primary-bg text-primary flex items-center justify-center"><i data-lucide="sparkles" class="w-4 h-4"></i></span><h2 data-anno="8" class="text-[16px] font-semibold text-ink-title">云登智能助手</h2></div><button class="text-ink-muted hover:text-ink-body" data-close="assistantDrawer" aria-label="关闭"><i data-lucide="x" class="w-5 h-5"></i></button></header><div class="flex-1 p-6 overflow-auto"><div class="max-w-lg"><p class="text-ink-title font-medium">我可以帮你检查浏览器环境配置。</p><p class="mt-2 text-ink-sub leading-relaxed">你可以询问代理、指纹、账号绑定或保存校验规则。当前原型保留完整入口与反馈容器。</p><div class="mt-5 flex flex-wrap gap-2"><button class="quick-question btn btn-secondary">如何更换代理？</button><button class="quick-question btn btn-secondary">哪些指纹项有风险？</button><button class="quick-question btn btn-secondary">保存前会校验什么？</button></div><div id="assistantReply" class="hidden mt-5 p-3 border border-info bg-info-bg rounded text-info"></div></div></div><form id="assistantForm" class="p-4 border-t border-line flex gap-2"><input id="assistantInput" maxlength="120" class="control flex-1" placeholder="输入问题（演示入口）"><button class="btn btn-primary">发送</button></form></section></div>
+  <div id="assistantDrawer" class="hidden fixed inset-0 z-50 bg-black/30" role="dialog" aria-modal="true" aria-labelledby="assistantTitle"><section id="assistantPanel" class="drawer-panel ml-auto h-full w-[800px] max-w-full bg-card shadow-[-4px_0_24px_rgba(0,0,0,.1)] flex flex-col"><header class="h-14 px-6 border-b border-line flex items-center justify-between"><div class="flex items-center gap-2"><span class="w-7 h-7 rounded bg-primary-bg text-primary flex items-center justify-center"><i data-lucide="sparkles" class="w-4 h-4"></i></span><h2 id="assistantTitle" data-anno="8" class="text-[16px] font-semibold text-ink-title">云登智能助手</h2></div><button class="text-ink-muted hover:text-ink-body" data-close="assistantDrawer" aria-label="关闭"><i data-lucide="x" class="w-5 h-5"></i></button></header><div class="flex-1 p-6 overflow-auto"><div class="max-w-lg"><p class="text-ink-title font-medium">我可以帮你检查浏览器环境配置。</p><p class="mt-2 text-ink-sub leading-relaxed">你可以询问代理、指纹、账号绑定或保存校验规则。当前原型保留完整入口与反馈容器。</p><div class="mt-5 flex flex-wrap gap-2"><button class="quick-question btn btn-secondary">如何更换代理？</button><button class="quick-question btn btn-secondary">哪些指纹项有风险？</button><button class="quick-question btn btn-secondary">保存前会校验什么？</button></div><div id="assistantReply" class="hidden mt-5 p-3 border border-info bg-info-bg rounded text-info"></div></div></div><form id="assistantForm" class="p-4 border-t border-line flex gap-2"><input id="assistantInput" maxlength="120" class="control flex-1" placeholder="输入问题（演示入口）"><button class="btn btn-primary">发送</button></form></section></div>
 
   <div id="toastContainer" class="fixed top-4 left-1/2 -translate-x-1/2 z-[2000] flex flex-col gap-2 pointer-events-none" aria-live="polite"></div>
   <div id="proxyHelpPopover" class="field-help-popover hidden fixed z-50 bg-card border border-line rounded-lg popover p-4" role="tooltip"><div id="fieldHelpContent" class="text-[12px] text-ink-sub leading-relaxed"></div></div>
@@ -719,7 +732,7 @@
   <!-- Portal 标注系统 -->
   <div id="annoLayer" class="fixed inset-0 pointer-events-none z-[9998]"></div>
   <button id="annoToggle" class="fixed right-2 top-[120px] z-[9997] h-8 px-3 rounded-full bg-ink-muted text-white shadow-[0_2px_8px_rgba(0,0,0,.12)] flex items-center justify-center gap-1.5 cursor-grab select-none touch-none" title="点击显示标注；长按拖拽调整位置" aria-label="显示交互标注，长按可拖拽" aria-pressed="false"><i data-lucide="tags" class="w-4 h-4"></i><span class="text-[12px] font-medium whitespace-nowrap">显示标注</span></button>
-  <div id="annoPopup" class="hidden fixed inset-0 z-[9999] bg-black/30 flex items-center justify-center p-4"><div class="w-[520px] max-w-full bg-card rounded-lg shadow-[0_6px_24px_rgba(0,0,0,.12)]"><header id="annoDrag" class="px-5 py-4 border-b border-line flex items-center justify-between cursor-move"><h2 id="annoTitle" class="text-[16px] font-semibold text-ink-title"></h2><button id="closeAnno" type="button" class="text-ink-muted hover:text-ink-body cursor-pointer" aria-label="关闭标注说明"><i data-lucide="x" class="w-5 h-5 pointer-events-none"></i></button></header><div id="annoDesc" class="p-5 text-[14px] leading-relaxed"></div></div></div>
+  <div id="annoPopup" class="hidden fixed inset-0 z-[9999] bg-black/30 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="annoTitle"><div class="w-[520px] max-w-full bg-card rounded-lg shadow-[0_6px_24px_rgba(0,0,0,.12)]"><header id="annoDrag" class="px-5 py-4 border-b border-line flex items-center justify-between cursor-move"><h2 id="annoTitle" class="text-[16px] font-semibold text-ink-title"></h2><button id="closeAnno" type="button" class="text-ink-muted hover:text-ink-body cursor-pointer" aria-label="关闭标注说明"><i data-lucide="x" class="w-5 h-5 pointer-events-none"></i></button></header><div id="annoDesc" class="p-5 text-[14px] leading-relaxed"></div></div></div>
 
   <script>
   window.lucide=window.lucide||{createIcons(){}};
@@ -1172,7 +1185,7 @@
       // 空值/全空格 或 已存在同名 → 禁用
       const exist=syncOptionsFromNative().includes(trimmed);
       addBtn.disabled=trimmed.length===0||exist;
-      countEl.style.color=len>=30?'#F59E0B':'#9DA2AC';
+      countEl.style.color=len>=30?'#E7772D':'#9DA2AC';
     }
 
     // 新建分组
@@ -1328,7 +1341,7 @@
       countEl.textContent=`${len} / 30`;
       const trimmed=input.value.trim();
       addBtn.disabled=trimmed.length===0||names().includes(trimmed);
-      countEl.style.color=len>=30?'#F59E0B':'#9DA2AC';
+      countEl.style.color=len>=30?'#E7772D':'#9DA2AC';
     }
     // 新建标签
     function createTag(){
@@ -1439,7 +1452,11 @@
   $('#copySummary').onclick=async()=>{const text=$$('#summaryList .summary-row').map(r=>`${r.children[0].textContent}: ${r.children[1].textContent}`).join('\n');try{await navigator.clipboard.writeText(text);showToast('非敏感指纹摘要已复制')}catch{showToast('当前浏览器不允许访问剪贴板','warning')}};
 
   // ===== Save, cancel, dialog =====
-  let dialogAction=null;function openDialog({title,desc,confirm='确定',action}){$('#dialogTitle').textContent=title;$('#dialogDesc').textContent=desc;$('#dialogConfirm').textContent=confirm;dialogAction=action;$('#dialogOverlay').classList.remove('hidden');pushAnnoScope($('#dialogPanel'))}function closeDialog(){$('#dialogOverlay').classList.add('hidden');dialogAction=null;popAnnoScope($('#dialogPanel'))}$('#dialogClose').onclick=closeDialog;$('#dialogCancel').onclick=closeDialog;$('#dialogOverlay').onclick=e=>{if(e.target===$('#dialogOverlay'))closeDialog()};$('#dialogConfirm').onclick=()=>{const fn=dialogAction;closeDialog();fn?.()};
+  let dialogAction=null,dialogLastFocus=null;
+  function openDialog({title,desc,confirm='确定',action}){dialogLastFocus=document.activeElement;$('#dialogTitle').textContent=title;$('#dialogDesc').textContent=desc;$('#dialogConfirm').textContent=confirm;dialogAction=action;$('#dialogOverlay').classList.remove('hidden');pushAnnoScope($('#dialogPanel'));lucide.createIcons();requestAnimationFrame(()=>$('#dialogConfirm').focus({preventScroll:true}))}
+  function closeDialog(){if($('#dialogOverlay').classList.contains('hidden'))return;$('#dialogOverlay').classList.add('hidden');dialogAction=null;popAnnoScope($('#dialogPanel'));dialogLastFocus?.focus?.({preventScroll:true});dialogLastFocus=null}
+  $('#dialogClose').onclick=closeDialog;$('#dialogCancel').onclick=closeDialog;$('#dialogOverlay').onclick=e=>{if(e.target===$('#dialogOverlay'))closeDialog()};$('#dialogConfirm').onclick=()=>{const fn=dialogAction;closeDialog();fn?.()};
+  $('#dialogOverlay').addEventListener('keydown',event=>{if(event.key!=='Tab')return;const items=$$('#dialogPanel button:not(:disabled)');if(!items.length)return;const first=items[0],last=items.at(-1);if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus()}else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus()}});
   $('#cancelBtn').onclick=()=>{if(state.dirty)openDialog({title:'放弃本次修改？',desc:'当前编辑内容尚未保存，离开后将丢失。',confirm:'放弃修改',action:()=>{state.dirty=false;showToast('已放弃未保存修改','info');setTimeout(()=>location.href='环境管理.html',500)}});else location.href='环境管理.html'};
   $('#saveBtn').onclick=()=>{const okay=validateName();const mac=$('[data-fp-input="macMode"]'),ports=$('[data-fp-input="portWhitelist"]');if(mac)validateSpecial(mac);if(ports)validateSpecial(ports);if(!okay||mac?.classList.contains('invalid')||ports?.classList.contains('invalid')){showToast('有配置未通过校验，请检查红色字段','danger');const fpInvalid=$('#section-fingerprint .invalid');if(fpInvalid){$('#section-fingerprint').classList.remove('hidden');fpInvalid.focus()}else $('#browserName').focus();return}const b=$('#saveBtn');b.disabled=true;b.innerHTML='<span class="w-4 h-4 border-2 border-white/50 border-t-white rounded-full spin"></span><span>保存中</span>';setTimeout(()=>{state.dirty=false;$('#dirtyBadge').classList.add('hidden');$('#footerStatus').textContent='所有修改已保存';b.disabled=false;b.innerHTML='<i data-lucide="circle-check" class="w-4"></i><span>已保存</span>';lucide.createIcons();showToast('编辑浏览器成功');setTimeout(()=>{b.innerHTML='<i data-lucide="save" class="w-4"></i><span>保存修改</span>';lucide.createIcons()},1600)},1000)};
   window.addEventListener('beforeunload',e=>{if(state.dirty){e.preventDefault();e.returnValue=''}});
@@ -1489,11 +1506,23 @@
   let annoVisible=false,annoScopeStack=[],annoToggleDragged=false;function resolveAnnoTarget(el){const r=el.getBoundingClientRect();if(r.width>800||r.width>innerWidth*.7)return el.querySelector('h1,h2,h3,button,input')||el;return el}function isBusinessAnnotation(el){return Boolean(el.closest('#routeOutlet')||el.closest('.app-frame>footer'))}function renderAnnoBadges(){const layer=$('#annoLayer');layer.innerHTML='';if(!annoVisible)return;const root=annoScopeStack.length?annoScopeStack.at(-1):document;[...root.querySelectorAll('[data-anno]')].filter(isBusinessAnnotation).forEach(el=>{if(el.offsetParent===null)return;const target=resolveAnnoTarget(el),r=target.getBoundingClientRect();if(r.bottom<0||r.top>innerHeight)return;const b=document.createElement('button');b.className='anno-badge';b.textContent=el.dataset.anno;b.style.top=`${Math.max(2,r.top-10)}px`;b.style.left=`${Math.min(innerWidth-22,r.right-10)}px`;b.onclick=()=>showAnnoPopup(el.dataset.anno);layer.appendChild(b)})}function showAnnoPopup(id){const a=annotations[id];if(!a)return;$('#annoTitle').textContent=`${id}. ${a.title}`;$('#annoDesc').innerHTML=`<ul class="list-disc pl-5 space-y-2">${a.desc.map(x=>`<li>${x}</li>`).join('')}</ul>`;$('#annoPopup').classList.remove('hidden')}function closeAnnoPopup(){$('#annoPopup').classList.add('hidden')}function pushAnnoScope(el){annoScopeStack=annoScopeStack.filter(x=>x!==el);annoScopeStack.push(el);renderAnnoBadges()}function popAnnoScope(el){annoScopeStack=annoScopeStack.filter(x=>x!==el);renderAnnoBadges()}$('#annoToggle').onclick=()=>{if(annoToggleDragged){annoToggleDragged=false;return}annoVisible=!annoVisible;$('#annoToggle').classList.toggle('bg-primary',annoVisible);$('#annoToggle').classList.toggle('bg-ink-muted',!annoVisible);$('#annoToggle').setAttribute('aria-pressed',String(annoVisible));$('#annoToggle').querySelector('span').textContent=annoVisible?'隐藏标注':'显示标注';renderAnnoBadges();showToast(annoVisible?'标注已显示':'标注已隐藏','info')};$('#closeAnno').onclick=e=>{e.stopPropagation();closeAnnoPopup()};$('#annoPopup').onclick=e=>{if(e.target===$('#annoPopup'))closeAnnoPopup()};$('#mainContent').addEventListener('scroll',renderAnnoBadges,{passive:true});window.addEventListener('resize',renderAnnoBadges);
   let dragState=null;$('#annoDrag').addEventListener('pointerdown',e=>{if(e.target.closest('button'))return;const panel=$('#annoDrag').parentElement,r=panel.getBoundingClientRect();dragState={x:e.clientX,y:e.clientY,left:r.left,top:r.top,panel};$('#annoDrag').setPointerCapture(e.pointerId);panel.style.position='fixed';panel.style.margin='0'});$('#annoDrag').addEventListener('pointermove',e=>{if(!dragState)return;dragState.panel.style.left=Math.max(8,Math.min(innerWidth-dragState.panel.offsetWidth-8,dragState.left+e.clientX-dragState.x))+'px';dragState.panel.style.top=Math.max(8,Math.min(innerHeight-dragState.panel.offsetHeight-8,dragState.top+e.clientY-dragState.y))+'px'});$('#annoDrag').addEventListener('pointerup',()=>dragState=null);
   function setupAnnoToggleDrag(){const toggle=$('#annoToggle');toggle.style.touchAction='none';const savedTop=Number(localStorage.getItem('yundeng-anno-toggle-top'));if(Number.isFinite(savedTop)&&savedTop>0)toggle.style.top=Math.max(8,Math.min(innerHeight-toggle.offsetHeight-8,savedTop))+'px';let state=null,timer=null;const moveTo=y=>{if(!state)return;toggle.style.top=Math.max(8,Math.min(innerHeight-toggle.offsetHeight-8,state.top+y-state.startY))+'px'};const finish=e=>{clearTimeout(timer);if(!state)return;if(state.active){annoToggleDragged=true;moveTo(state.latestY);toggle.classList.remove('cursor-grabbing','scale-105');toggle.classList.add('cursor-grab');localStorage.setItem('yundeng-anno-toggle-top',parseInt(toggle.style.top,10))}if(toggle.hasPointerCapture(e.pointerId))toggle.releasePointerCapture(e.pointerId);state=null};toggle.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse'&&e.button!==0)return;state={pointerId:e.pointerId,startY:e.clientY,latestY:e.clientY,top:toggle.getBoundingClientRect().top,active:false};toggle.setPointerCapture(e.pointerId);timer=setTimeout(()=>{if(!state)return;state.active=true;annoToggleDragged=true;toggle.classList.remove('cursor-grab');toggle.classList.add('cursor-grabbing','scale-105');moveTo(state.latestY)},350)});toggle.addEventListener('pointermove',e=>{if(!state||e.pointerId!==state.pointerId)return;state.latestY=e.clientY;if(!state.active)return;e.preventDefault();moveTo(e.clientY)});toggle.addEventListener('pointerup',finish);toggle.addEventListener('pointercancel',finish)}
-  document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeOverlays();closeAnnoPopup();if(!$('#accountFormDialog').classList.contains('hidden'))closeAccountFormDialog();else if(!$('#accountSelectDialog').classList.contains('hidden'))closeAccountSelectDialog(false);else if(!$('#ownedProxyDialog').classList.contains('hidden'))closeOwnedProxyDialog();else if(!$('#apiProxyDialog').classList.contains('hidden'))closeApiProxyDialog();else if(!$('#proxyEditor').classList.contains('hidden'))closeProxy();else if(!$('#assistantDrawer').classList.contains('hidden'))closeAssistant();else if(!$('#createDialog').classList.contains('hidden')){$('#createDialog').classList.add('hidden');popAnnoScope($('#createPanel'))}}});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeOverlays();if(!$('#annoPopup').classList.contains('hidden'))closeAnnoPopup();else if(!$('#dialogOverlay').classList.contains('hidden'))closeDialog();else if(!$('#accountFormDialog').classList.contains('hidden'))closeAccountFormDialog();else if(!$('#accountSelectDialog').classList.contains('hidden'))closeAccountSelectDialog(false);else if(!$('#ownedProxyDialog').classList.contains('hidden'))closeOwnedProxyDialog();else if(!$('#apiProxyDialog').classList.contains('hidden'))closeApiProxyDialog();else if(!$('#proxyEditor').classList.contains('hidden'))closeProxy();else if(!$('#assistantDrawer').classList.contains('hidden'))closeAssistant();else if(!$('#createDialog').classList.contains('hidden')){$('#createDialog').classList.add('hidden');popAnnoScope($('#createPanel'))}}});
 
   // ===== Initialize =====
   renderProxyRows();renderAccountRows();renderFingerprintFields();renderPlugins();renderPreferences();updateSummary();renderBoundAccounts();normalizeFieldLabels();lucide.createIcons();initOSSelector();initUaVersionMultiSelect();initGroupSelector();initTagSelector();setupAnnoToggleDrag();setTimeout(renderAnnoBadges,120);
   </script>
-  <script src="公共导航.js?v=20260813"></script>
+  <script>
+  (()=>{
+    const show=window.showAnnoPopup,close=window.closeAnnoPopup;
+    let returnFocus=null;
+    window.showAnnoPopup=id=>{const origin=document.querySelector(`[data-anno="${id}"]`);returnFocus=origin?.matches('button,a,input,select,textarea,[tabindex]')?origin:origin?.querySelector('button,a,input,select,textarea,[tabindex]')||document.getElementById('annoToggle');show(id);requestAnimationFrame(()=>document.getElementById('closeAnno')?.focus())};
+    window.closeAnnoPopup=()=>{if(document.getElementById('annoPopup')?.classList.contains('hidden'))return;close();returnFocus?.focus?.({preventScroll:true});returnFocus=null};
+    const restore=()=>setTimeout(()=>{if(document.getElementById('annoPopup')?.classList.contains('hidden')){returnFocus?.focus?.({preventScroll:true});returnFocus=null}},0);
+    document.getElementById('closeAnno')?.addEventListener('click',restore,true);
+    document.getElementById('annoPopup')?.addEventListener('click',event=>{if(event.target===event.currentTarget)restore()},true);
+    document.addEventListener('keydown',event=>{if(document.getElementById('annoPopup')?.classList.contains('hidden'))return;if(event.key==='Escape')restore();if(event.key==='Tab'){event.preventDefault();document.getElementById('closeAnno')?.focus()}},true);
+  })();
+  </script>
+
 </body>
 </html>

@@ -1,24 +1,217 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>云登 · 插件管理</title><script src="https://cdn.tailwindcss.com"></script><script src="https://unpkg.com/lucide@latest"></script><link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<script>tailwind.config={theme:{extend:{colors:{primary:'#0066FF','primary-hover':'#0052CC','primary-bg':'#E6F0FF','ink-title':'#1A1D24','ink-body':'#3A3F4A','ink-sub':'#6E7685','ink-muted':'#9DA2AC',line:'#DFE1E5','line-light':'#E8EAED','line-lighter':'#F0F1F3','bg-page':'#F7F8FA','bg-card':'#FFFFFF','bg-hover':'#F3F4F6',success:'#0FC060','success-bg':'#E7F9F0',warning:'#E7772D','warning-bg':'#FDF2E9',danger:'#D9001B','danger-bg':'#FFE8EB',info:'#0091D5','info-bg':'#E4F4FB'}}}};</script>
-<style>*{box-sizing:border-box}body{font:13px/1.5 -apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif}.mono{font-family:'JetBrains Mono',monospace}.nav{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:4px;color:#6E7685}.nav:hover{background:#F3F4F6}.nav.active{background:#E6F0FF;color:#0066FF;font-weight:600}.btn{height:32px;padding:0 12px;border-radius:4px;display:inline-flex;align-items:center;justify-content:center;gap:6px;font-weight:500}.btn-primary{background:#0066FF;color:#fff}.btn-primary:hover{background:#0052CC}.btn-default{background:#fff;border:1px solid #DFE1E5}.btn-default:hover{background:#F3F4F6}.btn-danger{background:#D9001B;color:#fff}.field{height:32px;border:1px solid #DFE1E5;border-radius:4px;padding:0 10px;background:#fff;outline:none}.field:focus{border-color:#0066FF;box-shadow:0 0 0 2px #E6F0FF}.field.invalid{border-color:#D9001B}.card{background:#fff;border:1px solid #DFE1E5;border-radius:8px}.badge{display:inline-flex;padding:2px 8px;border-radius:4px;border:1px solid;font-size:12px}.tab{height:34px;padding:0 14px;border-radius:4px;color:#6E7685}.tab.active{background:#E6F0FF;color:#0066FF;font-weight:600}.chip{height:28px;padding:0 10px;border-radius:4px;border:1px solid #DFE1E5;background:#fff}.chip.active{background:#E6F0FF;border-color:#0066FF;color:#0066FF}.plugin-card{border:1px solid #DFE1E5;border-radius:8px;background:#fff;padding:16px}.plugin-card:hover{background:#F3F4F6}.modal-bg{position:fixed;inset:0;background:#0006;z-index:9999;display:flex;align-items:center;justify-content:center}.toast{position:fixed;right:24px;top:72px;z-index:10002;background:#1A1D24;color:#fff;padding:10px 16px;border-radius:4px}.anno-badge{position:fixed;width:20px;height:20px;border-radius:50%;background:#0066FF;color:#fff;font-size:11px;pointer-events:auto;box-shadow:0 2px 8px #0003}.hidden{display:none!important}</style></head>
-<body class="bg-bg-page text-ink-body overflow-hidden"><div class="h-screen flex"><aside class="w-[220px] shrink-0 bg-white flex flex-col"><div class="h-14 px-5 flex items-center gap-2"><a href="系统框架.html" class="flex items-center gap-2"><span class="w-7 h-7 rounded bg-primary text-white flex items-center justify-center font-bold">云</span><b class="text-[16px] text-ink-title">云登</b></a></div><nav class="px-3 py-2 space-y-1 flex-1 overflow-y-auto"><a class="nav" href="新建浏览器.html"><i data-lucide="circle-plus" class="w-4"></i>新建浏览器</a><a class="nav" href="环境管理.html"><i data-lucide="monitor-cog" class="w-4"></i>环境管理</a><a class="nav" href="代理管理.html"><i data-lucide="network" class="w-4"></i>代理管理</a><a class="nav" href="商城.html"><i data-lucide="shopping-bag" class="w-4"></i>商城</a><a class="nav" href="费用管理.html"><i data-lucide="wallet-cards" class="w-4"></i>费用管理</a><div class="px-3 pt-3 text-[11px] text-ink-muted">团队</div><a class="nav" href="团队管理.html"><i data-lucide="users" class="w-4"></i>团队管理</a><a class="nav" href="账号管理.html"><i data-lucide="contact" class="w-4"></i>账号管理</a><a class="nav" href="分享转移.html"><i data-lucide="share-2" class="w-4"></i>分享转移</a><a class="nav" href="日志管理.html"><i data-lucide="notebook-tabs" class="w-4"></i>日志管理</a><a class="nav active" href="插件管理.html"><i data-lucide="blocks" class="w-4"></i>插件管理</a><div class="px-3 pt-3 text-[11px] text-ink-muted">自动化</div><a class="nav" href="API.html"><i data-lucide="braces" class="w-4"></i>API</a><a class="nav" href="RPA.html"><i data-lucide="bot" class="w-4"></i>RPA</a><a class="nav" href="回收站.html"><i data-lucide="trash-2" class="w-4"></i>回收站</a></nav></aside>
-<main class="flex-1 min-w-0 flex flex-col"><header class="h-14 bg-white px-6 flex items-center justify-between shadow-[0_8px_8px_-8px_rgba(0,0,0,.18)] z-10"><span class="text-ink-sub">管理中心 / 插件管理</span><span class="w-7 h-7 rounded-full bg-primary-bg text-primary flex items-center justify-center font-semibold">张</span></header><div id="mainContent" class="flex-1 overflow-y-auto p-6"><div class="max-w-[1500px] mx-auto"><section class="card p-5 mb-4"><div class="flex justify-between items-center"><div class="flex gap-2"><button class="tab active" data-tab="market">插件市场</button><button class="tab" data-tab="mine">我的插件</button><button class="tab" data-tab="team">团队插件</button></div><button id="uploadBtn" data-anno="1" class="btn btn-primary"><i data-lucide="upload" class="w-4"></i>上传插件</button></div></section>
-<section id="filterPanel" class="card p-5 mb-4"><div id="marketFilters"><div class="flex items-center gap-2 mb-3"><span class="text-ink-sub">功能分类</span><div id="funcCats" data-anno="2" class="flex gap-1 flex-wrap"></div></div><div class="flex items-center gap-2"><span class="text-ink-sub">电商分类</span><div id="bizCats" class="flex gap-1 flex-wrap"></div></div></div><div class="grid grid-cols-[180px_180px_180px_minmax(240px,1fr)_auto] gap-4 mt-4 items-end"><label><span class="block text-ink-sub mb-1">全部内核</span><select id="kernelFilter" class="field w-full"><option>全部内核</option><option>谷歌</option><option>火狐</option></select></label><label class="owned-filter hidden"><span class="block text-ink-sub mb-1">是否开启全局</span><select id="globalFilter" class="field w-full"><option>是否开启全局</option><option>开启全局</option><option>未开启全局</option></select></label><label class="owned-filter hidden"><span class="block text-ink-sub mb-1">是否分配环境</span><select id="assignFilter" class="field w-full"><option>是否分配环境</option><option>已分配环境</option><option>未分配环境</option></select></label><label data-anno="3"><span class="block text-ink-sub mb-1">搜索扩展程序</span><input id="searchInput" class="field w-full" placeholder="搜索插件名称或简介"></label><div class="flex gap-2"><button id="queryBtn" class="btn btn-primary">查询</button><button id="resetBtn" class="btn btn-default">重置</button></div></div></section>
-<section class="card p-5"><div class="flex items-center justify-between mb-4"><h2 id="listTitle" data-anno="4" class="inline-block text-[16px] font-semibold text-ink-title">插件市场</h2><button id="createGroupBtn" data-anno="8" class="btn btn-default hidden"><i data-lucide="folder-plus" class="w-4"></i><span>创建我的分组</span></button></div><div id="pluginList" class="grid md:grid-cols-2 xl:grid-cols-3 gap-4"></div><div id="emptyState" class="hidden py-20 text-center text-ink-sub">暂无符合条件的插件</div></section></div></div></main></div>
-<button id="annoToggle" class="btn btn-default fixed right-2 top-[120px] z-[9997]"><i data-lucide="tags" class="w-4"></i><span>显示标注</span></button><div id="annoLayer" class="fixed inset-0 pointer-events-none z-[9998]"></div><div id="modal" class="modal-bg hidden"><div id="modalCard" data-anno="10" class="bg-white w-[760px] max-h-[88vh] overflow-hidden rounded-lg shadow-[0_6px_24px_rgba(0,0,0,.12)] flex flex-col"><div class="px-5 py-4 border-b border-line flex justify-between"><h3 id="modalTitle" class="text-[16px] font-semibold"></h3><button data-close><i data-lucide="x" class="w-4"></i></button></div><div id="modalBody" class="p-5 overflow-y-auto"></div><div class="px-5 py-4 border-t border-line flex justify-end gap-2"><button data-close class="btn btn-default">取消</button><button id="modalConfirm" class="btn btn-primary">确定</button></div></div></div><div id="toast" class="toast hidden"></div>
-<script>
-const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];let tab='market',func='热门推荐',biz='全部',modalKey='',annoVisible=false;const funcs=['热门推荐','选品专区','运营工具','店铺运营','推广营销','达人邀约','其他工具'];const bizs=['全部','亚马逊','速卖通','eBay','Etsy','Shopee','Shopify','Lazada','Yahoo'];let plugins=[['Google Translator Assistant','Google 翻译','浏览网页时可轻松查看翻译版本。由 Google 翻译小组提供。','5052万','谷歌','云登商店',true,1],['Cookie Editor','Cookie-Editor','编辑、导入和导出浏览器 Cookie，适合测试与运营排查。','1132万','谷歌','云登商店',false,0],['沉浸式翻译','沉浸式网页双语翻译扩展，支持多个翻译服务。','免费使用，支持 Deepl、Google、有道、腾讯翻译等。','1396万','谷歌','三方应用商店',false,0],['Find Selector','元素选择器','快速定位页面元素名称、属性、ID、CLASS 和结构层级。','1022万','谷歌','云登商店',true,1],['腾讯翻译','腾讯翻译','支持划词翻译、网页翻译、双语对照等功能。','1035万','谷歌','三方应用商店',false,0],['火山翻译','火山翻译-划词和网页翻译','划词翻译、英语辞典、例句和生词本。','1171万','火狐','云登商店',false,0]].map((x,i)=>({id:i+1,name:x[0],sub:x[1],desc:x[2],downloads:x[3],kernel:x[4],source:x[5],added:x[6],envs:x[7],group:'未分组',global:i===0,teamVisible:i%2===0,version:i===0?'v2.0.17（2026-08-03 14:46:48）':'v1.0.1（2026-07-30 21:15:16）'}));
-function toast(t){const e=$('#toast');e.textContent=t;e.classList.remove('hidden');clearTimeout(e.timer);e.timer=setTimeout(()=>e.classList.add('hidden'),1800)}function switchTab(v){tab=v;$$('[data-tab]').forEach(x=>x.classList.toggle('active',x.dataset.tab===v));$('#marketFilters').classList.toggle('hidden',v!=='market');$$('.owned-filter').forEach(x=>x.classList.toggle('hidden',v==='market'));$('#createGroupBtn').classList.toggle('hidden',v==='market');$('#createGroupBtn span').textContent=v==='team'?'创建团队分组':'创建我的分组';$('#listTitle').textContent={market:'插件市场',mine:'我的插件',team:'团队插件'}[v];render()}
-function renderCats(){ $('#funcCats').innerHTML=funcs.map(x=>`<button class="chip ${x===func?'active':''}" data-func="${x}">${x}</button>`).join('');$('#bizCats').innerHTML=bizs.map(x=>`<button class="chip ${x===biz?'active':''}" data-biz="${x}">${x}</button>`).join('')}
-function visible(){const q=$('#searchInput').value.trim().toLowerCase(),k=$('#kernelFilter').value,g=$('#globalFilter').value,a=$('#assignFilter').value;return plugins.filter(p=>(tab==='market'||p.added)&&(k==='全部内核'||p.kernel===k)&&(!q||(p.name+p.sub+p.desc).toLowerCase().includes(q))&&(tab==='market'||g==='是否开启全局'||(g==='开启全局')===p.global)&&(tab==='market'||a==='是否分配环境'||(a==='已分配环境')===(p.envs>0)))}
-function render(){renderCats();const rows=visible();$('#pluginList').innerHTML=rows.map(p=>`<article class="plugin-card"><div class="flex justify-between gap-3"><div><h3 class="font-semibold text-ink-title">${p.name}</h3><p class="text-ink-sub mt-1">${p.sub}</p></div><span class="badge text-primary border-primary bg-primary-bg">${p.kernel}</span></div><p class="mt-3 text-ink-sub leading-6">${p.desc}</p><div class="mt-3 text-[12px] text-ink-sub">${tab==='market'?`<span class="mono">${p.downloads}</span> 下载`: `来源：${p.source}　添加人：1938<br>${p.version}`}</div><div class="mt-4 flex flex-wrap gap-2">${tab==='market'?marketActions(p):ownedActions(p)}</div></article>`).join('');$('#emptyState').classList.toggle('hidden',rows.length>0);lucide.createIcons();renderAnno()}
-function marketActions(p){return p.added?`<button class="btn btn-default" data-assign="${p.id}">分配环境</button>`:`<button data-anno="5" class="btn btn-primary" data-add="${p.id}">添加</button>`}function ownedActions(p){return `<button data-anno="6" class="btn btn-default" data-assign="${p.id}">分配环境</button><button data-anno="7" data-global="${p.id}" class="btn btn-default">${p.global?'关闭全局':'开启全局'}</button><button data-anno="9" data-delete="${p.id}" class="btn btn-default text-danger">删除</button>`}
-function openModal(title,body,confirm='确定',key='generic'){modalKey=key;$('#modalTitle').textContent=title;$('#modalBody').innerHTML=body;$('#modalConfirm').textContent=confirm;$('#modal').classList.remove('hidden');lucide.createIcons();renderAnno()}function closeModal(){$('#modal').classList.add('hidden');renderAnno()}$$('[data-close]').forEach(x=>x.onclick=closeModal);$('#modal').onclick=e=>{if(e.target===$('#modal'))closeModal()};
-function uploadBody(){return `<div class="space-y-4"><label class="block"><span>Chrome/Firefox 插件 URL</span><input id="requiredField" class="field w-full mt-1" placeholder="请输入 Chrome 商店或 Firefox 应用商店插件 URL"></label><div class="p-3 rounded bg-warning-bg text-warning">此上传类型需使用非中国大陆网络。应用由第三方提供，最终解释权归第三方所有。</div><div class="border border-line rounded p-4"><b>上传应用</b><p class="mt-2 text-ink-sub leading-7">Chrome：crx、zip 格式，限制 50M。Firefox：xpi 格式，限制 50M。若同时上传谷歌和火狐插件，请将 crx 与 xpi 置于同一文件夹打包成 zip。</p><button class="btn btn-default mt-3">选择安装包</button></div></div>`}
-function authBody(p){return `<p class="mb-4">您同意 <b>${p.name}</b> 获取以下权限</p><label class="flex gap-2 mb-3"><input id="agreeUser" type="checkbox">我已阅读并同意《用户授权协议》</label><label class="flex gap-2 mb-3"><input id="agreePrivacy" type="checkbox">我已阅读并同意 ${p.name}《隐私协议》</label><label class="flex gap-2"><input id="toTeam" type="checkbox">收录入团队插件</label>`}
-function assignBody(){return `<div class="grid grid-cols-[220px_1fr] gap-4"><div class="border border-line rounded p-3 space-y-2"><label class="flex gap-2"><input type="checkbox">工作台</label><label class="flex gap-2"><input type="checkbox" checked>默认分组</label><label class="flex gap-2"><input type="checkbox">转移分组</label><label class="flex gap-2"><input type="checkbox">007</label></div><div><p class="mb-3 text-ink-sub">请选择需要分配的环境</p>${['RPA测试','云登浏览器_1','指纹测试','test'].map(x=>`<label class="block border border-line rounded p-2 mb-2"><input type="checkbox" data-env> ${x}</label>`).join('')}</div></div><p class="mt-4 text-ink-sub">已选择环境后，点击确定分配。原型不安装真实插件。</p>`}
-document.addEventListener('click',e=>{if(e.target.dataset.tab)switchTab(e.target.dataset.tab);if(e.target.dataset.func){func=e.target.dataset.func;render()}if(e.target.dataset.biz){biz=e.target.dataset.biz;render()}if(e.target.dataset.add){const p=plugins.find(x=>x.id==e.target.dataset.add);openModal('插件授权',authBody(p),'确定','add:'+p.id)}if(e.target.dataset.assign){openModal('分配环境',assignBody(),'确定分配','assign:'+e.target.dataset.assign)}if(e.target.dataset.global){const p=plugins.find(x=>x.id==e.target.dataset.global);openModal(p.global?'关闭全局':'开启全局',`<p>${p.global?'关闭后，该插件不再默认加载到我可操作的环境。':'设置后，我可操作的环境将均加载该插件。'}</p>`,'确定','global:'+p.id)}if(e.target.dataset.delete){const p=plugins.find(x=>x.id==e.target.dataset.delete);openModal('删除插件',`<p>确认删除插件 <b>${p.name}</b> 吗？</p>`,'确定','delete:'+p.id)}})
-$('#uploadBtn').onclick=()=>openModal('上传插件',uploadBody(),'确定','upload');$('#createGroupBtn').onclick=()=>openModal(tab==='team'?'创建团队分组':'创建我的分组','<label class="block mb-3">名称<input id="requiredField" class="field w-full mt-1" placeholder="请输入名称"></label><label class="block mb-3">备注<textarea class="field w-full h-20 py-2 mt-1" maxlength="30" placeholder="请输入备注信息"></textarea></label><div class="border border-line rounded p-3"><b>所有插件</b><div class="mt-2 space-y-2">'+plugins.filter(p=>p.added).map(p=>`<label class="block"><input type="checkbox"> ${p.name}</label>`).join('')+'</div></div>','确定','group');$('#queryBtn').onclick=render;$('#resetBtn').onclick=()=>{$('#searchInput').value='';$('#kernelFilter').value='全部内核';$('#globalFilter').value='是否开启全局';$('#assignFilter').value='是否分配环境';render()};
-$('#modalConfirm').onclick=()=>{if(modalKey.startsWith('add:')){if(!$('#agreeUser').checked||!$('#agreePrivacy').checked)return toast('请先同意授权协议和隐私协议');const p=plugins.find(x=>x.id==modalKey.split(':')[1]);p.added=true;p.teamVisible=$('#toTeam').checked;closeModal();render();return toast('插件已添加为演示数据')}if(modalKey.startsWith('assign:')){const p=plugins.find(x=>x.id==modalKey.split(':')[1]);p.envs=$$('[data-env]:checked').length;closeModal();render();return toast('环境分配已更新')}if(modalKey.startsWith('global:')){const p=plugins.find(x=>x.id==modalKey.split(':')[1]);p.global=!p.global;closeModal();render();return toast('全局状态已更新')}if(modalKey.startsWith('delete:')){const id=+modalKey.split(':')[1];plugins=plugins.filter(p=>p.id!==id);closeModal();render();return toast('插件已从演示列表删除')}if(['upload','group'].includes(modalKey)){const f=$('#requiredField');if(f&&!f.value.trim()){f.classList.add('invalid');return toast('请填写必填项')}}closeModal();toast('演示操作已完成')};
-const annotations={1:{title:'上传插件',desc:['支持 URL 与安装包说明','原型不上传真实文件']},2:{title:'市场分类',desc:['按功能分类与电商分类筛选插件']},3:{title:'插件搜索',desc:['搜索名称、简介或副标题']},4:{title:'插件列表',desc:['市场、我的插件、团队插件共用数据卡片']},5:{title:'添加插件',desc:['添加前必须确认授权协议和隐私协议']},6:{title:'分配环境',desc:['选择环境后更新演示分配状态']},7:{title:'开启全局',desc:['影响可操作环境，需二次确认']},8:{title:'创建分组',desc:['我的分组和团队分组均需名称']},9:{title:'删除插件',desc:['删除前二次确认，不影响真实插件']},10:{title:'业务弹窗',desc:['上传、授权、分配、分组和删除均为无副作用演示']}};function renderAnno(){const layer=$('#annoLayer');layer.innerHTML='';if(!annoVisible)return;const scope=$('#modal').classList.contains('hidden')?document:$('#modalCard');scope.querySelectorAll('[data-anno]').forEach(el=>{if(el.offsetParent===null)return;const r=el.getBoundingClientRect(),b=document.createElement('button');b.className='anno-badge';b.textContent=el.dataset.anno;b.style.left=r.right-10+'px';b.style.top=r.top-10+'px';b.onclick=()=>toast(annotations[el.dataset.anno].title+'：'+annotations[el.dataset.anno].desc.join('；'));layer.appendChild(b)})}$('#annoToggle').onclick=()=>{annoVisible=!annoVisible;$('#annoToggle span').textContent=annoVisible?'隐藏标注':'显示标注';renderAnno()};$('#mainContent').onscroll=renderAnno;window.onresize=renderAnno;render();lucide.createIcons();
-</script><script src="公共导航.js?v=20260813"></script></body></html>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>云登 - 插件管理</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="筛选布局.css?v=20260814">
+  <link rel="stylesheet" href="分页器.css?v=20260814">
+  <script>
+    tailwind.config={theme:{extend:{colors:{primary:'#0066FF','primary-hover':'#0052CC','primary-active':'#0047B3','primary-bg':'#E6F0FF','ink-title':'#1A1D24','ink-body':'#3A3F4A','ink-sub':'#6E7685','ink-muted':'#9DA2AC',line:'#DFE1E5','line-light':'#E8EAED','line-lighter':'#F0F1F3',page:'#F7F8FA',card:'#FFFFFF',hover:'#F3F4F6',success:'#0FC060','success-bg':'#E7F9F0',warning:'#E7772D','warning-bg':'#FDF2E9',danger:'#D9001B','danger-bg':'#FFE8EB',info:'#0091D5','info-bg':'#E4F4FB'}}}};
+  </script>
+  <style>
+    * { box-sizing:border-box; }
+    body { margin:0; color:#3A3F4A; background:#F7F8FA; font:13px/1.5 -apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei','Segoe UI',system-ui,sans-serif; }
+    button,input,select,textarea { font:inherit; }
+    button { white-space:nowrap; }
+    .mono { font-family:'JetBrains Mono',monospace; font-variant-numeric:tabular-nums; }
+    .panel { min-width:0; padding:20px; border-radius:8px; background:#FFFFFF; }
+    .btn { height:32px; padding:0 14px; border:1px solid transparent; border-radius:4px; display:inline-flex; align-items:center; justify-content:center; gap:6px; font-weight:500; cursor:pointer; }
+    .btn-primary { color:#FFFFFF; background:#0066FF; }
+    .btn-primary:hover { background:#0052CC; }
+    .btn-default { color:#3A3F4A; border-color:#DFE1E5; background:#FFFFFF; }
+    .btn-default:hover { color:#0066FF; border-color:#0066FF; }
+    .btn-danger { color:#D9001B; border-color:#D9001B; background:#FFFFFF; }
+    .btn:disabled { color:#9DA2AC; border-color:#DFE1E5; background:#F0F1F3; cursor:not-allowed; }
+    .control { width:100%; height:32px; padding:0 10px; border:1px solid #DFE1E5; border-radius:4px; color:#3A3F4A; background:#FFFFFF; outline:none; }
+    textarea.control { min-height:84px; padding-top:8px; resize:vertical; }
+    .control:focus { border-color:#0066FF; box-shadow:0 0 0 2px rgba(0,102,255,.12); }
+    .control.invalid { border-color:#D9001B; }
+    .tablist { display:flex; min-width:0; overflow-x:auto; border-bottom:1px solid #DFE1E5; }
+    .tab { height:38px; padding:0 16px; border:0; border-bottom:2px solid transparent; color:#6E7685; background:transparent; cursor:pointer; }
+    .tab[aria-selected="true"] { color:#0066FF; border-bottom-color:#0066FF; font-weight:600; }
+    .category-row { display:flex; align-items:flex-start; gap:12px; }
+    .category-label { width:72px; padding-top:5px; flex:none; color:#6E7685; }
+    .category-options { display:flex; flex-wrap:wrap; gap:6px; }
+    .chip { min-height:28px; padding:0 10px; border:1px solid #DFE1E5; border-radius:4px; color:#3A3F4A; background:#FFFFFF; cursor:pointer; }
+    .chip[aria-pressed="true"] { color:#0066FF; border-color:#0066FF; background:#E6F0FF; }
+    .catalog-head { display:flex; align-items:flex-start; justify-content:space-between; flex-wrap:wrap; gap:12px; margin:2px 0 14px; }
+    .plugin-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
+    .plugin-card { min-width:0; min-height:228px; padding:16px; border:1px solid #DFE1E5; border-radius:8px; display:flex; flex-direction:column; background:#FFFFFF; }
+    .plugin-card:hover { border-color:#C7CAD1; box-shadow:0 2px 8px rgba(0,0,0,.06); }
+    .plugin-icon { width:36px; height:36px; border-radius:6px; display:flex; align-items:center; justify-content:center; flex:none; }
+    .badge { min-height:22px; padding:2px 7px; border:1px solid currentColor; border-radius:4px; display:inline-flex; align-items:center; font-size:11px; }
+    .modal-mask { position:fixed; inset:0; z-index:2000; padding:16px; display:flex; align-items:center; justify-content:center; background:rgba(26,29,36,.32); }
+    .modal-mask.hidden { display:none; }
+    .modal-panel { width:760px; max-width:100%; max-height:calc(100dvh - 32px); border-radius:8px; display:flex; flex-direction:column; background:#FFFFFF; box-shadow:0 6px 24px rgba(0,0,0,.12); }
+    .toast { position:fixed; top:16px; left:50%; z-index:2200; transform:translateX(-50%); padding:9px 16px; border-radius:4px; color:#FFFFFF; background:#1A1D24; box-shadow:0 2px 8px rgba(0,0,0,.12); }
+    .anno-badge { position:fixed; width:20px; height:20px; border:0; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#FFFFFF; background:#0066FF; font:600 11px/1 'JetBrains Mono',monospace; pointer-events:auto; box-shadow:0 2px 8px rgba(0,0,0,.12); }
+    :where(button,input,select,textarea):focus-visible { outline:2px solid #0066FF; outline-offset:2px; }
+    @media (max-width:1100px) { .plugin-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+    @media (max-width:720px) { .panel { padding:16px; } .plugin-grid { grid-template-columns:1fr; } .category-row { display:block; } .category-label { width:auto; padding:0 0 6px; } .catalog-head .btn { width:100%; } }
+    @media (prefers-reduced-motion:reduce) { *,*::before,*::after { transition:none!important; animation:none!important; } }
+  </style>
+  <link rel="stylesheet" href="公共导航.css?v=20260821a">
+  <script src="公共导航.js?v=20260821a"></script>
+</head>
+<body class="overflow-hidden">
+  <div id="yundeng-shell" class="flex h-screen overflow-hidden">
+    <aside id="sidebar"></aside>
+    <div class="min-w-0 min-h-0 flex-1 flex flex-col">
+      <header></header>
+      <main id="mainContent" class="flex-1 min-h-0 overflow-auto bg-page p-4" tabindex="-1">
+        <h1 class="sr-only">插件管理</h1>
+        <div>
+          <section class="panel mb-4" aria-label="插件筛选">
+            <div class="flex items-center justify-between gap-4 mb-5">
+              <div id="moduleTabs" class="tablist flex-1" role="tablist" aria-label="插件范围"></div>
+              <button id="uploadBtn" data-anno="1" class="btn btn-primary"><i data-lucide="upload" class="w-4 h-4"></i>上传插件</button>
+            </div>
+            <div id="marketCategories" class="space-y-3 mb-5">
+              <div class="category-row"><span class="category-label">功能分类</span><div id="funcCats" data-anno="2" class="category-options"></div></div>
+              <div class="category-row"><span class="category-label">电商分类</span><div id="bizCats" class="category-options"></div></div>
+            </div>
+            <div class="filter-flow">
+              <label class="filter-item"><span class="filter-label">浏览器内核</span><select id="kernelFilter" class="control"><option>全部内核</option><option>谷歌</option><option>火狐</option></select></label>
+              <label class="filter-item owned-filter hidden"><span class="filter-label">全局状态</span><select id="globalFilter" class="control"><option>全部状态</option><option>已开启</option><option>未开启</option></select></label>
+              <label class="filter-item owned-filter hidden"><span class="filter-label">环境分配</span><select id="assignFilter" class="control"><option>全部状态</option><option>已分配</option><option>未分配</option></select></label>
+              <label class="filter-item" data-anno="3"><span class="filter-label">搜索插件</span><input id="searchInput" class="control" placeholder="搜索插件名称或简介"></label>
+              <div class="filter-actions"><button id="queryBtn" class="btn btn-primary"><i data-lucide="search" class="w-4 h-4"></i>查询</button><button id="resetBtn" class="btn btn-default">重置</button></div>
+            </div>
+          </section>
+
+          <section class="bg-white rounded-lg p-5 md:p-6" aria-labelledby="listTitle">
+            <div class="catalog-head"><div><h2 id="listTitle" data-anno="4" class="inline-block text-[18px] font-semibold text-ink-title">插件市场</h2><span id="resultCount" class="ml-2 text-[12px] text-ink-sub" aria-live="polite"></span></div><button id="createGroupBtn" data-anno="8" class="btn btn-default hidden"><i data-lucide="folder-plus" class="w-4 h-4"></i><span>创建我的分组</span></button></div>
+            <div id="pluginList" class="plugin-grid"></div>
+            <div id="emptyState" class="hidden min-h-[300px] flex flex-col items-center justify-center text-center p-8"><span class="w-12 h-12 rounded-lg bg-primary-bg text-primary flex items-center justify-center"><i data-lucide="search-x" class="w-6 h-6"></i></span><h3 class="mt-3 text-[15px] font-semibold text-ink-title">暂无符合条件的插件</h3><p class="mt-1 text-[12px] text-ink-sub">请调整筛选条件后重试</p></div>
+            <div id="pluginPagination" data-anno="5" aria-label="插件列表分页"></div>
+          </section>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <div id="pluginModal" class="modal-mask hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-hidden="true">
+    <section id="modalPanel" data-anno="10" class="modal-panel">
+      <header class="h-14 px-5 border-b border-line flex items-center justify-between shrink-0"><h2 id="modalTitle" class="text-[16px] font-semibold text-ink-title"></h2><button id="modalClose" class="btn btn-default w-8 px-0" aria-label="关闭弹窗"><i data-lucide="x" class="w-4 h-4"></i></button></header>
+      <div id="modalBody" class="p-5 overflow-auto"></div>
+      <footer class="px-5 py-4 border-t border-line flex justify-end gap-2 shrink-0"><button id="modalCancel" class="btn btn-default">取消</button><button id="modalConfirm" class="btn btn-primary">确定</button></footer>
+    </section>
+  </div>
+
+  <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+  <div id="annoLayer" class="fixed inset-0 pointer-events-none z-[9998]"></div>
+  <button id="annoToggle" class="fixed right-2 top-[120px] z-[9997] h-8 px-3 rounded-full bg-ink-muted text-white shadow-[0_2px_8px_rgba(0,0,0,.12)] flex items-center justify-center gap-1.5" aria-pressed="false"><i data-lucide="tags" class="w-4 h-4"></i><span class="text-[12px] font-medium">显示标注</span></button>
+  <div id="annoPopup" class="modal-mask hidden z-[9999]" role="dialog" aria-modal="true" aria-labelledby="annoTitle" aria-hidden="true"><section class="w-[520px] max-w-full rounded-lg bg-white shadow-[0_6px_24px_rgba(0,0,0,.12)]"><header class="px-5 py-4 border-b border-line flex items-center justify-between"><h2 id="annoTitle" class="text-[16px] font-semibold text-ink-title"></h2><button id="annoClose" class="btn btn-default w-8 px-0" aria-label="关闭标注说明"><i data-lucide="x" class="w-4 h-4"></i></button></header><div id="annoDesc" class="p-5 text-[14px] leading-7"></div></section></div>
+
+  <script src="分页器.js?v=20260814"></script>
+  <script>
+    const $=selector=>document.querySelector(selector);
+    const $$=selector=>[...document.querySelectorAll(selector)];
+    const escapeHtml=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+    const funcs=['热门推荐','选品专区','运营工具','店铺运营','推广营销','达人邀约','其他工具'];
+    const bizs=['全部','亚马逊','速卖通','eBay','Etsy','Shopee','Shopify','Lazada','Yahoo'];
+    const pluginSeed=[
+      ['Google 翻译助手','网页翻译与划词翻译','运营工具','全部','谷歌','languages','5052万','云登商店',true,2],
+      ['Cookie Editor','编辑、导入和导出站点 Cookie','运营工具','全部','谷歌','cookie','1132万','云登商店',true,4],
+      ['沉浸式翻译','网页双语翻译与术语管理','运营工具','全部','谷歌','languages','1396万','三方应用商店',false,0],
+      ['元素选择器','定位页面元素属性与结构层级','运营工具','全部','谷歌','scan-search','1022万','云登商店',true,1],
+      ['商品采集助手','采集商品信息并生成选品清单','选品专区','亚马逊','谷歌','package-search','986万','云登商店',false,0],
+      ['店铺库存同步','同步库存与缺货状态','店铺运营','Shopify','谷歌','boxes','768万','云登商店',true,3],
+      ['广告像素检查器','检查页面像素和事件触发','推广营销','全部','谷歌','scan-line','641万','云登商店',true,0],
+      ['达人邀约助手','管理达人名单与邀约记录','达人邀约','TikTok Shop','谷歌','user-round-plus','524万','团队上传',false,0],
+      ['亚马逊关键词工具','分析搜索词与商品关联度','推广营销','亚马逊','火狐','chart-no-axes-combined','478万','三方应用商店',false,0],
+      ['Shopee 订单助手','批量读取订单与物流状态','店铺运营','Shopee','谷歌','clipboard-list','432万','云登商店',true,6],
+      ['Etsy 标签分析','分析商品标签与曝光趋势','选品专区','Etsy','火狐','tags','398万','三方应用商店',false,0],
+      ['速卖通价格监控','记录商品价格与促销变化','选品专区','速卖通','谷歌','badge-dollar-sign','356万','云登商店',false,0],
+      ['Lazada 消息助手','集中处理买家消息','店铺运营','Lazada','谷歌','messages-square','312万','云登商店',true,2],
+      ['Yahoo 商品对比','比较同类商品价格和评价','选品专区','Yahoo','火狐','columns-3-cog','286万','三方应用商店',false,0],
+      ['页面数据导出','将当前页面表格导出为文件','其他工具','全部','谷歌','file-down','241万','团队上传',true,1]
+    ];
+    let plugins=pluginSeed.map((item,index)=>({id:index+1,name:item[0],desc:item[1],func:item[2],biz:item[3],kernel:item[4],icon:item[5],downloads:item[6],source:item[7],added:item[8],envs:item[9],global:index%4===0,teamVisible:index%3===0,group:'未分组',version:`v${index%3+1}.${index%5}.0`}));
+    const state={tab:'market',func:'热门推荐',biz:'全部',page:1,pageSize:10,modalKey:'',lastFocus:null};
+    let pager=null,annoVisible=false;
+    const tabMeta={market:'插件市场',mine:'我的插件',team:'团队插件'};
+    const annotations={1:{title:'上传插件',desc:['支持商店链接和安装包两种来源。','原型仅校验表单，不上传真实文件。']},2:{title:'插件分类',desc:['功能分类与电商分类会共同参与市场筛选。']},3:{title:'插件搜索',desc:['可按名称、简介、来源和分类查询。']},4:{title:'插件列表',desc:['市场、我的插件和团队插件共用同一套筛选与分页。']},5:{title:'列表分页',desc:['默认每页 10 条，支持 10、20、50 条。']},8:{title:'插件分组',desc:['我的插件和团队插件可建立独立分组。']},10:{title:'业务弹窗',desc:['授权、分配、全局状态和删除均需明确确认。']}};
+
+    function toast(message){const node=$('#toast');node.textContent=message;node.classList.remove('hidden');clearTimeout(node.timer);node.timer=setTimeout(()=>node.classList.add('hidden'),2200)}
+    function renderTabs(){
+      $('#moduleTabs').innerHTML=Object.entries(tabMeta).map(([key,label])=>`<button type="button" class="tab" role="tab" data-tab="${key}" aria-selected="${state.tab===key}" tabindex="${state.tab===key?0:-1}">${label}</button>`).join('');
+    }
+    function renderCategories(){
+      $('#funcCats').innerHTML=funcs.map(value=>`<button type="button" class="chip" data-func="${value}" aria-pressed="${state.func===value}">${value}</button>`).join('');
+      $('#bizCats').innerHTML=bizs.map(value=>`<button type="button" class="chip" data-biz="${value}" aria-pressed="${state.biz===value}">${value}</button>`).join('');
+    }
+    function getFiltered(){
+      const query=$('#searchInput').value.trim().toLowerCase(),kernel=$('#kernelFilter').value,globalState=$('#globalFilter').value,assignState=$('#assignFilter').value;
+      return plugins.filter(plugin=>{
+        if(state.tab==='mine'&&!plugin.added)return false;
+        if(state.tab==='team'&&(!plugin.added||!plugin.teamVisible))return false;
+        if(state.tab==='market'&&state.func!=='热门推荐'&&plugin.func!==state.func)return false;
+        if(state.tab==='market'&&state.biz!=='全部'&&plugin.biz!==state.biz)return false;
+        if(kernel!=='全部内核'&&plugin.kernel!==kernel)return false;
+        if(state.tab!=='market'&&globalState!=='全部状态'&&((globalState==='已开启')!==plugin.global))return false;
+        if(state.tab!=='market'&&assignState!=='全部状态'&&((assignState==='已分配')!==(plugin.envs>0)))return false;
+        return !query||[plugin.name,plugin.desc,plugin.source,plugin.func,plugin.biz].join(' ').toLowerCase().includes(query);
+      });
+    }
+    function cardActions(plugin){
+      if(state.tab==='market')return plugin.added?`<button class="btn btn-default" data-action="assign" data-id="${plugin.id}">分配环境</button>`:`<button class="btn btn-primary" data-action="add" data-id="${plugin.id}">添加</button>`;
+      return `<button class="btn btn-default" data-action="assign" data-id="${plugin.id}">分配环境</button><button class="btn btn-default" data-action="global" data-id="${plugin.id}">${plugin.global?'关闭全局':'开启全局'}</button><button class="btn btn-danger" data-action="delete" data-id="${plugin.id}">删除</button>`;
+    }
+    function renderList(){
+      const rows=getFiltered(),totalPages=Math.max(1,Math.ceil(rows.length/state.pageSize));state.page=Math.min(state.page,totalPages);
+      const visible=rows.slice((state.page-1)*state.pageSize,state.page*state.pageSize);
+      $('#listTitle').textContent=tabMeta[state.tab];$('#resultCount').textContent=`共 ${rows.length} 个插件`;
+      $('#pluginList').innerHTML=visible.map((plugin,index)=>`<article class="plugin-card"><div class="flex items-start gap-3"><span class="plugin-icon ${index%4===0?'text-primary bg-primary-bg':index%4===1?'text-success bg-success-bg':index%4===2?'text-warning bg-warning-bg':'text-info bg-info-bg'}"><i data-lucide="${plugin.icon}" class="w-5 h-5"></i></span><div class="min-w-0 flex-1"><div class="flex items-start justify-between gap-2"><h3 class="font-semibold text-ink-title truncate" title="${escapeHtml(plugin.name)}">${escapeHtml(plugin.name)}</h3><span class="badge text-primary bg-primary-bg">${plugin.kernel}</span></div><p class="mt-1 text-[12px] text-ink-sub">${escapeHtml(plugin.func)} · ${escapeHtml(plugin.biz)}</p></div></div><p class="mt-3 text-ink-sub leading-6 flex-1">${escapeHtml(plugin.desc)}</p><div class="mt-3 text-[12px] text-ink-sub"><span class="mono">${escapeHtml(plugin.downloads)}</span> 下载 · ${escapeHtml(plugin.source)}</div><div class="mt-4 flex flex-wrap gap-2">${cardActions(plugin)}</div></article>`).join('');
+      $('#pluginList').classList.toggle('hidden',visible.length===0);$('#emptyState').classList.toggle('hidden',visible.length!==0);
+      if(!pager)pager=new YDPager('#pluginPagination',{total_count:rows.length,current_page:state.page,page_size:state.pageSize,page_size_options:[10,20,50],onChange:next=>{state.page=next.current_page;state.pageSize=next.page_size;renderList()},toast});
+      else pager.setState({total_count:rows.length,current_page:state.page,page_size:state.pageSize},{silent:true});
+      lucide.createIcons();renderAnnoBadges();
+    }
+    function render(){renderTabs();renderCategories();$('#marketCategories').classList.toggle('hidden',state.tab!=='market');$$('.owned-filter').forEach(node=>node.classList.toggle('hidden',state.tab==='market'));$('#createGroupBtn').classList.toggle('hidden',state.tab==='market');$('#createGroupBtn span').textContent=state.tab==='team'?'创建团队分组':'创建我的分组';renderList()}
+
+    function uploadBody(){return `<div class="space-y-4"><label class="block"><span class="block mb-1.5">插件商店链接</span><input id="requiredField" class="control" placeholder="请输入 Chrome 或 Firefox 插件商店链接"></label><div class="p-3 rounded bg-warning-bg text-warning">第三方插件由对应开发者提供，请在授权前核对权限范围。</div><div class="border border-line rounded p-4"><strong class="text-ink-title">上传安装包</strong><p class="mt-2 text-[12px] text-ink-sub leading-6">支持 crx、xpi 和 zip，单个文件不超过 50MB。</p><button type="button" class="btn btn-default mt-3"><i data-lucide="file-up" class="w-4 h-4"></i>选择安装包</button></div></div>`}
+    function authBody(plugin){return `<p class="mb-4">添加 <strong>${escapeHtml(plugin.name)}</strong> 前需要确认授权范围。</p><div class="space-y-3"><label class="flex gap-2"><input id="agreeUser" type="checkbox">我已阅读并同意用户授权协议</label><label class="flex gap-2"><input id="agreePrivacy" type="checkbox">我已阅读并同意隐私协议</label><label class="flex gap-2"><input id="toTeam" type="checkbox">同步收录到团队插件</label></div>`}
+    function assignBody(){return `<div class="grid md:grid-cols-2 gap-4"><div class="border border-line rounded p-3 space-y-2"><strong class="text-ink-title">环境分组</strong><label class="block"><input type="checkbox" checked> 默认分组</label><label class="block"><input type="checkbox"> 店铺运营</label><label class="block"><input type="checkbox"> 广告投放</label></div><div class="space-y-2"><strong class="text-ink-title">选择环境</strong>${['北美店铺-01','欧洲广告-02','新加坡运营-03','素材检查-04'].map(name=>`<label class="block border border-line rounded p-2"><input type="checkbox" data-env> ${name}</label>`).join('')}</div></div>`}
+    function groupBody(){return `<label class="block mb-4"><span class="block mb-1.5">分组名称</span><input id="requiredField" class="control" maxlength="30" placeholder="请输入分组名称"></label><label class="block"><span class="block mb-1.5">备注</span><textarea class="control" maxlength="100" placeholder="请输入备注"></textarea></label>`}
+    function openModal(title,body,confirm,key){state.lastFocus=document.activeElement;state.modalKey=key;$('#modalTitle').textContent=title;$('#modalBody').innerHTML=body;$('#modalConfirm').textContent=confirm||'确定';$('#pluginModal').classList.remove('hidden');$('#pluginModal').setAttribute('aria-hidden','false');lucide.createIcons();requestAnimationFrame(()=>($('#modalBody').querySelector('input,select,textarea,button')||$('#modalConfirm')).focus());renderAnnoBadges()}
+    function closeModal(){if($('#pluginModal').classList.contains('hidden'))return;$('#pluginModal').classList.add('hidden');$('#pluginModal').setAttribute('aria-hidden','true');state.modalKey='';state.lastFocus?.focus?.({preventScroll:true});state.lastFocus=null;renderAnnoBadges()}
+    function confirmModal(){
+      const [action,id]=state.modalKey.split(':'),plugin=plugins.find(item=>item.id===Number(id));
+      if(action==='add'){if(!$('#agreeUser').checked||!$('#agreePrivacy').checked){toast('请先确认授权协议和隐私协议');return}plugin.added=true;plugin.teamVisible=$('#toTeam').checked;closeModal();render();toast('插件已添加到演示列表');return}
+      if(action==='assign'){plugin.envs=$$('[data-env]:checked').length;closeModal();render();toast('环境分配已更新');return}
+      if(action==='global'){plugin.global=!plugin.global;closeModal();render();toast('全局状态已更新');return}
+      if(action==='delete'){plugins=plugins.filter(item=>item.id!==plugin.id);closeModal();state.page=1;render();toast('插件已从演示列表删除');return}
+      const required=$('#requiredField');if(required&&!required.value.trim()){required.classList.add('invalid');required.focus();toast('请填写必填项');return}closeModal();toast('演示操作已完成');
+    }
+
+    function openAnnotation(id){const item=annotations[id];if(!item)return;$('#annoTitle').textContent=`${id}. ${item.title}`;$('#annoDesc').innerHTML=`<ul class="list-disc pl-5 space-y-2">${item.desc.map(text=>`<li>${escapeHtml(text)}</li>`).join('')}</ul>`;$('#annoPopup').classList.remove('hidden');$('#annoPopup').setAttribute('aria-hidden','false');$('#annoClose').focus()}
+    function closeAnnotation(){if($('#annoPopup').classList.contains('hidden'))return;$('#annoPopup').classList.add('hidden');$('#annoPopup').setAttribute('aria-hidden','true')}
+    function renderAnnoBadges(){const layer=$('#annoLayer');layer.innerHTML='';if(!annoVisible)return;const scope=$('#pluginModal').classList.contains('hidden')?document:$('#modalPanel');scope.querySelectorAll('[data-anno]').forEach(target=>{if(target.offsetParent===null)return;const rect=target.getBoundingClientRect();if(rect.bottom<0||rect.top>innerHeight)return;const badge=document.createElement('button');badge.type='button';badge.className='anno-badge';badge.textContent=target.dataset.anno;badge.style.left=Math.max(0,Math.min(innerWidth-22,rect.right-10))+'px';badge.style.top=Math.max(0,rect.top-10)+'px';badge.setAttribute('aria-label',`查看交互说明 ${target.dataset.anno}`);badge.onclick=()=>openAnnotation(target.dataset.anno);layer.append(badge)})}
+
+    document.addEventListener('click',event=>{
+      const tabButton=event.target.closest('[data-tab]');if(tabButton){state.tab=tabButton.dataset.tab;state.page=1;render();return}
+      const funcButton=event.target.closest('[data-func]');if(funcButton){state.func=funcButton.dataset.func;state.page=1;render();return}
+      const bizButton=event.target.closest('[data-biz]');if(bizButton){state.biz=bizButton.dataset.biz;state.page=1;render();return}
+      const actionButton=event.target.closest('[data-action]');if(!actionButton)return;const plugin=plugins.find(item=>item.id===Number(actionButton.dataset.id));if(!plugin)return;const action=actionButton.dataset.action;if(action==='add')openModal('插件授权',authBody(plugin),'确认添加',`add:${plugin.id}`);if(action==='assign')openModal('分配环境',assignBody(),'确定分配',`assign:${plugin.id}`);if(action==='global')openModal(plugin.global?'关闭全局':'开启全局',`<p>${plugin.global?'关闭后，该插件不再默认加载到可操作环境。':'开启后，可操作环境将默认加载该插件。'}</p>`,'确定',`global:${plugin.id}`);if(action==='delete')openModal('删除插件',`<p>确认从当前列表删除 <strong>${escapeHtml(plugin.name)}</strong> 吗？</p>`,'确认删除',`delete:${plugin.id}`);
+    });
+    $('#moduleTabs').addEventListener('keydown',event=>{if(!['ArrowLeft','ArrowRight'].includes(event.key))return;const tabs=$$('#moduleTabs [role="tab"]'),index=tabs.indexOf(document.activeElement),next=event.key==='ArrowRight'?(index+1)%tabs.length:(index-1+tabs.length)%tabs.length;tabs[next].focus();tabs[next].click()});
+    $('#queryBtn').onclick=()=>{state.page=1;renderList()};
+    $('#resetBtn').onclick=()=>{$('#searchInput').value='';$('#kernelFilter').value='全部内核';$('#globalFilter').value='全部状态';$('#assignFilter').value='全部状态';state.func='热门推荐';state.biz='全部';state.page=1;render()};
+    $('#searchInput').addEventListener('keydown',event=>{if(event.key==='Enter')$('#queryBtn').click()});
+    $('#uploadBtn').onclick=()=>openModal('上传插件',uploadBody(),'确定','upload');
+    $('#createGroupBtn').onclick=()=>openModal(state.tab==='team'?'创建团队分组':'创建我的分组',groupBody(),'创建','group');
+    $('#modalClose').onclick=$('#modalCancel').onclick=closeModal;$('#modalConfirm').onclick=confirmModal;$('#pluginModal').onclick=event=>{if(event.target===$('#pluginModal'))closeModal()};
+    $('#annoClose').onclick=closeAnnotation;$('#annoPopup').onclick=event=>{if(event.target===$('#annoPopup'))closeAnnotation()};
+    $('#pluginModal').addEventListener('keydown',event=>{if(event.key!=='Tab')return;const items=$$('#pluginModal button:not(:disabled),#pluginModal input:not(:disabled),#pluginModal select:not(:disabled),#pluginModal textarea:not(:disabled)').filter(node=>node.offsetParent!==null);if(!items.length)return;const first=items[0],last=items.at(-1);if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus()}else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus()}});
+    document.addEventListener('keydown',event=>{if(event.key!=='Escape')return;if(!$('#annoPopup').classList.contains('hidden'))closeAnnotation();else closeModal()});
+    $('#mainContent').addEventListener('scroll',renderAnnoBadges,{passive:true});
+    render();lucide.createIcons();
+  </script>
+  <script src="标注交互.js?v=20260814"></script>
+
+</body>
+</html>

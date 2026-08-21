@@ -1,1 +1,64 @@
-.filter-flow{display:flex;flex-wrap:wrap;align-items:flex-end;gap:16px 24px}.filter-flow .filter-item{display:flex;flex:0 0 400px;width:400px;flex-direction:column;align-items:stretch;gap:6px}.filter-flow .filter-label{width:auto;min-height:18px;flex:none;text-align:left;color:#3A3F4A;font-size:13px;line-height:18px}.filter-flow .filter-label::after{content:''}.filter-flow .control{width:400px;max-width:100%}.filter-actions{display:flex;flex:0 0 auto;align-items:center;gap:12px;min-height:32px}@media(max-width:720px){.filter-flow{gap:12px}.filter-flow .filter-item{flex-basis:100%;width:100%}.filter-flow .control{width:100%}}
+/* 云登 PC 端筛选区。标签在上，400px 条件项流式换行，操作组紧随末项。 */
+.filter-flow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 16px 24px;
+  min-width: 0;
+}
+
+.filter-flow .filter-item {
+  display: flex;
+  flex: 0 0 400px;
+  width: 400px;
+  max-width: 100%;
+  min-width: 0;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+}
+
+.filter-flow .filter-label,
+.filter-flow .filter-item > label,
+.filter-flow .filter-item > span:first-child {
+  width: auto;
+  min-height: 18px;
+  flex: none;
+  color: #3A3F4A;
+  font-size: 13px;
+  line-height: 18px;
+  text-align: left;
+}
+
+.filter-flow .control,
+.filter-flow .field,
+.filter-flow .filter-control {
+  width: 400px;
+  max-width: 100%;
+}
+
+.filter-flow .filter-actions {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 12px;
+  min-height: 32px;
+}
+
+@media (max-width: 720px) {
+  .filter-flow { gap: 12px; }
+
+  .filter-flow .filter-item {
+    flex-basis: 100%;
+    width: 100%;
+  }
+
+  .filter-flow .control,
+  .filter-flow .field,
+  .filter-flow .filter-control { width: 100%; }
+
+  .filter-flow .filter-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}

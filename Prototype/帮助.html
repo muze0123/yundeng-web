@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>云登 · 帮助</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config={theme:{extend:{colors:{
+      primary:{DEFAULT:'#0066FF',hover:'#0052CC',active:'#0047B3',bg:'#E6F0FF'},
+      ink:{title:'#1A1D24',body:'#3A3F4A',sub:'#6E7685',muted:'#9DA2AC'},
+      line:{DEFAULT:'#DFE1E5',light:'#E8EAED',lighter:'#F0F1F3'},
+      page:'#F7F8FA',card:'#FFFFFF',hover:'#F3F4F6',
+      success:{DEFAULT:'#0FC060',bg:'#E7F9F0'},warning:{DEFAULT:'#E7772D',bg:'#FDF2E9'},danger:{DEFAULT:'#D9001B',bg:'#FFE8EB'},info:{DEFAULT:'#0091D5',bg:'#E4F4FB'}
+    },borderRadius:{DEFAULT:'4px',lg:'8px'},fontFamily:{sans:['-apple-system','BlinkMacSystemFont','PingFang SC','Hiragino Sans GB','Microsoft YaHei','Helvetica Neue','Helvetica','Arial','sans-serif'],mono:['JetBrains Mono','monospace']}}}};
+  </script>
+  <style>
+    *{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden}body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei','Hiragino Sans GB','Segoe UI',system-ui,sans-serif;color:#3A3F4A;letter-spacing:0}button,input,select,textarea{font:inherit;letter-spacing:0}.mono{font-family:'JetBrains Mono',monospace;font-variant-numeric:tabular-nums}.category-tab{height:32px;padding:0 12px;border-radius:4px;color:#6E7685;white-space:nowrap}.category-tab:hover{background:#F3F4F6;color:#3A3F4A}.category-tab.active{background:#E6F0FF;color:#0066FF;font-weight:600}.article-card{min-height:132px;border:1px solid #E8EAED;border-radius:8px;padding:16px;background:#fff;text-align:left;transition:border-color .15s,box-shadow .15s}.article-card:hover{border-color:#0066FF;box-shadow:0 4px 14px rgba(26,29,36,.08)}.faq-trigger{width:100%;min-height:48px;padding:12px 0;display:flex;align-items:center;gap:12px;text-align:left;color:#1A1D24}.faq-trigger:hover{color:#0066FF}.faq-chevron{transition:transform .18s}.faq-trigger[aria-expanded="true"] .faq-chevron{transform:rotate(180deg)}.field{width:100%;height:36px;border:1px solid #DFE1E5;border-radius:4px;padding:0 10px;background:#fff;outline:none}.field:focus,textarea.field:focus{border-color:#0066FF;box-shadow:0 0 0 2px #E6F0FF}textarea.field{height:112px;padding:9px 10px;resize:vertical}.btn{height:32px;padding:0 14px;border-radius:4px;display:inline-flex;align-items:center;justify-content:center;gap:6px;font-weight:500}.btn-primary{background:#0066FF;color:#fff}.btn-primary:hover{background:#0052CC}.btn-secondary{background:#fff;color:#3A3F4A;border:1px solid #DFE1E5}.btn-secondary:hover{background:#F3F4F6}.anno-badge{position:fixed;width:20px;height:20px;border:0;border-radius:50%;background:#0066FF;color:#fff;font:700 11px/20px 'JetBrains Mono',monospace;text-align:center;box-shadow:0 2px 6px rgba(0,0,0,.15);pointer-events:auto;z-index:9998}.anno-badge:hover{transform:scale(1.16)}@media(max-width:767px){.article-grid{grid-template-columns:1fr!important}.help-heading{align-items:flex-start!important;flex-direction:column}.support-strip{align-items:flex-start!important;flex-direction:column}}@media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important}}
+  </style>
+  <link rel="stylesheet" href="公共导航.css?v=20260821a">
+  <script src="公共导航.js?v=20260821a"></script>
+</head>
+<body class="bg-page text-[13px]">
+  <div class="flex h-screen min-w-0">
+    <aside id="sidebar" class="w-[220px] shrink-0 bg-card" aria-label="主导航"></aside>
+    <div class="min-w-0 flex-1 flex flex-col h-screen">
+      <header class="h-14 shrink-0 bg-card"></header>
+      <main id="mainContent" class="flex-1 overflow-auto p-4" tabindex="-1">
+        <section class="min-h-full bg-card rounded-lg p-5 md:p-6" aria-labelledby="pageTitle">
+          <div class="help-heading flex items-center justify-between gap-5 mb-5">
+            <div><h1 id="pageTitle" class="text-[20px] font-bold text-ink-title">帮助中心</h1><p class="mt-1 text-[12px] text-ink-sub">查找操作指南、常见问题与支持渠道</p></div>
+            <label class="relative w-full max-w-[420px]" data-anno="1"><span class="sr-only">搜索帮助内容</span><i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-muted"></i><input id="helpSearch" class="field pl-9 pr-9" type="search" placeholder="搜索功能、问题或关键词"><button id="clearSearch" type="button" class="hidden absolute right-2 top-1/2 -translate-y-1/2 w-6 h-6 items-center justify-center text-ink-muted hover:text-ink-body" aria-label="清空搜索"><i data-lucide="x" class="w-4 h-4"></i></button></label>
+          </div>
+
+          <div id="categoryTabs" data-anno="2" class="flex items-center gap-1 overflow-x-auto pb-1 mb-5" role="tablist" aria-label="帮助分类"></div>
+
+          <section aria-labelledby="guideTitle" class="mb-7">
+            <div class="flex items-center justify-between mb-3"><h2 id="guideTitle" data-anno="3" class="inline-block text-[16px] font-semibold text-ink-title">使用指南</h2><span id="resultCount" class="text-[12px] text-ink-sub mono"></span></div>
+            <div id="articleGrid" class="article-grid grid grid-cols-2 xl:grid-cols-4 gap-3"></div>
+            <div id="emptyState" class="hidden py-12 text-center"><i data-lucide="search-x" class="w-9 h-9 mx-auto text-ink-muted"></i><p class="mt-3 text-ink-title font-medium">没有找到相关内容</p><button id="resetSearch" class="btn btn-secondary mt-4" type="button">清空筛选</button></div>
+          </section>
+
+          <section aria-labelledby="faqTitle" class="border-t border-line-light pt-6">
+            <h2 id="faqTitle" data-anno="4" class="inline-block text-[16px] font-semibold text-ink-title mb-2">常见问题</h2>
+            <div id="faqList" class="divide-y divide-line-lighter"></div>
+          </section>
+
+          <section class="support-strip mt-7 rounded-lg bg-primary-bg p-4 flex items-center justify-between gap-5" aria-labelledby="supportTitle">
+            <div class="flex items-center gap-3"><span class="w-9 h-9 rounded bg-card text-primary flex items-center justify-center"><i data-lucide="headphones" class="w-5 h-5"></i></span><div><h2 id="supportTitle" class="text-[14px] font-semibold text-ink-title">仍未解决？</h2><p class="text-[12px] text-ink-sub mt-0.5">提交问题后，支持团队将在工作时间内跟进。</p></div></div>
+            <button id="contactSupport" data-anno="5" type="button" class="btn btn-primary"><i data-lucide="message-square-more" class="w-4 h-4"></i>联系支持</button>
+          </section>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <div id="supportModal" class="hidden fixed inset-0 z-[1000] bg-black/30 p-4 items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="supportModalTitle">
+    <form id="supportForm" class="w-[520px] max-w-full bg-card rounded-lg shadow-[0_6px_24px_rgba(0,0,0,.12)]" novalidate>
+      <header class="px-5 py-4 border-b border-line flex items-center justify-between"><h2 id="supportModalTitle" data-anno="6" class="inline-block text-[16px] font-semibold text-ink-title">联系支持</h2><button id="closeSupport" type="button" class="w-8 h-8 rounded flex items-center justify-center text-ink-muted hover:bg-hover" aria-label="关闭"><i data-lucide="x" class="w-5 h-5"></i></button></header>
+      <div class="p-5 space-y-4"><label class="block"><span class="block text-[13px] text-ink-title mb-1.5">问题类型 <span class="text-danger">*</span></span><select id="supportType" class="field"><option value="">请选择</option><option>环境与代理</option><option>团队与账号</option><option>费用与订单</option><option>自动化与插件</option><option>其他问题</option></select><span id="typeError" class="hidden text-[12px] text-danger mt-1">请选择问题类型</span></label><label class="block"><span class="block text-[13px] text-ink-title mb-1.5">问题描述 <span class="text-danger">*</span></span><textarea id="supportDetail" class="field" maxlength="500" placeholder="请描述操作路径、实际结果和期望结果"></textarea><span class="flex justify-between mt-1"><span id="detailError" class="hidden text-[12px] text-danger">至少填写 10 个字</span><span id="detailCount" class="ml-auto text-[12px] text-ink-muted mono">0/500</span></span></label><label class="block"><span class="block text-[13px] text-ink-title mb-1.5">联系方式</span><input class="field" value="138****4821" aria-describedby="contactHint"><span id="contactHint" class="block text-[12px] text-ink-muted mt-1">默认使用账号绑定手机号，可直接修改。</span></label></div>
+      <footer class="px-5 py-4 border-t border-line flex justify-end gap-2"><button id="cancelSupport" type="button" class="btn btn-secondary">取消</button><button id="submitSupport" type="submit" class="btn btn-primary">提交问题</button></footer>
+    </form>
+  </div>
+  <div id="toast" class="hidden fixed top-4 left-1/2 -translate-x-1/2 z-[1100] px-4 py-2.5 rounded bg-success text-white shadow-[0_4px_16px_rgba(0,0,0,.12)]" role="status"></div>
+
+  <div id="annoLayer" class="fixed inset-0 pointer-events-none z-[9998]"></div>
+  <button id="annoToggle" class="fixed z-[9997] right-2 top-[120px] h-8 px-3 rounded-full bg-ink-muted text-white shadow-[0_2px_8px_rgba(0,0,0,.12)] flex items-center justify-center gap-1.5"><i data-lucide="tags" class="w-4 h-4"></i><span class="text-[12px] font-medium">显示标注</span></button>
+  <div id="annoPopup" class="hidden fixed inset-0 z-[9999] bg-black/30 p-4 items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="annoTitle"><div id="annoPanel" class="w-[520px] max-w-full bg-card rounded-lg shadow-[0_6px_24px_rgba(0,0,0,.12)]"><header class="px-5 py-4 border-b border-line flex items-center justify-between"><h2 id="annoTitle" class="text-[16px] font-semibold text-ink-title"></h2><button id="closeAnno" type="button" class="w-8 h-8 rounded flex items-center justify-center text-ink-muted hover:bg-hover" aria-label="关闭标注"><i data-lucide="x" class="w-5 h-5"></i></button></header><div id="annoDesc" class="p-5 text-[14px] leading-7"></div></div></div>
+
+  <script>
+    const articles=[
+      {id:'how-to-add-environment',categoryKey:'getting-started',category:'新手入门',title:'如何添加环境',desc:'从账号信息、代理选择到浏览器指纹，完成独立环境创建。',icon:'circle-plus'},
+      {id:'how-to-configure-proxy',categoryKey:'environment-proxy',category:'环境与代理',title:'如何为环境配置代理',desc:'理解出口 IP、地区、线路与连接检测的配置方法。',icon:'network'},
+      {id:'how-to-edit-fingerprint',categoryKey:'environment-proxy',category:'环境与代理',title:'如何配置浏览器指纹',desc:'配置内核、系统、WebRTC、Canvas 与硬件参数。',icon:'fingerprint'},
+      {id:'how-to-manage-team-members',categoryKey:'team-collaboration',category:'团队协作',title:'如何邀请和管理团队成员',desc:'设置部门、角色权限与成员可访问的环境范围。',icon:'users-round'},
+      {id:'how-to-share-or-transfer-environment',categoryKey:'team-collaboration',category:'团队协作',title:'如何分享或转移环境',desc:'将环境安全分享给成员，或完成跨团队资源交接。',icon:'arrow-right-left'},
+      {id:'view-billing-records',categoryKey:'billing-security',category:'费用与安全',title:'查看订单与云币流水',desc:'核对充值、消费、退款和套餐订单记录。',icon:'wallet-cards'},
+      {id:'run-rpa-task',categoryKey:'automation-plugins',category:'自动化与插件',title:'运行 RPA 自动化任务',desc:'选择模板、分配环境并查看任务运行日志。',icon:'bot'},
+      {id:'install-and-assign-plugins',categoryKey:'automation-plugins',category:'自动化与插件',title:'安装与分配插件',desc:'从插件市场安装插件并配置团队环境范围。',icon:'blocks'}
+    ];
+    const faqs=[
+      {q:'环境启动失败时应该先检查什么？',a:'先在代理管理中检测对应线路，再确认浏览器内核已下载且当前账号拥有该环境的使用权限。'},
+      {q:'修改代理后为什么出口 IP 没有变化？',a:'代理修改需要在编辑浏览器页面保存后重新启动环境；已运行环境不会在会话中途切换出口。'},
+      {q:'被删除的环境可以恢复吗？',a:'可以。在回收站保留期内可恢复环境及其基础配置；彻底删除后不可恢复。'},
+      {q:'如何控制成员能访问哪些环境？',a:'在成员管理或角色权限中设置环境范围。最终权限取成员、角色与部门规则的交集。'},
+      {q:'RPA 任务运行时可以关闭云登吗？',a:'本地执行的任务需要客户端保持运行；任务开始前请确认设备网络与目标环境均可用。'}
+    ];
+    const annotations={1:{title:'帮助搜索',desc:['按标题、简介与分类实时筛选使用指南。','清空按钮仅在存在关键词时显示。']},2:{title:'帮助分类',desc:['分类与搜索关键词共同生效。','切换分类后结果数量即时更新。']},3:{title:'使用指南',desc:['由 8 条内联 mock 数据渲染。','点击卡片模拟打开对应指南。']},4:{title:'常见问题',desc:['同一时间仅展开一项答案。','按钮同步维护 aria-expanded 状态。']},5:{title:'联系支持',desc:['打开独立支持表单。','弹窗打开时标注范围切换到表单内部。']},6:{title:'支持表单',desc:['问题类型必选，问题描述至少 10 个字。','提交成功后关闭弹窗并显示状态提示。']}};
+    const $=id=>document.getElementById(id);const pageParams=new URLSearchParams(location.search);const requestedArticle=pageParams.get('article');const requestedCategory=pageParams.get('category');const requestedArticleItem=articles.find(item=>item.id===requestedArticle);const requestedCategoryItem=articles.find(item=>item.categoryKey===requestedCategory);let activeArticle=requestedArticleItem?.id||null;let activeCategory=requestedArticleItem?.category||requestedCategoryItem?.category||'全部';let annoVisible=false;let annoScopeStack=[];let lastAnnoFocus=null;
+    function categories(){return ['全部',...new Set(articles.map(item=>item.category))]}
+    function replaceModuleParams(update){const next=new URL(location.href);update(next.searchParams);history.replaceState(history.state,'',`${next.pathname}${next.search}${next.hash}`)}
+    function renderCategories(){$('categoryTabs').innerHTML=categories().map(name=>`<button type="button" role="tab" aria-selected="${name===activeCategory}" class="category-tab ${name===activeCategory?'active':''}" data-category="${name}">${name}</button>`).join('');$('categoryTabs').querySelectorAll('[data-category]').forEach(button=>button.onclick=()=>{activeCategory=button.dataset.category;activeArticle=null;replaceModuleParams(params=>{params.delete('article');const item=articles.find(article=>article.category===activeCategory);if(item)params.set('category',item.categoryKey);else params.delete('category')});renderCategories();renderArticles()})}
+    function filteredArticles(){const keyword=$('helpSearch').value.trim().toLowerCase();return articles.filter(item=>(activeCategory==='全部'||item.category===activeCategory)&&(!keyword||`${item.title}${item.desc}${item.category}`.toLowerCase().includes(keyword)))}
+    function renderArticles(){const items=filteredArticles();$('resultCount').textContent=`${items.length} 条`;$('articleGrid').innerHTML=items.map(item=>`<button type="button" class="article-card ${item.id===activeArticle?'border-primary ring-2 ring-primary-bg':''}" data-article="${item.id}" ${item.id===activeArticle?'aria-current="page"':''}><span class="w-8 h-8 rounded bg-primary-bg text-primary flex items-center justify-center"><i data-lucide="${item.icon}" class="w-[18px] h-[18px]"></i></span><strong class="block mt-3 text-[14px] text-ink-title">${item.title}</strong><span class="block mt-1 text-[12px] leading-5 text-ink-sub">${item.desc}</span><span class="inline-flex mt-3 text-[11px] text-primary">${item.category}</span></button>`).join('');$('articleGrid').classList.toggle('hidden',!items.length);$('emptyState').classList.toggle('hidden',Boolean(items.length));$('articleGrid').querySelectorAll('[data-article]').forEach(button=>button.onclick=()=>openArticle(button.dataset.article));lucide.createIcons();renderAnnoBadges()}
+    function openArticle(id){const item=articles.find(article=>article.id===id);if(!item)return;activeArticle=item.id;activeCategory=item.category;replaceModuleParams(params=>{params.set('article',item.id);params.set('category',item.categoryKey)});renderCategories();renderArticles();requestAnimationFrame(()=>document.querySelector(`[data-article="${item.id}"]`)?.focus());showToast(`已打开：${item.title}`)}
+    function renderFaqs(){$('faqList').innerHTML=faqs.map((item,index)=>`<div><button type="button" class="faq-trigger" aria-expanded="false" aria-controls="faq-${index}" data-faq="${index}"><i data-lucide="circle-help" class="w-4 h-4 text-ink-muted shrink-0"></i><span class="flex-1">${item.q}</span><i data-lucide="chevron-down" class="faq-chevron w-4 h-4 text-ink-muted"></i></button><div id="faq-${index}" class="hidden pl-7 pr-8 pb-4 text-[13px] leading-6 text-ink-sub">${item.a}</div></div>`).join('');$('faqList').querySelectorAll('[data-faq]').forEach(button=>button.onclick=()=>{const wasOpen=button.getAttribute('aria-expanded')==='true';$('faqList').querySelectorAll('[data-faq]').forEach(other=>{other.setAttribute('aria-expanded','false');$(other.getAttribute('aria-controls')).classList.add('hidden')});if(!wasOpen){button.setAttribute('aria-expanded','true');$(button.getAttribute('aria-controls')).classList.remove('hidden')}renderAnnoBadges()});lucide.createIcons()}
+    function resetHelp(){activeArticle=null;activeCategory='全部';replaceModuleParams(params=>{params.delete('article');params.delete('category')});$('helpSearch').value='';$('clearSearch').classList.add('hidden');$('clearSearch').classList.remove('flex');renderCategories();renderArticles()}
+    function pushAnnoScope(el){annoScopeStack=annoScopeStack.filter(item=>item!==el);annoScopeStack.push(el);renderAnnoBadges()}
+    function popAnnoScope(el){annoScopeStack=annoScopeStack.filter(item=>item!==el);renderAnnoBadges()}
+    function openSupport(){$('supportModal').classList.remove('hidden');$('supportModal').classList.add('flex');pushAnnoScope($('supportForm'));requestAnimationFrame(()=>$('supportType').focus())}
+    function closeSupport(){$('supportModal').classList.add('hidden');$('supportModal').classList.remove('flex');popAnnoScope($('supportForm'));$('contactSupport').focus()}
+    function showToast(message){$('toast').textContent=message;$('toast').classList.remove('hidden');clearTimeout(showToast.timer);showToast.timer=setTimeout(()=>$('toast').classList.add('hidden'),2200)}
+    function validateSupport(){const typeOk=Boolean($('supportType').value);const detailOk=$('supportDetail').value.trim().length>=10;$('typeError').classList.toggle('hidden',typeOk);$('detailError').classList.toggle('hidden',detailOk);return typeOk&&detailOk}
+    function renderAnnoBadges(){const layer=$('annoLayer');layer.innerHTML='';if(!annoVisible)return;const scope=annoScopeStack.at(-1)||document;scope.querySelectorAll('[data-anno]').forEach(el=>{const rect=el.getBoundingClientRect();if(!rect.width||!rect.height||rect.bottom<0||rect.top>innerHeight)return;const badge=document.createElement('button');badge.className='anno-badge';badge.textContent=el.dataset.anno;badge.style.left=Math.max(0,rect.right-10)+'px';badge.style.top=Math.max(0,rect.top-10)+'px';badge.setAttribute('aria-label',`查看标注 ${el.dataset.anno}`);badge.onclick=()=>showAnno(el.dataset.anno);layer.appendChild(badge)})}
+    function showAnno(id){const item=annotations[id];if(!item)return;lastAnnoFocus=document.activeElement;$('annoTitle').textContent=`${id}. ${item.title}`;$('annoDesc').innerHTML=`<ul class="list-disc pl-5 space-y-2">${item.desc.map(line=>`<li>${line}</li>`).join('')}</ul>`;$('annoPopup').classList.remove('hidden');$('annoPopup').classList.add('flex');$('closeAnno').focus()}
+    function closeAnno(){$('annoPopup').classList.add('hidden');$('annoPopup').classList.remove('flex');lastAnnoFocus?.focus();lastAnnoFocus=null}
+    $('helpSearch').oninput=()=>{$('clearSearch').classList.toggle('hidden',!$('helpSearch').value);$('clearSearch').classList.toggle('flex',Boolean($('helpSearch').value));renderArticles()};$('clearSearch').onclick=()=>{$('helpSearch').value='';$('helpSearch').dispatchEvent(new Event('input'));$('helpSearch').focus()};$('resetSearch').onclick=resetHelp;$('contactSupport').onclick=openSupport;$('closeSupport').onclick=closeSupport;$('cancelSupport').onclick=closeSupport;$('supportModal').onclick=event=>{if(event.target===$('supportModal'))closeSupport()};$('supportDetail').oninput=()=>{$('detailCount').textContent=`${$('supportDetail').value.length}/500`};$('supportForm').onsubmit=event=>{event.preventDefault();if(!validateSupport())return;$('supportForm').reset();$('detailCount').textContent='0/500';closeSupport();showToast('问题已提交，工单编号 YD-20260817-032')};$('annoToggle').onclick=()=>{annoVisible=!annoVisible;$('annoToggle').classList.toggle('bg-primary',annoVisible);$('annoToggle').classList.toggle('bg-ink-muted',!annoVisible);$('annoToggle span').textContent=annoVisible?'隐藏标注':'显示标注';renderAnnoBadges()};$('closeAnno').onclick=closeAnno;$('annoPopup').onclick=event=>{if(event.target===$('annoPopup'))closeAnno()};$('mainContent').onscroll=renderAnnoBadges;window.onresize=renderAnnoBadges;document.addEventListener('keydown',event=>{if(event.key==='Escape'){if(!$('annoPopup').classList.contains('hidden'))closeAnno();else if(!$('supportModal').classList.contains('hidden'))closeSupport()}});renderCategories();renderArticles();renderFaqs();lucide.createIcons();if(requestedArticle){if(requestedArticleItem){requestAnimationFrame(()=>{document.querySelector(`[data-article="${requestedArticle}"]`)?.scrollIntoView({block:'center'});showToast(`已定位：${requestedArticleItem.title}`)})}else{showToast('该指南暂时无法打开，已返回帮助中心。')}}
+  </script>
+  <script src="标注交互.js?v=20260814"></script>
+  
+</body>
+</html>

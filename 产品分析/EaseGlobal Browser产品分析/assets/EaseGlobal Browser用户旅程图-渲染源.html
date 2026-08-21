@@ -1,0 +1,436 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EaseGlobal Browser 用户旅程图</title>
+  <style>
+    :root {
+      --ink: #172033;
+      --muted: #667085;
+      --line: #d7dde5;
+      --panel: #ffffff;
+      --canvas: #f7f9fb;
+      --blue: #3157d5;
+      --blue-soft: #eef3ff;
+      --teal: #0f766e;
+      --teal-soft: #e9f7f4;
+      --amber: #b45309;
+      --amber-soft: #fff5e8;
+      --red: #b42318;
+      --red-soft: #fff0ee;
+      --green: #16845b;
+      --green-soft: #eaf8f1;
+      --label-width: 260px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      width: 4800px;
+      min-height: 2700px;
+      background: var(--canvas);
+      color: var(--ink);
+      font-family: "PingFang SC", "Noto Sans CJK SC", "Microsoft YaHei", sans-serif;
+      letter-spacing: 0;
+    }
+
+    body { padding: 72px 80px 64px; }
+
+    .page {
+      width: 4640px;
+      margin: 0 auto;
+    }
+
+    .topline {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 80px;
+      padding-bottom: 42px;
+      border-bottom: 3px solid var(--ink);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 76px;
+      line-height: 1.18;
+      font-weight: 760;
+    }
+
+    .subtitle {
+      margin: 22px 0 0;
+      max-width: 3000px;
+      color: var(--muted);
+      font-size: 34px;
+      line-height: 1.55;
+    }
+
+    .stamp {
+      flex: 0 0 760px;
+      border: 2px solid var(--line);
+      border-radius: 8px;
+      padding: 26px 30px;
+      background: var(--panel);
+      font-size: 30px;
+      line-height: 1.6;
+    }
+
+    .stamp strong { color: var(--blue); }
+
+    .legend {
+      display: flex;
+      align-items: center;
+      gap: 42px;
+      min-height: 112px;
+      font-size: 29px;
+      color: var(--muted);
+    }
+
+    .legend-item { display: flex; align-items: center; gap: 14px; }
+    .dot { width: 24px; height: 24px; border-radius: 50%; display: inline-block; }
+    .dot.fact { background: var(--teal); }
+    .dot.infer { background: white; border: 5px solid var(--amber); }
+    .line-sample { width: 66px; border-top: 5px solid var(--teal); }
+    .line-sample.dashed { border-color: var(--amber); border-top-style: dashed; }
+
+    .journey-grid {
+      display: grid;
+      grid-template-columns: var(--label-width) repeat(9, minmax(0, 1fr));
+      border-top: 2px solid var(--line);
+      border-left: 2px solid var(--line);
+      background: var(--panel);
+    }
+
+    .cell {
+      border-right: 2px solid var(--line);
+      border-bottom: 2px solid var(--line);
+      padding: 26px 28px;
+      overflow: hidden;
+    }
+
+    .label {
+      display: flex;
+      align-items: flex-start;
+      justify-content: flex-start;
+      padding-top: 34px;
+      background: #eef1f5;
+      color: #3c4758;
+      font-size: 31px;
+      line-height: 1.35;
+      font-weight: 720;
+    }
+
+    .group-label { min-height: 92px; align-items: center; padding-top: 26px; }
+    .group {
+      min-height: 92px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 34px;
+      font-weight: 760;
+      border-bottom: 2px solid var(--line);
+      border-right: 2px solid var(--line);
+    }
+    .group.acquire { grid-column: span 2; color: var(--blue); background: var(--blue-soft); }
+    .group.activate { grid-column: span 4; color: var(--teal); background: var(--teal-soft); }
+    .group.retain { grid-column: span 3; color: var(--amber); background: var(--amber-soft); }
+
+    .phase {
+      min-height: 302px;
+      position: relative;
+      background: #fff;
+    }
+
+    .phase.acquire { border-top: 13px solid var(--blue); }
+    .phase.activate { border-top: 13px solid var(--teal); }
+    .phase.retain { border-top: 13px solid var(--amber); }
+
+    .phase-no {
+      display: inline-flex;
+      width: 58px;
+      height: 58px;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      color: white;
+      font-size: 30px;
+      font-weight: 760;
+      margin-bottom: 24px;
+    }
+
+    .acquire .phase-no { background: var(--blue); }
+    .activate .phase-no { background: var(--teal); }
+    .retain .phase-no { background: var(--amber); }
+
+    .phase h2 {
+      margin: 0;
+      min-height: 118px;
+      font-size: 39px;
+      line-height: 1.32;
+      font-weight: 760;
+    }
+
+    .phase-role {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 25px;
+      line-height: 1.4;
+    }
+
+    .objective { min-height: 175px; font-size: 28px; line-height: 1.55; font-weight: 600; }
+    .actions { min-height: 248px; font-size: 27px; line-height: 1.5; }
+    .touch { min-height: 195px; font-size: 26px; line-height: 1.5; color: #3e4857; }
+    .friction { min-height: 245px; font-size: 27px; line-height: 1.5; background: var(--red-soft); }
+    .opportunity { min-height: 215px; font-size: 27px; line-height: 1.5; background: var(--green-soft); }
+    .metrics { min-height: 190px; font-size: 25px; line-height: 1.48; color: #3e4857; }
+
+    .facts { color: var(--teal); font-weight: 720; }
+    .risk { color: var(--red); font-weight: 720; }
+    .chance { color: var(--green); font-weight: 720; }
+
+    ul { margin: 0; padding-left: 30px; }
+    li { margin: 0 0 8px; }
+    li:last-child { margin-bottom: 0; }
+
+    .chart-label { min-height: 370px; }
+    .chart-wrap {
+      grid-column: span 9;
+      height: 370px;
+      padding: 12px 0 0;
+      background: #fffdf8;
+      border-right: 2px solid var(--line);
+      border-bottom: 2px solid var(--line);
+    }
+
+    .chart-note {
+      fill: var(--muted);
+      font-size: 22px;
+      font-weight: 560;
+    }
+
+    .score-label {
+      fill: var(--ink);
+      font-size: 24px;
+      font-weight: 700;
+    }
+
+    .insights {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+      margin-top: 38px;
+    }
+
+    .insight {
+      min-height: 260px;
+      padding: 34px 38px;
+      border: 2px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+    }
+
+    .insight.decision { border-top: 12px solid var(--red); }
+    .insight.value { border-top: 12px solid var(--teal); }
+    .insight.retain { border-top: 12px solid var(--amber); }
+
+    .insight .eyebrow {
+      font-size: 25px;
+      color: var(--muted);
+      font-weight: 680;
+    }
+
+    .insight h3 {
+      margin: 13px 0 13px;
+      font-size: 37px;
+      line-height: 1.35;
+    }
+
+    .insight p {
+      margin: 0;
+      color: #465062;
+      font-size: 27px;
+      line-height: 1.5;
+    }
+
+    .footnote {
+      display: flex;
+      justify-content: space-between;
+      gap: 80px;
+      margin-top: 34px;
+      padding-top: 26px;
+      border-top: 2px solid var(--line);
+      color: var(--muted);
+      font-size: 24px;
+      line-height: 1.5;
+    }
+
+    .footnote strong { color: var(--ink); }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="topline">
+      <div>
+        <h1>EaseGlobal Browser 用户旅程图</h1>
+        <p class="subtitle">主角色：跨境电商团队创建者 / 运营主管。主路径覆盖认知、注册、建店、设备、首启、协作、运营与续费；协作阶段包含财务、管理员、普通运营和客服的角色交接。</p>
+      </div>
+      <div class="stamp">
+        <strong>当前态旅程 · V1.0</strong><br>
+        调研快照：2026-08-13 至 2026-08-14<br>
+        证据：318 张平台截图 + 88 篇帮助文章<br>
+        口径：页面事实与分析推导分离
+      </div>
+    </header>
+
+    <section class="legend" aria-label="图例">
+      <span class="legend-item"><i class="dot fact"></i>已核实页面事实</span>
+      <span class="legend-item"><i class="dot infer"></i>情绪、摩擦与机会为分析推导</span>
+      <span class="legend-item"><i class="line-sample"></i>主用户路径</span>
+      <span class="legend-item"><i class="line-sample dashed"></i>情绪假设</span>
+      <span>未完成真实支付、退款、自动续费和到期注销实测</span>
+    </section>
+
+    <section class="journey-grid">
+      <div class="cell label group-label">业务阶段</div>
+      <div class="group acquire">获客与进入</div>
+      <div class="group activate">首次价值激活</div>
+      <div class="group retain">留存、治理与扩张</div>
+
+      <div class="cell label">旅程阶段</div>
+      <article class="cell phase acquire"><span class="phase-no">1</span><h2>认知与评估</h2><div class="phase-role">主角色：团队创建者</div></article>
+      <article class="cell phase acquire"><span class="phase-no">2</span><h2>注册、下载与首次登录</h2><div class="phase-role">主角色：团队创建者</div></article>
+      <article class="cell phase activate"><span class="phase-no">3</span><h2>团队进入与新手引导</h2><div class="phase-role">主角色：团队创建者</div></article>
+      <article class="cell phase activate"><span class="phase-no">4</span><h2>创建店铺环境</h2><div class="phase-role">主角色：运营主管</div></article>
+      <article class="cell phase activate"><span class="phase-no">5</span><h2>选择并购买 / 添加设备</h2><div class="phase-role">协作：财务 / 采购</div></article>
+      <article class="cell phase activate"><span class="phase-no">6</span><h2>交付、绑定与首次启动</h2><div class="phase-role">协作：运营成员</div></article>
+      <article class="cell phase retain"><span class="phase-no">7</span><h2>团队协作与安全配置</h2><div class="phase-role">协作：管理员 / 安全</div></article>
+      <article class="cell phase retain"><span class="phase-no">8</span><h2>日常运营与异常处理</h2><div class="phase-role">协作：成员 / 客服</div></article>
+      <article class="cell phase retain"><span class="phase-no">9</span><h2>续费、扩容与退出</h2><div class="phase-role">协作：财务 / 管理员</div></article>
+
+      <div class="cell label">用户目标</div>
+      <div class="cell objective">判断产品是否匹配目标平台、地区和团队</div>
+      <div class="cell objective">获得可用账号并顺利进入客户端</div>
+      <div class="cell objective">明确所在团队与最短下一步</div>
+      <div class="cell objective">建立可持续运营的店铺资产</div>
+      <div class="cell objective">获得适配地区与平台的网络资源</div>
+      <div class="cell objective">让首个店铺成功访问目标站点</div>
+      <div class="cell objective">让成员在最小权限下协作</div>
+      <div class="cell objective">稳定、高效地运营多个店铺</div>
+      <div class="cell objective">保持业务连续并控制长期成本</div>
+
+      <div class="cell label">关键行为</div>
+      <div class="cell actions"><ul><li>浏览官网与帮助中心</li><li>查看价格线索与优惠</li><li>咨询客服或进入注册</li></ul></div>
+      <div class="cell actions"><ul><li>手机号与短信注册</li><li>下载并安装客户端</li><li>完成客户端首次登录</li></ul></div>
+      <div class="cell actions"><ul><li>创建或选择团队</li><li>查看发布与功能引导</li><li>进入首页任务</li></ul></div>
+      <div class="cell actions"><ul><li>选择平台与站点</li><li>配置环境与凭证</li><li>保存或批量导入</li></ul></div>
+      <div class="cell actions"><ul><li>选地区、线路与时长</li><li>确认库存、价格与条款</li><li>支付或检测自有设备</li></ul></div>
+      <div class="cell actions"><ul><li>等待约 5-15 分钟</li><li>检测并绑定店铺</li><li>完成目标平台首启</li></ul></div>
+      <div class="cell actions"><ul><li>邀请成员与设角色</li><li>授权店铺与凭证</li><li>配置策略与插件</li></ul></div>
+      <div class="cell actions"><ul><li>启动店铺并运营</li><li>使用插件或 Agent</li><li>查看日志并处理异常</li></ul></div>
+      <div class="cell actions"><ul><li>充值与手动/自动续费</li><li>换 IP、增购与开票</li><li>退出时回收资产</li></ul></div>
+
+      <div class="cell label">核心触点</div>
+      <div class="cell touch">官网、活动、注册弹窗、下载、帮助中心、客服二维码</div>
+      <div class="cell touch">注册表单、短信、下载页、安装包、客户端登录</div>
+      <div class="cell touch">团队选择、发布信息、新手引导、首页、热门设备</div>
+      <div class="cell touch">店铺列表、新增/导入、环境配置、凭证、授权</div>
+      <div class="cell touch">购买设备、库存、价格、优惠券、支付、设备检测</div>
+      <div class="cell touch">订单状态、设备列表、绑定弹窗、店铺启动、浏览器窗口</div>
+      <div class="cell touch">成员、部门、角色、店铺授权、策略、插件</div>
+      <div class="cell touch">首页、店铺、插件、Agent、日志、反馈、临时授权</div>
+      <div class="cell touch">到期提醒、余额、订单、续费、优惠券、发票</div>
+
+      <div class="cell label chart-label">情绪走势<br><span style="font-size:24px;font-weight:500;color:#667085">1 受阻 · 5 顺畅<br>均为分析假设</span></div>
+      <div class="chart-wrap">
+        <svg viewBox="0 0 4320 350" width="100%" height="350" role="img" aria-label="九阶段情绪走势">
+          <g stroke="#d7dde5" stroke-width="2">
+            <line x1="0" y1="45" x2="4320" y2="45"/><line x1="0" y1="100" x2="4320" y2="100"/>
+            <line x1="0" y1="155" x2="4320" y2="155"/><line x1="0" y1="210" x2="4320" y2="210"/>
+            <line x1="0" y1="265" x2="4320" y2="265"/>
+          </g>
+          <g class="chart-note"><text x="12" y="36">5</text><text x="12" y="91">4</text><text x="12" y="146">3</text><text x="12" y="201">2</text><text x="12" y="256">1</text></g>
+          <polyline points="240,155 720,155 1200,155 1680,155 2160,210 2640,210 3120,155 3600,100 4080,155" fill="none" stroke="#b45309" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="22 18"/>
+          <g fill="#ffffff" stroke="#b45309" stroke-width="9">
+            <circle cx="240" cy="155" r="19"/><circle cx="720" cy="155" r="19"/><circle cx="1200" cy="155" r="19"/>
+            <circle cx="1680" cy="155" r="19"/><circle cx="2160" cy="210" r="19"/><circle cx="2640" cy="210" r="19"/>
+            <circle cx="3120" cy="155" r="19"/><circle cx="3600" cy="100" r="19"/><circle cx="4080" cy="155" r="19"/>
+          </g>
+          <g class="score-label" text-anchor="middle">
+            <text x="240" y="305">3/5</text><text x="720" y="305">3/5</text><text x="1200" y="305">3/5</text>
+            <text x="1680" y="305">3/5</text><text x="2160" y="305">2/5</text><text x="2640" y="305">等待 2/5</text>
+            <text x="3120" y="305">3/5</text><text x="3600" y="305">正常 4/5</text><text x="4080" y="305">3/5</text>
+          </g>
+          <line x1="2640" y1="195" x2="2640" y2="60" stroke="#16845b" stroke-width="8" marker-end="url(#arrowGreen)"/>
+          <circle cx="2640" cy="45" r="22" fill="#16845b"/>
+          <text x="2685" y="58" fill="#16845b" font-size="25" font-weight="720">首次启动成功 5/5</text>
+          <line x1="3600" y1="115" x2="3600" y2="195" stroke="#b42318" stroke-width="8" marker-end="url(#arrowRed)"/>
+          <circle cx="3600" cy="210" r="22" fill="#b42318"/>
+          <text x="3645" y="222" fill="#b42318" font-size="25" font-weight="720">异常发生 2/5</text>
+          <defs>
+            <marker id="arrowGreen" viewBox="0 0 10 10" markerWidth="24" markerHeight="24" refX="9" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L10,5 L0,10 Z" fill="#16845b"/></marker>
+            <marker id="arrowRed" viewBox="0 0 10 10" markerWidth="24" markerHeight="24" refX="9" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L10,5 L0,10 Z" fill="#b42318"/></marker>
+          </defs>
+        </svg>
+      </div>
+
+      <div class="cell label">主要摩擦</div>
+      <div class="cell friction">价值承诺、价格与服务边界分散；移动端裁切和弹窗可能阻断阅读</div>
+      <div class="cell friction">网页注册、下载安装与客户端登录跨多个触点</div>
+      <div class="cell friction">发布、功能引导和业务任务可能叠加；下一步不够聚焦</div>
+      <div class="cell friction">配置概念密集；建店成功仍可能因为无设备而不可启动</div>
+      <div class="cell friction"><span class="risk">全旅程决策低点：</span>SKU、库存、价格、适配与不可退款叠加</div>
+      <div class="cell friction">支付成功不等于业务可用；等待、绑定和站点可达存在不确定性</div>
+      <div class="cell friction">权限规则叠加后结果难预测；帮助文档存在口径冲突</div>
+      <div class="cell friction">设备、策略、并发、客户端和站点异常难以归因</div>
+      <div class="cell friction">余额不足或到期可能造成解绑和业务中断；退出回收复杂</div>
+
+      <div class="cell label">产品机会</div>
+      <div class="cell opportunity">按平台、地区和团队规模组织方案，公开价格样例与风险边界</div>
+      <div class="cell opportunity">注册后保留连续任务进度，提供安装与验证码诊断</div>
+      <div class="cell opportunity">状态型激活清单串联建店、设备、绑定和启动</div>
+      <div class="cell opportunity">区分基础与高级配置，实时展示“不可启动”的缺失条件</div>
+      <div class="cell opportunity">提供推荐 SKU、价格拆解、库存替代、下单前检测和条款确认</div>
+      <div class="cell opportunity"><span class="chance">统一激活进度：</span>交付、检测、绑定、首启和失败恢复</div>
+      <div class="cell opportunity">提供最终权限预览、岗位模板和高敏能力分级</div>
+      <div class="cell opportunity">统一诊断码、责任角色和可撤销临时授权</div>
+      <div class="cell opportunity">到期影响预览、余额预测、失败重试和离场检查清单</div>
+
+      <div class="cell label">建议指标</div>
+      <div class="cell metrics">注册点击率<br>帮助中心到下载率<br>移动端退出率</div>
+      <div class="cell metrics">注册成功率<br>首次登录率<br>注册到登录时长</div>
+      <div class="cell metrics">团队创建/加入率<br>引导完成率<br>下一步点击率</div>
+      <div class="cell metrics">首店创建率<br>字段错误率<br>创建耗时</div>
+      <div class="cell metrics">首购转化率<br>库存满足率<br>弃单位置</div>
+      <div class="cell metrics">交付/绑定/首启成功率<br>注册到首次价值时长</div>
+      <div class="cell metrics">邀请激活率<br>授权完成率<br>权限拒绝率</div>
+      <div class="cell metrics">周活跃有效店铺<br>异常率<br>自助解决率</div>
+      <div class="cell metrics">续费率<br>扣款失败率<br>到期中断率</div>
+    </section>
+
+    <section class="insights">
+      <article class="insight decision">
+        <div class="eyebrow">关键判断 01 · 决策摩擦</div>
+        <h3>设备选购是首购信任的最低点</h3>
+        <p>地区、供应商/线路、库存、时长价格、适配和不可退款同时进入一次决策，需要用可解释价格与下单前检测降低风险。</p>
+      </article>
+      <article class="insight value">
+        <div class="eyebrow">关键判断 02 · 首次价值</div>
+        <h3>成功首启，而不是注册或支付</h3>
+        <p>只有有效设备绑定店铺并完成目标平台首次启动，前序注册、建店和购买才真正转化为用户可感知的业务价值。</p>
+      </article>
+      <article class="insight retain">
+        <div class="eyebrow">关键判断 03 · 留存机制</div>
+        <h3>业务连续性与组织治理共同驱动续费</h3>
+        <p>店铺、凭证、权限、策略、日志和费用逐步沉淀后，续费价值来自持续运营，而不只是时长折扣。</p>
+      </article>
+    </section>
+
+    <footer class="footnote">
+      <div><strong>事实来源：</strong>官网与真实页面交互、318 张本地平台截图、88 篇帮助中心文章。地区、库存、价格和促销均为 2026-08-14 快照。</div>
+      <div><strong>研究边界：</strong>情绪、摩擦、机会与优先级是产品分析，不是用户访谈结论；未实测支付、退款、自动续费扣款、换 IP 和到期注销。</div>
+    </footer>
+  </main>
+</body>
+</html>

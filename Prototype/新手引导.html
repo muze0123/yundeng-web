@@ -1,0 +1,595 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>云登 · 新手引导</title>
+  <script>
+    if(window.top===window.self){
+      document.documentElement.style.visibility='hidden';
+      const previewUrl=new URL('系统框架.html',location.href);
+      previewUrl.searchParams.set('page','home');
+      previewUrl.searchParams.set('guide','1');
+      location.replace(previewUrl.href);
+    }
+  </script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config={theme:{extend:{colors:{
+      primary:{DEFAULT:'#0066FF',hover:'#0052CC',active:'#0047B3',bg:'#E6F0FF'},
+      ink:{title:'#1A1D24',body:'#3A3F4A',sub:'#6E7685',muted:'#9DA2AC'},
+      line:{DEFAULT:'#DFE1E5',light:'#E8EAED',lighter:'#F0F1F3'},
+      page:'#F7F8FA',card:'#FFFFFF',hover:'#F3F4F6',
+      success:{DEFAULT:'#0FC060',bg:'#E7F9F0'},warning:{DEFAULT:'#E7772D',bg:'#FDF2E9'},danger:{DEFAULT:'#D9001B',bg:'#FFE8EB'},info:{DEFAULT:'#0091D5',bg:'#E4F4FB'}
+    },borderRadius:{DEFAULT:'4px',lg:'8px'},fontFamily:{sans:['-apple-system','BlinkMacSystemFont','PingFang SC','Hiragino Sans GB','Microsoft YaHei','Helvetica Neue','Helvetica','Arial','sans-serif'],mono:['JetBrains Mono','monospace']}}}};
+  </script>
+  <style>
+    *{box-sizing:border-box}
+    html,body{margin:0;width:100%;height:100%;overflow:hidden}
+    body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Hiragino Sans GB','Microsoft YaHei','Helvetica Neue',Helvetica,Arial,sans-serif;color:#3A3F4A;background:#fff;letter-spacing:0}
+    button,a{font:inherit;letter-spacing:0}
+    button{cursor:pointer}
+    [hidden]{display:none!important}
+    .mono{font-family:'JetBrains Mono',monospace;font-variant-numeric:tabular-nums}
+    .guide-shell{display:grid;grid-template-columns:250px minmax(0,1fr);width:100%;height:100%;min-width:0;background:#fff}
+    .guide-rail{min-width:0;display:flex;flex-direction:column;background:#F7F8FA;border-right:1px solid #E8EAED}
+    .guide-rail-title{padding:28px 24px 20px;color:#1A1D24;font-size:24px;font-weight:700;line-height:1.35}
+    .guide-main-tabs{padding:0 20px;display:flex;flex-direction:column;gap:20px}
+    .guide-main-tab{position:relative;width:100%;min-height:76px;padding:12px 14px;border:0;border-radius:8px;display:grid;grid-template-columns:32px minmax(0,1fr);align-items:start;gap:10px;color:#3A3F4A;background:transparent;text-align:left;transition:background-color .16s ease,color .16s ease}
+    .guide-main-tab:hover{background:#F3F4F6}
+    .guide-main-tab[aria-selected="true"]{color:#0066FF;background:#E6F0FF}
+    .guide-main-tab:focus-visible,.operation-card:focus-visible,.guide-button:focus-visible,.guide-link:focus-visible,.icon-button:focus-visible{outline:2px solid #0066FF;outline-offset:2px}
+    .main-tab-number{width:20px;height:20px;margin-top:4px;border:0;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;color:#fff;background:#9DA2AC;font-size:13px;font-weight:600;line-height:1}
+    .guide-main-tab[aria-selected="true"] .main-tab-number{color:#fff;background:#0066FF}
+    .main-tab-copy{min-width:0}
+    .main-tab-title{display:block;color:#1A1D24;font-size:16px;font-weight:600;line-height:28px}
+    .guide-main-tab[aria-selected="true"] .main-tab-title{color:#0066FF}
+    .main-tab-subtitle{display:block;margin-top:2px;color:#9DA2AC;font-size:12px;line-height:1.6}
+    .guide-main-tab[aria-selected="true"] .main-tab-subtitle{color:#6E7685}
+    .guide-rail-footer{margin-top:auto;padding:16px 20px;border-top:1px solid #E8EAED}
+    .guide-link{width:100%;min-height:36px;padding:0 4px;border:0;display:flex;align-items:center;gap:9px;color:#3A3F4A;background:transparent;text-decoration:none;font-size:14px;font-weight:500}
+    .guide-link:hover{color:#0066FF}
+    .guide-link svg:first-child{width:18px;height:18px}
+    .guide-link svg:last-child{width:16px;height:16px;margin-left:auto}
+    .guide-content{min-width:0;min-height:0;display:flex;flex-direction:column;gap:0;padding:22px 28px 18px;background:#fff}
+    .guide-header{display:flex;align-items:flex-start;justify-content:space-between;gap:24px;margin-bottom:20px}
+    .guide-heading{min-width:0;padding-top:2px}
+    .guide-heading h1{margin:0;color:#1A1D24;font-size:22px;font-weight:700;line-height:1.4}
+    .guide-heading h1:focus{outline:none}
+    .guide-heading p{max-width:920px;margin:10px 0 0;color:#6E7685;font-size:14px;line-height:1.75}
+    .icon-button{width:32px;height:32px;padding:0;border:0;border-radius:4px;display:inline-flex;align-items:center;justify-content:center;flex:none;color:#6E7685;background:transparent}
+    .icon-button:hover{color:#1A1D24;background:#F3F4F6}
+    .icon-button svg{width:20px;height:20px}
+    .operation-track{height:92px;display:grid;grid-template-columns:minmax(0,1fr) 28px minmax(0,1fr) 28px minmax(0,1fr);align-items:stretch;gap:8px}
+    .operation-card{position:relative;min-width:0;height:100%;min-height:0;padding:14px 16px;border:0;border-radius:8px;overflow:hidden;color:#3A3F4A;background:#F7F8FA;text-align:left;transition:background-color .16s ease,color .16s ease,box-shadow .16s ease,transform .16s ease}
+    .operation-card:hover{color:#0066FF;background:#E6F0FF;box-shadow:0 4px 14px rgba(0,102,255,.10);transform:translateY(-1px)}
+    .operation-card:active{transform:translateY(0) scale(.995)}
+    .operation-card[aria-selected="true"]{color:#fff;background:#0066FF;box-shadow:0 4px 14px rgba(0,102,255,.18)}
+    .operation-card[aria-selected="true"]:hover{background:#0052CC;box-shadow:0 6px 18px rgba(0,102,255,.22)}
+    .operation-card strong{display:block;font-size:15px;font-weight:600;line-height:1.45}
+    .operation-card span{display:block;margin-top:6px;color:#6E7685;font-size:12px;line-height:1.55}
+    .operation-card[aria-selected="true"] span{color:rgba(255,255,255,.86)}
+    .operation-progress{position:absolute;left:0;right:0;bottom:0;height:3px;background:rgba(255,255,255,.24);transform-origin:left center;transform:scaleX(0)}
+    .operation-card[aria-selected="true"] .operation-progress[data-running="true"]{animation:guide-progress var(--progress-duration,3000ms) linear forwards}
+    .operation-progress[data-paused="true"]{animation-play-state:paused!important}
+    .operation-arrow{display:flex;align-items:center;justify-content:center}
+    .operation-arrow img{width:28px;height:28px;display:block;object-fit:contain;filter:drop-shadow(0 2px 3px rgba(0,102,255,.16))}
+    .guide-carousel{min-height:0;display:flex;flex-direction:column;gap:0;margin-bottom:20px}
+    .guide-shot{position:relative;align-self:center;width:100%;height:360px;min-height:360px;max-height:360px;margin:0 0 20px;padding:12px;border-radius:8px;overflow:hidden;background:#E6F0FF}
+    .shot-stage{position:relative;width:100%;height:100%;min-height:0;border:1px solid rgba(0,102,255,.16);border-radius:8px;overflow:hidden;background:#fff;box-shadow:0 8px 22px rgba(0,102,255,.10)}
+    .shot-image{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;user-select:none;-webkit-user-drag:none}
+    .shot-image-focus{filter:none;opacity:1;transition:opacity .18s ease}
+    .shot-inset{position:absolute;right:18px;top:18px;width:min(22%,230px);max-height:82%;border:4px solid #fff;border-radius:8px;object-fit:contain;background:#fff;box-shadow:0 8px 24px rgba(26,29,36,.18)}
+    .shot-status{position:absolute;right:22px;top:22px;min-height:36px;padding:0 14px;border-radius:4px;display:flex;align-items:center;gap:8px;color:#0091D5;background:#E4F4FB;border:1px solid rgba(0,145,213,.35);font-size:13px;font-weight:600;box-shadow:0 4px 14px rgba(26,29,36,.08)}
+    .shot-status svg{width:16px;height:16px;animation:guide-spin .8s linear infinite}
+    .shot-loading,.shot-error{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:9px;color:#6E7685;background:#F7F8FA;font-size:13px}
+    .shot-loading svg{width:18px;height:18px;animation:guide-spin .8s linear infinite}
+    .shot-error{display:none;flex-direction:column;color:#3A3F4A}
+    .shot-error svg{width:24px;height:24px;color:#D9001B}
+    .shot-error button{height:30px;padding:0 12px;border:1px solid #DFE1E5;border-radius:4px;color:#3A3F4A;background:#fff}
+    .shot-error button:hover{border-color:#0066FF;color:#0066FF}
+    .guide-tip{min-height:46px;padding:10px 14px;border-radius:8px;display:flex;align-items:center;gap:10px;overflow:hidden;color:#6E4B24;background:#FDF2E9;font-size:13px;line-height:1.75}
+    .guide-tip span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .guide-tip svg{width:18px;height:18px;flex:none;color:#E7772D}
+    .guide-footer{min-height:50px;margin-top:auto;padding-top:14px;border-top:0;display:flex;align-items:center;justify-content:flex-end;gap:10px}
+    .guide-button{height:36px;padding:0 18px;border-radius:4px;display:inline-flex;align-items:center;justify-content:center;gap:7px;font-size:14px;font-weight:500;white-space:nowrap}
+    .guide-button svg{width:16px;height:16px}
+    .guide-button-secondary{border:1px solid #DFE1E5;color:#3A3F4A;background:#fff}
+    .guide-button-secondary:hover{border-color:#0066FF;color:#0066FF;background:#E6F0FF}
+    .guide-button-primary{min-width:126px;border:1px solid #0066FF;color:#fff;background:#0066FF}
+    .guide-button-primary:hover{border-color:#0052CC;background:#0052CC}
+    .guide-button-primary:active{border-color:#0047B3;background:#0047B3}
+    .anno-badge{position:fixed;width:20px;height:20px;border:0;border-radius:50%;background:#0066FF;color:#fff;font:700 11px/20px 'JetBrains Mono',monospace;text-align:center;box-shadow:0 2px 6px rgba(0,0,0,.15);pointer-events:auto;z-index:9998}
+    .anno-badge:hover{transform:scale(1.16)}
+    @keyframes guide-progress{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+    @keyframes guide-spin{to{transform:rotate(360deg)}}
+    @media(max-width:1279px){
+      .guide-shell{grid-template-columns:250px minmax(0,1fr)}
+      .guide-rail-title{padding:22px 18px 16px;font-size:21px}
+      .guide-main-tabs{padding:0 20px;gap:20px}
+      .guide-main-tab{min-height:70px;padding:10px 11px;grid-template-columns:28px minmax(0,1fr);gap:8px}
+      .main-tab-number{width:20px;height:20px;margin-top:2.5px}
+      .main-tab-title{font-size:15px;line-height:25px}
+      .guide-content{gap:0;padding:18px 20px 14px}
+      .guide-heading h1{font-size:20px}
+      .guide-heading p{margin-top:10px;font-size:13px;line-height:1.65}
+      .operation-track{height:88px;grid-template-columns:minmax(0,1fr) 24px minmax(0,1fr) 24px minmax(0,1fr);gap:5px}
+      .operation-arrow img{width:24px;height:24px}
+      .operation-card{padding:12px}
+      .operation-card strong{font-size:14px}
+      .operation-card span{font-size:12px}
+      .guide-shot{padding:10px}
+    }
+    @media(min-width:901px) and (max-width:1100px){
+      .guide-header{height:83px}
+      .guide-shot{height:300px;min-height:300px;max-height:300px}
+    }
+    @media(min-width:720px) and (max-width:900px){
+      .guide-shell{grid-template-columns:250px minmax(0,1fr)}
+      .guide-rail-title{padding:18px 14px 12px;font-size:20px}
+      .guide-main-tabs{padding:0 20px;gap:20px}
+      .guide-main-tab{min-height:64px;padding:8px 7px;grid-template-columns:26px minmax(0,1fr);gap:6px}
+      .main-tab-number{width:20px;height:20px;margin-top:1.5px;font-size:12px}
+      .main-tab-title{font-size:14px;line-height:23px}
+      .main-tab-subtitle{font-size:11px;line-height:1.4}
+      .guide-rail-footer{padding:12px 14px}
+      .guide-content{gap:0;padding:14px 16px 12px}
+      .guide-header{height:74px}
+      .guide-heading h1{font-size:18px}
+      .guide-heading p{margin-top:10px;font-size:12px;line-height:1.5}
+      .operation-track{height:90px;grid-template-columns:minmax(0,1fr) 16px minmax(0,1fr) 16px minmax(0,1fr);gap:4px}
+      .operation-arrow img{width:16px;height:16px}
+      .operation-card{padding:9px}
+      .operation-card strong{font-size:13px}
+      .operation-card span{margin-top:4px;font-size:12px;line-height:1.35}
+      .guide-shot{height:200px;min-height:200px;max-height:200px}
+      .guide-tip{min-height:40px;padding:7px 11px;font-size:12px;line-height:1.55}
+      .guide-footer{min-height:44px;padding-top:8px}
+      .guide-button{height:34px;padding:0 14px;font-size:13px}
+    }
+    @media(max-width:719px){
+      html{height:auto;min-height:100%;overflow-y:auto}
+      body{height:auto;min-height:100%;overflow:visible}
+      .guide-shell{display:flex;flex-direction:column;min-height:100%;height:auto}
+      .guide-rail{border-right:0;border-bottom:1px solid #E8EAED}
+      .guide-rail-title{padding:16px 16px 10px;font-size:20px}
+      .guide-main-tabs{padding:0 20px 12px;gap:20px;display:grid;grid-auto-flow:column;grid-auto-columns:minmax(168px,1fr);overflow-x:auto}
+      .guide-main-tab{min-height:62px}
+      .main-tab-subtitle{display:none}
+      .guide-rail-footer{display:none}
+      .guide-content{padding:16px}
+      .operation-track{height:auto;grid-template-columns:1fr;gap:8px}
+      .operation-arrow{display:none}
+      .operation-card{height:80px;min-height:80px}
+      .operation-card span{margin-top:4px}
+      .guide-shot{height:260px;min-height:260px;max-height:260px}
+      .guide-footer{flex-wrap:wrap}
+    }
+    @media(prefers-reduced-motion:reduce){
+      *,*::before,*::after{scroll-behavior:auto!important;transition:none!important}
+      .operation-card[aria-selected="true"] .operation-progress[data-running="true"]{animation:none!important}
+      .shot-status svg,.shot-loading svg{animation:none!important}
+    }
+  </style>
+  <link rel="stylesheet" href="../src/assets/styles/global.css?v=20260821a">
+</head>
+<body>
+  <main id="guidePanel" class="guide-shell" aria-labelledby="guideTitle">
+    <aside class="guide-rail" aria-label="新手引导步骤">
+      <div class="guide-rail-title">新手引导</div>
+      <div id="mainTabs" class="guide-main-tabs" role="tablist" aria-orientation="vertical" data-anno="1"></div>
+      <div class="guide-rail-footer">
+        <a id="fullGuideLink" class="guide-link" data-anno="4" href="https://www.yunlogin.com/help/1639" target="_blank" rel="noopener noreferrer">
+          <i data-lucide="book-open-text" aria-hidden="true"></i><span>查看完整指南</span><i data-lucide="arrow-up-right" aria-hidden="true"></i>
+        </a>
+      </div>
+    </aside>
+
+    <section class="guide-content">
+      <header class="guide-header">
+        <div class="guide-heading">
+          <h1 id="guideTitle" tabindex="-1"></h1>
+          <p id="guideDescription"></p>
+        </div>
+        <button id="closeGuide" type="button" class="icon-button" data-anno="7" aria-label="关闭新手引导" title="关闭新手引导"><i data-lucide="x" aria-hidden="true"></i></button>
+      </header>
+
+      <div id="carouselRegion" class="guide-carousel" aria-label="操作步骤与产品截图">
+        <div id="operationTabs" class="operation-track" role="tablist" aria-label="操作步骤" data-anno="2"></div>
+      </div>
+
+      <figure id="shotFigure" class="guide-shot" data-anno="3">
+        <div id="shotStage" class="shot-stage">
+          <div id="shotLoading" class="shot-loading" role="status"><i data-lucide="loader-circle" aria-hidden="true"></i><span>正在加载产品画面</span></div>
+          <img id="shotFocus" class="shot-image shot-image-focus" alt="">
+          <img id="shotInset" class="shot-inset" alt="" hidden>
+          <div id="shotStatus" class="shot-status" hidden><i data-lucide="loader-circle" aria-hidden="true"></i><span></span></div>
+          <div id="shotError" class="shot-error" role="alert"><i data-lucide="image-off" aria-hidden="true"></i><span>产品截图加载失败</span><button id="retryShot" type="button">重新加载</button></div>
+        </div>
+      </figure>
+
+      <div class="guide-tip"><i data-lucide="circle-alert" aria-hidden="true"></i><span id="guideTip"></span></div>
+
+      <footer class="guide-footer">
+        <button id="previousButton" type="button" class="guide-button guide-button-secondary" data-anno="5"><span>上一步</span></button>
+        <button id="nextButton" type="button" class="guide-button guide-button-secondary" data-anno="5"><span>下一步</span></button>
+        <button id="ctaButton" type="button" class="guide-button guide-button-primary" data-anno="6"><span></span></button>
+      </footer>
+    </section>
+  </main>
+
+  <div id="toast" class="hidden fixed top-4 left-1/2 -translate-x-1/2 z-[1000] px-4 py-2 rounded bg-danger text-white shadow-[0_4px_16px_rgba(0,0,0,.12)] text-[13px]" role="status"></div>
+  <div id="annoLayer" class="fixed inset-0 pointer-events-none z-[9998]"></div>
+  <div id="annoPopup" class="hidden fixed inset-0 z-[9999] bg-black/30 p-4 items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="annoTitle">
+    <div id="annoPanel" class="w-[520px] max-w-full bg-card rounded-lg shadow-[0_6px_24px_rgba(0,0,0,.12)]">
+      <header class="px-5 py-4 border-b border-line flex items-center justify-between"><h2 id="annoTitle" class="text-[16px] font-semibold text-ink-title"></h2><button id="closeAnno" type="button" class="icon-button" aria-label="关闭标注说明"><i data-lucide="x"></i></button></header>
+      <div id="annoDesc" class="p-5 text-[14px] text-ink-body leading-7"></div>
+    </div>
+  </div>
+
+  <script>
+    const ASSET_ROOT='../src/assets/新手引导/';
+    const steps=[
+      {
+        title:'新建环境',subtitle:'创建专属运营环境',description:'环境用于独立保存浏览器指纹、Cookie、平台账号和使用偏好。先创建环境，再按业务需要购买并绑定代理。',tip:'环境名称必填；运营前请绑定与业务地区匹配的代理。',cta:'去添加环境',route:{page:'create',file:'新建浏览器.html'},operations:[
+          {title:'进入新建环境',description:'在侧栏点击“新建环境”，进入单个添加页面',asset:'create_enter.png',alt:'云登侧栏新建浏览器入口与单个添加页面',focus:[0.5,2.5,22,25],position:'center top'},
+          {title:'填写环境信息',description:'填写环境名称，并按需配置账号平台、指纹和使用偏好',asset:'create_form.png',alt:'新建环境页面的名称、代理信息和账号平台表单',focus:[3,2,62,89],fit:'contain',position:'left center'},
+          {title:'确认创建',description:'核对配置后点击“确定”，创建成功后返回环境管理',asset:'create_confirm.png',alt:'新建环境表单底部的确定、确定并新建下一条和取消按钮',focus:[0.5,84,31,13],position:'center bottom'}
+        ]
+      },
+      {
+        title:'购买代理',subtitle:'获取匹配业务的网络出口',description:'代理为环境提供网络出口。请根据业务地区、线路类型、数量和使用周期选择合适的代理资源。',tip:'支付前请核对地区、线路、数量和有效期；结果以订单状态为准。',cta:'购买代理',route:{page:'store',file:'商城.html'},operations:[
+          {title:'进入代理商城',description:'进入“商城”，选择“代理购买”分类',asset:'proxy_purchase_enter.png',alt:'云登商城代理购买页面与代理分类选中状态',focus:[0.5,0.5,25,22],position:'center top'},
+          {title:'选择代理方案',description:'选择代理类型、地区、资源、数量和使用时长',asset:'proxy_purchase_config.png',alt:'代理类型、地区、资源和购买时长配置区域',focus:[2,5,58,78],position:'center center'},
+          {title:'核对订单并支付',description:'阅读购买须知，选择支付方式后提交订单',asset:'proxy_purchase_pay.png',alt:'代理订单信息、支付方式、购买须知与立即购买按钮',focus:[78,2,21,64],position:'center center'}
+        ]
+      },
+      {
+        title:'绑定代理',subtitle:'为环境配置代理网络',description:'将已购买的代理绑定到目标环境，用于为该环境配置网络出口。',tip:'绑定前请确认代理状态和地区；换绑结果以客户端提示为准。',cta:'去绑定代理',route:{page:'environment',file:'环境管理.html'},operations:[
+          {title:'选择目标环境',description:'在环境管理找到目标环境，通过行级操作进入“修改代理”',asset:'proxy_bind_target.png',alt:'环境管理列表中的目标环境与行级更多操作',focus:[86,10,13,19],position:'center top',inset:'proxy_bind_menu.png',insetAlt:'环境行级操作菜单中的修改代理入口'},
+          {title:'选择可用代理',description:'在代理选择弹窗中选择已购买的平台代理',asset:'proxy_bind_select.png',alt:'选择代理弹窗的平台代理分类与代理列表区域',focus:[11,16,82,69],fit:'contain',position:'center center'},
+          {title:'检测并保存',description:'检查代理网络，确认信息后保存',asset:'proxy_bind_save.png',alt:'选择代理弹窗底部的检测、取消与确定操作区域',focus:[72,78,26,18],fit:'contain',position:'center center'}
+        ]
+      },
+      {
+        title:'启动环境',subtitle:'开始使用独立浏览器',description:'从环境管理启动环境后，云登会按已保存的指纹、代理、账号和启动页配置打开独立浏览器窗口。',tip:'首次启动需初始化内核；长时间未启动请检查网络、代理和权限。',cta:'去启动环境',route:{page:'environment',file:'环境管理.html'},operations:[
+          {title:'定位目标环境',description:'通过分组或搜索找到需要使用的环境',asset:'environment_locate.png',alt:'环境管理筛选结果中的目标环境与启动按钮',focus:[83,4,15,20],position:'center top'},
+          {title:'启动并等待',description:'点击“启动”，等待状态更新为最终结果',asset:'environment_starting.png',alt:'环境管理目标行进入启动中的等待状态',focus:[83,4,15,20],position:'center top',status:'正在启动'},
+          {title:'开始使用环境',description:'启动成功后进入独立浏览器窗口',asset:'environment_running.png',alt:'独立浏览器窗口已打开并显示环境、代理和网络检测通过',focus:[31,12,39,27],position:'center top'}
+        ]
+      }
+    ];
+    const annotations={
+      1:{title:'主步骤切换',desc:['点击左侧四个步骤切换引导主题。','切换后右侧从该主题的第一个操作开始，并重新计时。']},
+      2:{title:'操作步骤轮播',desc:['当前主题的三个操作每 3 秒循环切换。','手动点击后从完整 3 秒重新计时；鼠标悬停、键盘焦点或窗口失焦时暂停。']},
+      3:{title:'产品截图联动',desc:['操作卡片与真实 YunLogin 产品截图同步更新。','截图保持完整清晰；涉及账号、IP 或代理端点的素材区域使用不可逆像素化脱敏。']},
+      4:{title:'查看完整指南',desc:['在新标签页打开云登帮助中心文章。','当前引导保持打开，窗口失焦期间自动轮播暂停。']},
+      5:{title:'前后步骤',desc:['上一步与下一步切换左侧主步骤。','第一项不显示上一步，最后一项不显示下一步。']},
+      6:{title:'业务入口',desc:['关闭引导后在当前标签页进入对应业务页面。','新建环境进入新建浏览器，购买代理进入商城，绑定和启动进入环境管理。']},
+      7:{title:'关闭与再次打开',desc:['关闭后保留当前业务页面状态。','首次自动展示资格消费后不再自动弹出，顶部导航仍可随时重新打开。']}
+    };
+    const state={mainIndex:0,operationIndex:0,intervalMs:3000,remainingMs:3000,timerId:null,timerStartedAt:0,pauseReasons:new Set(),shotToken:0};
+    const $=id=>document.getElementById(id);
+    let annoVisible=false;
+    let lastAnnoFocus=null;
+
+    function renderMainTabs(){
+      $('mainTabs').innerHTML=steps.map((step,index)=>`<button type="button" id="main-tab-${index}" class="guide-main-tab" role="tab" aria-selected="${index===state.mainIndex}" aria-controls="guideTitle" tabindex="${index===state.mainIndex?0:-1}" data-main-index="${index}"><span class="main-tab-number mono">${index+1}</span><span class="main-tab-copy"><span class="main-tab-title">${step.title}</span><span class="main-tab-subtitle">${step.subtitle}</span></span></button>`).join('');
+      $('mainTabs').querySelectorAll('[data-main-index]').forEach(button=>{
+        button.addEventListener('click',()=>selectMain(Number(button.dataset.mainIndex),'tab'));
+        button.addEventListener('keydown',event=>handleTabKey(event,'main'));
+      });
+    }
+
+    function renderOperations(){
+      const operations=steps[state.mainIndex].operations;
+      $('operationTabs').innerHTML=operations.map((operation,index)=>`${index?`<span class="operation-arrow" aria-hidden="true"><img src="${ASSET_ROOT}operation-arrow.png" alt=""></span>`:''}<button type="button" id="operation-tab-${index}" class="operation-card" role="tab" aria-selected="${index===state.operationIndex}" aria-controls="shotStage" tabindex="${index===state.operationIndex?0:-1}" data-operation-index="${index}"><strong>${operation.title}</strong><span>${operation.description}</span><i class="operation-progress" data-running="${index===state.operationIndex}" data-paused="${state.pauseReasons.size>0||document.hidden}" style="--progress-duration:${Math.max(0,state.remainingMs)}ms" aria-hidden="true"></i></button>`).join('');
+      $('operationTabs').querySelectorAll('[data-operation-index]').forEach(button=>{
+        button.addEventListener('click',()=>selectOperation(Number(button.dataset.operationIndex),'manual'));
+        button.addEventListener('keydown',event=>handleTabKey(event,'operation'));
+      });
+    }
+
+    function renderContent(){
+      const step=steps[state.mainIndex];
+      $('guideTitle').textContent=step.title;
+      $('guideDescription').textContent=step.description;
+      $('guideTip').textContent=step.tip;
+      $('guideTip').title=step.tip;
+      $('ctaButton').querySelector('span').textContent=step.cta;
+      $('previousButton').hidden=state.mainIndex===0;
+      $('nextButton').hidden=state.mainIndex===steps.length-1;
+      renderMainTabs();
+      renderOperations();
+      renderShot();
+      lucide.createIcons();
+      requestAnimationFrame(renderAnnoBadges);
+    }
+
+    function renderShot(){
+      const operation=steps[state.mainIndex].operations[state.operationIndex];
+      const token=++state.shotToken;
+      const src=ASSET_ROOT+operation.asset;
+      $('shotLoading').style.display='flex';
+      $('shotError').style.display='none';
+      const image=$('shotFocus');
+      image.style.opacity='0';
+      image.style.objectFit=operation.fit||'contain';
+      image.style.objectPosition=operation.position||'center';
+      image.src=src;
+      $('shotFocus').alt=operation.alt;
+      $('shotInset').hidden=!operation.inset;
+      if(operation.inset){$('shotInset').src=ASSET_ROOT+operation.inset;$('shotInset').alt=operation.insetAlt||''}
+      $('shotStatus').hidden=!operation.status;
+      $('shotStatus').querySelector('span').textContent=operation.status||'';
+      const onLoad=()=>{
+        if(token!==state.shotToken)return;
+        $('shotLoading').style.display='none';
+        $('shotFocus').style.opacity='1';
+      };
+      const onError=()=>{
+        if(token!==state.shotToken)return;
+        $('shotLoading').style.display='none';
+        $('shotError').style.display='flex';
+      };
+      $('shotFocus').onload=onLoad;
+      $('shotFocus').onerror=onError;
+      preloadAdjacent();
+    }
+
+    function preloadAdjacent(){
+      const operations=steps[state.mainIndex].operations;
+      [state.operationIndex+1,state.operationIndex-1].forEach(index=>{
+        const operation=operations[(index+operations.length)%operations.length];
+        const image=new Image();image.src=ASSET_ROOT+operation.asset;
+      });
+    }
+
+    function selectMain(index,source){
+      if(index===state.mainIndex)return;
+      const restoreFocus=source==='tab'&&Boolean(document.activeElement?.closest?.('[data-main-index]'));
+      state.mainIndex=index;
+      state.operationIndex=0;
+      restartTimer();
+      renderContent();
+      if(restoreFocus)setTimeout(()=>document.getElementById(`main-tab-${index}`)?.focus({preventScroll:true}),0);
+      window.dispatchEvent(new CustomEvent('new-user-guide:main-select',{detail:{index,source}}));
+    }
+
+    function selectOperation(index,source){
+      const restoreFocus=source==='manual'&&Boolean(document.activeElement?.closest?.('[data-operation-index]'));
+      state.operationIndex=index;
+      restartTimer();
+      renderOperations();
+      renderShot();
+      lucide.createIcons();
+      requestAnimationFrame(renderAnnoBadges);
+      if(restoreFocus)setTimeout(()=>document.getElementById(`operation-tab-${index}`)?.focus({preventScroll:true}),0);
+      window.dispatchEvent(new CustomEvent('new-user-guide:operation-select',{detail:{mainIndex:state.mainIndex,index,source}}));
+    }
+
+    function clearTimer(){
+      if(state.timerId){clearTimeout(state.timerId);state.timerId=null}
+    }
+
+    function startTimer(reset=false){
+      clearTimer();
+      if(reset)state.remainingMs=state.intervalMs;
+      if(state.pauseReasons.size||document.hidden)return;
+      state.timerStartedAt=performance.now();
+      state.timerId=setTimeout(()=>{
+        state.timerId=null;
+        state.remainingMs=state.intervalMs;
+        const length=steps[state.mainIndex].operations.length;
+        state.operationIndex=(state.operationIndex+1)%length;
+        renderOperations();
+        renderShot();
+        lucide.createIcons();
+        requestAnimationFrame(renderAnnoBadges);
+        window.dispatchEvent(new CustomEvent('new-user-guide:operation-select',{detail:{mainIndex:state.mainIndex,index:state.operationIndex,source:'auto'}}));
+        startTimer(true);
+      },Math.max(0,state.remainingMs));
+      const progress=$('operationTabs').querySelector('.operation-card[aria-selected="true"] .operation-progress');
+      if(progress)progress.dataset.paused='false';
+    }
+
+    function restartTimer(){state.remainingMs=state.intervalMs;startTimer(false)}
+
+    function pauseTimer(reason){
+      if(state.pauseReasons.has(reason))return;
+      state.pauseReasons.add(reason);
+      if(state.timerId){state.remainingMs=Math.max(0,state.remainingMs-(performance.now()-state.timerStartedAt))}
+      clearTimer();
+      const progress=$('operationTabs').querySelector('.operation-card[aria-selected="true"] .operation-progress');
+      if(progress)progress.dataset.paused='true';
+    }
+
+    function resumeTimer(reason){
+      state.pauseReasons.delete(reason);
+      if(!state.pauseReasons.size&&!document.hidden){
+        const progress=$('operationTabs').querySelector('.operation-card[aria-selected="true"] .operation-progress');
+        if(progress)progress.dataset.paused='false';
+        startTimer(false);
+      }
+    }
+
+    function handleTabKey(event,type){
+      const max=type==='main'?steps.length:steps[state.mainIndex].operations.length;
+      const datasetKey=type==='main'?'mainIndex':'operationIndex';
+      const focusedIndex=Number(event.currentTarget?.dataset?.[datasetKey]);
+      const current=Number.isInteger(focusedIndex)?focusedIndex:(type==='main'?state.mainIndex:state.operationIndex);
+      let next=current;
+      if(['ArrowRight','ArrowDown'].includes(event.key))next=(current+1)%max;
+      else if(['ArrowLeft','ArrowUp'].includes(event.key))next=(current-1+max)%max;
+      else if(event.key==='Home')next=0;
+      else if(event.key==='End')next=max-1;
+      else return;
+      event.preventDefault();
+      const id=type==='main'?`main-tab-${next}`:`operation-tab-${next}`;
+      document.getElementById(id)?.focus();
+    }
+
+    function getGuideFocusables(scope=document){
+      return [...scope.querySelectorAll('a[href],button:not([disabled]),[tabindex]:not([tabindex="-1"])')]
+        .filter(element=>!element.hidden&&element.getClientRects().length>0);
+    }
+
+    function focusGuideEdge(edge='first'){
+      const scope=$('annoPopup').classList.contains('hidden')?document:$('annoPanel');
+      const focusable=getGuideFocusables(scope);
+      const target=edge==='last'?focusable.at(-1):focusable[0];
+      requestAnimationFrame(()=>target?.focus({preventScroll:true}));
+    }
+
+    function trapGuideFocus(event){
+      if(event.key!=='Tab'||window.parent===window)return;
+      const popupOpen=!$('annoPopup').classList.contains('hidden');
+      const scope=popupOpen?$('annoPanel'):document;
+      const focusable=getGuideFocusables(scope);
+      if(!focusable.length)return;
+      const current=focusable.indexOf(document.activeElement);
+      if(current===-1){event.preventDefault();focusable[0].focus();return}
+      const leavesForward=!event.shiftKey&&current===focusable.length-1;
+      const leavesBackward=event.shiftKey&&current===0;
+      if(!leavesForward&&!leavesBackward)return;
+      event.preventDefault();
+      if(!popupOpen){
+        window.parent.postMessage({type:'yundeng:onboarding-focus-annotation'},'*');
+        return;
+      }
+      (leavesForward?focusable[0]:focusable.at(-1)).focus();
+    }
+
+    function resetGuide(runTimer=true){
+      clearTimer();
+      if(!$('annoPopup').classList.contains('hidden'))closeAnno(false);
+      setAnnotationVisible(false);
+      state.mainIndex=0;
+      state.operationIndex=0;
+      state.pauseReasons.clear();
+      state.remainingMs=state.intervalMs;
+      $('ctaButton').disabled=false;
+      renderContent();
+      if(runTimer)startTimer(true);
+    }
+
+    function closeGuide(method='button'){
+      resetGuide(false);
+      if(window.parent!==window){window.parent.postMessage({type:'yundeng:onboarding-close',method},'*');return}
+      location.href='系统框架.html?page=environment';
+    }
+
+    function navigateToCurrent(){
+      const step=steps[state.mainIndex];
+      clearTimer();
+      $('ctaButton').disabled=true;
+      if(window.parent!==window){window.parent.postMessage({type:'yundeng:onboarding-navigate',...step.route},'*');return}
+      location.href=`系统框架.html?page=${encodeURIComponent(step.route.page)}`;
+    }
+
+    function showToast(message){
+      $('toast').textContent=message;
+      $('toast').classList.remove('hidden');
+      clearTimeout(showToast.timer);
+      showToast.timer=setTimeout(()=>$('toast').classList.add('hidden'),2400);
+    }
+
+    function renderAnnoBadges(){
+      const layer=$('annoLayer');layer.innerHTML='';if(!annoVisible)return;
+      document.querySelectorAll('[data-anno]').forEach(element=>{
+        if(element.hidden)return;
+        const rect=element.getBoundingClientRect();
+        if(!rect.width||!rect.height||rect.bottom<0||rect.top>innerHeight)return;
+        const badge=document.createElement('button');
+        badge.className='anno-badge';badge.textContent=element.dataset.anno;
+        badge.style.left=Math.max(0,rect.right-10)+'px';badge.style.top=Math.max(0,rect.top-10)+'px';
+        badge.setAttribute('aria-label',`查看标注 ${element.dataset.anno}`);
+        badge.onclick=()=>showAnno(element.dataset.anno);layer.appendChild(badge);
+      });
+    }
+
+    function notifyAnnotationState(){
+      if(window.parent!==window)window.parent.postMessage({type:'yundeng:onboarding-annotation-state',visible:annoVisible},'*');
+    }
+
+    function setAnnotationVisible(visible){
+      annoVisible=Boolean(visible);
+      if(!annoVisible&&!$('annoPopup').classList.contains('hidden'))closeAnno(false);
+      renderAnnoBadges();
+      notifyAnnotationState();
+    }
+
+    function showAnno(id){
+      const item=annotations[id];if(!item)return;
+      lastAnnoFocus=document.activeElement;
+      $('annoTitle').textContent=`${id}. ${item.title}`;
+      $('annoDesc').innerHTML=`<ul class="list-disc pl-5 space-y-2">${item.desc.map(line=>`<li>${line}</li>`).join('')}</ul>`;
+      $('annoPopup').classList.remove('hidden');$('annoPopup').classList.add('flex');$('closeAnno').focus();
+    }
+
+    function closeAnno(restoreFocus=true){
+      $('annoPopup').classList.add('hidden');$('annoPopup').classList.remove('flex');
+      if(restoreFocus)lastAnnoFocus?.focus();
+      lastAnnoFocus=null;
+    }
+
+    $('closeGuide').addEventListener('click',()=>closeGuide('button'));
+    $('previousButton').addEventListener('click',()=>selectMain(state.mainIndex-1,'previous'));
+    $('nextButton').addEventListener('click',()=>selectMain(state.mainIndex+1,'next'));
+    $('ctaButton').addEventListener('click',navigateToCurrent);
+    $('retryShot').addEventListener('click',renderShot);
+    $('fullGuideLink').addEventListener('click',event=>{
+      if(!$('fullGuideLink').href){event.preventDefault();showToast('完整指南暂未上线，请稍后再试')}
+    });
+    const carouselNodes=[$('carouselRegion'),$('shotFigure')];
+    const isInsideCarousel=node=>carouselNodes.some(element=>element.contains(node));
+    carouselNodes.forEach(element=>{
+      element.addEventListener('mouseenter',()=>pauseTimer('hover'));
+      element.addEventListener('mouseleave',event=>{if(!isInsideCarousel(event.relatedTarget))resumeTimer('hover')});
+      element.addEventListener('focusin',()=>pauseTimer('focus'));
+      element.addEventListener('focusout',event=>{if(!isInsideCarousel(event.relatedTarget))resumeTimer('focus')});
+    });
+    window.addEventListener('blur',()=>pauseTimer('window-blur'));
+    window.addEventListener('focus',()=>resumeTimer('window-blur'));
+    document.addEventListener('visibilitychange',()=>document.hidden?pauseTimer('document-hidden'):resumeTimer('document-hidden'));
+    document.addEventListener('keydown',event=>{
+      trapGuideFocus(event);
+      if(event.key!=='Escape')return;
+      if(!$('annoPopup').classList.contains('hidden'))closeAnno();else closeGuide('escape');
+    });
+    $('annoPopup').addEventListener('click',event=>{if(event.target===$('annoPopup'))closeAnno()});
+    $('closeAnno').addEventListener('click',closeAnno);
+    window.addEventListener('resize',()=>{
+      renderAnnoBadges();
+    });
+    window.addEventListener('message',event=>{
+      if(event.source!==window.parent||!event.data)return;
+      if(event.data.type==='yundeng:onboarding-reset'){
+        resetGuide(true);requestAnimationFrame(()=>$('guideTitle').focus({preventScroll:true}));
+      }
+      if(event.data.type==='yundeng:onboarding-ping'){
+        window.parent.postMessage({type:'yundeng:onboarding-ready'},'*');
+        notifyAnnotationState();
+      }
+      if(event.data.type==='yundeng:onboarding-annotation-toggle')setAnnotationVisible(!annoVisible);
+      if(event.data.type==='yundeng:onboarding-focus-edge')focusGuideEdge(event.data.edge);
+      if(event.data.type==='yundeng:onboarding-navigation-cancelled'){$('ctaButton').disabled=false;startTimer(false);showToast('已取消跳转，当前修改仍保留')}
+      if(event.data.type==='yundeng:onboarding-close-request')closeGuide('shell');
+    });
+
+    document.documentElement.dataset.embedded=String(window.parent!==window);
+    renderContent();
+    startTimer(true);
+    lucide.createIcons();
+    requestAnimationFrame(()=>{
+      $('guideTitle').focus({preventScroll:true});
+      if(window.parent!==window){
+        window.parent.postMessage({type:'yundeng:onboarding-ready'},'*');
+        notifyAnnotationState();
+      }
+    });
+  </script>
+</body>
+</html>

@@ -39,11 +39,11 @@
     .menu-icon { width:18px; height:18px; flex:0 0 18px; }
     .popover { box-shadow:0 6px 24px rgba(0,0,0,.12); }
     .doc-surface { background:#fff; border-radius:8px; }
-    .doc-code { background:#20242c; color:#e7edf7; border-radius:5px; }
-    .doc-code .muted-code { color:#9da7b8; }
-    .directory-link { color:#6e7685; border-left:2px solid transparent; transition:all .15s ease; }
-    .directory-link:hover { color:#0066ff; background:#f3f6fb; }
-    .directory-link.active { color:#0066ff; background:#e6f0ff; border-left-color:#0066ff; font-weight:600; }
+    .doc-code { background:#1A1D24; color:#FFFFFF; border-radius:5px; }
+    .doc-code .muted-code { color:#9DA2AC; }
+    .directory-link { color:#6E7685; border-left:2px solid transparent; transition:all .15s ease; }
+    .directory-link:hover { color:#0066FF; background:#F3F4F6; }
+    .directory-link.active { color:#0066FF; background:#E6F0FF; border-left-color:#0066FF; font-weight:600; }
     .directory-group > summary { list-style:none; cursor:pointer; }
     .directory-group > summary::-webkit-details-marker { display:none; }
     .directory-group[open] > summary .group-chevron { transform:rotate(180deg); }
@@ -61,6 +61,8 @@
     @media (max-width:1023px) { .directory-panel { order:-1; } }
     @media (max-width:767px) { .sidebar { position:fixed; z-index:50; height:100vh; box-shadow:0 6px 24px rgba(0,0,0,.12); } .sidebar.compact { width:0; overflow:hidden; } }
   </style>
+  <link rel="stylesheet" href="公共导航.css?v=20260821a">
+  <script src="公共导航.js?v=20260821a"></script>
 </head>
 <body class="bg-page text-[13px]">
   <div class="flex min-h-screen">
@@ -95,29 +97,22 @@
         </div>
       </header>
 
-      <main id="mainContent" class="flex-1 overflow-auto p-4 md:p-6" tabindex="-1">
-        <div id="businessContent" class="max-w-[1480px] mx-auto">
-          <section class="flex flex-wrap items-start justify-between gap-4 mb-5">
-            <div>
-              <div class="flex items-center gap-3"><h1 class="text-[24px] leading-8 font-bold text-ink-title">API</h1><span class="h-7 px-3 rounded bg-primary-bg text-primary text-[12px] font-medium flex items-center gap-1.5"><i data-lucide="laptop" class="w-3.5 h-3.5"></i>本地浏览器</span></div>
-              <p class="mt-1.5 text-ink-sub">本地 API 文档与接口状态</p>
-            </div>
-            <div class="mono text-[11px] text-ink-muted pt-2">DOCS · LOCAL API</div>
-          </section>
-
+      <main id="mainContent" class="flex-1 overflow-auto p-4" tabindex="-1">
+        <div id="businessContent">
+          <h1 class="sr-only">API</h1>
           <section id="statusPanel" class="doc-surface px-5 md:px-6 py-4 mb-5 shadow-[0_2px_8px_rgba(26,29,36,.06)]">
             <div class="flex flex-wrap items-center gap-x-8 gap-y-4">
-              <div data-anno="1" class="min-w-[170px]"><div class="text-[12px] text-ink-sub mb-1">接口状态</div><div class="flex items-center gap-2"><span id="statusDot" class="status-dot bg-success"></span><strong id="statusText" class="text-[15px] text-success">成功</strong><span id="statusHint" class="text-[12px] text-ink-muted">本地服务可用</span></div></div>
+              <div data-anno="1" class="min-w-[220px]"><div class="text-[12px] text-ink-sub mb-1">接口状态</div><div class="flex items-center gap-2"><span id="statusDot" class="status-dot bg-line"></span><strong id="statusText" class="text-[15px] text-ink-sub">未检测</strong><span id="statusHint" class="text-[12px] text-ink-muted">仅展示原型状态</span></div></div>
               <div class="min-w-[250px] flex-1"><div class="text-[12px] text-ink-sub mb-1">API 地址</div><div class="flex items-center gap-2"><code id="baseUrl" class="mono text-[13px] text-ink-title">http://localhost:50213</code><button id="copyBaseUrl" data-anno="3" class="w-7 h-7 rounded flex items-center justify-center text-ink-sub hover:text-primary hover:bg-primary-bg" title="复制 API 地址" aria-label="复制 API 地址"><i data-lucide="copy" class="w-4 h-4"></i></button></div></div>
               <div class="flex items-center gap-2"><button id="formatBtn" data-anno="2" class="h-8 px-3 rounded border border-line text-ink-body hover:bg-hover flex items-center gap-1.5"><i data-lucide="braces" class="w-4 h-4 text-primary"></i>参数格式</button><button id="simulateStatus" class="h-8 px-3 rounded bg-primary hover:bg-primary-hover text-white flex items-center gap-1.5"><i data-lucide="refresh-cw" class="w-4 h-4"></i><span>模拟检查</span></button><button id="simulateFailure" class="h-8 px-3 rounded border border-line text-ink-sub hover:bg-hover">模拟失败</button></div>
             </div>
-            <div class="mt-4 pt-3 border-t border-line-lighter flex flex-wrap items-center gap-3 text-[12px] text-ink-muted"><span>上次检查：<span id="lastChecked" class="mono">刚刚</span></span><span class="h-3 border-l border-line"></span><span>原型不会发起真实请求</span></div>
+            <div class="mt-4 pt-3 border-t border-line-lighter flex flex-wrap items-center gap-3 text-[12px] text-ink-muted"><span>上次检查：<span id="lastChecked">尚未检查</span></span><span class="h-3 border-l border-line"></span><span>原型不会发起真实请求</span></div>
           </section>
 
           <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_270px] gap-5 items-start">
             <article id="docContent" class="doc-surface shadow-[0_2px_8px_rgba(26,29,36,.04)] px-5 md:px-8 py-6">
               <section id="overview" class="doc-anchor pb-7 border-b border-line-lighter">
-                <div class="flex items-center justify-between gap-3"><h2 data-anno="4" class="inline-block text-[20px] font-semibold text-ink-title">概览</h2><span class="mono text-[11px] text-ink-muted">INTRODUCTION</span></div>
+                <div class="flex items-center justify-between gap-3"><h2 data-anno="4" class="inline-block text-[20px] font-semibold text-ink-title">概览</h2></div>
                 <p class="mt-4 text-[14px] leading-7 text-ink-body">API可以通过程序的方式读取和写入环境配置信息、启动/关闭浏览器、查询环境等操作。可以配合 Selenium、Puppeteer 等自动化框架使用。</p>
                 <h3 class="mt-6 text-[16px] font-semibold text-ink-title">使用方法</h3>
                 <ol class="mt-3 list-decimal pl-5 space-y-2 text-[13px] leading-6 text-ink-body">
@@ -126,7 +121,7 @@
                   <li>可以使用脚本或 HTTP 请求工具调用接口。</li>
                   <li>参数类型均为字符串，请求体使用 JSON 格式；非必需参数可以省略。</li>
                 </ol>
-                <div data-anno="5" class="mt-5 flex items-start gap-2 p-3 rounded bg-info-bg text-info"><i data-lucide="info" class="w-4 h-4 shrink-0 mt-0.5"></i><p>调用频率限制：每个接口每秒最多请求 1 次。建议在客户端实现退避与重试提示。</p></div>
+                <div data-anno="5" class="mt-5 flex items-start gap-2 p-3 rounded bg-info-bg text-info"><i data-lucide="info" class="w-4 h-4 shrink-0 mt-0.5"></i><p>调用频率待确认：产品分析暂按每个接口每秒 1 次展示，正式限制、响应码与重试策略以后端文档为准。</p></div>
               </section>
 
               <section id="status" class="doc-anchor pt-7 pb-7 border-b border-line-lighter">
@@ -138,7 +133,7 @@
               </section>
 
               <section id="unconfirmedDocs" class="pt-7">
-                <div class="flex items-end justify-between gap-3 mb-4"><div><h2 class="text-[20px] font-semibold text-ink-title">接口目录详情</h2><p class="mt-1.5 text-[12px] text-ink-sub">以下能力名称来自产品分析；正式路径、参数和响应字段待后端确认。</p></div><span class="mono text-[11px] text-warning">CONTRACT PENDING</span></div>
+                <div class="flex items-end justify-between gap-3 mb-4"><div><h2 class="text-[20px] font-semibold text-ink-title">接口目录详情</h2><p class="mt-1.5 text-[12px] text-ink-sub">以下能力名称来自产品分析；正式路径、参数和响应字段待后端确认。</p></div><span class="text-[11px] text-warning">契约待确认</span></div>
                 <div id="unconfirmedList" class="space-y-3"></div>
               </section>
             </article>
@@ -161,7 +156,7 @@
       <div class="p-5 space-y-5 text-[13px] leading-6 text-ink-body"><p>接口参数统一按字符串传递，请求体使用 JSON 格式。以下示例仅说明编码规则，不代表未列出的接口契约已经确定。</p><div><div class="flex items-center justify-between mb-2"><strong>POST 请求体</strong><button class="copy-inline h-7 px-2 rounded border border-line text-[12px] text-ink-sub hover:text-primary" data-copy='{"environment_id":"ENV-001","name":"示例"}'>复制示例</button></div><pre class="doc-code p-4 mono text-[12px] leading-6 overflow-auto">{
   "environment_id": "ENV-001",
   "name": "示例"
-}</pre></div><div class="p-3 rounded bg-warning-bg text-warning flex gap-2"><i data-lucide="triangle-alert" class="w-4 h-4 mt-1 shrink-0"></i><span>非必需参数可以省略；每个接口每秒最多请求 1 次。请以正式后端文档为准。</span></div></div>
+}</pre></div><div class="p-3 rounded bg-warning-bg text-warning flex gap-2"><i data-lucide="triangle-alert" class="w-4 h-4 mt-1 shrink-0"></i><span>非必需参数可以省略；调用频率暂按每秒 1 次演示，正式限制以后端文档为准。</span></div></div>
       <footer class="px-5 py-3 border-t border-line flex justify-end"><button id="closeFormatFooter" class="h-8 px-4 rounded bg-primary hover:bg-primary-hover text-white">知道了</button></footer>
     </section>
   </div>
@@ -173,7 +168,7 @@
   <div id="toastContainer" class="fixed top-4 left-1/2 -translate-x-1/2 z-[60] space-y-2 pointer-events-none"></div>
   <div id="annoLayer" style="position:fixed;inset:0;pointer-events:none;z-index:9998;"></div>
   <button id="annoToggle" class="fixed z-[9997] right-2 top-[120px] h-8 px-3 rounded-full bg-ink-muted text-white shadow-[0_2px_8px_rgba(0,0,0,.12)] flex items-center justify-center gap-1.5 cursor-pointer select-none" title="显示交互标注" aria-label="显示交互标注" aria-pressed="false"><i data-lucide="tags" class="w-4 h-4"></i><span class="text-[12px] font-medium whitespace-nowrap">显示标注</span></button>
-  <div id="annoPopup" class="hidden fixed inset-0 z-[9999] bg-black/30 p-4 items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="annoTitle"><div class="w-[520px] max-w-full bg-card rounded-lg shadow-[0_6px_24px_rgba(0,0,0,.12)]"><div class="px-5 py-4 border-b border-line flex justify-between items-center"><h2 id="annoTitle" class="text-[16px] font-semibold text-ink-title"></h2><button id="closeAnno" class="text-ink-muted hover:text-ink-body" aria-label="关闭标注说明"><i data-lucide="x" class="w-5 h-5"></i></button></div><div id="annoDesc" class="p-5 text-[14px] text-ink-body leading-7"></div></div></div>
+  <div id="annoPopup" class="hidden fixed inset-0 z-[9999] bg-black/30 p-4 items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="annoTitle"><div id="annoPanel" class="w-[520px] max-w-full bg-card rounded-lg shadow-[0_6px_24px_rgba(0,0,0,.12)]" tabindex="-1"><div class="px-5 py-4 border-b border-line flex justify-between items-center"><h2 id="annoTitle" class="text-[16px] font-semibold text-ink-title"></h2><button id="closeAnno" class="text-ink-muted hover:text-ink-body" aria-label="关闭标注说明"><i data-lucide="x" class="w-5 h-5"></i></button></div><div id="annoDesc" class="p-5 text-[14px] text-ink-body leading-7"></div></div></div>
 
   <script>
     const session = { user:'张小登', language:'简体中文' };
@@ -220,7 +215,7 @@
       2:{title:'参数格式入口',desc:['打开参数格式说明弹窗。','说明 POST JSON、字符串参数和可省略参数规则，并明确正式契约以后端文档为准。']},
       3:{title:'复制 API 地址',desc:['复制当前文档中的基础地址。','复制失败时保留手动选择文本的提示，不把地址写入 URL 或埋点。']},
       4:{title:'概览阅读区',desc:['概览复现截图中已确认的能力说明和使用方法。','目录点击会滚动到对应文档锚点。']},
-      5:{title:'调用频率规则',desc:['每个接口每秒最多请求 1 次。','该规则来自产品分析，正式限流响应和重试头信息仍待后端确认。']},
+      5:{title:'调用频率规则',desc:['产品分析暂按每个接口每秒 1 次展示。','正式限流响应、重试头信息和适用范围仍待后端确认。']},
       6:{title:'接口目录',desc:['按业务域分组显示已确认的接口名称。','输入关键词可筛选目录；除 GET /status 外，详情卡片均带待后端确认标识。']},
       7:{title:'请求示例复制',desc:['复制已核实的 GET /status 请求地址。','示例使用截图中的 localhost:50213 基础地址。']},
       8:{title:'返回数据表',desc:['展示 GET /status 截图中确认的 code、msg 字段及状态码取值。','其他接口不会复用这份字段表。']},
@@ -229,7 +224,7 @@
       11:{title:'参数格式弹窗',desc:['弹窗打开后标注范围只覆盖弹窗内部，关闭后恢复页面标注。','示例中的字段是编码示意，不代表正式接口字段。']}
     };
     const $ = id => document.getElementById(id);
-    let sidebarCompact=innerWidth<768, annoVisible=false, annoScopeStack=[], activeDoc='overview', responseMode='success', statusMode='success', directoryOpen={};
+    let sidebarCompact=innerWidth<768, annoVisible=false, annoScopeStack=[], activeDoc='overview', responseMode='success', statusMode='idle', directoryOpen={}, lastAnnoFocus=null;
     const notices=[{title:'成员申请待处理',desc:'王晓明申请加入“云登团队”。',time:'5 分钟前',unread:true},{title:'浏览器环境已同步',desc:'环境 ENV-20260806-092 已完成云端同步。',time:'昨天 18:20',unread:true}];
     const statusResponses={success:'{\n  "code": 0,\n  "msg": "success"\n}',error:'{\n  "code": -4,\n  "msg": "账号登录异常"\n}'};
     function menuButton(item,child){return `<a href="${item.href||'#'}" ${item.href?'':'data-route="'+item.id+'"'} class="menu-link ${item.id==='api'?'active-leaf':''} w-full px-2 ${child?'pl-3':''} flex items-center gap-3 text-left mb-1"><i data-lucide="${item.icon}" class="menu-icon"></i><span class="menu-label">${item.label}</span></a>`}
@@ -245,15 +240,16 @@
     function toast(message,kind='info'){const color={info:'bg-info',success:'bg-success',warning:'bg-warning',danger:'bg-danger'}[kind]||'bg-info';const el=document.createElement('div');el.className=`toast ${color} text-white px-4 py-2 rounded shadow-[0_2px_8px_rgba(0,0,0,.12)] text-[13px]`;el.textContent=message;$('toastContainer').append(el);setTimeout(()=>el.remove(),2600)}
     async function copyText(value,successMessage='已复制到剪贴板'){try{await navigator.clipboard.writeText(value);toast(successMessage,'success')}catch(_){toast('复制失败，请手动选择文本','warning')}}
     function updateResponse(){ $('statusResponse').textContent=statusResponses[responseMode];$('copyStatusResponse').dataset.copy=statusResponses[responseMode];document.querySelectorAll('.response-tab').forEach(button=>{const on=button.dataset.response===responseMode;button.classList.toggle('bg-primary-bg',on);button.classList.toggle('text-primary',on);button.classList.toggle('text-ink-sub',!on)}); }
-    function updateStatus(mode){statusMode=mode;const panel=$('statusPanel'),dot=$('statusDot'),text=$('statusText'),hint=$('statusHint');panel.classList.toggle('status-checking',mode==='checking');dot.className=`status-dot ${mode==='success'?'bg-success':mode==='checking'?'bg-warning':'bg-danger'}`;text.className=`text-[15px] ${mode==='success'?'text-success':mode==='checking'?'text-warning':'text-danger'}`;text.textContent=mode==='success'?'成功':mode==='checking'?'检查中':'失败';hint.textContent=mode==='success'?'本地服务可用':mode==='checking'?'正在模拟检查…':'演示服务不可用';$('lastChecked').textContent=mode==='checking'?'检查中':'刚刚';}
-    function simulateStatus(mode){if(statusMode==='checking')return;updateStatus('checking');$('simulateStatus').disabled=true;$('simulateFailure').disabled=true;setTimeout(()=>{updateStatus(mode);$('simulateStatus').disabled=false;$('simulateFailure').disabled=false;toast(mode==='success'?'接口检查成功（演示）':'接口检查失败（演示）',mode==='success'?'success':'danger')},650)}
+    function updateStatus(mode){statusMode=mode;const panel=$('statusPanel'),dot=$('statusDot'),text=$('statusText'),hint=$('statusHint'),styles={idle:['bg-line','text-ink-sub','未检测','仅展示原型状态'],checking:['bg-warning','text-warning','模拟检查中','不会连接真实服务'],success:['bg-success','text-success','模拟通过','未连接真实服务'],error:['bg-danger','text-danger','模拟失败','未连接真实服务']}[mode]||['bg-line','text-ink-sub','未检测','仅展示原型状态'];panel.classList.toggle('status-checking',mode==='checking');dot.className=`status-dot ${styles[0]}`;text.className=`text-[15px] ${styles[1]}`;text.textContent=styles[2];hint.textContent=styles[3];$('lastChecked').textContent=mode==='idle'?'尚未检查':mode==='checking'?'模拟检查中':'刚刚';}
+    function simulateStatus(mode){if(statusMode==='checking')return;updateStatus('checking');$('simulateStatus').disabled=true;$('simulateFailure').disabled=true;setTimeout(()=>{updateStatus(mode);$('simulateStatus').disabled=false;$('simulateFailure').disabled=false;toast(mode==='success'?'已生成模拟通过状态':'已生成模拟失败状态',mode==='success'?'success':'danger')},650)}
     function openFormat(){ $('formatModal').classList.remove('hidden');$('formatModal').classList.add('flex');pushAnnoScope($('formatPanel'));$('closeFormat').focus() }
     function closeFormat(){ $('formatModal').classList.add('hidden');$('formatModal').classList.remove('flex');popAnnoScope($('formatPanel'));$('formatBtn').focus() }
     function pushAnnoScope(element){annoScopeStack=annoScopeStack.filter(item=>item!==element);annoScopeStack.push(element);renderAnnoBadges()}
     function popAnnoScope(element){annoScopeStack=annoScopeStack.filter(item=>item!==element);renderAnnoBadges()}
     function renderAnnoBadges(){const layer=$('annoLayer');layer.innerHTML='';if(!annoVisible||!$('annoPopup').classList.contains('hidden'))return;const root=annoScopeStack.at(-1)||$('businessContent');root.querySelectorAll('[data-anno]').forEach(el=>{if(el.offsetParent===null)return;const r=el.getBoundingClientRect();if(r.bottom<0||r.top>innerHeight)return;const b=document.createElement('button');b.className='anno-badge';b.textContent=el.dataset.anno;b.style.left=Math.min(innerWidth-22,Math.max(0,r.right-10))+'px';b.style.top=Math.max(2,r.top-10)+'px';b.setAttribute('aria-label',`查看标注 ${el.dataset.anno}`);b.onclick=()=>showAnnoPopup(el.dataset.anno);layer.append(b)})}
-    function showAnnoPopup(id){const item=annotations[id];if(!item)return;$('annoTitle').textContent=`${id}. ${item.title}`;$('annoDesc').innerHTML='<ul class="list-disc pl-5 space-y-2">'+item.desc.map(x=>`<li>${x}</li>`).join('')+'</ul>';$('annoPopup').classList.remove('hidden');$('annoPopup').classList.add('flex')}
-    function closeAnnoPopup(){$('annoPopup').classList.add('hidden');$('annoPopup').classList.remove('flex')}
+    function showAnnoPopup(id){const item=annotations[id];if(!item)return;const origin=document.querySelector(`[data-anno="${id}"]`);lastAnnoFocus=origin?.matches('button,a,input,select,textarea,[tabindex]')?origin:origin?.querySelector('button,a,input,select,textarea,[tabindex]')||$('annoToggle');$('annoTitle').textContent=`${id}. ${item.title}`;$('annoDesc').innerHTML='<ul class="list-disc pl-5 space-y-2">'+item.desc.map(x=>`<li>${x}</li>`).join('')+'</ul>';$('annoPopup').classList.remove('hidden');$('annoPopup').classList.add('flex');$('closeAnno').focus()}
+    function closeAnnoPopup(){if($('annoPopup').classList.contains('hidden'))return;$('annoPopup').classList.add('hidden');$('annoPopup').classList.remove('flex');lastAnnoFocus?.focus?.({preventScroll:true});lastAnnoFocus=null}
+    function trapAnnoFocus(event){if(event.key!=='Tab')return;const items=[...$('annoPanel').querySelectorAll('button:not([disabled]),a[href],[tabindex]:not([tabindex="-1"])')].filter(node=>node.offsetParent!==null);if(!items.length){event.preventDefault();$('annoPanel').focus();return}const first=items[0],last=items.at(-1);if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus()}else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus()}}
     function openPopover(id){['noticePopover','languagePopover','helpPopover','accountPopover'].forEach(x=>{if(x!==id)$(x).classList.add('hidden')});$(id).classList.toggle('hidden')}
     function closePopovers(){['noticePopover','languagePopover','helpPopover','accountPopover'].forEach(id=>$(id).classList.add('hidden'))}
     $('directorySearch').addEventListener('input',e=>{$('clearDirectory').classList.toggle('hidden',!e.target.value);renderDirectory(e.target.value)});
@@ -276,10 +272,10 @@
     $('languagePopover').innerHTML=['简体中文','English','日本語'].map(l=>`<button data-language="${l}" class="w-full text-left px-3 py-2 rounded hover:bg-hover ${l===session.language?'text-primary font-medium':'text-ink-body'}">${l}</button>`).join('');$('languagePopover').onclick=e=>{const b=e.target.closest('[data-language]');if(!b)return;session.language=b.dataset.language;toast(`语言已切换为 ${session.language}`,'success');closePopovers()};
     document.addEventListener('click',e=>{const group=e.target.closest('[data-group]');if(group){const item=navItems.find(x=>x.id===group.dataset.group);item.expanded=!item.expanded;renderNav();return}if(e.target.closest('[data-global="help"]'))openPopover('helpPopover');if(e.target.closest('[data-global="settings"]'))toast('偏好设置将在对应业务页面实现','info');if(!e.target.closest('.popover,#noticeBtn,#languageBtn,#helpBtn,#accountBtn,[data-global]'))closePopovers()});
     $('annoToggle').onclick=()=>{annoVisible=!annoVisible;$('annoToggle').classList.toggle('bg-primary',annoVisible);$('annoToggle').classList.toggle('bg-ink-muted',!annoVisible);$('annoToggle').setAttribute('aria-pressed',String(annoVisible));$('annoToggle').querySelector('span').textContent=annoVisible?'隐藏标注':'显示标注';renderAnnoBadges()};$('closeAnno').onclick=closeAnnoPopup;$('annoPopup').onclick=e=>{if(e.target===$('annoPopup'))closeAnnoPopup()};
-    document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(!$('formatModal').classList.contains('hidden'))closeFormat();if(!$('annoPopup').classList.contains('hidden'))closeAnnoPopup();closePopovers()}});$('mainContent').addEventListener('scroll',renderAnnoBadges,{passive:true});window.addEventListener('resize',renderAnnoBadges);
+    document.addEventListener('keydown',e=>{if(!$('annoPopup').classList.contains('hidden')){if(e.key==='Escape'){e.preventDefault();closeAnnoPopup();return}trapAnnoFocus(e);return}if(e.key==='Escape'){if(!$('formatModal').classList.contains('hidden'))closeFormat();closePopovers()}});$('mainContent').addEventListener('scroll',renderAnnoBadges,{passive:true});window.addEventListener('resize',renderAnnoBadges);
     function setupAnchorObserver(){const observer=new IntersectionObserver(entries=>{const visible=entries.filter(entry=>entry.isIntersecting).sort((a,b)=>a.boundingClientRect.top-b.boundingClientRect.top)[0];if(!visible||visible.target.id===activeDoc)return;activeDoc=visible.target.id;renderDirectory($('directorySearch').value)},{root:$('mainContent'),rootMargin:'-12% 0px -72% 0px',threshold:[0,.1]});apiDocs.forEach(doc=>{const element=document.getElementById(doc.id);if(element)observer.observe(element)})}
-    $('sidebar').classList.toggle('compact',sidebarCompact);renderNav();renderNotices();renderUnconfirmed();renderDirectory();updateResponse();updateStatus('success');setupAnchorObserver();lucide.createIcons();setTimeout(renderAnnoBadges,120);
+    $('sidebar').classList.toggle('compact',sidebarCompact);renderNav();renderNotices();renderUnconfirmed();renderDirectory();updateResponse();updateStatus('idle');setupAnchorObserver();lucide.createIcons();setTimeout(renderAnnoBadges,120);
   </script>
-  <script src="公共导航.js?v=20260813"></script>
+
 </body>
 </html>

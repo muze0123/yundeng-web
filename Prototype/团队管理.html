@@ -1,26 +1,635 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>云登 · 团队管理</title><script src="https://cdn.tailwindcss.com"></script><script src="https://unpkg.com/lucide@latest"></script><link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<script>tailwind.config={theme:{extend:{colors:{primary:'#0066FF','primary-hover':'#0052CC','primary-bg':'#E6F0FF','ink-title':'#1A1D24','ink-body':'#3A3F4A','ink-sub':'#6E7685','ink-muted':'#9DA2AC',line:'#DFE1E5','line-light':'#E8EAED','line-lighter':'#F0F1F3','bg-page':'#F7F8FA','bg-card':'#FFFFFF','bg-hover':'#F3F4F6',success:'#0FC060','success-bg':'#E7F9F0',warning:'#E7772D','warning-bg':'#FDF2E9',danger:'#D9001B','danger-bg':'#FFE8EB',info:'#0091D5','info-bg':'#E4F4FB'}}}};</script>
-<style>*{box-sizing:border-box}body{font:13px/1.5 -apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif}.mono{font-family:'JetBrains Mono',monospace}.nav,.section{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:4px;color:#6E7685}.nav:hover,.section:hover{background:#F3F4F6}.nav.active,.section.active{background:#E6F0FF;color:#0066FF;font-weight:600}.btn{height:32px;padding:0 12px;border-radius:4px;display:inline-flex;align-items:center;justify-content:center;gap:6px;font-weight:500}.btn-primary{background:#0066FF;color:#fff}.btn-primary:hover{background:#0052CC}.btn-default{background:#fff;border:1px solid #DFE1E5}.btn-default:hover{background:#F3F4F6}.btn-danger{background:#D9001B;color:#fff}.field{height:32px;border:1px solid #DFE1E5;border-radius:4px;padding:0 10px;background:#fff;outline:none}.field:focus{border-color:#0066FF;box-shadow:0 0 0 2px #E6F0FF}.field.invalid{border-color:#D9001B}.card{background:#fff;border:1px solid #DFE1E5;border-radius:8px}.badge{display:inline-flex;padding:2px 8px;border-radius:4px;border:1px solid;font-size:12px}.tab{height:34px;padding:0 14px;border-radius:4px}.tab.active{background:#E6F0FF;color:#0066FF}.modal-bg{position:fixed;inset:0;background:#0006;z-index:9999;display:flex;align-items:center;justify-content:center}.toast{position:fixed;right:24px;top:72px;z-index:10002;background:#1A1D24;color:#fff;padding:10px 16px;border-radius:4px}.anno-badge{position:fixed;width:20px;height:20px;border-radius:50%;background:#0066FF;color:#fff;font-size:11px;pointer-events:auto;box-shadow:0 2px 8px #0003}.hidden{display:none!important}th,td{white-space:nowrap}th{font-weight:500}</style></head>
-<body class="bg-bg-page text-ink-body overflow-hidden"><div class="h-screen flex"><aside class="w-[220px] shrink-0 bg-white flex flex-col"><div class="h-14 px-5 flex items-center gap-2"><a href="系统框架.html" class="flex items-center gap-2"><span class="w-7 h-7 rounded bg-primary text-white flex items-center justify-center font-bold">云</span><b class="text-[16px] text-ink-title">云登</b></a></div><nav class="px-3 py-2 space-y-1 flex-1 overflow-y-auto"><a class="nav" href="新建浏览器.html"><i data-lucide="circle-plus" class="w-4"></i>新建浏览器</a><a class="nav" href="环境管理.html"><i data-lucide="monitor-cog" class="w-4"></i>环境管理</a><a class="nav" href="代理管理.html"><i data-lucide="network" class="w-4"></i>代理管理</a><a class="nav" href="商城.html"><i data-lucide="shopping-bag" class="w-4"></i>商城</a><a class="nav" href="费用管理.html"><i data-lucide="wallet-cards" class="w-4"></i>费用管理</a><div class="px-3 pt-3 text-[11px] text-ink-muted">团队</div><a class="nav active" href="团队管理.html"><i data-lucide="users" class="w-4"></i>团队管理</a><a class="nav" href="账号管理.html"><i data-lucide="contact" class="w-4"></i>账号管理</a><a class="nav" href="分享转移.html"><i data-lucide="share-2" class="w-4"></i>分享转移</a></nav></aside>
-<main class="flex-1 min-w-0 flex flex-col"><header class="h-14 bg-white px-6 flex items-center justify-between shadow-[0_8px_8px_-8px_rgba(0,0,0,.18)] z-10"><span class="text-ink-sub">管理中心 / 团队管理</span><div class="flex items-center gap-3"><button data-toast="暂无新通知"><i data-lucide="bell" class="w-[18px]"></i></button><span class="w-7 h-7 rounded-full bg-primary-bg text-primary flex items-center justify-center font-semibold">张</span></div></header>
-<div id="mainContent" class="flex-1 overflow-y-auto p-6"><div class="max-w-[1500px] mx-auto grid grid-cols-[240px_minmax(0,1fr)] gap-4"><aside class="card p-3 h-fit sticky top-0"><div class="p-3 border-b border-line-light"><div class="flex items-center gap-3"><span class="w-10 h-10 rounded bg-primary-bg text-primary flex items-center justify-center"><i data-lucide="building-2" class="w-5"></i></span><div><b class="text-ink-title">云登运营团队</b><div class="text-[12px] text-ink-sub">8 名成员</div></div></div><button data-anno="1" id="certBtn" class="badge mt-3 text-warning border-warning bg-warning-bg">未认证 · 去认证</button><div class="text-[11px] text-ink-muted mt-2">套餐到期：2026-09-30</div></div><nav class="pt-3 space-y-1"><button class="section active w-full" data-section="members"><i data-lucide="users" class="w-4"></i>所有成员</button><button class="section w-full" data-section="departments"><i data-lucide="network" class="w-4"></i>部门管理</button><button class="section w-full" data-section="roles"><i data-lucide="shield-check" class="w-4"></i>角色管理</button><button class="section w-full" data-section="applications"><i data-lucide="user-round-plus" class="w-4"></i>成员申请 <span class="ml-auto badge text-warning border-warning bg-warning-bg">1</span></button><button class="section w-full" data-section="logins"><i data-lucide="monitor-check" class="w-4"></i>登录请求</button></nav></aside>
-<div><section id="membersPanel"><div class="card p-5 mb-4"><div class="grid grid-cols-4 gap-3"><label><span class="block text-ink-sub mb-1">姓名 / 账号</span><input id="memberKeyword" class="field w-full" placeholder="搜索昵称或账号"></label><label><span class="block text-ink-sub mb-1">所在部门</span><select id="memberDept" class="field w-full"><option>全部</option><option>默认部门</option><option>跨境运营</option><option>内容增长</option></select></label><label><span class="block text-ink-sub mb-1">角色</span><select id="memberRole" class="field w-full"><option>全部</option><option>创始人</option><option>经理</option><option>财务</option><option>环境操作员</option></select></label><label data-anno="2"><span class="block text-ink-sub mb-1">人员状态</span><select id="memberStatus" class="field w-full"><option>全部</option><option>正常</option><option>已禁用</option></select></label><div class="col-span-4 flex justify-end gap-2"><button id="memberReset" class="btn btn-default">重置</button><button id="memberSearch" class="btn btn-primary">查询</button></div></div></div><div class="card overflow-hidden"><div class="p-5 flex justify-between items-center"><h2 data-anno="3" class="inline-block text-[16px] font-semibold text-ink-title">成员列表</h2><button data-anno="4" id="inviteBtn" class="btn btn-primary"><i data-lucide="user-plus" class="w-4"></i>邀请成员</button></div><div class="overflow-x-auto"><table class="w-full"><thead class="bg-line-lighter text-ink-sub"><tr><th class="p-3 text-left">姓名 / 账号</th><th class="p-3 text-left">所在部门</th><th class="p-3 text-left">角色</th><th class="p-3 text-left">人员状态</th><th class="p-3 text-left">联系方式</th><th class="p-3 text-left">最后登录时间</th><th class="p-3 text-left">是否在线</th><th class="p-3 text-right">操作</th></tr></thead><tbody id="memberBody"></tbody></table></div><div class="h-12 px-5 flex justify-end items-center text-ink-sub">共 <span id="memberCount" class="mono mx-1">0</span> 条　20 条/页　<span class="mono">1 / 1</span></div></div></section>
-<section id="departmentsPanel" class="hidden"><div class="card p-5"><div class="flex justify-between mb-5"><h2 data-anno="5" class="inline-block text-[16px] font-semibold text-ink-title">部门管理</h2><button id="addDept" class="btn btn-primary"><i data-lucide="plus" class="w-4"></i>添加子部门</button></div><div class="grid grid-cols-[260px_1fr] gap-4"><div class="border border-line rounded-lg p-3"><div class="font-medium p-2">云登运营团队（8）</div><div class="ml-3 border-l border-line pl-3 space-y-1"><button class="section active w-full">默认部门（3）</button><button class="section w-full">跨境运营（3）</button><button class="section w-full">内容增长（2）</button></div></div><div class="border border-line rounded-lg overflow-hidden"><table class="w-full"><thead class="bg-line-lighter"><tr><th class="p-3 text-left">部门名称</th><th class="p-3 text-left">部门人数</th><th class="p-3 text-left">管理员</th><th class="p-3 text-right">操作</th></tr></thead><tbody><tr><td class="p-3">默认部门</td><td class="p-3 mono">3</td><td class="p-3">张小登</td><td class="p-3 text-right"><button class="text-primary" data-action="deptInvite">邀请成员</button>　<button class="text-primary" data-action="transfer">转移成员</button></td></tr></tbody></table></div></div></div></section>
-<section id="rolesPanel" class="hidden"><div class="card p-5"><div class="flex justify-between mb-5"><h2 data-anno="6" class="inline-block text-[16px] font-semibold text-ink-title">角色管理</h2><button id="addRole" class="btn btn-primary"><i data-lucide="plus" class="w-4"></i>添加角色</button></div><div class="grid grid-cols-[240px_1fr] gap-4"><div class="border border-line rounded-lg p-3"><div class="text-ink-sub text-[12px] px-2 mb-2">系统角色（4）</div><div id="roleList" class="space-y-1"></div></div><div id="roleDetail" class="border border-line rounded-lg p-5"></div></div></div></section>
-<section id="applicationsPanel" class="hidden"><div class="card p-5"><div class="flex gap-2 mb-5"><button class="tab active" data-app-status="待审批">待审批</button><button class="tab" data-app-status="已通过">已通过</button><button class="tab" data-app-status="不通过">不通过</button></div><div id="applicationContent"></div></div></section>
-<section id="loginsPanel" class="hidden"><div class="card p-5 mb-4"><div class="flex gap-3 items-end"><label><span class="block text-ink-sub mb-1">开始日期</span><input type="date" class="field"></label><label><span class="block text-ink-sub mb-1">结束日期</span><input type="date" class="field"></label><label class="flex-1"><span class="block text-ink-sub mb-1">搜索</span><input class="field w-full" placeholder="用户、姓名或终端识别码"></label><button class="btn btn-primary">查询</button></div></div><div class="card overflow-hidden"><div class="p-5"><h2 data-anno="7" class="inline-block text-[16px] font-semibold">登录请求</h2></div><table class="w-full"><thead class="bg-line-lighter"><tr><th class="p-3 text-left">请求授权用户</th><th class="p-3 text-left">请求授权姓名</th><th class="p-3 text-left">终端识别码</th><th class="p-3 text-left">MAC 地址</th><th class="p-3 text-left">本机网络</th><th class="p-3 text-left">申请时间</th><th class="p-3 text-left">状态</th><th class="p-3 text-right">操作</th></tr></thead><tbody><tr><td class="p-3 mono">177****0832</td><td class="p-3">李**</td><td class="p-3 mono">DEV-8F2A-****</td><td class="p-3 mono">A4:**:**:**:1C:09</td><td class="p-3 mono">192.168.*.18</td><td class="p-3 mono">2026-08-12 13:20</td><td class="p-3"><span class="badge text-warning border-warning bg-warning-bg">待处理</span></td><td class="p-3 text-right"><button class="text-primary" data-login="allow">允许</button>　<button class="text-danger" data-login="deny">拒绝</button></td></tr></tbody></table></div></section></div></div></div></main></div>
-<button id="annoToggle" class="btn btn-default fixed right-2 top-[120px] z-[9997]"><i data-lucide="tags" class="w-4"></i><span>显示标注</span></button><div id="annoLayer" class="fixed inset-0 pointer-events-none z-[9998]"></div><div id="modal" class="modal-bg hidden"><div id="modalCard" data-anno="8" class="bg-white w-[620px] max-h-[84vh] overflow-hidden rounded-lg shadow-[0_6px_24px_rgba(0,0,0,.12)] flex flex-col"><div class="px-5 py-4 border-b border-line flex justify-between"><h3 id="modalTitle" class="text-[16px] font-semibold"></h3><button data-close><i data-lucide="x" class="w-4"></i></button></div><div id="modalBody" class="p-5 overflow-y-auto"></div><div class="px-5 py-4 border-t border-line flex justify-end gap-2"><button data-close class="btn btn-default">取消</button><button id="modalConfirm" class="btn btn-primary">确定</button></div></div></div><div id="toast" class="toast hidden"></div>
-<script>
-const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];let annoVisible=false,modalAction='';const members=[{name:'张小登',account:'177****0832',dept:'默认部门',role:'创始人',status:'正常',phone:'177****0832',login:'2026-08-12 12:17',online:true},{name:'李运营',account:'1938****0832',dept:'跨境运营',role:'经理',status:'正常',phone:'193****0832',login:'2026-08-12 11:42',online:true},{name:'王财务',account:'186****2719',dept:'默认部门',role:'财务',status:'正常',phone:'186****2719',login:'2026-08-11 18:06',online:false},{name:'陈配置',account:'155****6280',dept:'跨境运营',role:'环境配置员',status:'正常',phone:'155****6280',login:'2026-08-12 09:20',online:true},{name:'赵执行',account:'133****9051',dept:'内容增长',role:'环境操作员',status:'正常',phone:'133****9051',login:'2026-08-10 16:31',online:false},{name:'孙运营',account:'188****4421',dept:'跨境运营',role:'环境操作员',status:'已禁用',phone:'188****4421',login:'2026-08-01 14:12',online:false},{name:'周内容',account:'159****3708',dept:'内容增长',role:'环境操作员',status:'正常',phone:'159****3708',login:'2026-08-12 10:08',online:true},{name:'吴协作',account:'137****1196',dept:'默认部门',role:'环境操作员',status:'正常',phone:'137****1196',login:'2026-08-09 19:22',online:false}];const roles=[{name:'经理',desc:'团队日常运营管理',members:1,permissions:['环境管理','代理管理','团队管理']},{name:'财务',desc:'费用与订单查询',members:1,permissions:['费用管理','商城']},{name:'环境配置员',desc:'创建与配置环境',members:1,permissions:['新建浏览器','环境管理','代理管理']},{name:'环境操作员',desc:'启动和使用已授权环境',members:4,permissions:['环境管理']},{name:'内容审核员',desc:'自定义角色',members:1,permissions:['环境管理','日志管理']}];let currentRole=0;
-function toast(t){const e=$('#toast');e.textContent=t;e.classList.remove('hidden');clearTimeout(e.timer);e.timer=setTimeout(()=>e.classList.add('hidden'),1800)}function statusBadge(s){return s==='正常'?'<span class="badge text-success border-success bg-success-bg">正常</span>':'<span class="badge text-danger border-danger bg-danger-bg">已禁用</span>'}function renderMembers(){const q=$('#memberKeyword').value.trim().toLowerCase(),d=$('#memberDept').value,r=$('#memberRole').value,s=$('#memberStatus').value,rows=members.filter(x=>(!q||(x.name+x.account).toLowerCase().includes(q))&&(d==='全部'||x.dept===d)&&(r==='全部'||x.role===r)&&(s==='全部'||x.status===s));$('#memberBody').innerHTML=rows.map((x,i)=>`<tr class="border-t border-line-light hover:bg-bg-hover"><td class="p-3"><b>${x.name}</b><div class="mono text-[11px] text-ink-sub">${x.account}</div></td><td class="p-3">${x.dept}</td><td class="p-3">${x.role}</td><td class="p-3">${statusBadge(x.status)}</td><td class="p-3 mono">${x.phone}</td><td class="p-3 mono">${x.login}</td><td class="p-3 ${x.online?'text-success':'text-ink-muted'}">${x.online?'是':'否'}</td><td class="p-3 text-right"><button class="text-primary" data-member="${members.indexOf(x)}">${x.role==='创始人'?'查看':'编辑'}</button>${x.role==='创始人'?'':'　<button class="text-primary" data-transfer="'+members.indexOf(x)+'">转移</button>'}</td></tr>`).join('')||'<tr><td colspan="8" class="py-16 text-center text-ink-sub">暂无符合条件的成员</td></tr>';$('#memberCount').textContent=rows.length}
-function renderRoles(){ $('#roleList').innerHTML=roles.map((x,i)=>`<button data-role="${i}" class="section w-full ${i===currentRole?'active':''}"><span>${x.name}</span><span class="ml-auto mono">${x.members}</span></button>`).join('');const x=roles[currentRole];$('#roleDetail').innerHTML=`<div class="flex justify-between"><div><h3 class="text-[17px] font-semibold">${x.name}</h3><p class="text-ink-sub mt-1">${x.desc}</p></div><div><button class="btn btn-default" data-role-action="copy">复制角色</button> <button class="btn btn-primary" data-role-action="members">配置成员</button></div></div><div class="mt-5"><b>已授予模块权限</b><div class="flex flex-wrap gap-2 mt-3">${x.permissions.map(p=>`<span class="badge text-primary border-primary bg-primary-bg">${p}</span>`).join('')}</div></div><button data-role-action="edit" class="text-primary mt-5">编辑角色与权限</button>`;lucide.createIcons()}
-function renderApplications(status='待审批'){$$('[data-app-status]').forEach(x=>x.classList.toggle('active',x.dataset.appStatus===status));const content={待审批:`<table class="w-full"><thead class="bg-line-lighter"><tr><th class="p-3 text-left">申请时间</th><th class="p-3 text-left">真实姓名</th><th class="p-3 text-left">联系方式</th><th class="p-3 text-right">操作</th></tr></thead><tbody><tr><td class="p-3 mono">2026-08-12 09:13:32</td><td class="p-3">黄**</td><td class="p-3 mono">193****0832</td><td class="p-3 text-right"><button class="text-primary" data-approve="yes">通过</button>　<button class="text-danger" data-approve="no">拒绝</button></td></tr></tbody></table>`,已通过:'<div class="py-16 text-center text-ink-sub">暂无已通过申请</div>',不通过:'<div class="p-4 border border-line rounded"><b>黄**</b><span class="mono ml-4">193****0832</span><p class="text-ink-sub mt-2">拒绝原因：非团队成员　操作时间：2026-07-28 15:37</p></div>'};$('#applicationContent').innerHTML=content[status]}
-function switchSection(v){$$('[data-section]').forEach(x=>x.classList.toggle('active',x.dataset.section===v));['members','departments','roles','applications','logins'].forEach(x=>$('#'+x+'Panel').classList.toggle('hidden',x!==v));if(v==='roles')renderRoles();if(v==='applications')renderApplications();renderAnno()};$$('[data-section]').forEach(x=>x.onclick=()=>switchSection(x.dataset.section));
-function openModal(title,body,action='确定',key='generic'){$('#modalTitle').textContent=title;$('#modalBody').innerHTML=body;$('#modalConfirm').textContent=action;modalAction=key;$('#modal').classList.remove('hidden');lucide.createIcons();renderAnno()}function closeModal(){$('#modal').classList.add('hidden');renderAnno()}$$('[data-close]').forEach(x=>x.onclick=closeModal);$('#modal').onclick=e=>{if(e.target===$('#modal'))closeModal()};
-$('#inviteBtn').onclick=()=>openModal('邀请成员',`<div class="grid grid-cols-2 gap-4"><div class="border border-line rounded-lg p-4 text-center"><div class="w-32 h-32 mx-auto bg-line-lighter flex items-center justify-center"><i data-lucide="qr-code" class="w-16 text-ink-sub"></i></div><b class="block mt-3">扫描二维码邀请</b><p class="text-[12px] text-ink-sub mt-1">演示二维码，不可用于真实加入</p><button class="btn btn-default mt-3" data-reset-invite>重置二维码</button></div><div class="border border-line rounded-lg p-4"><b>通过链接邀请</b><textarea id="inviteLink" readonly class="field w-full h-24 py-2 mt-3 mono text-[11px]">https://www.yunlogin.com/invite.html?code=demo_masked</textarea><button class="btn btn-default mt-3" id="copyInvite">复制链接</button> <button class="btn btn-default mt-3" data-reset-invite>重置</button></div></div><p class="mt-4 text-ink-sub">成员提交申请后，需在“成员申请”中审批通过。</p>`,'完成','invite');
-$('#certBtn').onclick=()=>openModal('团队实名认证',`<div class="p-3 bg-warning-bg text-warning rounded mb-4">原型不采集姓名、身份证、企业代码、银行卡或人脸信息。</div><div class="space-y-3"><div class="border border-line rounded p-4"><b>个人认证</b><p class="text-ink-sub mt-1">信息认证 → 刷脸认证 → 认证结果</p></div><div class="border border-line rounded p-4"><b>企业法人认证</b><p class="text-ink-sub mt-1">企业资料 → 法人身份校验 → 法人人脸认证</p></div><div class="border border-line rounded p-4"><b>企业对公转账认证</b><p class="text-ink-sub mt-1">企业资料 → 对公银行验证 → 认证结果</p></div></div>`,'知道了','cert');
-$('#addDept').onclick=()=>openModal('添加子部门','<label class="block mb-4"><span class="block mb-1">上级部门</span><select class="field w-full"><option>默认部门</option><option>跨境运营</option></select></label><label><span class="block mb-1">部门名称</span><input id="requiredField" class="field w-full" placeholder="请输入部门名称"></label>','确定添加','validate');document.addEventListener('click',e=>{if(e.target.dataset.action==='transfer'||e.target.dataset.transfer!==undefined)openModal('转移成员','<p class="mb-4">选择成员要转入的目标部门。</p><select id="requiredField" class="field w-full"><option value="">请选择</option><option>默认部门</option><option>跨境运营</option><option>内容增长</option></select><p class="mt-3 text-warning">原部门管理员转至新部门，将自动获得新部门管理员身份。</p>','确认转移','validate');if(e.target.dataset.action==='deptInvite')$('#inviteBtn').click();if(e.target.dataset.member!==undefined){const x=members[e.target.dataset.member];openModal(x.role==='创始人'?'查看成员':'编辑成员',`<div class="space-y-4"><label class="block">昵称<input class="field w-full mt-1" value="${x.name}"></label><label class="block">部门<select class="field w-full mt-1"><option>${x.dept}</option><option>默认部门</option><option>跨境运营</option></select></label><label class="block">角色<select class="field w-full mt-1" ${x.role==='创始人'?'disabled':''}><option>${x.role}</option><option>经理</option><option>财务</option></select></label>${x.role==='创始人'?'<p class="text-warning">创始人不可被普通管理员禁用、删除或降级。</p>':'<label class="flex gap-2"><input type="checkbox" '+(x.status==='正常'?'checked':'')+'>启用成员</label>'}</div>`,'保存','member')}if(e.target.dataset.role!==undefined){currentRole=+e.target.dataset.role;renderRoles()}if(e.target.dataset.roleAction==='edit'||e.target.id==='addRole')openRoleEditor(e.target.id==='addRole');if(e.target.dataset.roleAction==='copy')toast('已创建角色副本（演示）');if(e.target.dataset.roleAction==='members')openModal('配置成员','<p class="mb-3">为当前角色选择成员</p>'+members.slice(1,6).map(x=>`<label class="flex gap-2 p-2"><input type="checkbox">${x.name} · ${x.dept}</label>`).join(''),'保存配置','generic');if(e.target.dataset.approve==='yes')openModal('通过成员申请','<label class="block mb-3">所在部门<select id="requiredField" class="field w-full mt-1"><option value="">请选择</option><option>默认部门</option><option>跨境运营</option></select></label><label class="block">角色<select class="field w-full mt-1"><option>环境操作员</option><option>经理</option></select></label>','确认通过','validate');if(e.target.dataset.approve==='no')openModal('拒绝成员申请','<label>拒绝原因<textarea id="requiredField" class="field w-full h-24 py-2 mt-1" placeholder="请输入拒绝原因"></textarea></label>','确认拒绝','validate');if(e.target.dataset.login)openModal(e.target.dataset.login==='allow'?'允许登录请求':'拒绝登录请求','<p>请核对请求用户、终端识别码、MAC 地址和本机网络。确认后将更新演示状态，不会改变真实授权。</p>',e.target.dataset.login==='allow'?'确认允许':'确认拒绝','generic');if(e.target.id==='copyInvite'){navigator.clipboard?.writeText($('#inviteLink').value);toast('演示邀请链接已复制')}if(e.target.hasAttribute('data-reset-invite'))openModal('重置邀请凭证','<p>重置后旧二维码或链接立即失效。原型不会生成真实凭证。</p>','确认重置','generic')});
-function openRoleEditor(isNew){const x=isNew?{name:'',desc:'',permissions:[]}:roles[currentRole],mods=['新建浏览器','环境管理','代理管理','插件管理','费用管理','商城','回收站','窗口同步','API','RPA','团队管理','账号管理','分享转移','日志管理','账号设置'];openModal(isNew?'添加角色':'编辑角色',`<div class="grid grid-cols-[110px_1fr] gap-y-4 items-center"><span>角色名称</span><input id="requiredField" class="field" value="${x.name}" placeholder="请输入角色名称"><span>归属角色组</span><select class="field"><option>默认</option><option>系统角色</option></select><span>角色描述</span><input class="field" value="${x.desc}" placeholder="请输入描述"></div><div class="mt-5"><b>模块权限</b><div class="grid grid-cols-3 gap-2 mt-3">${mods.map(m=>`<label class="p-2 border border-line rounded"><input type="checkbox" ${x.permissions.includes(m)?'checked':''}> ${m}</label>`).join('')}</div></div><p class="text-ink-sub mt-4">正式权限按模块展开子权限，并校验查看权限与操作权限依赖。</p>`,'保存角色','validate')}
-$('#addRole').onclick=()=>openRoleEditor(true);$$('[data-app-status]').forEach(x=>x.onclick=()=>renderApplications(x.dataset.appStatus));$('#memberSearch').onclick=renderMembers;$('#memberReset').onclick=()=>{$('#memberKeyword').value='';$('#memberDept').value=$('#memberRole').value=$('#memberStatus').value='全部';renderMembers()};$('#modalConfirm').onclick=()=>{if(modalAction==='validate'){const f=$('#requiredField');if(f&&!f.value.trim()){f.classList.add('invalid');return toast('请填写必填项')}}closeModal();toast('演示操作已完成，未修改真实团队数据')};$$('[data-toast]').forEach(x=>x.onclick=()=>toast(x.dataset.toast));
-const annotations={1:{title:'团队认证',desc:['展示认证状态与流程说明','不采集真实证件资料']},2:{title:'成员筛选',desc:['姓名、部门、角色和状态组合查询']},3:{title:'成员列表',desc:['覆盖创始人、管理员、成员及禁用状态']},4:{title:'邀请成员',desc:['支持演示二维码和链接，重置使旧凭证失效']},5:{title:'部门管理',desc:['维护部门树、子部门及成员转移']},6:{title:'角色管理',desc:['系统与自定义角色、权限矩阵和成员配置']},7:{title:'登录请求',desc:['核查用户、终端和网络后审批']},8:{title:'业务弹窗',desc:['危险操作止于演示确认，不修改真实数据']}};function renderAnno(){const layer=$('#annoLayer');layer.innerHTML='';if(!annoVisible)return;const scope=$('#modal').classList.contains('hidden')?document:$('#modalCard');scope.querySelectorAll('[data-anno]').forEach(el=>{if(el.offsetParent===null)return;const r=el.getBoundingClientRect(),b=document.createElement('button');b.className='anno-badge';b.textContent=el.dataset.anno;b.style.left=r.right-10+'px';b.style.top=r.top-10+'px';b.onclick=()=>toast(annotations[el.dataset.anno].title+'：'+annotations[el.dataset.anno].desc.join('；'));layer.appendChild(b)})}$('#annoToggle').onclick=()=>{annoVisible=!annoVisible;$('#annoToggle span').textContent=annoVisible?'隐藏标注':'显示标注';renderAnno()};$('#mainContent').onscroll=renderAnno;window.onresize=renderAnno;renderMembers();renderRoles();renderApplications();lucide.createIcons();
-</script><script src="公共导航.js?v=20260813"></script></body></html>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>云登 · 团队管理</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="公共导航.css?v=20260821a">
+  <link rel="stylesheet" href="筛选布局.css?v=20260814">
+  <link rel="stylesheet" href="分页器.css?v=20260814">
+  <script>
+    tailwind.config = { theme: { extend: { colors: {
+      primary:'#0066FF', 'primary-hover':'#0052CC', 'primary-bg':'#E6F0FF',
+      'ink-title':'#1A1D24', 'ink-body':'#3A3F4A', 'ink-sub':'#6E7685', 'ink-muted':'#9DA2AC',
+      line:'#DFE1E5', 'line-light':'#E8EAED', 'line-lighter':'#F0F1F3',
+      page:'#F7F8FA', card:'#FFFFFF', hover:'#F3F4F6',
+      success:'#0FC060', 'success-bg':'#E7F9F0', warning:'#E7772D', 'warning-bg':'#FDF2E9',
+      danger:'#D9001B', 'danger-bg':'#FFE8EB', info:'#0091D5', 'info-bg':'#E4F4FB'
+    } } } };
+  </script>
+  <style>
+    * { box-sizing: border-box; }
+    html, body { width:100%; height:100%; }
+    body { margin:0; overflow:hidden; color:#3A3F4A; background:#F7F8FA; font:13px/1.5 -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif; }
+    button, input, select, textarea { font:inherit; }
+    button { letter-spacing:0; }
+    .mono { font-family:"JetBrains Mono",monospace; }
+    .btn { min-height:32px; padding:0 12px; border:0; border-radius:4px; display:inline-flex; align-items:center; justify-content:center; gap:6px; font-weight:500; white-space:nowrap; transition:background-color .15s ease, border-color .15s ease, color .15s ease, transform .1s ease; }
+    .btn:active:not(:disabled) { transform:translateY(1px); }
+    .btn:disabled { opacity:.45; cursor:not-allowed; }
+    .btn-primary { color:#FFFFFF; background:#0066FF; }
+    .btn-primary:hover:not(:disabled) { background:#0052CC; }
+    .btn-default { color:#3A3F4A; background:#FFFFFF; border:1px solid #DFE1E5; }
+    .btn-default:hover:not(:disabled) { color:#0066FF; border-color:#0066FF; }
+    .btn-danger { color:#FFFFFF; background:#D9001B; }
+    .btn-icon { width:32px; padding:0; }
+    :where(button, a, input, select, textarea, [tabindex]):focus-visible { outline:2px solid rgba(0,102,255,.22); outline-offset:2px; }
+    .field { width:100%; height:32px; padding:0 10px; border:1px solid #DFE1E5; border-radius:4px; outline:0; color:#3A3F4A; background:#FFFFFF; }
+    textarea.field { height:auto; min-height:88px; padding-top:8px; padding-bottom:8px; resize:vertical; }
+    .field:focus { border-color:#0066FF; box-shadow:0 0 0 2px #E6F0FF; }
+    .field.is-error { border-color:#D9001B; }
+    .panel { min-width:0; border-radius:8px; background:#FFFFFF; }
+    .team-layout { width:100%; display:grid; grid-template-columns:220px minmax(0,1fr); gap:16px; align-items:start; }
+    .team-rail { position:sticky; top:0; padding:12px; }
+    .team-summary { padding:12px 12px 16px; border-bottom:1px solid #E8EAED; }
+    .team-section-nav { padding-top:12px; display:flex; flex-direction:column; gap:4px; }
+    .section-tab { width:100%; min-height:36px; padding:8px 10px; border:0; border-radius:4px; display:flex; align-items:center; gap:10px; color:#6E7685; background:transparent; text-align:left; white-space:nowrap; }
+    .section-tab:hover { color:#3A3F4A; background:#F3F4F6; }
+    .section-tab[aria-selected="true"] { color:#0066FF; background:#E6F0FF; font-weight:600; }
+    .section-tab .count { margin-left:auto; min-width:20px; height:20px; padding:0 6px; border-radius:4px; display:inline-flex; align-items:center; justify-content:center; color:#E7772D; background:#FDF2E9; font:500 11px/1 "JetBrains Mono",monospace; }
+    .content-stack { min-width:0; display:flex; flex-direction:column; gap:16px; }
+    .filter-panel { padding:20px; }
+    .data-panel { padding:20px; }
+    .panel-head { min-width:0; margin-bottom:16px; display:flex; align-items:center; justify-content:space-between; gap:12px; }
+    .panel-title { color:#1A1D24; font-size:16px; line-height:24px; font-weight:600; }
+    .panel-note { color:#6E7685; font-size:12px; }
+    .table-scroll { width:100%; min-width:0; overflow-x:auto; border-top:1px solid #E8EAED; }
+    table { width:100%; min-width:980px; border-collapse:collapse; }
+    th, td { height:48px; padding:8px 12px; border-bottom:1px solid #E8EAED; vertical-align:middle; white-space:nowrap; }
+    th { height:40px; color:#6E7685; background:#F7F8FA; font-weight:500; text-align:left; }
+    th:last-child, td:last-child { text-align:left; }
+    tbody tr:hover { background:#F3F4F6; }
+    .text-action { padding:4px 0; border:0; color:#0066FF; background:transparent; }
+    .text-action.danger { color:#D9001B; }
+    .action-set { display:inline-flex; align-items:center; gap:12px; }
+    .badge { min-height:22px; padding:2px 8px; border-radius:4px; display:inline-flex; align-items:center; border:1px solid transparent; font-size:12px; line-height:16px; white-space:nowrap; }
+    .badge-success { color:#0FC060; border-color:#0FC060; background:#E7F9F0; }
+    .badge-warning { color:#E7772D; border-color:#E7772D; background:#FDF2E9; }
+    .badge-danger { color:#D9001B; border-color:#D9001B; background:#FFE8EB; }
+    .badge-neutral { color:#6E7685; border-color:#DFE1E5; background:#F7F8FA; }
+    .empty-state { padding:56px 16px; color:#6E7685; text-align:center; }
+    .workspace-split { min-width:0; display:grid; grid-template-columns:260px minmax(0,1fr); border-top:1px solid #E8EAED; }
+    .workspace-nav { min-width:0; padding:16px 16px 16px 0; border-right:1px solid #E8EAED; }
+    .workspace-detail { min-width:0; padding:16px 0 0 20px; }
+    .subnav-button { width:100%; min-height:34px; padding:7px 10px; border:0; border-radius:4px; display:flex; align-items:center; justify-content:space-between; gap:8px; color:#3A3F4A; background:transparent; text-align:left; }
+    .subnav-button:hover { background:#F3F4F6; }
+    .subnav-button[aria-selected="true"] { color:#0066FF; background:#E6F0FF; font-weight:600; }
+    .status-tabs { display:flex; align-items:center; gap:4px; padding-bottom:16px; border-bottom:1px solid #E8EAED; overflow-x:auto; }
+    .status-tab { min-height:32px; padding:0 12px; border:0; border-radius:4px; color:#6E7685; background:transparent; white-space:nowrap; }
+    .status-tab:hover { background:#F3F4F6; }
+    .status-tab[aria-selected="true"] { color:#0066FF; background:#E6F0FF; font-weight:600; }
+    .modal-mask { position:fixed; inset:0; z-index:10000; padding:16px; display:flex; align-items:center; justify-content:center; background:rgba(26,29,36,.30); }
+    .modal-mask.hidden { display:none; }
+    .modal-panel { width:620px; max-width:100%; max-height:min(84vh,760px); border-radius:8px; display:flex; flex-direction:column; overflow:hidden; background:#FFFFFF; box-shadow:0 6px 24px rgba(0,0,0,.12); }
+    .modal-header { min-height:56px; padding:12px 20px; border-bottom:1px solid #E8EAED; display:flex; align-items:center; justify-content:space-between; gap:12px; }
+    .modal-body { min-height:0; padding:20px; overflow-y:auto; }
+    .modal-footer { padding:12px 20px; border-top:1px solid #E8EAED; display:flex; justify-content:flex-end; gap:12px; }
+    .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    .form-item { min-width:0; display:flex; flex-direction:column; gap:6px; }
+    .choice-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    .choice-block { min-width:0; padding:16px; border:1px solid #DFE1E5; border-radius:6px; }
+    .permission-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; }
+    .check-row { min-height:34px; padding:7px 9px; border:1px solid #E8EAED; border-radius:4px; display:flex; align-items:center; gap:8px; }
+    .toast { position:fixed; top:72px; left:50%; z-index:11000; transform:translateX(-50%); max-width:min(520px,calc(100vw - 32px)); padding:9px 14px; border-radius:4px; color:#FFFFFF; background:#1A1D24; box-shadow:0 4px 16px rgba(0,0,0,.16); }
+    .anno-badge { position:fixed; width:20px; height:20px; padding:0; border:0; border-radius:50%; display:flex; align-items:center; justify-content:center; pointer-events:auto; color:#FFFFFF; background:#0066FF; box-shadow:0 2px 8px rgba(0,0,0,.16); font:600 11px/1 "JetBrains Mono",monospace; }
+    .anno-list { margin:0; padding-left:20px; display:flex; flex-direction:column; gap:8px; }
+    #annoToggle { cursor:grab; }
+    .hidden { display:none !important; }
+    @media (max-width:900px) {
+      .team-layout { grid-template-columns:minmax(0,1fr); }
+      .team-rail { position:static; padding:8px; overflow:hidden; }
+      .team-summary { display:none; }
+      .team-section-nav { padding-top:0; flex-direction:row; overflow-x:auto; }
+      .section-tab { width:auto; flex:0 0 auto; }
+      .section-tab .count { margin-left:2px; }
+      .workspace-split { grid-template-columns:minmax(0,1fr); }
+      .workspace-nav { padding:16px 0; border-right:0; border-bottom:1px solid #E8EAED; }
+      .workspace-detail { padding:16px 0 0; }
+    }
+    @media (max-width:720px) {
+      #mainContent { padding:12px !important; }
+      .filter-panel, .data-panel { padding:16px; }
+      .panel-head { align-items:flex-start; flex-direction:column; }
+      .panel-head .btn { width:100%; }
+      .form-grid, .choice-grid, .permission-grid { grid-template-columns:minmax(0,1fr); }
+      .modal-mask { padding:12px; }
+      .modal-body { padding:16px; }
+      .modal-header, .modal-footer { padding-left:16px; padding-right:16px; }
+      .modal-footer .btn { flex:1 1 0; }
+      .toast { top:64px; }
+    }
+    @media (prefers-reduced-motion:reduce) { .btn { transition:none; } .btn:active:not(:disabled) { transform:none; } }
+  </style>
+  <script src="公共导航.js?v=20260821a"></script>
+</head>
+<body>
+  <div id="yundeng-shell" class="flex h-screen min-h-screen overflow-hidden">
+    <aside id="sidebar"></aside>
+    <div class="min-w-0 flex-1 flex flex-col h-screen">
+      <header></header>
+      <main id="mainContent" class="flex-1 min-w-0 overflow-y-auto bg-page p-4">
+        <div class="team-layout">
+          <aside class="panel team-rail" aria-label="团队管理分区">
+            <div class="team-summary">
+              <div class="flex items-center gap-3">
+                <span class="w-10 h-10 rounded bg-primary-bg text-primary flex items-center justify-center shrink-0"><i data-lucide="building-2" class="w-5 h-5"></i></span>
+                <div class="min-w-0"><h1 class="font-semibold text-ink-title truncate">云登运营团队</h1><p id="teamMemberSummary" class="text-[12px] text-ink-sub mt-0.5">16 名成员</p></div>
+              </div>
+              <button id="certBtn" type="button" data-anno="1" class="badge badge-warning mt-3">未认证，去认证</button>
+              <p class="text-[11px] text-ink-muted mt-2">套餐到期：2026-09-30</p>
+            </div>
+            <nav id="sectionTabs" class="team-section-nav" role="tablist" aria-orientation="vertical">
+              <button type="button" class="section-tab" role="tab" id="tab-members" aria-controls="membersPanel" aria-selected="true" data-section="members"><i data-lucide="users" class="w-4 h-4"></i><span>所有成员</span></button>
+              <button type="button" class="section-tab" role="tab" id="tab-departments" aria-controls="departmentsPanel" aria-selected="false" tabindex="-1" data-section="departments"><i data-lucide="network" class="w-4 h-4"></i><span>部门管理</span></button>
+              <button type="button" class="section-tab" role="tab" id="tab-roles" aria-controls="rolesPanel" aria-selected="false" tabindex="-1" data-section="roles"><i data-lucide="shield-check" class="w-4 h-4"></i><span>角色管理</span></button>
+              <button type="button" class="section-tab" role="tab" id="tab-applications" aria-controls="applicationsPanel" aria-selected="false" tabindex="-1" data-section="applications"><i data-lucide="user-round-plus" class="w-4 h-4"></i><span>成员申请</span><span class="count" aria-label="1 条待审批">1</span></button>
+              <button type="button" class="section-tab" role="tab" id="tab-logins" aria-controls="loginsPanel" aria-selected="false" tabindex="-1" data-section="logins"><i data-lucide="monitor-check" class="w-4 h-4"></i><span>登录请求</span></button>
+            </nav>
+          </aside>
+
+          <div class="content-stack">
+            <section id="membersPanel" role="tabpanel" aria-labelledby="tab-members">
+              <div class="panel filter-panel mb-4">
+                <div class="filter-flow">
+                  <label class="filter-item"><span class="filter-label">姓名或账号</span><input id="memberKeyword" class="field" type="search" placeholder="搜索昵称或账号" autocomplete="off"></label>
+                  <label class="filter-item"><span class="filter-label">所在部门</span><select id="memberDept" class="field"><option value="">全部部门</option><option>默认部门</option><option>跨境运营</option><option>内容增长</option><option>客户成功</option></select></label>
+                  <label class="filter-item"><span class="filter-label">角色</span><select id="memberRole" class="field"><option value="">全部角色</option><option>创始人</option><option>经理</option><option>财务</option><option>环境配置员</option><option>环境操作员</option><option>内容审核员</option></select></label>
+                  <label class="filter-item"><span class="filter-label">人员状态</span><select id="memberStatus" data-anno="2" class="field"><option value="">全部状态</option><option>正常</option><option>已禁用</option></select></label>
+                  <div class="filter-actions"><button id="memberSearch" type="button" class="btn btn-primary">查询</button><button id="memberReset" type="button" class="btn btn-default">重置</button></div>
+                </div>
+              </div>
+              <div class="panel data-panel">
+                <div class="panel-head"><div><h2 data-anno="3" class="panel-title inline-block">成员列表</h2><p id="memberResultText" class="panel-note mt-1">当前显示全部成员</p></div><button id="inviteBtn" type="button" data-anno="4" class="btn btn-primary"><i data-lucide="user-plus" class="w-4 h-4"></i><span>邀请成员</span></button></div>
+                <div class="table-scroll"><table><thead><tr><th>姓名 / 账号</th><th>所在部门</th><th>角色</th><th>人员状态</th><th>联系方式</th><th>最后登录时间</th><th>在线状态</th><th>操作</th></tr></thead><tbody id="memberBody"></tbody></table></div>
+                <div id="memberPagination" class="pt-5" aria-label="成员列表分页"></div>
+              </div>
+            </section>
+
+            <section id="departmentsPanel" role="tabpanel" aria-labelledby="tab-departments" hidden>
+              <div class="panel data-panel">
+                <div class="panel-head"><div><h2 data-anno="5" class="panel-title inline-block">部门管理</h2><p class="panel-note mt-1">按部门维护管理员与成员归属</p></div><button id="addDept" type="button" class="btn btn-primary"><i data-lucide="plus" class="w-4 h-4"></i><span>添加子部门</span></button></div>
+                <div class="workspace-split">
+                  <div class="workspace-nav" role="tablist" aria-label="部门列表">
+                    <button type="button" class="subnav-button" role="tab" aria-selected="true" data-dept-tab="默认部门"><span>默认部门</span><span class="mono">4</span></button>
+                    <button type="button" class="subnav-button" role="tab" aria-selected="false" data-dept-tab="跨境运营"><span>跨境运营</span><span class="mono">4</span></button>
+                    <button type="button" class="subnav-button" role="tab" aria-selected="false" data-dept-tab="内容增长"><span>内容增长</span><span class="mono">4</span></button>
+                    <button type="button" class="subnav-button" role="tab" aria-selected="false" data-dept-tab="客户成功"><span>客户成功</span><span class="mono">4</span></button>
+                  </div>
+                  <div class="workspace-detail"><div class="table-scroll !border-t-0"><table class="!min-w-[620px]"><thead><tr><th>部门名称</th><th>部门人数</th><th>管理员</th><th>操作</th></tr></thead><tbody id="departmentBody"></tbody></table></div></div>
+                </div>
+              </div>
+            </section>
+
+            <section id="rolesPanel" role="tabpanel" aria-labelledby="tab-roles" hidden>
+              <div class="panel data-panel">
+                <div class="panel-head"><div><h2 data-anno="6" class="panel-title inline-block">角色管理</h2><p class="panel-note mt-1">配置模块权限和角色成员</p></div><button id="addRole" type="button" class="btn btn-primary"><i data-lucide="plus" class="w-4 h-4"></i><span>添加角色</span></button></div>
+                <div class="workspace-split"><div id="roleList" class="workspace-nav" role="tablist" aria-label="角色列表"></div><div id="roleDetail" class="workspace-detail" role="tabpanel"></div></div>
+              </div>
+            </section>
+
+            <section id="applicationsPanel" role="tabpanel" aria-labelledby="tab-applications" hidden>
+              <div class="panel data-panel">
+                <div class="panel-head"><div><h2 class="panel-title">成员申请</h2><p class="panel-note mt-1">审批加入当前团队的成员申请</p></div></div>
+                <div id="applicationTabs" class="status-tabs" role="tablist" aria-label="申请状态">
+                  <button type="button" class="status-tab" role="tab" aria-selected="true" data-app-status="待审批">待审批</button>
+                  <button type="button" class="status-tab" role="tab" aria-selected="false" tabindex="-1" data-app-status="已通过">已通过</button>
+                  <button type="button" class="status-tab" role="tab" aria-selected="false" tabindex="-1" data-app-status="不通过">不通过</button>
+                </div>
+                <div id="applicationContent" role="tabpanel" class="pt-4"></div>
+              </div>
+            </section>
+
+            <section id="loginsPanel" role="tabpanel" aria-labelledby="tab-logins" hidden>
+              <div class="panel filter-panel mb-4">
+                <div class="filter-flow">
+                  <label class="filter-item"><span class="filter-label">开始日期</span><input id="loginStart" type="date" class="field"></label>
+                  <label class="filter-item"><span class="filter-label">结束日期</span><input id="loginEnd" type="date" class="field"></label>
+                  <label class="filter-item"><span class="filter-label">用户、姓名或终端识别码</span><input id="loginKeyword" type="search" class="field" placeholder="输入关键词" autocomplete="off"></label>
+                  <label class="filter-item"><span class="filter-label">审批状态</span><select id="loginStatus" class="field"><option value="">全部状态</option><option>待处理</option><option>已允许</option><option>已拒绝</option></select></label>
+                  <div class="filter-actions"><button id="loginSearch" type="button" class="btn btn-primary">查询</button><button id="loginReset" type="button" class="btn btn-default">重置</button></div>
+                </div>
+              </div>
+              <div class="panel data-panel">
+                <div class="panel-head"><div><h2 data-anno="7" class="panel-title inline-block">登录请求</h2><p id="loginResultText" class="panel-note mt-1">当前显示全部请求</p></div></div>
+                <div class="table-scroll"><table><thead><tr><th>请求授权用户</th><th>请求授权姓名</th><th>终端识别码</th><th>MAC 地址</th><th>本机网络</th><th>申请时间</th><th>状态</th><th>操作</th></tr></thead><tbody id="loginBody"></tbody></table></div>
+                <div id="loginPagination" class="pt-5" aria-label="登录请求分页"></div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <button id="annoToggle" type="button" class="fixed z-[9997] right-2 top-[120px] h-8 px-3 rounded-full bg-ink-sub text-white shadow flex items-center gap-1.5" aria-pressed="false"><i data-lucide="tags" class="w-4 h-4"></i><span class="text-[12px]">显示标注</span></button>
+  <div id="annoLayer" class="fixed inset-0 pointer-events-none z-[9998]"></div>
+
+  <div id="businessModal" class="modal-mask hidden" aria-hidden="true">
+    <section id="businessModalPanel" data-anno="8" class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="businessModalTitle" tabindex="-1">
+      <header class="modal-header"><h2 id="businessModalTitle" class="text-[16px] font-semibold text-ink-title"></h2><button id="businessModalClose" type="button" class="btn btn-default btn-icon" aria-label="关闭弹窗"><i data-lucide="x" class="w-4 h-4"></i></button></header>
+      <div id="businessModalBody" class="modal-body"></div>
+      <footer class="modal-footer"><button type="button" class="btn btn-default" data-close-business>取消</button><button id="businessModalConfirm" type="button" class="btn btn-primary">确定</button></footer>
+    </section>
+  </div>
+
+  <div id="annoPopup" class="modal-mask hidden !z-[10003]" aria-hidden="true">
+    <section id="annoPanel" class="modal-panel !w-[520px]" role="dialog" aria-modal="true" aria-labelledby="annoTitle" tabindex="-1">
+      <header class="modal-header"><h2 id="annoTitle" class="text-[16px] font-semibold text-ink-title"></h2><button id="annoClose" type="button" class="btn btn-default btn-icon" aria-label="关闭标注说明"><i data-lucide="x" class="w-4 h-4"></i></button></header>
+      <div id="annoDesc" class="modal-body"></div>
+    </section>
+  </div>
+
+  <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+
+  <script src="分页器.js?v=20260814"></script>
+  <script>
+    const $ = selector => document.querySelector(selector);
+    const $$ = selector => Array.from(document.querySelectorAll(selector));
+    const members = [
+      {name:'张小登',account:'177****0832',dept:'默认部门',role:'创始人',status:'正常',phone:'177****0832',login:'2026-08-14 09:42',online:true},
+      {name:'李运营',account:'193****0832',dept:'跨境运营',role:'经理',status:'正常',phone:'193****0832',login:'2026-08-14 09:18',online:true},
+      {name:'王财务',account:'186****2719',dept:'默认部门',role:'财务',status:'正常',phone:'186****2719',login:'2026-08-13 18:06',online:false},
+      {name:'陈配置',account:'155****6280',dept:'跨境运营',role:'环境配置员',status:'正常',phone:'155****6280',login:'2026-08-14 08:55',online:true},
+      {name:'赵执行',account:'133****9051',dept:'内容增长',role:'环境操作员',status:'正常',phone:'133****9051',login:'2026-08-13 16:31',online:false},
+      {name:'孙运营',account:'188****4421',dept:'跨境运营',role:'环境操作员',status:'已禁用',phone:'188****4421',login:'2026-08-01 14:12',online:false},
+      {name:'周内容',account:'159****3708',dept:'内容增长',role:'内容审核员',status:'正常',phone:'159****3708',login:'2026-08-14 09:08',online:true},
+      {name:'吴协作',account:'137****1196',dept:'默认部门',role:'环境操作员',status:'正常',phone:'137****1196',login:'2026-08-12 19:22',online:false},
+      {name:'郑客服',account:'181****5602',dept:'客户成功',role:'经理',status:'正常',phone:'181****5602',login:'2026-08-14 08:34',online:true},
+      {name:'冯增长',account:'136****7741',dept:'内容增长',role:'环境操作员',status:'正常',phone:'136****7741',login:'2026-08-13 20:12',online:false},
+      {name:'褚售后',account:'189****2285',dept:'客户成功',role:'环境操作员',status:'正常',phone:'189****2285',login:'2026-08-13 14:25',online:false},
+      {name:'卫审查',account:'158****3914',dept:'内容增长',role:'内容审核员',status:'正常',phone:'158****3914',login:'2026-08-14 07:50',online:true},
+      {name:'蒋配置',account:'187****6033',dept:'跨境运营',role:'环境配置员',status:'正常',phone:'187****6033',login:'2026-08-12 11:05',online:false},
+      {name:'沈客服',account:'132****8470',dept:'客户成功',role:'环境操作员',status:'已禁用',phone:'132****8470',login:'2026-07-29 10:16',online:false},
+      {name:'韩结算',account:'157****9406',dept:'默认部门',role:'财务',status:'正常',phone:'157****9406',login:'2026-08-13 17:42',online:false},
+      {name:'杨支持',account:'135****2857',dept:'客户成功',role:'环境操作员',status:'正常',phone:'135****2857',login:'2026-08-14 09:31',online:true}
+    ];
+    const roles = [
+      {name:'经理',desc:'负责团队日常运营管理',members:2,permissions:['环境管理','代理管理','团队管理']},
+      {name:'财务',desc:'负责费用与订单查询',members:2,permissions:['费用管理','商城']},
+      {name:'环境配置员',desc:'创建并配置浏览器环境',members:2,permissions:['新建浏览器','环境管理','代理管理']},
+      {name:'环境操作员',desc:'启动和使用已授权环境',members:7,permissions:['环境管理']},
+      {name:'内容审核员',desc:'审核内容工作流与账号资料',members:2,permissions:['环境管理','日志管理']}
+    ];
+    const loginRequests = [
+      {user:'177****0832',name:'李宁',device:'DEV-8F2A-9012',mac:'A4:83:E7:2B:1C:09',network:'192.168.8.18',time:'2026-08-14 09:36',status:'待处理'},
+      {user:'193****0832',name:'周敏',device:'DEV-72BD-3418',mac:'34:6F:24:10:5D:A2',network:'192.168.8.21',time:'2026-08-14 08:52',status:'待处理'},
+      {user:'186****2719',name:'王蕾',device:'DEV-C18E-2204',mac:'58:11:22:9A:76:03',network:'10.10.2.16',time:'2026-08-13 18:21',status:'已允许'},
+      {user:'155****6280',name:'陈凯',device:'DEV-390F-7712',mac:'B0:41:6A:18:2C:7E',network:'192.168.3.42',time:'2026-08-13 16:08',status:'已拒绝'},
+      {user:'133****9051',name:'赵明',device:'DEV-68CE-1209',mac:'80:7D:3A:66:20:14',network:'172.16.0.31',time:'2026-08-13 13:44',status:'已允许'},
+      {user:'188****4421',name:'孙悦',device:'DEV-A026-5517',mac:'44:8A:5B:01:77:C0',network:'192.168.1.64',time:'2026-08-12 20:17',status:'已拒绝'},
+      {user:'159****3708',name:'周岚',device:'DEV-F77D-0083',mac:'9C:2F:9D:03:6A:21',network:'10.2.8.17',time:'2026-08-12 15:30',status:'已允许'},
+      {user:'137****1196',name:'吴晨',device:'DEV-110C-8390',mac:'20:4E:7F:88:13:2A',network:'192.168.8.76',time:'2026-08-11 11:26',status:'待处理'},
+      {user:'181****5602',name:'郑岩',device:'DEV-42AE-7621',mac:'E8:31:CD:4A:20:9B',network:'172.16.4.22',time:'2026-08-10 17:48',status:'已允许'},
+      {user:'136****7741',name:'冯欣',device:'DEV-B8A1-3007',mac:'68:39:22:AB:70:14',network:'192.168.6.33',time:'2026-08-09 09:14',status:'已拒绝'},
+      {user:'189****2285',name:'褚宁',device:'DEV-5E20-9174',mac:'18:7A:93:4D:2A:60',network:'10.8.3.19',time:'2026-08-08 14:32',status:'已允许'},
+      {user:'158****3914',name:'卫晴',device:'DEV-90C4-2268',mac:'7C:8B:CA:14:39:22',network:'192.168.2.58',time:'2026-08-07 19:05',status:'待处理'},
+      {user:'187****6033',name:'蒋越',device:'DEV-76A9-4301',mac:'38:21:10:FA:82:64',network:'172.18.0.12',time:'2026-08-06 10:42',status:'已允许'},
+      {user:'132****8470',name:'沈安',device:'DEV-E305-1182',mac:'50:11:92:6A:8C:07',network:'192.168.9.15',time:'2026-08-05 08:18',status:'已拒绝'}
+    ];
+    const departments = [
+      {name:'默认部门',count:4,manager:'张小登'},
+      {name:'跨境运营',count:4,manager:'李运营'},
+      {name:'内容增长',count:4,manager:'周内容'},
+      {name:'客户成功',count:4,manager:'郑客服'}
+    ];
+    const applications = {
+      '待审批':[{time:'2026-08-14 08:16',name:'黄云',contact:'193****6028',status:'待审批'}],
+      '已通过':[{time:'2026-08-10 13:42',name:'林可',contact:'156****7731',status:'已通过'},{time:'2026-08-08 09:25',name:'何川',contact:'180****1146',status:'已通过'}],
+      '不通过':[{time:'2026-07-28 15:37',name:'曹宁',contact:'133****8021',status:'不通过'}]
+    };
+    const annotations = {
+      1:{title:'团队认证',desc:['展示当前认证状态和可选流程。','原型不采集真实证件、银行卡或人脸信息。']},
+      2:{title:'成员组合筛选',desc:['支持姓名或账号、部门、角色和状态组合查询。','查询和重置都会回到成员列表第一页。']},
+      3:{title:'成员列表',desc:['成员数据覆盖创始人、管理角色、普通角色与禁用状态。','分页支持 10、20、50 条每页以及页码跳转。']},
+      4:{title:'邀请成员',desc:['提供二维码与邀请链接两种演示入口。','重置凭证只更新演示反馈，不生成真实邀请凭证。']},
+      5:{title:'部门管理',desc:['部门标签独立切换并展示对应管理员和人数。','可演示添加子部门、邀请和转移成员。']},
+      6:{title:'角色管理',desc:['按角色查看成员数量、描述和已授予模块权限。','支持配置成员、复制及编辑角色。']},
+      7:{title:'登录请求',desc:['日期、用户信息、终端识别码和状态筛选真实生效。','待处理请求可进入允许或拒绝确认流程。']},
+      8:{title:'业务确认弹窗',desc:['弹窗打开后焦点进入首个可操作控件。','Tab 键限制在弹窗内，Escape 关闭后焦点返回触发位置。']}
+    };
+
+    let memberRows = members.slice();
+    let loginRows = loginRequests.slice();
+    let activeRoleIndex = 0;
+    let modalReturnFocus = null;
+    let modalConfirmHandler = null;
+    let annoReturnFocus = null;
+    let annoReturnId = '';
+    let annoVisible = false;
+    let toastTimer = null;
+
+    function toast(message) {
+      const node = $('#toast');
+      node.textContent = message;
+      node.classList.remove('hidden');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => node.classList.add('hidden'), 1800);
+    }
+    function focusable(root) {
+      return $$('button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])').filter(node => root.contains(node) && !node.closest('[hidden]') && node.getClientRects().length);
+    }
+    function trapFocus(event, root) {
+      if (event.key !== 'Tab') return;
+      const nodes = focusable(root);
+      if (!nodes.length) { event.preventDefault(); root.focus(); return; }
+      const first = nodes[0], last = nodes[nodes.length - 1];
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+      if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+    }
+    function badge(status) {
+      const type = status === '正常' || status === '已允许' || status === '已通过' ? 'success' : status === '待处理' || status === '待审批' ? 'warning' : 'danger';
+      return `<span class="badge badge-${type}">${status}</span>`;
+    }
+
+    const memberPager = new YDPager($('#memberPagination'), {
+      total_count: members.length, current_page:1, page_size:10, page_size_options:[10,20,50], toast,
+      onChange:renderMemberRows
+    });
+    const loginPager = new YDPager($('#loginPagination'), {
+      total_count: loginRequests.length, current_page:1, page_size:10, page_size_options:[10,20,50], toast,
+      onChange:renderLoginRows
+    });
+
+    function renderMemberRows() {
+      const state = memberPager.getState();
+      const start = (state.current_page - 1) * state.page_size;
+      const rows = memberRows.slice(start, start + state.page_size);
+      $('#memberBody').innerHTML = rows.length ? rows.map(member => {
+        const index = members.indexOf(member);
+        return `<tr><td><strong class="text-ink-title">${member.name}</strong><div class="mono text-[11px] text-ink-sub">${member.account}</div></td><td>${member.dept}</td><td>${member.role}</td><td>${badge(member.status)}</td><td class="mono">${member.phone}</td><td class="mono">${member.login}</td><td>${member.online ? '<span class="text-success">在线</span>' : '<span class="text-ink-muted">离线</span>'}</td><td><span class="action-set"><button type="button" class="text-action" data-member-edit="${index}">${member.role === '创始人' ? '查看' : '编辑'}</button>${member.role === '创始人' ? '' : `<button type="button" class="text-action" data-member-transfer="${index}">转移</button>`}</span></td></tr>`;
+      }).join('') : '<tr><td colspan="8"><div class="empty-state">暂无符合条件的成员</div></td></tr>';
+      $('#memberResultText').textContent = `筛选结果 ${memberRows.length} 条`;
+      lucide.createIcons();
+      renderAnnoBadges();
+    }
+    function applyMemberFilters() {
+      const keyword = $('#memberKeyword').value.trim().toLowerCase();
+      const dept = $('#memberDept').value;
+      const role = $('#memberRole').value;
+      const status = $('#memberStatus').value;
+      memberRows = members.filter(item => (!keyword || `${item.name}${item.account}`.toLowerCase().includes(keyword)) && (!dept || item.dept === dept) && (!role || item.role === role) && (!status || item.status === status));
+      memberPager.setState({total_count:memberRows.length,current_page:1},{silent:true});
+      renderMemberRows();
+    }
+
+    function renderLoginRows() {
+      const state = loginPager.getState();
+      const start = (state.current_page - 1) * state.page_size;
+      const rows = loginRows.slice(start, start + state.page_size);
+      $('#loginBody').innerHTML = rows.length ? rows.map((item, index) => {
+        const sourceIndex = loginRequests.indexOf(item);
+        const actions = item.status === '待处理' ? `<span class="action-set"><button type="button" class="text-action" data-login-action="allow" data-login-index="${sourceIndex}">允许</button><button type="button" class="text-action danger" data-login-action="deny" data-login-index="${sourceIndex}">拒绝</button></span>` : '<span class="text-ink-muted">已处理</span>';
+        return `<tr><td class="mono">${item.user}</td><td>${item.name}</td><td class="mono">${item.device}</td><td class="mono">${item.mac}</td><td class="mono">${item.network}</td><td class="mono">${item.time}</td><td>${badge(item.status)}</td><td>${actions}</td></tr>`;
+      }).join('') : '<tr><td colspan="8"><div class="empty-state">暂无符合条件的登录请求</div></td></tr>';
+      $('#loginResultText').textContent = `筛选结果 ${loginRows.length} 条`;
+      lucide.createIcons();
+      renderAnnoBadges();
+    }
+    function applyLoginFilters() {
+      const start = $('#loginStart').value;
+      const end = $('#loginEnd').value;
+      if (start && end && start > end) { $('#loginStart').classList.add('is-error'); $('#loginStart').focus(); toast('开始日期不能晚于结束日期'); return; }
+      $('#loginStart').classList.remove('is-error');
+      const keyword = $('#loginKeyword').value.trim().toLowerCase();
+      const status = $('#loginStatus').value;
+      loginRows = loginRequests.filter(item => {
+        const day = item.time.slice(0,10);
+        return (!start || day >= start) && (!end || day <= end) && (!keyword || `${item.user}${item.name}${item.device}`.toLowerCase().includes(keyword)) && (!status || item.status === status);
+      });
+      loginPager.setState({total_count:loginRows.length,current_page:1},{silent:true});
+      renderLoginRows();
+    }
+
+    function switchSection(section, focusTab = false) {
+      $$('[data-section]').forEach(tab => {
+        const active = tab.dataset.section === section;
+        tab.setAttribute('aria-selected', String(active));
+        tab.tabIndex = active ? 0 : -1;
+        if (active && focusTab) tab.focus();
+      });
+      ['members','departments','roles','applications','logins'].forEach(name => {
+        const panel = $(`#${name}Panel`);
+        const active = name === section;
+        panel.hidden = !active;
+        panel.classList.toggle('hidden', !active);
+      });
+      renderAnnoBadges();
+    }
+    $('#sectionTabs').addEventListener('click', event => {
+      const tab = event.target.closest('[data-section]');
+      if (tab) switchSection(tab.dataset.section);
+    });
+    $('#sectionTabs').addEventListener('keydown', event => {
+      if (!['ArrowDown','ArrowUp','ArrowRight','ArrowLeft','Home','End'].includes(event.key)) return;
+      event.preventDefault();
+      const tabs = $$('[data-section]');
+      const current = tabs.indexOf(document.activeElement);
+      let next = current;
+      if (event.key === 'Home') next = 0;
+      else if (event.key === 'End') next = tabs.length - 1;
+      else if (event.key === 'ArrowDown' || event.key === 'ArrowRight') next = (current + 1) % tabs.length;
+      else next = (current - 1 + tabs.length) % tabs.length;
+      switchSection(tabs[next].dataset.section, true);
+    });
+
+    function renderDepartment(name = '默认部门') {
+      $$('[data-dept-tab]').forEach(button => button.setAttribute('aria-selected', String(button.dataset.deptTab === name)));
+      const item = departments.find(dept => dept.name === name);
+      $('#departmentBody').innerHTML = `<tr><td><strong>${item.name}</strong></td><td class="mono">${item.count}</td><td>${item.manager}</td><td><span class="action-set"><button type="button" class="text-action" data-dept-action="invite">邀请成员</button><button type="button" class="text-action" data-dept-action="transfer">转移成员</button></span></td></tr>`;
+    }
+    $$('[data-dept-tab]').forEach(button => button.addEventListener('click', () => renderDepartment(button.dataset.deptTab)));
+
+    function renderRoles() {
+      $('#roleList').innerHTML = roles.map((role,index) => `<button type="button" class="subnav-button" role="tab" aria-selected="${index === activeRoleIndex}" data-role-index="${index}"><span>${role.name}</span><span class="mono">${role.members}</span></button>`).join('');
+      const role = roles[activeRoleIndex];
+      $('#roleDetail').innerHTML = `<div class="flex flex-wrap items-start justify-between gap-4"><div><h3 class="text-[17px] font-semibold text-ink-title">${role.name}</h3><p class="text-ink-sub mt-1">${role.desc}</p></div><div class="flex flex-wrap gap-2"><button type="button" class="btn btn-default" data-role-action="copy">复制角色</button><button type="button" class="btn btn-primary" data-role-action="members">配置成员</button></div></div><div class="mt-6"><h4 class="font-semibold text-ink-title">已授予模块权限</h4><div class="flex flex-wrap gap-2 mt-3">${role.permissions.map(permission => `<span class="badge text-primary border-primary bg-primary-bg">${permission}</span>`).join('')}</div></div><button type="button" class="text-action mt-5" data-role-action="edit">编辑角色与权限</button>`;
+      lucide.createIcons();
+    }
+    $('#roleList').addEventListener('click', event => {
+      const button = event.target.closest('[data-role-index]');
+      if (!button) return;
+      activeRoleIndex = Number(button.dataset.roleIndex);
+      renderRoles();
+    });
+
+    function renderApplications(status = '待审批') {
+      $$('[data-app-status]').forEach(tab => {
+        const active = tab.dataset.appStatus === status;
+        tab.setAttribute('aria-selected', String(active));
+        tab.tabIndex = active ? 0 : -1;
+      });
+      const rows = applications[status];
+      $('#applicationContent').innerHTML = rows.length ? `<div class="table-scroll !border-t-0"><table class="!min-w-[680px]"><thead><tr><th>申请时间</th><th>真实姓名</th><th>联系方式</th><th>状态</th><th>操作</th></tr></thead><tbody>${rows.map((item,index) => `<tr><td class="mono">${item.time}</td><td>${item.name}</td><td class="mono">${item.contact}</td><td>${badge(item.status)}</td><td>${status === '待审批' ? `<span class="action-set"><button type="button" class="text-action" data-application="approve" data-application-index="${index}">通过</button><button type="button" class="text-action danger" data-application="reject" data-application-index="${index}">拒绝</button></span>` : '<span class="text-ink-muted">已处理</span>'}</td></tr>`).join('')}</tbody></table></div>` : '<div class="empty-state">暂无该状态的成员申请</div>';
+    }
+    $('#applicationTabs').addEventListener('click', event => {
+      const tab = event.target.closest('[data-app-status]');
+      if (tab) renderApplications(tab.dataset.appStatus);
+    });
+    $('#applicationTabs').addEventListener('keydown', event => {
+      if (!['ArrowRight','ArrowLeft','Home','End'].includes(event.key)) return;
+      event.preventDefault();
+      const tabs = $$('[data-app-status]');
+      const current = tabs.indexOf(document.activeElement);
+      const next = event.key === 'Home' ? 0 : event.key === 'End' ? tabs.length - 1 : event.key === 'ArrowRight' ? (current + 1) % tabs.length : (current - 1 + tabs.length) % tabs.length;
+      renderApplications(tabs[next].dataset.appStatus);
+      tabs[next].focus();
+    });
+
+    function openBusinessModal({title, body, confirmText = '确定', danger = false, onConfirm = null}) {
+      modalReturnFocus = document.activeElement;
+      modalConfirmHandler = onConfirm;
+      $('#businessModalTitle').textContent = title;
+      $('#businessModalBody').innerHTML = body;
+      $('#businessModalConfirm').textContent = confirmText;
+      $('#businessModalConfirm').className = danger ? 'btn btn-danger' : 'btn btn-primary';
+      $('#businessModal').classList.remove('hidden');
+      $('#businessModal').setAttribute('aria-hidden','false');
+      lucide.createIcons();
+      renderAnnoBadges();
+      requestAnimationFrame(() => {
+        const firstControl = $('#businessModalBody').querySelector('input:not([disabled]),select:not([disabled]),textarea:not([disabled]),button:not([disabled]),a[href]') || $('#businessModalClose');
+        if (firstControl) firstControl.focus();
+        else $('#businessModalPanel').focus();
+      });
+    }
+    function closeBusinessModal(restore = true) {
+      if ($('#businessModal').classList.contains('hidden')) return;
+      $('#businessModal').classList.add('hidden');
+      $('#businessModal').setAttribute('aria-hidden','true');
+      $('#businessModalBody').innerHTML = '';
+      modalConfirmHandler = null;
+      renderAnnoBadges();
+      if (restore) modalReturnFocus?.focus();
+    }
+    $('#businessModalClose').addEventListener('click', () => closeBusinessModal());
+    $('[data-close-business]').addEventListener('click', () => closeBusinessModal());
+    $('#businessModal').addEventListener('click', event => { if (event.target === event.currentTarget) closeBusinessModal(); });
+    $('#businessModalConfirm').addEventListener('click', () => {
+      const handler = modalConfirmHandler;
+      if (handler && handler() === false) return;
+      closeBusinessModal();
+      toast('演示操作已完成，未修改真实团队数据');
+    });
+
+    function requiredValue(selector, message) {
+      const field = $(selector);
+      if (field && !field.value.trim()) { field.classList.add('is-error'); field.focus(); toast(message); return false; }
+      field?.classList.remove('is-error');
+      return true;
+    }
+    function inviteModal() {
+      openBusinessModal({title:'邀请成员',confirmText:'完成',body:`<div class="choice-grid"><div class="choice-block text-center"><div role="img" aria-label="演示二维码，不可用于真实扫码" class="w-28 h-28 mx-auto bg-page text-ink-sub flex items-center justify-center"><i data-lucide="qr-code" class="w-14 h-14"></i></div><h3 class="font-semibold text-ink-title mt-3">扫描二维码邀请</h3><p class="text-[12px] text-ink-sub mt-1">演示二维码，不可用于真实加入</p><button type="button" class="btn btn-default mt-3" data-reset-invite>重置二维码</button></div><div class="choice-block"><h3 class="font-semibold text-ink-title">通过链接邀请</h3><label class="form-item mt-3"><span>演示邀请链接</span><textarea id="inviteLink" class="field mono text-[11px]" readonly>https://www.yunlogin.com/invite.html?code=demo_masked</textarea></label><div class="flex flex-wrap gap-2 mt-3"><button type="button" id="copyInvite" class="btn btn-default">复制链接</button><button type="button" class="btn btn-default" data-reset-invite>重置链接</button></div></div></div><p class="text-ink-sub mt-4">成员提交申请后，需要在成员申请中审批通过。</p>`});
+    }
+    function roleEditor(isNew) {
+      const role = isNew ? {name:'',desc:'',permissions:[]} : roles[activeRoleIndex];
+      const modules = ['新建浏览器','环境管理','代理管理','插件管理','费用管理','商城','回收站','窗口同步','API','RPA','团队管理','账号管理','分享转移','日志管理','账号设置'];
+      openBusinessModal({title:isNew ? '添加角色' : '编辑角色',confirmText:'保存角色',body:`<div class="form-grid"><label class="form-item"><span>角色名称</span><input id="requiredField" class="field" value="${role.name}" placeholder="请输入角色名称"></label><label class="form-item"><span>归属角色组</span><select class="field"><option>默认角色组</option><option>系统角色组</option></select></label><label class="form-item md:col-span-2"><span>角色描述</span><input class="field" value="${role.desc}" placeholder="请输入角色描述"></label></div><fieldset class="mt-5"><legend class="font-semibold text-ink-title">模块权限</legend><div class="permission-grid mt-3">${modules.map(module => `<label class="check-row"><input type="checkbox" aria-label="授予${module}权限" ${role.permissions.includes(module) ? 'checked' : ''}><span>${module}</span></label>`).join('')}</div></fieldset>`,onConfirm:() => requiredValue('#requiredField','请输入角色名称')});
+    }
+
+    document.addEventListener('click', event => {
+      const edit = event.target.closest('[data-member-edit]');
+      if (edit) {
+        const member = members[Number(edit.dataset.memberEdit)];
+        openBusinessModal({title:member.role === '创始人' ? '查看成员' : '编辑成员',confirmText:member.role === '创始人' ? '关闭' : '保存',body:`<div class="form-grid"><label class="form-item"><span>昵称</span><input class="field" value="${member.name}" ${member.role === '创始人' ? 'readonly' : ''}></label><label class="form-item"><span>所在部门</span><select class="field" ${member.role === '创始人' ? 'disabled' : ''}><option>${member.dept}</option><option>默认部门</option><option>跨境运营</option><option>内容增长</option><option>客户成功</option></select></label><label class="form-item"><span>角色</span><select class="field" ${member.role === '创始人' ? 'disabled' : ''}><option>${member.role}</option><option>经理</option><option>财务</option><option>环境操作员</option></select></label>${member.role === '创始人' ? '<p class="text-warning md:col-span-2">创始人不可被普通管理员禁用、删除或降级。</p>' : `<label class="check-row self-end"><input type="checkbox" aria-label="启用成员" ${member.status === '正常' ? 'checked' : ''}><span>启用成员</span></label>`}</div>`});
+      }
+      const transfer = event.target.closest('[data-member-transfer]');
+      if (transfer || event.target.closest('[data-dept-action="transfer"]')) openBusinessModal({title:'转移成员',confirmText:'确认转移',body:'<label class="form-item"><span>目标部门</span><select id="requiredField" class="field"><option value="">请选择目标部门</option><option>默认部门</option><option>跨境运营</option><option>内容增长</option><option>客户成功</option></select></label><p class="text-warning mt-3">原部门管理员转至新部门后，将自动获得新部门管理员身份。</p>',onConfirm:() => requiredValue('#requiredField','请选择目标部门')});
+      if (event.target.closest('[data-dept-action="invite"]')) inviteModal();
+      const roleAction = event.target.closest('[data-role-action]');
+      if (roleAction?.dataset.roleAction === 'copy') toast('已创建角色副本，当前为演示数据');
+      if (roleAction?.dataset.roleAction === 'members') openBusinessModal({title:'配置角色成员',confirmText:'保存配置',body:`<fieldset><legend class="font-semibold text-ink-title mb-3">选择成员</legend><div class="space-y-2">${members.slice(1,7).map(member => `<label class="check-row"><input type="checkbox" aria-label="选择成员${member.name}"><span>${member.name} · ${member.dept}</span></label>`).join('')}</div></fieldset>`});
+      if (roleAction?.dataset.roleAction === 'edit') roleEditor(false);
+      const application = event.target.closest('[data-application]');
+      if (application?.dataset.application === 'approve') openBusinessModal({title:'通过成员申请',confirmText:'确认通过',body:'<div class="form-grid"><label class="form-item"><span>所在部门</span><select id="requiredField" class="field"><option value="">请选择部门</option><option>默认部门</option><option>跨境运营</option><option>内容增长</option><option>客户成功</option></select></label><label class="form-item"><span>角色</span><select class="field"><option>环境操作员</option><option>经理</option></select></label></div>',onConfirm:() => requiredValue('#requiredField','请选择部门')});
+      if (application?.dataset.application === 'reject') openBusinessModal({title:'拒绝成员申请',confirmText:'确认拒绝',danger:true,body:'<label class="form-item"><span>拒绝原因</span><textarea id="requiredField" class="field" placeholder="请输入拒绝原因"></textarea></label>',onConfirm:() => requiredValue('#requiredField','请输入拒绝原因')});
+      const loginAction = event.target.closest('[data-login-action]');
+      if (loginAction) {
+        const item = loginRequests[Number(loginAction.dataset.loginIndex)];
+        const allow = loginAction.dataset.loginAction === 'allow';
+        openBusinessModal({title:allow ? '允许登录请求' : '拒绝登录请求',confirmText:allow ? '确认允许' : '确认拒绝',danger:!allow,body:`<dl class="grid grid-cols-[120px_1fr] gap-y-3"><dt class="text-ink-sub">请求用户</dt><dd>${item.user} · ${item.name}</dd><dt class="text-ink-sub">终端识别码</dt><dd class="mono">${item.device}</dd><dt class="text-ink-sub">MAC 地址</dt><dd class="mono">${item.mac}</dd><dt class="text-ink-sub">本机网络</dt><dd class="mono">${item.network}</dd></dl><p class="text-ink-sub mt-4">确认后仅更新演示反馈，不会改变真实设备授权。</p>`});
+      }
+      if (event.target.closest('#copyInvite')) { navigator.clipboard?.writeText($('#inviteLink').value); toast('演示邀请链接已复制'); }
+      if (event.target.closest('[data-reset-invite]')) toast('演示邀请凭证已重置');
+    });
+
+    $('#memberSearch').addEventListener('click', applyMemberFilters);
+    $('#memberKeyword').addEventListener('keydown', event => { if (event.key === 'Enter') applyMemberFilters(); });
+    $('#memberReset').addEventListener('click', () => { $('#memberKeyword').value = ''; $('#memberDept').value = ''; $('#memberRole').value = ''; $('#memberStatus').value = ''; applyMemberFilters(); });
+    $('#loginSearch').addEventListener('click', applyLoginFilters);
+    $('#loginKeyword').addEventListener('keydown', event => { if (event.key === 'Enter') applyLoginFilters(); });
+    $('#loginReset').addEventListener('click', () => { $('#loginStart').value = ''; $('#loginEnd').value = ''; $('#loginKeyword').value = ''; $('#loginStatus').value = ''; $('#loginStart').classList.remove('is-error'); applyLoginFilters(); });
+    $('#inviteBtn').addEventListener('click', inviteModal);
+    $('#certBtn').addEventListener('click', () => openBusinessModal({title:'团队实名认证',confirmText:'知道了',body:'<div class="p-3 rounded bg-warning-bg text-warning mb-4">原型不采集姓名、身份证、企业代码、银行卡或人脸信息。</div><div class="space-y-4"><div><h3 class="font-semibold text-ink-title">个人认证</h3><p class="text-ink-sub mt-1">信息认证、刷脸认证、认证结果</p></div><div><h3 class="font-semibold text-ink-title">企业法人认证</h3><p class="text-ink-sub mt-1">企业资料、法人身份校验、法人人脸认证</p></div><div><h3 class="font-semibold text-ink-title">企业对公转账认证</h3><p class="text-ink-sub mt-1">企业资料、对公银行验证、认证结果</p></div></div>'}));
+    $('#addDept').addEventListener('click', () => openBusinessModal({title:'添加子部门',confirmText:'确定添加',body:'<div class="form-grid"><label class="form-item"><span>上级部门</span><select class="field"><option>云登运营团队</option><option>默认部门</option><option>跨境运营</option></select></label><label class="form-item"><span>部门名称</span><input id="requiredField" class="field" placeholder="请输入部门名称"></label></div>',onConfirm:() => requiredValue('#requiredField','请输入部门名称')}));
+    $('#addRole').addEventListener('click', () => roleEditor(true));
+
+    function renderAnnoBadges() {
+      const layer = $('#annoLayer');
+      layer.innerHTML = '';
+      if (!annoVisible || !$('#annoPopup').classList.contains('hidden')) return;
+      const scope = $('#businessModal').classList.contains('hidden') ? document : $('#businessModalPanel');
+      scope.querySelectorAll('[data-anno]').forEach(target => {
+        if (!target.getClientRects().length) return;
+        const rect = target.getBoundingClientRect();
+        if (rect.bottom < 0 || rect.top > innerHeight) return;
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'anno-badge';
+        button.textContent = target.dataset.anno;
+        button.style.left = `${Math.max(8,Math.min(innerWidth - 28,rect.right - 10))}px`;
+        button.style.top = `${Math.max(8,Math.min(innerHeight - 28,rect.top - 10))}px`;
+        button.setAttribute('aria-label',`查看交互说明 ${target.dataset.anno}`);
+        button.setAttribute('aria-haspopup','dialog');
+        button.dataset.annoId = target.dataset.anno;
+        button.addEventListener('click', () => showAnnoPopup(target.dataset.anno, button));
+        layer.appendChild(button);
+      });
+    }
+    function showAnnoPopup(id, trigger) {
+      const item = annotations[id];
+      if (!item) return;
+      annoReturnFocus = trigger || document.activeElement;
+      annoReturnId = String(id);
+      $('#annoTitle').textContent = `${id}. ${item.title}`;
+      $('#annoDesc').innerHTML = `<ul class="anno-list">${item.desc.map(text => `<li>${text}</li>`).join('')}</ul>`;
+      $('#annoPopup').classList.remove('hidden');
+      $('#annoPopup').setAttribute('aria-hidden','false');
+      renderAnnoBadges();
+      requestAnimationFrame(() => $('#annoClose').focus());
+    }
+    function closeAnnoPopup() {
+      if ($('#annoPopup').classList.contains('hidden')) return;
+      $('#annoPopup').classList.add('hidden');
+      $('#annoPopup').setAttribute('aria-hidden','true');
+      renderAnnoBadges();
+      const replacementBadge = $(`#annoLayer [data-anno-id="${annoReturnId}"]`);
+      const focusTarget = replacementBadge || (annoReturnFocus?.isConnected ? annoReturnFocus : $('#annoToggle'));
+      focusTarget?.focus();
+    }
+    $('#annoClose').addEventListener('click', closeAnnoPopup);
+    $('#annoPopup').addEventListener('click', event => { if (event.target === event.currentTarget) closeAnnoPopup(); });
+    $('#mainContent').addEventListener('scroll', renderAnnoBadges, {passive:true});
+    window.addEventListener('resize', renderAnnoBadges);
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape') {
+        if (!$('#annoPopup').classList.contains('hidden')) { event.preventDefault(); closeAnnoPopup(); return; }
+        if (!$('#businessModal').classList.contains('hidden')) { event.preventDefault(); closeBusinessModal(); return; }
+      }
+      if (!$('#annoPopup').classList.contains('hidden')) trapFocus(event,$('#annoPanel'));
+      else if (!$('#businessModal').classList.contains('hidden')) trapFocus(event,$('#businessModalPanel'));
+    });
+
+    renderDepartment();
+    renderRoles();
+    renderApplications();
+    renderMemberRows();
+    renderLoginRows();
+    lucide.createIcons();
+  </script>
+  <script src="标注交互.js?v=20260814"></script>
+
+</body>
+</html>

@@ -1,16 +1,16 @@
 # claude.md — 原型页面制作行为约束（Claude Code 必须严格遵守）
 
-> 本文件规定 Claude Code **如何工作、交付什么、遵守什么红线**。
+> 本文件是 Claude Code 的兼容性镜像；项目合并后的主规则源为 `AGENTS.md`。两者冲突时以 `AGENTS.md` 为准，工程流程变化不得只写入本镜像。
 > 视觉规范（颜色/字号/组件外观）见 `design.md`，本文件**不重复视觉 token**，只要求"引用 design.md，不自造"。
 > 页面内容与交互见各模块 `PRD.md`。
-> 三者关系：**claude.md 管"怎么做" · design.md 管"长什么样" · PRD 管"这个页面做什么"**。制作任一页面时三份同时读。
+> 三者关系：**AGENTS.md 管"怎么做" · design.md 管"长什么样" · PRD 管"这个页面做什么"**。制作任一页面时按项目主规则执行。
 
 ---
 
 ## 一、角色与目标
 
 ## 你是一名**资深前端工程师**，为“云登 / YunLogin PC 端”项目制作**高保真 HTML 原型页面**，交付给开发人员用作视觉+交互还原参考，部分代码可被直接复用。代码必须**规范、语义化、可维护**，不是一次性 demo。
-**每个页面的交付标准**：一个自包含、可独立预览、响应式、带真实感 mock 数据、带基础交互、带交互标注的 `.html` 文件。
+**每个页面的交付标准**：一个自包含、可通过统一系统框架预览、响应式、带真实感 mock 数据、带基础交互、带交互标注的 `.html` 文件。业务模块文件直接双击时必须自动回到系统框架，不得以第二套 App Shell 独立运行。
 
 ## 二、技术栈（固定，不得擅自更换）
 
@@ -22,7 +22,7 @@
 | 图标  | **Lucide via CDN**（首选），必要时 Font Awesome CDN。**禁用 emoji 代替图标**     |
 | 图表  | **Chart.js via CDN**（统一图表库），配色取 `design.md` 语义色。必要时可用 ECharts CDN |
 | 脚本  | **原生 JavaScript（ES6+）**。**不使用 Vue / React / jQuery 等框架**          |
-| 字体  | 按 `design.md` 引入（系统字体 + JetBrains Mono）                           |
+| 字体  | 按 `design.md` 引入（系统字体 PingFang SC / Microsoft YaHei + JetBrains Mono） |
 
 
 > **关于框架**：本项目原型要求"单文件自包含、双击即预览、无构建步骤"，因此**不使用 Vue/React**（它们需要构建，与单文件预览冲突）。原型交互用原生 JS 实现。若后续改为工程化交付再另行约定。
@@ -32,6 +32,7 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/lucide@latest"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="stylesheet" href="../src/assets/styles/global.css?v=20260821a">
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <!-- 页面底部：lucide.createIcons(); -->
 ```
@@ -56,13 +57,23 @@
 
 ## 四、单文件自包含（强制）
 
-**每个页面 = 一个独立** `.html`，双击浏览器即可预览，无需构建/本地服务器/外部本地资源（CDN 除外）。
+**每个页面 = 一个独立** `.html`，无需构建或本地服务器；但后台业务模块的运行入口统一为 `Prototype/系统框架.html?page=<key>`。直接双击业务模块文件时，应使用相对路径自动回到对应的系统框架 URL，再由 Router Outlet 加载该模块，因此“可独立预览”不等于“可独立创建 App Shell”。
 
-- CSS：Tailwind CDN + 页面内 `<style>`；
-- JS：页面内 `<script>`；
+- CSS：Tailwind CDN + 页面内 `<style>`；允许按页面需要引用 `Prototype/公共导航.css`、`Prototype/分页器.css`、`Prototype/筛选布局.css`，以及共享字体源 `src/assets/styles/global.css`（后台页由公共导航层统一引入，独立页直接引用）；
+- JS：页面内 `<script>`；允许按页面需要引用 `Prototype/公共导航.js`、`Prototype/分页器.js`、`Prototype/标注交互.js`、`Prototype/侧栏交互.js`；
 - 数据：mock data 内联（见第六章）；
 - 图片：用占位（色块/图标/`https://placehold.co`），不依赖本地图片。
-**禁止**：外部本地 `.css`/`.js`/图片依赖、构建工具、模块 import。
+**禁止**：白名单以外的本地 `.css`/`.js`/图片依赖、构建工具、模块 import。公共层文件属于单文件自包含规则的唯一例外，必须使用项目列明的文件名并统一缓存参数；不得复制其实现到页面内形成分叉。
+
+### 4.1 SystemFrame 与模块运行模式（强制）
+
+- `系统框架.html` 是唯一顶层运行外壳（SystemFrame），独占 BrowserChrome、TopBar、Sidebar、全局智能助手、全局 Toast / Popover / Dialog / Drawer 和全局标注开关；
+- 除 `index.html`、`设计系统.html`、`登录.html` 外，所有后台业务文件都作为 Router Outlet 的 iframe 子文档加载，标准地址为 `系统框架.html?page=<key>`；
+- 业务模块只负责业务内容、业务弹层、业务 Mock 数据与业务标注，不得再次创建 BrowserChrome、TopBar、Sidebar、全局助手或全局弹层；
+- `公共导航.js` 在顶层 SystemFrame 中负责壳层和路由；检测到页面处于 iframe 嵌入模式时，只保留模块所需的公共样式、图标、分页等增强，不得调用壳层创建逻辑或生成任何全局壳层节点；
+- 所有后台业务模块必须在 `</head>` 前按“`公共导航.css` 在前、`公共导航.js` 在后”的顺序直接引用同一缓存版本；公共脚本完成直开跳转或嵌入适配后再显示页面，不得把公共资源移回 `<body>` 底部造成旧壳闪现；
+- 业务文件被顶层直接打开时，必须将自身映射为 `<key>` 并跳转到相邻的 `系统框架.html?page=<key>`；处于目标 SystemFrame iframe 内时不得再次跳转；
+- 相对路径、查询参数解析和 iframe `src` 必须兼容 `file://`，不得把本地服务器作为必要前提。
 
 ---
 
@@ -81,7 +92,7 @@
 | hover 态                     | 按钮、行、可点元素有反馈            |
 | 筛选 / 搜索                     | 前端 mock 过滤生效            |
 | 下拉 / 日期                     | 可展开选择                   |
-| 页面跳转                        | 按钮/菜单跳转对应 `.html`（见第八章） |
+| 页面跳转                        | 由 SystemFrame 更新 `?page=<key>` 并加载对应模块；业务页直开自动回框架（见第八章） |
 | 组件行为遵循 `design.md` 的组件外观标准。 |                         |
 
 
@@ -105,7 +116,7 @@
 
 **核心思路**：标注徽标与页面 DOM 完全解耦——页面元素只需标记 `data-anno="N"`，徽标通过 `getBoundingClientRect()` 动态计算位置，统一渲染在 `<body>` 级独立图层。彻底解决 `overflow:hidden` 裁剪、Flex/Grid 布局错位、z-index 嵌套等问题。
 
-> 框架模板中已内置完整 Portal 标注系统（`#annoLayer` + `#annoToggle` + `#annoPopup` + `renderAnnoBadges()`），新页面复制框架后只需做两件事：① 在功能元素上加 `data-anno`；② 在 `annotations` 对象中填说明。
+> SystemFrame 与每个 ModuleFrame 文档各自维护独立的 Portal 标注层（`#annoLayer` + `#annoPopup` + `renderAnnoBadges()`）。新增业务页面时只接入模块级标注能力：① 在业务功能元素上加 `data-anno`；② 在模块自己的 `annotations` 对象中填说明；不得为此复制 SystemFrame 壳层。
 
 
 
@@ -239,10 +250,10 @@ annotations = { 1:{...}, 2:{...}, 3:{...}, 4:{...} }
 
 ### 7.8 新页面接入步骤
 
-1. 复制框架模板，页面内容已包含 Portal 图层和 JS（含智能定位 `resolveAnnoTarget`）
-2. 在**具体功能元素**上添加 `data-anno="N"`，块级元素加 `inline-block`
-3. 在 `annotations` 对象中填入对应的标题和说明
-4. 徽标自动精确定位，不受 `overflow`/`z-index`/全宽容器影响
+1. 从现有模块页面或公共标注脚本接入模块级 Portal 图层与 JS（含智能定位 `resolveAnnoTarget`），不复制 BrowserChrome、TopBar、Sidebar 等壳层 DOM
+2. 在**具体业务功能元素**上添加 `data-anno="N"`，块级元素加 `inline-block`
+3. 在模块自己的 `annotations` 对象中填入对应标题和说明，编号从 1 连续排列
+4. 在 iframe 内验证徽标准确定位、业务弹层作用域正常，且不与父级 SystemFrame 全局标注混用
 
 ### 7.9 抽屉/弹窗标注作用域（强制，红线）
 
@@ -309,6 +320,13 @@ function closeModal() {
 
 > **注意**：`renderAnnoBadges()` 已内置栈感知——栈非空时 `querySelectorAll('[data-anno]')` 仅查询栈顶容器内的元素，页面级徽标自动不渲染。无需额外过滤逻辑。
 
+### 7.10 SystemFrame 与 iframe 标注边界（强制）
+
+- SystemFrame 的 BrowserChrome、TopBar、Sidebar、全局助手和全局弹层只由顶层文档标注；模块 iframe 不重复标注这些元素；
+- iframe 内只保留业务标注，编号从 1 开始连续排列；业务弹层只在 iframe 内管理标注作用域；
+- 父文档切换 `?page=<key>`、前进、后退、刷新或恢复菜单高亮时，应等待 iframe 加载完成后重新计算当前模块标注；iframe 重载不得重复生成壳层；
+- 业务模块请求外层路由时传递稳定 `<key>`，不得在 iframe 内嵌套另一个 `系统框架.html`；`file://` 下不能假设消息 origin 非空。
+
 ---
 
 
@@ -323,6 +341,7 @@ function closeModal() {
 /Prototype
   ├─ index.html            ← 入口/导航页（汇总所有原型，必做）
   ├─ 登录.html              ← 登录页（独立页面，无侧边栏）
+  ├─ 设计系统.html          ← 设计规范页（独立展示，不进入业务壳）
   ├─ 系统框架.html           ← **唯一系统框架模板**（所有模块页面的结构基准）
   ├─ 成员管理.html           ← 成员管理
   ├─ 部门管理.html           ← 部门管理
@@ -334,65 +353,63 @@ function closeModal() {
   └─ ...
 ```
 
-**页面布局（强制）**：`Prototype/系统框架.html` 是云登平台所有模块页面的唯一系统框架模板。除 `index.html` 和 `登录.html` 外，所有后台页面必须复用该框架，仅在内容承载区开发模块内容，不得自行重建或分叉系统壳层。
+**页面布局（强制）**：`Prototype/系统框架.html` 是云登平台所有模块页面的唯一运行外壳。除 `index.html`、`设计系统.html` 和 `登录.html` 外，所有后台页面都只提供 iframe 业务文档；用户访问 `系统框架.html?page=<key>` 时由 Router Outlet 加载模块，直接访问业务文件时自动回到该 URL。业务文件不得自行重建或分叉系统壳层。
 
 - **顶栏**（56px）：左侧 Logo + 系统名（点击回首页），右侧任务列表/消息中心（红色角标）/账号信息图标
 - **侧边栏**（220px）：可展开菜单，当前页高亮（`active-l1` 蓝色字+图标 / `active-l2` 蓝底蓝字），移动端可折叠。菜单交互见下方「侧边栏菜单交互规范」
-- **主内容区**（flex-1，`bg-page` 背景）：卡片 `bg-white rounded-lg border` + `p-5 md:p-6`
-- 文件名用**中文语义化命名**（如 `成员管理.html`、`订单看板.html`）；
-- 左侧菜单必须配置真实可用的页面入口与跳转路由，页面间使用 `<a href>` 或 JS 跳转互通；
-- 后台各页共用侧边导航，且当前路由唯一高亮。
+- **主内容区**（flex-1，`bg-page` 背景）：SystemFrame 只提供无边框、无额外圆角和外层内边距的 iframe Router Outlet；模块在自身文档内按 `design.md` 组织筛选区、数据区、表格、表单控件与业务弹层
+- **页面级业务容器**：必须占满模块业务根的可用内容宽度（`w-full max-w-none mx-0`），不得使用页面级 `max-width` + `mx-auto` 将整个页面收窄居中；表单、协议正文、上传流程和弹窗等内部功能区域可按业务需要局部限宽
+- 文件名用**中文语义化命名**，并在公共路由表中登记稳定的 `<key>`；
+- 左侧菜单只由 SystemFrame 渲染，叶子菜单更新 `系统框架.html?page=<key>`；
+- 当前高亮、面包屑、BrowserChrome 标签标题与 iframe `src` 必须由同一个 `<key>` 派生。
 
 
 
-### 8.1.1 侧边栏菜单交互规范（强制）
+### 8.1.1 SystemFrame 路由与侧边栏交互规范（强制）
 
-> `Prototype/公共导航.js` 与 `Prototype/公共导航.css` 是侧栏、顶部导航和独立页面路由的公共实现。所有 HTML 统一引用同一缓存版本；页面只声明业务主体，不得复制或另行修改公共导航行为。
+> `Prototype/系统框架.html` 是唯一壳层宿主；`Prototype/公共导航.js` 与 `Prototype/公共导航.css` 提供统一路由注册、壳层交互和嵌入模式增强。
 >
 >
-> | 操作           | 行为                      |
-> | ------------ | ----------------------- |
-> | 点击无子菜单的一级菜单  | 选中高亮（`active-l1`）+ 导航跳转 |
-> | 点击有子菜单的一级菜单  | 展开/收起子菜单（仅切换，不导航）       |
-> | 已展开的一级菜单再次点击 | 收起子菜单                   |
-> | 点击二级菜单       | 二级菜单 + 所属一级菜单双高亮 + 导航   |
-> | 点击已选中的二级菜单   | 重新跳转                    |
-> | 展开其他一级菜单     | 自动收起当前展开的子菜单（互斥展开）      |
-> | **HTML 约定**： |                         |
->
+> | 操作 | 行为 |
+> | --- | --- |
+> | 点击叶子菜单 | 更新顶层 `?page=<key>` 并写入浏览器历史，加载 iframe 并恢复唯一高亮 |
+> | 点击有子菜单的一级菜单 | 只展开/收起子菜单，不导航 |
+> | 点击已选中的叶子菜单 | 重新进入当前 SystemFrame 路由，不创建第二层壳 |
+> | 浏览器前进 / 后退 | 通过顶层浏览器历史恢复 iframe、标题与菜单高亮 |
+> | 刷新 SystemFrame | 重新解析当前 `?page=<key>` 并恢复同一模块；无效 key 回退默认模块并替换为有效顶层 URL |
 
-- 一级菜单：`class="menu-item l1"` + `data-page="页面名"`（无子菜单）或 `data-sub="sub-xxx"`（有子菜单）+ `onclick="menuSelect(this)"`
-- 二级菜单：`class="menu-item l2"` + `data-page="目标.html"` + `onclick="menuSelect(this)"`，放在对应 `id="sub-xxx"` 的 `.submenu` 容器内
-- 菜单结构、当前态、分组展开、折叠、移动端侧栏和顶部栏交互均由 `公共导航.js` 统一生成；叶子菜单使用普通 `<a href="目标页面.html">` 跳转，不使用 `系统框架.html#模块` 承载业务页面
+- 一级叶子菜单和二级菜单绑定稳定的 `data-page="<key>"`；公共路由表维护 `<key> → 文件名 / 标题 / 所属分组` 映射；
+- 菜单点击、模块跨页请求和 `index.html` 卡片统一进入 `系统框架.html?page=<key>`；禁止使用 hash 替代 page，也禁止 iframe 内嵌套 SystemFrame；
+- 有效模块切换必须形成顶层浏览器历史记录；首次载入、前进、后退和刷新都从当前 `?page=<key>` 恢复模块与唯一高亮，无效 key 使用默认模块替换当前历史项。模块自己的 query/hash 不得覆盖外层 page 参数；需要刷新恢复时分别写入 `moduleSearch` / `moduleHash` 命名空间。
 
 
 
-### 8.1.2 侧边栏菜单全局同步（强制，红线）
+### 8.1.2 路由注册与全局同步（强制，红线）
 
-> **核心规则**：`Prototype/公共导航.js` 是侧边栏与独立页面路由配置的唯一基准，`Prototype/系统框架.html` 用于展示框架契约。新增、改名、删除模块或调整菜单结构时，必须同步更新公共导航、系统框架、`index.html` 与全部路由引用。
+> **核心规则**：`Prototype/公共导航.js` 中的路由/菜单配置是 `<key> → 模块文件` 的唯一基准，`Prototype/系统框架.html` 是唯一运行外壳；不再把侧栏 HTML 批量复制到每个业务页面。
 
 | 变更场景 | 同步范围 | 操作 |
 |----------|----------|------|
-| **新建 HTML 原型页面** | 所有后台 `.html`（含 `系统框架.html`）+ `index.html` | ① 在侧边栏添加对应菜单项与跳转路由；② 在 `index.html` 添加导航卡片 |
-| **修改模块名或 HTML 文件名** | 所有后台 `.html`（含 `系统框架.html`）+ `index.html` | ① 更新菜单名称及对应路由；② 更新 `index.html` 中卡片名称与 `href`；③ 全局搜索旧名称，更新 JS 跳转、`a` 标签等引用 |
-| **删除模块或 HTML 原型页面** | 所有后台 `.html`（含 `系统框架.html`）+ `index.html` | ① 移除对应菜单项与路由；② 从 `index.html` 移除卡片；③ 全局搜索并清理失效引用 |
-| **调整菜单层级/结构** | 所有后台 `.html`（含 `系统框架.html`） | 同步更新菜单结构、路由配置、菜单初始化逻辑及权限树等硬编码引用，**不可遗漏** |
+| **新建 HTML 原型页面** | 公共路由表 + `系统框架.html` + `index.html` + 新模块文件 | 分配稳定 key、添加菜单与 SystemFrame URL，并验证模块直开回框架 |
+| **修改模块名或 HTML 文件名** | 公共路由表 + `系统框架.html` + `index.html` + 跨模块链接 | 更新 iframe 文件映射与全部 SystemFrame URL；稳定 key 非必要不得变化 |
+| **删除模块或 HTML 原型页面** | 公共路由表 + `系统框架.html` + `index.html` + 跨模块链接 | 移除路由并为历史旧 key 提供默认模块回退 |
+| **调整菜单层级/结构** | 公共路由表 + `系统框架.html` | 更新分组、唯一高亮和权限树；业务模块不复制侧栏结构 |
 
 **同步检查清单**（每次变更后必过）：
 
-- [ ] `Prototype/系统框架.html` — 侧边栏与路由已更新（唯一基准模板）
-- [ ] 所有后台 `.html` — 每个文件的侧边栏 HTML 完全一致
-- [ ] `index.html` — 导航卡片与侧边栏菜单一一对应
-- [ ] 全局搜索旧文件名/旧菜单标识（`sub-xxx`、`全部订单`等）→ 零残留
-- [ ] 各文件 JS 中的 `initSidebarActive()` / 菜单高亮逻辑与新结构匹配
+- [ ] `Prototype/系统框架.html` — iframe Router Outlet、历史恢复、无效 key 回退与唯一高亮正常
+- [ ] 所有业务 `.html` — iframe 内不创建壳层；顶层直开自动回 `系统框架.html?page=<key>`
+- [ ] `index.html` — 后台卡片使用 SystemFrame URL
+- [ ] 前进、后退、刷新后 iframe、标题和菜单高亮一致
+- [ ] `file://` 直接双击 SystemFrame 与业务文件均可预览
 - [ ] 权限树、快捷入口等硬编码菜单引用已更新
 
-> **执行方式**：用脚本批量替换确保一致性，不可逐个手动修改（容易遗漏）。替换后运行全局搜索验证旧标识零残留。
+> **执行方式**：路由或文件名变更使用脚本批量更新 URL 与 key 引用，不再批量复制侧栏 DOM。
 
 ### 8.2 index.html 导航页（必做）
 
 - 汇总所有原型页面，分组（后台系统 / 用户端）；
-- 每页一张卡片：页面名 + 简述 + 图标 + "打开"链接；
+- 每页一张卡片：页面名 + 简述 + 图标 + "打开"链接；后台模块统一链接 `系统框架.html?page=<key>`，特殊页直接链接自身；
 - 作为交付预览总入口。
 
 ---
@@ -424,15 +441,15 @@ function closeModal() {
 ## 十一、固定工作流程（每页必守）
 
 1. **读三份**：`claude.md`（本文件）+ `design.md` + 该页面的模块 `PRD.md`；
-2. **搭结构**：语义化 HTML + 布局（后台三段 / 用户端手机框）；
+2. **搭结构**：SystemFrame 搭唯一 App Shell；后台模块只搭 iframe 内业务结构与业务弹层；
 3. **套 token**：注入 design.md 的 Tailwind config；
 4. **填 mock data**：内联真实感数据，JS 渲染；
 5. **做交互**：tab/弹窗/表单校验/hover/筛选/跳转；
 6. **加标注**：把 PRD 交互说明转写进 annotations，加徽标 + 说明弹窗 + 全局开关；
-7. **接导航**：与 index.html 及相关页互链，侧边栏当前页高亮；
+7. **接导航**：登记稳定 page key，接入 `系统框架.html?page=<key>`，验证直开回框架、前进后退、刷新与高亮；
 8. **自检**：对照第十二章清单逐条核对；
-9. **同步文档**：页面业务或可复用视觉规则发生变化时，同步更新模块 PRD、`design.md`、`Prototype/设计系统.html`；工程流程变化再更新 `claude.md`/`agent.md`；
-10. **输出单文件**：双击可预览、无外部依赖、无报错。
+9. **同步文档**：页面业务或可复用视觉规则发生变化时，同步更新模块 PRD、`design.md`、`Prototype/设计系统.html`；工程流程变化统一更新 `AGENTS.md`，不得形成第二套 Agent 规则源；
+10. **输出页面**：双击 SystemFrame 或业务文件均可预览；业务 iframe 无重复壳层；只引用公共层白名单中的本地资源且无报错。
 
 ---
 
@@ -440,7 +457,7 @@ function closeModal() {
 
 ## 十二、交付前自检清单（每页必过）
 
-- [ ] 单文件自包含，双击可预览，无本地资源依赖（CDN 除外）
+- [ ] `file://` 双击可预览；业务文件直开自动回 SystemFrame；公共资源缓存参数与全站一致
 - [ ] Tailwind CDN + Lucide，未引入禁用库（无 Vue/React/jQuery）
 - [ ] 色值/字号/圆角/间距全部引用 design.md，无自造值
 - [ ] 语义色用途正确（primary/success/warning/danger/info）
@@ -448,11 +465,11 @@ function closeModal() {
 - [ ] Mock data 真实可信、覆盖多状态、≥8 条、数字用 mono
 - [ ] 基础交互可用：tab/弹窗/表单校验/hover/筛选/跳转
 - [ ] **交互标注完整**：每个交互/规则点有徽标，点击弹说明，全局可显隐
-- [ ] 复用系统框架时仅显示业务内容及本页操作栏标注，编号从 1 连续排列
+- [ ] SystemFrame 独占全局壳层与全局弹层；业务 iframe 仅显示业务内容、业务弹层和从 1 开始的业务标注
 - [ ] 标注内容转写自对应模块 PRD
 - [ ] 自定义下拉、Popover、菜单展开后父区块自动适配，无裁切、重叠和意外页面跳动
 - [ ] 页面业务与视觉调整已同步模块 PRD、design.md 和 HTML 设计系统
-- [ ] 与 index.html 及相关页互链，侧边栏当前页高亮
+- [ ] 后台跨页入口使用 `系统框架.html?page=<key>`；前进、后退、刷新后 iframe 与当前高亮一致
 - [ ] 语义化标签 + 分区注释 + 规范类名 + JS 分区注释
 - [ ] 控制台无 error，Lucide 图标正常渲染
 - [ ] 代码规范、可读、开发可复用
@@ -465,7 +482,9 @@ function closeModal() {
 
 - ❌ 自造色值/字号/圆角，偏离 design.md
 - ❌ 引入 Vue/React/jQuery 或未列出的库（Chart.js 及必要时 ECharts CDN 除外，见第二节）
-- ❌ 依赖外部本地 CSS/JS/图片（破坏单文件预览）
+- ❌ 依赖公共层白名单以外的本地 CSS/JS/图片，或复制公共实现形成页面分叉
+- ❌ 在业务 iframe 内再次创建 BrowserChrome、TopBar、Sidebar、全局助手、全局弹层或嵌套 SystemFrame
+- ❌ 后台模块直接跳转另一业务 `.html`，绕过 `系统框架.html?page=<key>`
 - ❌ 用 emoji 代替图标
 - ❌ 静态堆数据（不用 mock data 驱动）
 - ❌ 交互不可用（纯静态图）

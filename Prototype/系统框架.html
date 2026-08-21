@@ -6,7 +6,8 @@
   <title>云登 · 系统框架</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="公共导航.css?v=20260821a">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
   <script>
     tailwind.config = { theme: { extend: { colors: {
       primary:{DEFAULT:'#0066FF',hover:'#0052CC',active:'#0047B3',bg:'#E6F0FF'},
@@ -36,7 +37,7 @@
     .menu-link.active-group { color:#0066FF; font-weight:600; }
     .submenu .menu-link { min-height:34px; font-size:12px; }
     .submenu .menu-link.active-leaf { background:#E6F0FF; }
-    .menu-icon { width:18px; height:18px; flex:0 0 18px; }
+    .menu-icon { width:16px; height:16px; flex:0 0 16px; }
     .popover { box-shadow:0 6px 24px rgba(0,0,0,.12); }
     .route-card { min-height:420px; }
     .toast { animation:toast-in .2s ease both; }
@@ -48,53 +49,66 @@
     .status-dot { width:8px; height:8px; border-radius:50%; display:inline-block; }
     @media (max-width: 767px) { .sidebar { position:fixed; z-index:50; height:100vh; box-shadow:0 6px 24px rgba(0,0,0,.12); } .sidebar.compact { width:0; overflow:hidden; } }
   </style>
+  <script src="公共导航.js?v=20260821a"></script>
 </head>
 <body class="bg-page text-[13px]">
-  <div class="flex min-h-screen">
-    <!-- 左侧应用导航 -->
-    <aside id="sidebar" class="sidebar sticky top-0 h-screen shrink-0 bg-card flex flex-col overflow-hidden" aria-label="主导航">
-      <div class="brand-row h-14 px-5 flex items-center gap-2 shrink-0">
-        <a href="#环境管理" class="brand-link flex items-center gap-2 min-w-0" aria-label="云登首页">
-        <span class="w-7 h-7 rounded-md bg-primary text-white flex items-center justify-center font-bold text-[15px]">云</span>
-        <span class="brand-copy font-semibold text-ink-title text-[16px] tracking-tight">云登</span>
-        </a>
-        <button id="collapseBtn" data-anno="2" class="ml-auto w-8 h-8 shrink-0 rounded flex items-center justify-center text-ink-sub hover:bg-hover" title="收起侧栏" aria-label="收起侧栏"><i data-lucide="panel-left-close" class="w-[18px] h-[18px]"></i></button>
-      </div>
-      <div class="p-3">
-        <button id="createBrowserBtn" data-anno="1" class="create-button h-8 w-full rounded bg-primary hover:bg-primary-hover active:bg-primary-active text-white flex items-center justify-center gap-2 font-medium transition-colors">
-          <i data-lucide="plus" class="w-4 h-4"></i><span class="create-label">新建浏览器</span>
-        </button>
-      </div>
-      <nav id="primaryNav" class="px-3 flex-1 overflow-y-auto pb-3" aria-label="业务模块"></nav>
-      <div class="p-3 space-y-1">
-        <div class="border-t border-line mb-3" aria-hidden="true"></div>
-        <button data-anno="7" class="bottom-link w-full h-8 px-2 flex items-center gap-3 rounded text-ink-sub" data-global="help"><i data-lucide="circle-help" class="menu-icon"></i><span class="bottom-label">新手帮助</span></button>
-        <button class="bottom-link w-full h-8 px-2 flex items-center gap-3 rounded text-ink-sub" data-global="settings"><i data-lucide="settings-2" class="menu-icon"></i><span class="bottom-label">偏好设置</span></button>
-      </div>
-    </aside>
-
-    <div class="min-w-0 flex-1 flex flex-col min-h-screen">
-      <!-- 顶部全局栏 -->
-      <header class="h-14 shrink-0 bg-card shadow-[0_8px_8px_-8px_rgba(0,0,0,.18)] z-10 flex items-center justify-between px-4 md:px-6">
-        <div class="flex items-center gap-3 min-w-0"><button id="mobileMenu" class="md:hidden text-ink-sub" aria-label="展开导航"><i data-lucide="menu" class="w-5 h-5"></i></button><span id="breadcrumb" class="text-ink-sub truncate">工作台 / 环境管理</span></div>
-        <div class="flex items-center gap-1 md:gap-2">
-          <button id="helpBtn" data-anno="7" class="relative w-8 h-8 rounded flex items-center justify-center text-ink-sub hover:bg-hover" aria-label="新手帮助"><i data-lucide="circle-help" class="w-[18px] h-[18px]"></i></button>
-          <button id="noticeBtn" data-anno="5" class="relative w-8 h-8 rounded flex items-center justify-center text-ink-sub hover:bg-hover" aria-label="通知"><i data-lucide="bell" class="w-[18px] h-[18px]"></i><span class="absolute right-1 top-1 w-2 h-2 bg-danger rounded-full border border-white"></span></button>
-          <button id="languageBtn" data-anno="6" class="w-8 h-8 rounded flex items-center justify-center text-ink-sub hover:bg-hover" aria-label="切换语言"><i data-lucide="languages" class="w-[18px] h-[18px]"></i></button>
-          <span class="h-5 border-l border-line mx-1"></span>
-          <button id="accountBtn" class="flex items-center gap-2 rounded px-1 py-1 hover:bg-hover"><span class="w-7 h-7 rounded-full bg-primary-bg text-primary flex items-center justify-center font-semibold">张</span><span class="hidden sm:block text-ink-body">张小登</span><i data-lucide="chevron-down" class="hidden sm:block w-3.5 h-3.5 text-ink-muted"></i></button>
+  <div id="yundeng-app-frame">
+    <!-- 浏览器引擎框架 -->
+    <section id="yundeng-browser-frame" class="yundeng-browser-frame" aria-label="浏览器工具栏">
+      <div class="yundeng-tab-strip">
+        <div class="yundeng-window-controls" aria-hidden="true"><span class="is-danger"></span><span class="is-warning"></span><span class="is-success"></span></div>
+        <div class="yundeng-tab-cluster">
+          <div class="yundeng-browser-tabs" role="tablist" aria-label="浏览器标签页"><div class="yundeng-browser-tab" data-active="true" data-anno="1" role="tab" aria-selected="true"><span class="yundeng-browser-tab-mark">云</span><span class="yundeng-browser-tab-title">云登 · 系统框架</span><button type="button" class="yundeng-close-tab" data-anno="2" title="关闭标签页" aria-label="关闭云登 · 系统框架"><i data-lucide="x"></i></button></div></div>
+          <button type="button" class="yundeng-browser-button yundeng-new-tab" data-anno="3" title="新增标签页" aria-label="新增标签页"><i data-lucide="plus"></i></button>
         </div>
-      </header>
+      </div>
+      <div class="yundeng-browser-toolbar">
+        <div class="yundeng-history-actions" data-anno="4"><button type="button" class="yundeng-browser-button" aria-label="后退"><i data-lucide="arrow-left"></i></button><button type="button" class="yundeng-browser-button" aria-label="前进"><i data-lucide="arrow-right"></i></button><button type="button" class="yundeng-browser-button" aria-label="重新加载"><i data-lucide="rotate-cw"></i></button></div>
+        <form class="yundeng-address-form" data-anno="5" role="search"><i data-lucide="search"></i><input value="https://app.yunlogin.com/environment" aria-label="搜索或输入地址"><button type="button" class="yundeng-bookmark-button" data-yundeng-tooltip="为此标签页添加书签" title="为此标签页添加书签" aria-label="为此标签页添加书签" aria-pressed="false"><i data-lucide="star"></i></button></form>
+        <div class="yundeng-browser-actions"><button type="button" class="yundeng-browser-button" data-anno="6" aria-label="扩展程序"><i data-lucide="puzzle"></i></button><button type="button" class="yundeng-browser-button" data-anno="7" aria-label="下载内容"><i data-lucide="download"></i></button><button type="button" class="yundeng-browser-button" data-anno="8" aria-label="更多"><i data-lucide="ellipsis-vertical"></i></button><div class="yundeng-browser-panel yundeng-extensions-panel hidden" role="dialog" aria-label="扩展程序"><div class="yundeng-panel-header"><strong>扩展程序</strong><button type="button" class="yundeng-panel-close" aria-label="关闭扩展程序"><i data-lucide="x"></i></button></div><div class="yundeng-panel-copy"><strong>完全访问权限</strong><p>这些扩展程序可以查看和更改此网站上的信息。</p></div><div class="yundeng-extension-row"><span class="yundeng-extension-icon"><i data-lucide="scan-line"></i></span><span class="yundeng-extension-name">element-selector</span><button type="button" class="yundeng-panel-icon-button" aria-label="固定扩展程序"><i data-lucide="pin"></i></button><button type="button" class="yundeng-panel-icon-button" aria-label="更多扩展程序选项"><i data-lucide="ellipsis-vertical"></i></button></div><button type="button" class="yundeng-panel-footer"><i data-lucide="settings"></i><span>管理扩展程序</span></button></div><div class="yundeng-browser-panel yundeng-download-panel hidden" role="dialog" aria-label="下载内容"><div class="yundeng-panel-header"><strong>下载内容</strong><button type="button" class="yundeng-panel-close" aria-label="关闭下载内容"><i data-lucide="x"></i></button></div><div class="yundeng-download-empty"><i data-lucide="download-cloud"></i><p>暂无下载任务</p></div></div><div class="yundeng-browser-panel yundeng-more-panel hidden" role="menu" aria-label="更多"><button type="button" class="yundeng-more-item" role="menuitem"><i data-lucide="square-plus"></i><span>打开新的标签页</span><span class="yundeng-more-shortcut">⌘T</span></button><button type="button" class="yundeng-more-item" role="menuitem"><i data-lucide="history"></i><span>历史记录</span><i data-lucide="chevron-right" class="yundeng-more-chevron"></i></button><button type="button" class="yundeng-more-item" role="menuitem"><i data-lucide="download"></i><span>下载内容</span><span class="yundeng-more-shortcut">⌥⌘L</span></button><button type="button" class="yundeng-more-item" role="menuitem"><i data-lucide="bookmark"></i><span>书签</span><i data-lucide="chevron-right" class="yundeng-more-chevron"></i></button><div class="yundeng-more-divider"></div><div class="yundeng-zoom-row"><button type="button" class="yundeng-panel-icon-button" aria-label="缩小"><i data-lucide="minus"></i></button><span>100%</span><button type="button" class="yundeng-panel-icon-button" aria-label="放大"><i data-lucide="plus"></i></button><button type="button" class="yundeng-panel-icon-button" aria-label="全屏"><i data-lucide="maximize"></i></button></div><div class="yundeng-more-divider"></div><button type="button" class="yundeng-more-item" role="menuitem"><i data-lucide="printer"></i><span>打印…</span><span class="yundeng-more-shortcut">⌘P</span></button><button type="button" class="yundeng-more-item" role="menuitem"><i data-lucide="search"></i><span>查找…</span><span class="yundeng-more-shortcut">⌘F</span></button><button type="button" class="yundeng-more-item" role="menuitem"><i data-lucide="wrench"></i><span>更多工具</span><i data-lucide="chevron-right" class="yundeng-more-chevron"></i></button><div class="yundeng-more-divider"></div><button type="button" class="yundeng-more-item" role="menuitem"><i data-lucide="puzzle"></i><span>插件管理</span></button></div></div>
+      </div>
+    </section>
 
-      <!-- 路由内容承载区 -->
-      <main id="mainContent" class="flex-1 overflow-auto p-4" tabindex="-1">
-        <section id="routeOutlet" aria-live="polite"></section>
-      </main>
+    <!-- 顶部平台导航 -->
+    <header class="h-14 shrink-0 bg-card z-10 flex items-center justify-between px-4 md:px-6">
+      <div class="flex items-center gap-3 min-w-0"><button id="mobileMenu" class="md:hidden text-ink-sub" aria-label="展开导航"><i data-lucide="menu" class="w-5 h-5"></i></button><a href="系统框架.html" data-anno="9" class="flex items-center gap-2 text-ink-title" aria-label="云登首页"><span class="w-7 h-7 rounded-md bg-primary text-white flex items-center justify-center font-bold text-[15px]">云</span><span class="font-semibold text-[16px]">云登</span></a></div>
+      <div class="yundeng-topbar-actions flex items-center gap-1 md:gap-2">
+        <button id="helpBtn" data-anno="14" class="yundeng-icon-button relative w-8 h-8 rounded flex items-center justify-center text-ink-sub hover:bg-hover" aria-label="新手引导" data-yundeng-tooltip="新手引导" aria-haspopup="dialog" aria-expanded="false"><svg class="yundeng-onboarding-icon" viewBox="0 0 1024 1024" fill="currentColor" aria-hidden="true" focusable="false"><path d="M512 927a414.85 414.85 0 1 1 358.28-205.46A414.81 414.81 0 0 1 512 927z m0-766a351 351 0 1 0 177.11 654.11A350.8 350.8 0 0 0 863 512a351 351 0 0 0-351-351z"></path><path d="M353 711.82a41.3 41.3 0 0 1-37-59.63l100.34-202.42a69.44 69.44 0 0 1 31.23-31.22L650 318.19a41.28 41.28 0 0 1 55.32 55.32L605 575.93a69.42 69.42 0 0 1-31.23 31.23L371.31 707.52a41.35 41.35 0 0 1-18.31 4.3z m265-306.36l-142 70.43a5.09 5.09 0 0 0-2.32 2.31l-70.42 142 142-70.42a5.16 5.16 0 0 0 2.32-2.32z"></path><path d="M570.67 570.05L453.45 452.83a36.77 36.77 0 0 1 9-6.32l202.46-100.36a9.28 9.28 0 0 1 12.44 12.44L577 561a36.64 36.64 0 0 1-6.33 9.05z"></path></svg></button>
+        <button id="noticeBtn" data-anno="15" class="yundeng-icon-button relative w-8 h-8 rounded flex items-center justify-center text-ink-sub hover:bg-hover" aria-label="通知" data-yundeng-tooltip="通知" aria-haspopup="dialog" aria-expanded="false"><i data-lucide="bell" class="w-[18px] h-[18px]"></i><span class="absolute right-1 top-1 w-2 h-2 bg-danger rounded-full border border-white"></span></button>
+        <button id="languageBtn" data-anno="16" class="yundeng-icon-button w-8 h-8 rounded flex items-center justify-center text-ink-sub hover:bg-hover" aria-label="界面语言" data-yundeng-tooltip="界面语言" aria-haspopup="dialog" aria-expanded="false"><i data-lucide="languages" class="w-[18px] h-[18px]"></i></button>
+        <span class="h-5 border-l border-line mx-1"></span>
+        <button id="accountBtn" data-anno="17" class="yundeng-account flex items-center gap-2 rounded px-1 py-1 hover:bg-hover" aria-label="账号菜单" aria-haspopup="dialog" aria-expanded="false"><span class="w-7 h-7 rounded-full bg-primary-bg text-primary flex items-center justify-center font-semibold">张</span><span class="hidden sm:block text-ink-body">张小登</span><i data-lucide="chevron-down" class="hidden sm:block w-3.5 h-3.5 text-ink-muted"></i></button>
+      </div>
+    </header>
+
+    <div id="yundeng-shell" class="flex min-h-0 flex-1 overflow-hidden">
+      <!-- 左侧应用导航 -->
+      <aside id="sidebar" class="sidebar shrink-0 bg-card flex flex-col" aria-label="主导航">
+        <div class="p-3">
+          <button id="createBrowserBtn" data-anno="10" class="create-button h-8 w-full rounded bg-primary hover:bg-primary-hover active:bg-primary-active text-white flex items-center justify-center gap-2 font-medium transition-colors" aria-haspopup="dialog" aria-controls="createPanel">
+            <i data-lucide="plus" class="w-4 h-4"></i><span class="create-label">新建浏览器</span>
+          </button>
+        </div>
+        <nav id="primaryNav" class="px-3 flex-1 overflow-y-auto pb-3" aria-label="业务模块"></nav>
+        <div class="p-3 space-y-1">
+          <div class="border-t border-line mb-3" aria-hidden="true"></div>
+          <button class="bottom-link w-full h-8 px-2 flex items-center gap-3 rounded text-ink-sub" data-global="settings"><i data-lucide="settings-2" class="menu-icon"></i><span class="bottom-label">设置</span></button>
+          <button class="bottom-link w-full h-8 px-2 flex items-center gap-3 rounded text-ink-sub" data-global="help"><i data-lucide="circle-help" class="menu-icon"></i><span class="bottom-label">帮助</span></button>
+        </div>
+        <button id="collapseBtn" data-anno="11" class="yundeng-sidebar-toggle" title="收起侧栏" aria-label="收起侧栏"><i data-lucide="triangle" class="yundeng-solid-arrow"></i></button>
+      </aside>
+
+      <div class="min-w-0 flex-1 flex flex-col min-h-0">
+        <!-- 路由内容承载区 -->
+        <main id="mainContent" class="flex-1 overflow-auto" tabindex="-1">
+          <section id="routeOutlet" aria-live="polite"></section>
+        </main>
+      </div>
     </div>
   </div>
 
   <!-- 右侧智能助手 -->
-  <button id="assistantBtn" data-anno="8" class="fixed right-5 bottom-5 z-30 w-11 h-11 rounded-full bg-primary hover:bg-primary-hover text-white shadow-[0_6px_24px_rgba(0,0,0,.12)] flex items-center justify-center" aria-label="打开智能助手"><i data-lucide="sparkles" class="w-5 h-5"></i></button>
+  <button id="assistantBtn" data-anno="18" class="fixed right-5 bottom-5 z-30 w-11 h-11 rounded-full bg-primary hover:bg-primary-hover text-white shadow-[0_6px_24px_rgba(0,0,0,.12)] flex items-center justify-center" aria-label="打开智能助手" aria-haspopup="dialog" aria-controls="assistantPanel"><i data-lucide="sparkles" class="w-5 h-5"></i></button>
 
   <!-- 通用浮层 -->
   <div id="noticePopover" class="hidden fixed right-20 top-12 z-40 w-[340px] max-w-[calc(100vw-32px)] bg-card border border-line rounded-lg popover">
@@ -106,32 +120,32 @@
   <div id="helpPopover" class="hidden fixed right-28 top-12 z-40 w-64 bg-card border border-line rounded-lg popover p-2"></div>
   <div id="accountPopover" class="hidden fixed right-4 top-12 z-40 w-44 bg-card border border-line rounded-lg popover p-1"></div>
 
-  <!-- 创建流程确认 Dialog -->
-  <div id="createDialog" class="hidden fixed inset-0 z-50 bg-black/30 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="createTitle">
-    <div id="createPanel" class="w-[600px] max-w-[92vw] h-[250px] bg-card rounded-lg shadow-[0_6px_24px_rgba(0,0,0,.12)] flex flex-col relative">
+  <!-- 创建流程确认弹窗 -->
+  <div id="createDialog" class="hidden fixed inset-0 z-50 bg-black/30 flex items-center justify-center p-4">
+    <div id="createPanel" class="w-[600px] max-w-[92vw] h-[250px] bg-card rounded-lg shadow-[0_6px_24px_rgba(0,0,0,.12)] flex flex-col relative" role="dialog" aria-modal="true" aria-labelledby="createTitle" aria-describedby="createDescription" tabindex="-1">
       <button class="absolute top-3 right-4 text-[20px] text-ink-muted hover:text-ink-body" data-close="createDialog" aria-label="关闭">×</button>
-      <div class="flex-1 flex items-center p-6"><span class="w-5 h-5 rounded-full bg-info-bg text-info flex items-center justify-center mr-3 font-semibold">i</span><div><h2 id="createTitle" data-anno="1" class="inline-block text-[16px] font-semibold text-ink-title">创建浏览器</h2><p class="text-[14px] text-ink-sub mt-1.5">将把创建意图交给“环境管理”业务模块处理；系统框架不会伪造创建结果。</p></div></div>
+      <div class="flex-1 flex items-center p-6"><span class="w-5 h-5 rounded-full bg-info-bg text-info flex items-center justify-center mr-3 font-semibold">i</span><div><h2 id="createTitle" data-anno="10" class="inline-block text-[16px] font-semibold text-ink-title">创建浏览器</h2><p id="createDescription" class="text-[14px] text-ink-sub mt-1.5">将把创建意图交给“环境管理”业务模块处理；系统框架不会伪造创建结果。</p></div></div>
       <div class="px-6 pb-5 flex justify-end gap-3"><button class="h-8 px-5 rounded border border-line text-ink-body hover:bg-hover" data-close="createDialog">取消</button><button id="handoffCreate" class="h-8 px-5 rounded bg-primary hover:bg-primary-hover text-white">进入创建流程</button></div>
     </div>
   </div>
 
   <!-- 智能助手抽屉 -->
-  <div id="assistantDrawer" class="hidden fixed inset-0 z-50 bg-black/30" role="dialog" aria-modal="true">
-    <section id="assistantPanel" class="drawer-panel ml-auto h-full w-[800px] max-w-full bg-card shadow-[-4px_0_24px_rgba(0,0,0,.1)] flex flex-col">
-      <header class="h-14 px-6 border-b border-line flex items-center justify-between"><div class="flex items-center gap-2"><span class="w-7 h-7 rounded bg-primary-bg text-primary flex items-center justify-center"><i data-lucide="sparkles" class="w-4 h-4"></i></span><h2 data-anno="8" class="inline-block text-[16px] font-semibold text-ink-title">云登智能助手</h2></div><button class="text-ink-muted hover:text-ink-body" data-close="assistantDrawer" aria-label="关闭"><i data-lucide="x" class="w-5 h-5"></i></button></header>
-      <div class="flex-1 p-6 overflow-auto"><div class="max-w-lg"><p class="text-ink-title font-medium">我可以帮你快速定位环境、代理与团队设置。</p><p class="mt-2 text-ink-sub leading-relaxed">当前为框架原型，问答引擎不在本期范围内。你仍可通过下方快捷问题验证入口、关闭与焦点恢复行为。</p><div class="mt-5 flex flex-wrap gap-2"><button class="quick-question">如何新建浏览器？</button><button class="quick-question">在哪里管理团队成员？</button><button class="quick-question">如何查看 API？</button></div><div id="assistantReply" class="hidden mt-5 p-3 border border-info bg-info-bg rounded text-info"></div></div></div>
-      <form id="assistantForm" class="p-4 border-t border-line flex gap-2"><input id="assistantInput" maxlength="120" class="h-8 flex-1 rounded border border-line px-2 outline-none focus:border-primary focus:ring-2 focus:ring-primary-bg" placeholder="输入问题（演示入口）"><button class="h-8 px-4 rounded bg-primary text-white hover:bg-primary-hover">发送</button></form>
+  <div id="assistantDrawer" class="hidden fixed inset-0 z-50 bg-black/30">
+    <section id="assistantPanel" class="drawer-panel ml-auto h-full w-[800px] max-w-full bg-card shadow-[-4px_0_24px_rgba(0,0,0,.1)] flex flex-col" role="dialog" aria-modal="true" aria-labelledby="assistantTitle" aria-describedby="assistantDescription" tabindex="-1">
+      <header class="h-14 px-6 border-b border-line flex items-center justify-between"><div class="flex items-center gap-2"><span class="w-7 h-7 rounded bg-primary-bg text-primary flex items-center justify-center"><i data-lucide="sparkles" class="w-4 h-4"></i></span><h2 id="assistantTitle" data-anno="18" class="inline-block text-[16px] font-semibold text-ink-title">云登智能助手</h2></div><button class="text-ink-muted hover:text-ink-body" data-close="assistantDrawer" aria-label="关闭"><i data-lucide="x" class="w-5 h-5"></i></button></header>
+      <div class="flex-1 p-6 overflow-auto"><div class="max-w-lg"><p class="text-ink-title font-medium">我可以帮你快速定位环境、代理与团队设置。</p><p id="assistantDescription" class="mt-2 text-ink-sub leading-relaxed">当前为框架原型，问答引擎不在本期范围内。你仍可通过下方快捷问题验证入口、关闭与焦点恢复行为。</p><div class="mt-5 flex flex-wrap gap-2"><button class="quick-question">如何新建浏览器？</button><button class="quick-question">在哪里管理团队成员？</button><button class="quick-question">如何查看 API？</button></div><div id="assistantReply" class="hidden mt-5 p-3 border border-info bg-info-bg rounded text-info" aria-live="polite"></div></div></div>
+      <form id="assistantForm" class="p-4 border-t border-line flex gap-2"><input id="assistantInput" maxlength="120" class="h-8 flex-1 rounded border border-line px-2 outline-none focus:border-primary focus:ring-2 focus:ring-primary-bg" placeholder="输入问题（演示入口）" aria-label="向智能助手提问"><button class="h-8 px-4 rounded bg-primary text-white hover:bg-primary-hover">发送</button></form>
     </section>
   </div>
 
   <!-- Toast 容器 -->
-  <div id="toastContainer" class="fixed top-4 left-1/2 -translate-x-1/2 z-[60] space-y-2 pointer-events-none"></div>
+  <div id="toastContainer" class="fixed top-4 left-1/2 -translate-x-1/2 z-[60] space-y-2 pointer-events-none" role="status" aria-live="polite" aria-atomic="true"></div>
 
   <!-- Portal 标注图层 -->
   <div id="annoLayer" style="position:fixed;inset:0;pointer-events:none;z-index:9998;"></div>
   <button id="annoToggle" class="fixed z-[9997] right-2 top-[120px] h-8 px-3 rounded-full bg-ink-muted text-white shadow-[0_2px_8px_rgba(0,0,0,.12)] flex items-center justify-center gap-1.5 cursor-grab select-none touch-none" title="点击显示标注；长按拖拽调整位置" aria-label="显示交互标注，长按可拖拽" aria-pressed="false"><i data-lucide="tags" class="w-4 h-4"></i><span class="text-[12px] font-medium whitespace-nowrap">显示标注</span></button>
   <div id="annoPopup" class="hidden fixed inset-0 z-[9999] bg-black/30 p-4 flex items-center justify-center">
-    <div class="w-[520px] max-w-full bg-card rounded-lg shadow-[0_6px_24px_rgba(0,0,0,.12)]"><div id="annoDrag" class="px-5 py-4 border-b border-line flex justify-between items-center cursor-move"><h2 id="annoTitle" class="text-[16px] font-semibold text-ink-title"></h2><button id="closeAnno" type="button" class="text-ink-muted hover:text-ink-body cursor-pointer" aria-label="关闭标注说明"><i data-lucide="x" class="w-5 h-5 pointer-events-none"></i></button></div><div id="annoDesc" class="p-5 text-[14px] text-ink-body leading-relaxed"></div></div>
+    <div id="annoPanel" class="w-[520px] max-w-full bg-card rounded-lg shadow-[0_6px_24px_rgba(0,0,0,.12)]" role="dialog" aria-modal="true" aria-labelledby="annoTitle" aria-describedby="annoDesc" tabindex="-1"><div id="annoDrag" class="px-5 py-4 border-b border-line flex justify-between items-center cursor-move"><h2 id="annoTitle" class="text-[16px] font-semibold text-ink-title"></h2><button id="closeAnno" type="button" class="text-ink-muted hover:text-ink-body cursor-pointer" aria-label="关闭标注说明"><i data-lucide="x" class="w-5 h-5 pointer-events-none"></i></button></div><div id="annoDesc" class="p-5 text-[14px] text-ink-body leading-relaxed"></div></div>
   </div>
 
   <script>
@@ -164,80 +178,94 @@
     ];
     const requestedRoute = decodeURIComponent(location.hash.slice(1));
     const requestedLeaf = navItems.flatMap(item=>item.children||[item]).find(item=>item.id===requestedRoute||item.label===requestedRoute);
-    let currentRoute = requestedLeaf?.id || 'environment', sidebarCompact = false, annoVisible = false, annoScopeStack = [];
+    let currentRoute = requestedLeaf?.id || 'environment', sidebarCompact = false, annoVisible = false, annoScopeStack = [], createReturnFocus = null, assistantReturnFocus = null, annoReturnFocus = null, annoReturnId = null;
     const annotations = {
-      1:{ title:'新建浏览器入口', desc:['触发：点击左上“新建浏览器”。','响应：框架打开创建意图确认弹窗，交由环境管理业务模块承接。','规则：App Shell 不伪造浏览器创建成功结果。'] },
-      2:{ title:'侧栏折叠', desc:['触发：点击侧栏底部收起按钮。','响应：侧栏切换完整与紧凑模式，主内容区自适应扩展。','规则：窄屏下侧栏作为覆盖层显示。'] },
-      3:{ title:'模块路由与菜单高亮', desc:['触发：点击任一叶子菜单。','响应：更新当前路由、面包屑、菜单高亮和内容承载区。','规则：任一时刻只有一个叶子菜单处于当前页状态。'] },
-      4:{ title:'菜单分组展开', desc:['触发：点击“团队”或“自动化”分组标题。','响应：切换对应子菜单可见性，不跳转路由。','规则：本页允许多个分组同时展开，符合系统框架 PRD 的覆盖规则。'] },
-      5:{ title:'全局通知', desc:['触发：点击顶部通知图标。','响应：打开通知 Popover，可标记全部已读或进入通知中心。','规则：不破坏当前路由、筛选和页面滚动状态。'] },
-      6:{ title:'语言切换', desc:['触发：点击语言图标并选择语言。','响应：更新当前会话语言并显示全局提示。','规则：原型仅模拟会话状态，不发起真实国际化资源加载。'] },
-      7:{ title:'新手帮助', desc:['触发：点击顶部或侧栏的新手帮助。','响应：显示教程、快捷键和联系支持入口。','规则：帮助入口使用 Popover，不离开当前页面。'] },
-      8:{ title:'智能助手入口', desc:['触发：点击右下角悬浮按钮。','响应：从右侧打开 800px 抽屉，并将标注范围限定在抽屉内。','规则：智能问答引擎不在本期范围内，保留入口与交互容器。'] },
-      9:{ title:'路由承载区', desc:['触发：首屏加载或切换业务模块。','响应：显示业务模块注入的内容承载占位、加载、无权限、空或失败状态。','规则：框架层不将路由插槽误作业务空状态。'] },
-      10:{ title:'恢复入口', desc:['触发：路由加载失败或权限不足时点击恢复操作。','响应：模拟重试、申请权限或返回环境管理。','规则：保留当前菜单与会话上下文，并给出明确下一步。'] }
+      1:{ title:'浏览器标签页', desc:['触发：点击任一标签页。','响应：切换当前标签并同步标题、地址与前进后退状态。','规则：标签宽度在 160–240px 之间自适应，超出可用宽度后横向滚动。'] },
+      2:{ title:'关闭标签页', desc:['触发：点击当前标签右侧关闭图标。','响应：关闭标签后激活相邻标签；仅剩一项时恢复为新标签页。','规则：关闭按钮阻止事件冒泡，不会误触标签切换。'] },
+      3:{ title:'新增标签页', desc:['触发：点击标签栏右侧加号。','响应：新增并激活“新的标签页”，焦点进入地址框。','规则：新标签只维护原型状态，不创建真实浏览器进程。'] },
+      4:{ title:'浏览器导航', desc:['触发：点击后退、前进或重新加载。','响应：在当前标签的地址历史中移动，或播放重新加载反馈。','规则：无可用历史时对应按钮禁用。'] },
+      5:{ title:'搜索、地址与书签', desc:['触发：输入网址或关键词后按回车，或点击地址框右侧星标。','响应：更新当前标签的地址、标题及前进后退历史；星标切换当前标签的书签状态。','规则：地址框使用最大圆角胶囊；鼠标移入/键盘聚焦星标时显示“为此标签页添加书签”，原型不发起外网导航。'] },
+      6:{ title:'扩展程序', desc:['触发：点击扩展程序图标。','响应：打开包含权限说明、element-selector Mock 条目、固定/更多操作和管理入口的面板。','规则：固定、权限和管理动作只反馈本地状态，不连接真实浏览器扩展。'] },
+      7:{ title:'下载内容', desc:['触发：点击下载图标。','响应：打开下载内容面板并展示当前任务状态。','规则：本期保留入口与基础空状态，任务队列后续接入。'] },
+      8:{ title:'浏览器更多', desc:['触发：点击更多图标。','响应：打开包含新标签、历史、下载、书签、缩放、打印、查找、更多工具和插件管理的分组菜单。','规则：菜单动作只更新本地 Mock 反馈；外部点击或 Escape 关闭并恢复触发按钮焦点。'] },
+      9:{ title:'平台品牌入口', desc:['触发：点击平台 Logo 或“云登”名称。','响应：返回系统框架首页。','规则：TopBar 只显示平台品牌与全局操作，不显示功能模块名称、面包屑或品牌后分隔线。'] },
+      10:{ title:'新建浏览器入口', desc:['触发：点击左上“新建浏览器”。','响应：框架打开创建意图确认弹窗，交由环境管理业务模块承接。','规则：系统框架不伪造浏览器创建成功结果。'] },
+      11:{ title:'侧栏折叠', desc:['触发：鼠标移入侧栏时把手线性显示，鼠标移出时线性隐藏；键盘导航仅在把手自身聚焦时显示。','响应：按钮默认背景为 #E5E6ED，鼠标移入按钮后背景切换为 #ACB0BA；10px 实心白色箭头在完整态指向左、紧凑态指向右。','规则：把手为 14×64px、无边线；点击后在 220px 与 68px 间切换并持久化状态，窄屏改由顶部菜单按钮控制覆盖层。'] },
+      12:{ title:'模块路由与菜单高亮', desc:['触发：点击任一叶子菜单。','响应：更新 SystemFrame 路由与 iframe，并保持当前叶子菜单唯一高亮。','规则：同组二级切换保留其他手动展开分组；跨分组二级切换仅展开目标分组，选择一级功能时收起全部二级菜单。'] },
+      13:{ title:'菜单分组展开', desc:['触发：点击“团队”或“自动化”分组标题。','响应：切换对应二级菜单可见性，不发生路由跳转。','规则：分组标题可临时多组展开；同组二级切换保留手动状态，跨组或进入一级叶子时按目标收起无关分组。'] },
+      14:{ title:'新手引导', desc:['触发：鼠标移入或键盘聚焦顶部问号时显示“新手引导”名称气泡；首次符合资格自动打开，或点击入口手动打开。','响应：显示“新建环境、购买代理、绑定代理、启动环境”四步引导。','规则：鼠标移出入口后名称气泡隐藏；关闭引导后保留当前页面状态，后续可再次打开。'] },
+      15:{ title:'全局通知', desc:['触发：鼠标移入或键盘聚焦通知图标时显示名称气泡，点击后打开通知浮层。','响应：可标记全部已读或进入通知中心。','规则：鼠标离开图标且未进入通知浮层时延迟关闭；离开图标与浮层后关闭，不破坏当前页面状态。'] },
+      16:{ title:'语言切换', desc:['触发：鼠标移入或键盘聚焦语言图标时显示名称气泡，点击后打开语言浮层。','响应：选择语言后更新当前会话并显示全局提示。','规则：鼠标离开图标且未进入语言浮层时延迟关闭；原型不加载真实国际化资源。'] },
+      17:{ title:'账号菜单', desc:['触发：点击头像或账号名称。','响应：打开账号相关入口菜单。','规则：鼠标离开账号入口且未进入菜单时延迟关闭；离开入口与菜单后关闭，键盘仍可用 Escape 关闭并返回焦点。'] },
+      18:{ title:'智能助手入口', desc:['触发：点击右下角悬浮按钮。','响应：从右侧打开 800px 抽屉，并将标注范围限定在抽屉内。','规则：智能问答引擎不在本期范围内，保留入口与交互容器。'] },
+      19:{ title:'路由承载区', desc:['触发：首屏加载或切换业务模块。','响应：显示业务模块注入的内容承载占位、加载、无权限、空或失败状态。','规则：框架层不将路由插槽误作业务空状态。'] },
+      20:{ title:'恢复入口', desc:['触发：路由加载失败或权限不足时点击恢复操作。','响应：模拟重试、申请权限或返回环境管理。','规则：保留当前菜单与会话上下文，并给出明确下一步。'] }
     };
 
     const $ = id => document.getElementById(id);
+    function restoreFocus(target, fallback) { const next = target?.isConnected ? target : fallback; next?.focus?.(); }
+    function dialogFocusable(panel) { return Array.from(panel.querySelectorAll('button:not(:disabled), a[href], input:not(:disabled), select:not(:disabled), textarea:not(:disabled), [tabindex]:not([tabindex="-1"])')).filter(element => element.getClientRects().length); }
+    function trapDialogFocus(event, panel) { if (event.key !== 'Tab') return; const focusable = dialogFocusable(panel); if (!focusable.length) { event.preventDefault(); panel.focus(); return; } const first = focusable[0], last = focusable[focusable.length - 1]; if (document.activeElement === panel || !panel.contains(document.activeElement)) { event.preventDefault(); (event.shiftKey ? last : first).focus(); } else if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); } else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); } }
     function getLeaf(id) { for (const item of navItems) { if (item.id === id) return item; if (item.children) { const child = item.children.find(x => x.id === id); if (child) return child; } } return navItems[0]; }
+    function syncGroupsForRoute(routeId) { const targetGroup=navItems.find(item=>item.children?.some(child=>child.id===routeId)); navItems.filter(item=>item.group).forEach(item=>{item.expanded=item.id===targetGroup?.id;}); }
     function renderNav() {
       $('primaryNav').innerHTML = navItems.map(item => item.group ? `
-        <div class="mb-1"><button data-group="${item.id}" data-anno="4" class="menu-link ${item.children.some(c=>c.id===currentRoute)?'active-group':''} w-full px-2 flex items-center gap-3 text-left"><i data-lucide="${item.icon}" class="menu-icon"></i><span class="menu-label flex-1">${item.label}</span><i data-lucide="chevron-${item.expanded?'down':'right'}" class="group-chevron w-4 h-4"></i></button>
-          <div class="submenu ${item.expanded?'':'hidden'} ml-4 pl-3 border-l border-line-light">${item.children.map(child => menuButton(child,true)).join('')}</div></div>` : menuButton(item,false)).join('');
+        <div class="mb-1"><button data-group="${item.id}" data-anno="13" class="menu-link ${item.children.some(c=>c.id===currentRoute)?'active-group':''} w-full px-2 flex items-center gap-3 text-left"><i data-lucide="${item.icon}" class="menu-icon"></i><span class="menu-label flex-1">${item.label}</span><i data-lucide="chevron-${item.expanded?'down':'right'}" class="group-chevron w-4 h-4"></i></button>
+          <div class="submenu ${item.expanded?'':'hidden'}">${item.children.map(child => menuButton(child,true)).join('')}</div></div>` : menuButton(item,false)).join('');
       lucide.createIcons();
     }
-    function menuButton(item, child) { return `<button data-route="${item.id}" ${item.href?`data-href="${item.href}"`:''} data-anno="3" class="menu-link ${currentRoute===item.id?'active-leaf':''} w-full px-2 ${child?'pl-3':''} flex items-center gap-3 text-left mb-1"><i data-lucide="${item.icon}" class="menu-icon"></i><span class="menu-label">${item.label}</span></button>`; }
+    function menuButton(item, child) { return `<button data-route="${item.id}" ${item.href?`data-href="${item.href}"`:''} data-anno="12" class="menu-link ${currentRoute===item.id?'active-leaf':''} w-full ${child?'pl-9':'px-2'} flex items-center ${child?'':'gap-3'} text-left mb-1">${child?'':`<i data-lucide="${item.icon}" class="menu-icon"></i>`}<span class="menu-label">${item.label}</span></button>`; }
     function renderRoute() {
-      const route = getLeaf(currentRoute), parent = navItems.find(x => x.children?.some(c=>c.id===route.id));
-      $('breadcrumb').textContent = `${parent ? parent.label+' / ' : '工作台 / '}${route.label}`;
-      const statusMap = { ready:['内容承载已就绪','业务页面将在此注入，系统框架仅保留稳定的路由上下文与全局能力。','box'], loading:['正在加载业务模块','正在恢复模块数据与页面状态，请稍候。','loader-circle'], empty:['该模块暂无可展示数据','这是目标路由的业务 Empty 状态，不是框架插槽的空状态。','inbox'], permission:['暂无访问权限','请联系团队管理员申请该模块权限；当前页面状态会被保留。','lock-keyhole'], error:['模块加载失败','网络连接异常或业务模块暂不可用，请重试或返回环境管理。','triangle-alert'] };
+      const route = getLeaf(currentRoute);
+      const statusMap = { ready:['内容承载已就绪','业务页面将在此注入，系统框架仅保留稳定的路由上下文与全局能力。','box'], loading:['正在加载业务模块','正在恢复模块数据与页面状态，请稍候。','loader-circle'], empty:['该模块暂无可展示数据','这是目标路由的业务空状态，不是框架内容区的空状态。','inbox'], permission:['暂无访问权限','请联系团队管理员申请该模块权限；当前页面状态会被保留。','lock-keyhole'], error:['模块加载失败','网络连接异常或业务模块暂不可用，请重试或返回环境管理。','triangle-alert'] };
       const [title,desc,icon] = statusMap[route.state] || statusMap.ready;
-      const action = route.state==='loading' ? '' : route.state==='permission' ? '<button data-recover="permission" data-anno="10" class="h-8 px-4 rounded bg-primary hover:bg-primary-hover text-white">申请权限</button>' : route.state==='error' ? '<button data-recover="retry" data-anno="10" class="h-8 px-4 rounded bg-primary hover:bg-primary-hover text-white">重新加载</button>' : route.state==='empty' ? '<button data-recover="environment" data-anno="10" class="h-8 px-4 rounded bg-primary hover:bg-primary-hover text-white">前往环境管理</button>' : '<button data-anno="9" class="h-8 px-4 rounded border border-line hover:bg-hover text-ink-body" data-global="details">查看框架契约</button>';
-      $('routeOutlet').innerHTML = `<section data-anno="9" class="route-card bg-card rounded-lg flex flex-col" aria-label="${route.label}路由内容"><div class="px-5 md:px-6 py-4 border-b border-line flex items-center justify-between gap-3"><div><h1 class="text-[20px] font-bold text-ink-title">${route.label}</h1><p class="text-[12px] text-ink-sub mt-1">Router Outlet · ${route.description}</p></div><span class="mono text-[11px] text-ink-muted hidden sm:block">ROUTE/${route.id.toUpperCase()}</span></div><div class="flex-1 flex items-center justify-center p-6"><div class="max-w-md text-center"><span class="w-12 h-12 rounded-lg bg-page text-primary mx-auto flex items-center justify-center"><i data-lucide="${icon}" class="w-6 h-6 ${route.state==='loading'?'animate-spin':''}"></i></span><h2 class="text-[18px] font-semibold text-ink-title mt-4">${title}</h2><p class="text-ink-sub leading-relaxed mt-2">${desc}</p><div class="mt-5">${action}</div></div></div><footer class="px-5 md:px-6 py-3 border-t border-line-lighter flex items-center justify-between text-[12px] text-ink-muted"><span>当前团队：${session.workspace}</span><span class="mono">SESSION/ONLINE</span></footer></section>`;
+      const action = route.state==='loading' ? '' : route.state==='permission' ? '<button data-recover="permission" data-anno="20" class="h-8 px-4 rounded bg-primary hover:bg-primary-hover text-white">申请权限</button>' : route.state==='error' ? '<button data-recover="retry" data-anno="20" class="h-8 px-4 rounded bg-primary hover:bg-primary-hover text-white">重新加载</button>' : route.state==='empty' ? '<button data-recover="environment" data-anno="20" class="h-8 px-4 rounded bg-primary hover:bg-primary-hover text-white">前往环境管理</button>' : '<button data-anno="19" class="h-8 px-4 rounded border border-line hover:bg-hover text-ink-body" data-global="details">查看框架契约</button>';
+      $('routeOutlet').innerHTML = `<section data-anno="19" class="route-card bg-card rounded-lg flex flex-col" aria-label="${route.label}内容区"><div class="px-5 md:px-6 py-4 border-b border-line flex items-center justify-between gap-3"><div><h1 class="text-[20px] font-bold text-ink-title">${route.label}</h1><p class="text-[12px] text-ink-sub mt-1">模块职责：${route.description}</p></div><span class="text-[11px] text-ink-muted hidden sm:block">业务内容区</span></div><div class="flex-1 flex items-center justify-center p-6"><div class="max-w-md text-center"><span class="w-12 h-12 rounded-lg bg-page text-primary mx-auto flex items-center justify-center"><i data-lucide="${icon}" class="w-6 h-6 ${route.state==='loading'?'animate-spin':''}"></i></span><h2 class="text-[18px] font-semibold text-ink-title mt-4">${title}</h2><p class="text-ink-sub leading-relaxed mt-2">${desc}</p><div class="mt-5">${action}</div></div></div><footer class="px-5 md:px-6 py-3 border-t border-line-lighter flex items-center justify-between text-[12px] text-ink-muted"><span>当前团队：${session.workspace}</span><span>会话状态：正常</span></footer></section>`;
       lucide.createIcons(); renderAnnoBadges();
     }
-    window.addEventListener('hashchange',()=>{const routeName=decodeURIComponent(location.hash.slice(1)),route=navItems.flatMap(item=>item.children||[item]).find(item=>item.id===routeName||item.label===routeName);if(!route)return;currentRoute=route.id;renderNav();renderRoute();});
     function renderNotices() { $('noticeList').innerHTML = notices.map(n=>`<button class="w-full text-left px-4 py-3 hover:bg-hover border-b border-line-lighter last:border-0"><div class="flex gap-2"><span class="status-dot ${n.unread?'bg-primary':'bg-line'} mt-1.5"></span><div class="min-w-0"><p class="font-medium text-ink-title">${n.title}</p><p class="text-[12px] text-ink-sub mt-1 truncate">${n.desc}</p><p class="mono text-[11px] text-ink-muted mt-1">${n.time}</p></div></div></button>`).join(''); }
-    function openPopover(id) { ['noticePopover','languagePopover','helpPopover','accountPopover'].forEach(x=>{ if(x!==id) $(x).classList.add('hidden'); }); $(id).classList.toggle('hidden'); }
-    function closeOverlays() { ['noticePopover','languagePopover','helpPopover','accountPopover'].forEach(id=>$(id).classList.add('hidden')); }
+    function openPopover(id) { ['noticePopover','languagePopover','helpPopover','accountPopover'].forEach(x=>{ const node=$(x); if(node&&x!==id) node.classList.add('hidden'); }); $(id)?.classList.toggle('hidden'); }
+    function closeOverlays() { ['noticePopover','languagePopover','helpPopover','accountPopover'].forEach(id=>$(id)?.classList.add('hidden')); }
     function toast(message, kind='info') { const color={info:'bg-info',success:'bg-success',warning:'bg-warning',danger:'bg-danger'}[kind]; const el=document.createElement('div'); el.className=`toast ${color} text-white px-4 py-2 rounded shadow-[0_2px_8px_rgba(0,0,0,.12)] text-[13px]`; el.textContent=message; $('toastContainer').append(el); setTimeout(()=>el.remove(),2800); }
-    function openAssistant() { $('assistantDrawer').classList.remove('hidden'); pushAnnoScope($('assistantPanel')); $('assistantInput').focus(); }
-    function closeDrawer() { $('assistantDrawer').classList.add('hidden'); popAnnoScope($('assistantPanel')); $('assistantBtn').focus(); }
+    function openCreateDialog() { createReturnFocus = document.activeElement; $('createDialog').classList.remove('hidden'); pushAnnoScope($('createPanel')); requestAnimationFrame(() => $('createPanel').focus()); }
+    function closeCreateDialog(shouldRestoreFocus = true) { if ($('createDialog').classList.contains('hidden')) return; $('createDialog').classList.add('hidden'); popAnnoScope($('createPanel')); if (shouldRestoreFocus) restoreFocus(createReturnFocus, document.querySelector('.yundeng-create') || $('createBrowserBtn') || $('mainContent')); }
+    function openAssistant() { assistantReturnFocus = document.activeElement; $('assistantDrawer').classList.remove('hidden'); pushAnnoScope($('assistantPanel')); requestAnimationFrame(() => $('assistantInput').focus()); }
+    function closeDrawer() { if ($('assistantDrawer').classList.contains('hidden')) return; $('assistantDrawer').classList.add('hidden'); popAnnoScope($('assistantPanel')); restoreFocus(assistantReturnFocus, $('assistantBtn')); }
     function pushAnnoScope(el) { const index=annoScopeStack.indexOf(el); if(index>=0) annoScopeStack.splice(index,1); annoScopeStack.push(el); renderAnnoBadges(); }
     function popAnnoScope(el) { const index=annoScopeStack.indexOf(el); if(index>=0) annoScopeStack.splice(index,1); renderAnnoBadges(); }
     function resolveAnnoTarget(el) { const rect=el.getBoundingClientRect(); return (rect.width>800 || rect.width>window.innerWidth*.7) ? el.querySelector('h1,h2,h3,button,input') || el : el; }
-    function renderAnnoBadges() { const layer=$('annoLayer'); layer.innerHTML=''; if(!annoVisible) return; const root=annoScopeStack.at(-1) || document; root.querySelectorAll('[data-anno]').forEach(el=>{ const target=resolveAnnoTarget(el), rect=target.getBoundingClientRect(); if(rect.width===0||rect.height===0) return; const badge=document.createElement('button'); badge.className='anno-badge'; badge.textContent=el.dataset.anno; badge.style.top=(rect.top-10)+'px'; badge.style.left=(rect.right-10)+'px'; badge.setAttribute('aria-label','查看交互说明 '+el.dataset.anno); badge.onclick=()=>showAnnoPopup(el.dataset.anno); layer.append(badge); }); }
-    function showAnnoPopup(id) { const item=annotations[id]; if(!item) return; $('annoTitle').textContent=`${id}. ${item.title}`; $('annoDesc').innerHTML='<ul class="list-disc pl-5 space-y-2">'+item.desc.map(x=>`<li>${x}</li>`).join('')+'</ul>'; $('annoPopup').classList.remove('hidden'); }
-    function closeAnnoPopup() { $('annoPopup').classList.add('hidden'); }
+    function renderAnnoBadges() { const layer=$('annoLayer'); layer.innerHTML=''; if(!annoVisible) return; const root=annoScopeStack.at(-1) || document; root.querySelectorAll('[data-anno]').forEach(el=>{ const target=resolveAnnoTarget(el), rect=target.getBoundingClientRect(); if(rect.width===0||rect.height===0) return; const badge=document.createElement('button'); badge.className='anno-badge'; badge.dataset.annoBadge=el.dataset.anno; badge.textContent=el.dataset.anno; badge.style.top=(rect.top-10)+'px'; badge.style.left=(rect.right-10)+'px'; badge.setAttribute('aria-label','查看交互说明 '+el.dataset.anno); badge.setAttribute('aria-haspopup','dialog'); badge.setAttribute('aria-controls','annoPanel'); badge.onclick=()=>showAnnoPopup(el.dataset.anno,badge); layer.append(badge); }); }
+    function showAnnoPopup(id, trigger) { const item=annotations[id]; if(!item) return; annoReturnFocus=trigger||document.activeElement; annoReturnId=String(id); $('annoTitle').textContent=`${id}. ${item.title}`; $('annoDesc').innerHTML='<ul class="list-disc pl-5 space-y-2">'+item.desc.map(x=>`<li>${x}</li>`).join('')+'</ul>'; $('annoPopup').classList.remove('hidden'); requestAnimationFrame(()=>$('annoPanel').focus()); }
+    function closeAnnoPopup(shouldRestoreFocus = true) { if ($('annoPopup').classList.contains('hidden')) return; $('annoPopup').classList.add('hidden'); if (shouldRestoreFocus) restoreFocus(annoReturnFocus, $('annoLayer').querySelector(`[data-anno-badge="${annoReturnId}"]`) || $('annoToggle')); }
 
     // 交互绑定
     document.addEventListener('click', event => {
       const routeBtn=event.target.closest('[data-route]'), groupBtn=event.target.closest('[data-group]'), globalBtn=event.target.closest('[data-global]'), closeBtn=event.target.closest('[data-close]'), recoverBtn=event.target.closest('[data-recover]');
-      if(routeBtn){ if(routeBtn.dataset.href){ location.href=routeBtn.dataset.href; return; } currentRoute=routeBtn.dataset.route; renderNav(); renderRoute(); }
+      if(routeBtn){ syncGroupsForRoute(routeBtn.dataset.route); if(routeBtn.dataset.href){ location.href=routeBtn.dataset.href; return; } currentRoute=routeBtn.dataset.route; renderNav(); renderRoute(); }
       if(groupBtn){ const group=navItems.find(x=>x.id===groupBtn.dataset.group); group.expanded=!group.expanded; renderNav(); renderAnnoBadges(); }
-      if(closeBtn){ const id=closeBtn.dataset.close; $(id).classList.add('hidden'); if(id==='assistantDrawer') closeDrawer(); else if(id==='createDialog'){ popAnnoScope($('createPanel')); $('createBrowserBtn').focus(); } }
+      if(closeBtn){ const id=closeBtn.dataset.close; if(id==='assistantDrawer') closeDrawer(); else if(id==='createDialog') closeCreateDialog(); else $(id).classList.add('hidden'); }
       if(recoverBtn){ if(recoverBtn.dataset.recover==='retry'){ getLeaf(currentRoute).state='loading'; renderRoute(); setTimeout(()=>{getLeaf(currentRoute).state='ready';renderRoute();toast('模块已重新加载','success');},900); } else if(recoverBtn.dataset.recover==='environment'){currentRoute='environment';renderNav();renderRoute();} else toast('已向团队管理员提交权限申请','success'); }
-      if(globalBtn){ const action=globalBtn.dataset.global; if(action==='help') openPopover('helpPopover'); else if(action==='settings'||action==='details'||action==='notice-center') toast(action==='details'?'框架事件契约已保留给业务模块接入':'该入口将在对应业务页面实现','info'); }
+      if(globalBtn){ const action=globalBtn.dataset.global; if(action==='help') location.href='系统框架.html?page=help'; else if(action==='settings'||action==='details'||action==='notice-center') toast(action==='details'?'框架事件契约已保留给业务模块接入':'该入口将在对应业务页面实现','info'); }
     });
-    $('createBrowserBtn').onclick=()=>{ $('createDialog').classList.remove('hidden'); pushAnnoScope($('createPanel')); };
-    $('handoffCreate').onclick=()=>{ $('createDialog').classList.add('hidden'); popAnnoScope($('createPanel')); location.href='新建浏览器.html'; };
-    $('collapseBtn').onclick=()=>{ sidebarCompact=!sidebarCompact; $('sidebar').classList.toggle('compact',sidebarCompact); const button=$('collapseBtn'); button.title=sidebarCompact?'展开侧栏':'收起侧栏'; button.setAttribute('aria-label',button.title); button.innerHTML=`<i data-lucide="${sidebarCompact?'panel-left-open':'panel-left-close'}" class="w-[18px] h-[18px]"></i>`; lucide.createIcons(); renderAnnoBadges(); };
+    $('createBrowserBtn').onclick=openCreateDialog;
+    $('handoffCreate').onclick=()=>{ closeCreateDialog(false); location.href='新建浏览器.html'; };
+    $('collapseBtn').onclick=()=>{ sidebarCompact=!sidebarCompact; $('sidebar').classList.toggle('compact',sidebarCompact); const button=$('collapseBtn'); button.title=sidebarCompact?'展开侧栏':'收起侧栏'; button.setAttribute('aria-label',button.title); button.innerHTML='<i data-lucide="triangle" class="yundeng-solid-arrow"></i>'; lucide.createIcons(); renderAnnoBadges(); };
     $('mobileMenu').onclick=()=>{ $('sidebar').classList.toggle('compact'); };
     $('noticeBtn').onclick=()=>openPopover('noticePopover');
     $('languageBtn').onclick=()=>openPopover('languagePopover');
-    $('helpBtn').onclick=()=>openPopover('helpPopover');
+    $('helpBtn').onclick=()=>window.openYundengOnboarding?.();
     $('accountBtn').onclick=()=>openPopover('accountPopover');
     $('assistantBtn').onclick=openAssistant;
     $('readAll').onclick=()=>{ notices.forEach(n=>n.unread=false); renderNotices(); toast('全部通知已标记为已读','success'); };
     $('languagePopover').innerHTML=['简体中文','English','日本語'].map(l=>`<button data-language="${l}" class="w-full text-left px-3 py-2 rounded hover:bg-hover ${l===session.language?'text-primary font-medium':'text-ink-body'}">${l}</button>`).join('');
-    $('helpPopover').innerHTML='<button class="w-full text-left px-3 py-2 rounded hover:bg-hover">新手教程</button><button class="w-full text-left px-3 py-2 rounded hover:bg-hover">快捷键说明</button><button class="w-full text-left px-3 py-2 rounded hover:bg-hover">联系支持</button>';
+    $('helpPopover').innerHTML='';
     $('accountPopover').innerHTML='<div class="px-3 py-2 text-[12px] text-ink-sub border-b border-line-lighter">团队管理员</div><button class="w-full text-left px-3 py-2 rounded hover:bg-hover">账号信息</button><button class="w-full text-left px-3 py-2 rounded hover:bg-hover">退出登录</button>';
     $('languagePopover').onclick=e=>{ const button=e.target.closest('[data-language]'); if(!button)return; session.language=button.dataset.language; $('languagePopover').querySelectorAll('button').forEach(x=>x.classList.toggle('text-primary',x.dataset.language===session.language)); toast(`语言已切换为 ${session.language}`,'success'); closeOverlays(); };
     $('assistantForm').onsubmit=e=>{ e.preventDefault(); const input=$('assistantInput'); if(!input.value.trim()){ toast('请输入问题后再发送','warning'); return; } $('assistantReply').textContent='已收到你的问题。本原型保留智能助手的交互容器，问答引擎将在后续业务版本接入。'; $('assistantReply').classList.remove('hidden'); input.value=''; };
     document.querySelectorAll('.quick-question').forEach(button=>button.onclick=()=>{ $('assistantInput').value=button.textContent; $('assistantInput').focus(); });
     document.addEventListener('click',e=>{ if(!e.target.closest('.popover, #noticeBtn, #languageBtn, #helpBtn, #accountBtn, [data-global="help"]')) closeOverlays(); });
     $('assistantDrawer').onclick=e=>{ if(e.target===$('assistantDrawer')) closeDrawer(); };
-    $('createDialog').onclick=e=>{ if(e.target===$('createDialog')){ $('createDialog').classList.add('hidden'); popAnnoScope($('createPanel')); } };
+    $('createDialog').onclick=e=>{ if(e.target===$('createDialog')) closeCreateDialog(); };
     let annoToggleDragged=false;
     $('annoToggle').onclick=()=>{ if(annoToggleDragged){ annoToggleDragged=false; return; } annoVisible=!annoVisible; $('annoToggle').classList.toggle('bg-primary',annoVisible); $('annoToggle').classList.toggle('bg-ink-muted',!annoVisible); $('annoToggle').setAttribute('aria-pressed',String(annoVisible)); $('annoToggle').querySelector('span').textContent=annoVisible?'隐藏标注':'显示标注'; renderAnnoBadges(); };
     $('closeAnno').onclick=e=>{ e.stopPropagation(); closeAnnoPopup(); };
@@ -250,9 +278,9 @@
     // 长按后仅沿页面右侧上下拖拽，避免普通点击误触移动。
     function setupAnnoToggleDrag(){ const toggle=$('annoToggle'); toggle.style.touchAction='none'; const savedTop=Number(localStorage.getItem('yundeng-anno-toggle-top')); if(Number.isFinite(savedTop)&&savedTop>0) toggle.style.top=Math.max(8,Math.min(innerHeight-toggle.offsetHeight-8,savedTop))+'px'; let state=null,timer=null; const moveTo=y=>{ if(!state)return; toggle.style.top=Math.max(8,Math.min(innerHeight-toggle.offsetHeight-8,state.top+y-state.startY))+'px'; }; const finish=e=>{ clearTimeout(timer); if(!state)return; if(state.active){ annoToggleDragged=true; moveTo(state.latestY); toggle.classList.remove('cursor-grabbing','scale-105'); toggle.classList.add('cursor-grab'); localStorage.setItem('yundeng-anno-toggle-top',parseInt(toggle.style.top,10)); } if(toggle.hasPointerCapture(e.pointerId))toggle.releasePointerCapture(e.pointerId); state=null; }; toggle.addEventListener('pointerdown',e=>{ if(e.pointerType==='mouse'&&e.button!==0)return; state={pointerId:e.pointerId,startY:e.clientY,latestY:e.clientY,top:toggle.getBoundingClientRect().top,active:false}; toggle.setPointerCapture(e.pointerId); timer=setTimeout(()=>{ if(!state)return; state.active=true; annoToggleDragged=true; toggle.classList.remove('cursor-grab'); toggle.classList.add('cursor-grabbing','scale-105'); moveTo(state.latestY); },350); }); toggle.addEventListener('pointermove',e=>{ if(!state||e.pointerId!==state.pointerId)return; state.latestY=e.clientY; if(!state.active)return; e.preventDefault(); moveTo(e.clientY); }); toggle.addEventListener('pointerup',finish); toggle.addEventListener('pointercancel',finish); }
     $('mainContent').addEventListener('scroll',renderAnnoBadges); window.addEventListener('resize',renderAnnoBadges);
-    document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ closeOverlays(); closeAnnoPopup(); if(!$('assistantDrawer').classList.contains('hidden')) closeDrawer(); } });
+    document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ if(!$('annoPopup').classList.contains('hidden')) closeAnnoPopup(); else if(!$('createDialog').classList.contains('hidden')) closeCreateDialog(); else if(!$('assistantDrawer').classList.contains('hidden')) closeDrawer(); else closeOverlays(); return; } if(!$('annoPopup').classList.contains('hidden')) trapDialogFocus(e,$('annoPanel')); else if(!$('createDialog').classList.contains('hidden')) trapDialogFocus(e,$('createPanel')); else if(!$('assistantDrawer').classList.contains('hidden')) trapDialogFocus(e,$('assistantPanel')); });
     renderNav(); renderNotices(); renderRoute(); lucide.createIcons(); setupAnnoToggleDrag();
   </script>
-  <script src="公共导航.js?v=20260813"></script>
+
 </body>
 </html>

@@ -15,7 +15,7 @@
             line:'#DFE1E5','line-light':'#E8EAED','line-lighter':'#F0F1F3',page:'#F7F8FA',card:'#FFFFFF',hover:'#F3F4F6',
             success:'#0FC060','success-bg':'#E7F9F0',warning:'#E7772D','warning-bg':'#FDF2E9',danger:'#D9001B','danger-bg':'#FFE8EB',info:'#0091D5','info-bg':'#E4F4FB'
           },
-          fontFamily: { sans:['Inter','PingFang SC','Microsoft YaHei','system-ui','sans-serif'], mono:['JetBrains Mono','SFMono-Regular','Consolas','monospace'] }
+          fontFamily: { sans:['-apple-system','BlinkMacSystemFont','PingFang SC','Hiragino Sans GB','Microsoft YaHei','Helvetica Neue','Helvetica','Arial','sans-serif'], mono:['JetBrains Mono','SFMono-Regular','Consolas','monospace'] }
         }
       }
     };
@@ -85,7 +85,7 @@
     .skeleton { position: relative; overflow: hidden; background: #F0F1F3; }
     .skeleton::after { content:''; position:absolute; inset:0; background: linear-gradient(90deg,transparent,rgba(255,255,255,.7),transparent); transform:translateX(-100%); animation: shimmer 1.2s infinite; }
     @keyframes shimmer { to { transform: translateX(100%); } }
-    .anno-badge { position: fixed; z-index: 9998; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 11px; color: #fff; background: #D9001B; border: 2px solid #fff; box-shadow: 0 2px 8px rgba(0,0,0,.22); pointer-events: auto; display: flex; align-items: center; justify-content: center; font: 700 11px/1 system-ui,sans-serif; cursor: pointer; }
+    .anno-badge { position: fixed; z-index: 9998; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 11px; color: #fff; background: #D9001B; border: 2px solid #fff; box-shadow: 0 2px 8px rgba(0,0,0,.22); pointer-events: auto; display: flex; align-items: center; justify-content: center; font: 700 11px/1 'JetBrains Mono','SFMono-Regular',Consolas,monospace; cursor: pointer; }
     .toast { min-width: 240px; max-width: min(440px, 90vw); background: #fff; border-radius: 4px; box-shadow: 0 6px 24px rgba(0,0,0,.14); padding: 11px 14px; display: flex; align-items: flex-start; gap: 9px; pointer-events: auto; animation: toast-in .18s ease-out; }
     @keyframes toast-in { from { opacity:0; transform:translateY(-6px); } }
     @media (max-width: 1279px) {
@@ -106,6 +106,8 @@
     }
     @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior:auto !important; animation-duration:.01ms !important; transition-duration:.01ms !important; } }
   </style>
+  <link rel="stylesheet" href="公共导航.css?v=20260821a">
+  <script src="公共导航.js?v=20260821a"></script>
 </head>
 <body class="font-sans antialiased">
   <div class="app-shell">
@@ -141,15 +143,7 @@
         </div>
       </header>
 
-      <main class="p-4 md:p-5 min-h-[calc(100vh-48px)]">
-        <div class="mb-4 flex items-center justify-between gap-4">
-          <div>
-            <h1 class="text-[22px] leading-8 font-semibold text-ink-title">账号设置</h1>
-            <p class="mt-1 text-ink-sub">管理当前团队、登录方式和可信设备</p>
-          </div>
-          <span id="securitySummary" class="status bg-success-bg text-success"><i data-lucide="shield-check" class="w-3.5 h-3.5"></i>安全项 4/5</span>
-        </div>
-
+      <main class="p-4 min-h-[calc(100vh-48px)]">
         <div class="account-layout grid grid-cols-[340px_minmax(0,1fr)] gap-4 items-start">
           <div class="left-stack space-y-4">
             <section id="currentTeamCard" data-anno="1" class="surface p-5 min-w-0" aria-labelledby="currentTeamTitle">
@@ -260,7 +254,7 @@
 
             <section id="deviceSection" data-anno="13" class="surface p-5" aria-labelledby="deviceTitle">
               <div class="flex items-center justify-between gap-3">
-                <div><h2 id="deviceTitle" class="section-title">登录设备</h2><p id="deviceUpdated" class="mt-1 text-ink-sub">最近更新：2026-08-13 10:26:42</p></div>
+                <div><h2 id="deviceTitle" class="section-title">登录设备</h2><p id="deviceUpdated" class="mt-1 text-ink-sub">最近更新：加载中</p></div>
                 <button id="refreshDevices" type="button" class="icon-btn" title="刷新设备列表" aria-label="刷新设备列表"><i data-lucide="refresh-cw" class="icon"></i></button>
               </div>
               <div id="deviceList" class="device-grid mt-3"></div>
@@ -372,12 +366,19 @@
     let nickname = '1938';
     let inviteVersion = 1;
     let annoVisible = false;
+    let modalReturnFocus = null;
+    let serviceReturnFocus = null;
     const annoScopeStack = [];
     const timers = new Set();
 
     function iconRefresh() { if (window.lucide) lucide.createIcons(); }
     function escapeHtml(value='') { return String(value).replace(/[&<>'"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch])); }
     function maskMobile(value) { return value.length === 11 ? value.slice(0,3) + '****' + value.slice(-4) : value; }
+    function formatLocalDateTime(date=new Date()) {
+      const parts = new Intl.DateTimeFormat('zh-CN',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}).formatToParts(date);
+      const values = Object.fromEntries(parts.map(part=>[part.type,part.value]));
+      return `${values.year}-${values.month}-${values.day} ${values.hour}:${values.minute}:${values.second}`;
+    }
     function toast(message, tone='success') {
       const map = {success:['circle-check','text-success'],error:['circle-x','text-danger'],info:['info','text-info'],warning:['triangle-alert','text-warning']};
       const [icon, color] = map[tone] || map.info;
@@ -411,7 +412,8 @@
       $('profileRole').textContent = currentTeam.role.split('、')[0];
       $('planName').textContent = currentTeam.plan;
       $('expireAt').textContent = currentTeam.expire;
-      const expired = new Date(currentTeam.expire+'T23:59:59') < new Date('2026-08-13T00:00:00');
+      const today = new Date(); today.setHours(0,0,0,0);
+      const expired = new Date(currentTeam.expire+'T23:59:59') < today;
       $('expireAt').className = `mono ${expired?'text-danger':'text-ink-title'}`;
       $('certStatus').textContent = currentTeam.certified ? '已认证' : '未认证';
       $('certStatus').className = `status ${currentTeam.certified?'bg-success-bg text-success':'bg-warning-bg text-warning'}`;
@@ -470,7 +472,7 @@
       } else if (currentModal==='invite') {
         title.textContent='邀请成员'; confirm.classList.add('hidden'); cancel.textContent='关闭';
         const link=`https://invite.invalid/team/${currentTeam.id.slice(-4)}-v${inviteVersion}`;
-        body.innerHTML=infoBanner('成员通过二维码或链接申请加入后，仍需团队管理员审批。重置后旧邀请凭证立即失效。') + `<div class="grid md:grid-cols-2 gap-6"><section class="md:border-r md:border-line-light md:pr-6"><h3 class="font-semibold text-ink-title">二维码邀请</h3><div class="mt-4 flex flex-col items-center"><div id="inviteQr" class="qr-grid">${qrBits(currentTeam.id+inviteVersion)}</div><p class="mt-3 text-[12px] text-ink-sub">使用云登客户端扫码申请加入</p><button type="button" data-invite-reset="qr" class="btn btn-secondary mt-3"><i data-lucide="refresh-cw" class="icon"></i>重置二维码</button></div></section><section><h3 class="font-semibold text-ink-title">链接邀请</h3><div class="mt-4 rounded bg-page p-3 break-all mono text-[12px] text-ink-sub" id="inviteLink">${link}</div><div class="mt-3 flex flex-wrap gap-2"><button id="copyInviteLink" type="button" class="btn btn-primary"><i data-lucide="copy" class="icon"></i>复制链接</button><button type="button" data-invite-reset="link" class="btn btn-secondary"><i data-lucide="refresh-cw" class="icon"></i>重置链接</button></div><div id="inviteConfirmBar" class="hidden mt-4 rounded bg-danger-bg p-3 text-danger"><p>确认重置？旧邀请凭证将立即失效。</p><div class="mt-3 flex gap-2"><button id="confirmInviteReset" type="button" class="btn bg-danger text-white">确认重置</button><button id="cancelInviteReset" type="button" class="btn btn-secondary">暂不重置</button></div></div></section></div>`;
+        body.innerHTML=infoBanner('成员通过二维码或链接申请加入后，仍需团队管理员审批。重置后旧邀请凭证立即失效。') + `<div class="grid md:grid-cols-2 gap-6"><section class="md:border-r md:border-line-light md:pr-6"><h3 class="font-semibold text-ink-title">二维码邀请</h3><div class="mt-4 flex flex-col items-center"><div id="inviteQr" class="qr-grid" role="img" aria-label="演示邀请二维码，不可用于真实扫码">${qrBits(currentTeam.id+inviteVersion)}</div><p class="mt-3 text-[12px] text-ink-sub">演示二维码，不可用于真实扫码</p><button type="button" data-invite-reset="qr" class="btn btn-secondary mt-3"><i data-lucide="refresh-cw" class="icon"></i>重置二维码</button></div></section><section><h3 class="font-semibold text-ink-title">链接邀请</h3><div class="mt-4 rounded bg-page p-3 break-all mono text-[12px] text-ink-sub" id="inviteLink">${link}</div><div class="mt-3 flex flex-wrap gap-2"><button id="copyInviteLink" type="button" class="btn btn-primary"><i data-lucide="copy" class="icon"></i>复制链接</button><button type="button" data-invite-reset="link" class="btn btn-secondary"><i data-lucide="refresh-cw" class="icon"></i>重置链接</button></div><div id="inviteConfirmBar" class="hidden mt-4 rounded bg-danger-bg p-3 text-danger"><p>确认重置？旧邀请凭证将立即失效。</p><div class="mt-3 flex gap-2"><button id="confirmInviteReset" type="button" class="btn bg-danger text-white">确认重置</button><button id="cancelInviteReset" type="button" class="btn btn-secondary">暂不重置</button></div></div></section></div>`;
       } else if (currentModal==='editNickname') {
         title.textContent='修改昵称';
         body.innerHTML=fieldRow('昵称',{id:'nicknameInput',value:nickname,maxlength:20,placeholder:'请输入昵称'}) + `<div class="form-row -mt-4 mb-0"><span></span><div class="text-right text-[12px] text-ink-muted"><span id="nicknameCount">${nickname.length}</span>/20</div></div>`;
@@ -488,7 +490,7 @@
         body.innerHTML=infoBanner(`验证码将发送至 ${$('mobileMasked').textContent}`) + codeField('passwordCode') + `<div class="form-row"><label class="form-label required" for="newPassword">新密码</label><div><div class="relative"><input id="newPassword" class="field pr-10" type="password" maxlength="32" placeholder="请输入至少 6 位密码" autocomplete="new-password"><button id="togglePassword" type="button" class="icon-btn absolute right-0.5 top-0.5" aria-label="显示密码"><i data-lucide="eye" class="icon"></i></button></div><div id="newPasswordError" class="field-error"></div></div></div>`;
       } else if (currentModal==='socialBind') {
         const provider=modalPayload.provider, label=provider==='wechat'?'微信':'钉钉'; title.textContent=`绑定${label}`; footer.classList.add('hidden');
-        body.innerHTML=`<div class="flex flex-col items-center py-3"><div id="socialQr" class="qr-grid">${qrBits(provider+Date.now())}</div><p class="mt-4 text-ink-title">请使用${label}扫码绑定并登录</p><p id="qrState" class="mt-1 text-[12px] text-ink-sub">二维码将在当前弹窗关闭后失效</p><div class="mt-4 flex gap-2"><button id="refreshSocialQr" data-anno="16" type="button" class="btn btn-secondary"><i data-lucide="refresh-cw" class="icon"></i>刷新二维码</button><button id="completeSocialBind" type="button" class="btn btn-primary">完成扫码</button></div></div>`;
+        body.innerHTML=`<div class="flex flex-col items-center py-3"><div id="socialQr" class="qr-grid" role="img" aria-label="${label}演示绑定二维码，不可用于真实扫码">${qrBits(provider+Date.now())}</div><p class="mt-4 text-ink-title">${label}扫码绑定演示</p><p id="qrState" class="mt-1 text-[12px] text-ink-sub">演示二维码，不可用于真实扫码</p><div class="mt-4 flex gap-2"><button id="refreshSocialQr" data-anno="16" type="button" class="btn btn-secondary"><i data-lucide="refresh-cw" class="icon"></i>刷新二维码</button><button id="completeSocialBind" type="button" class="btn btn-primary">完成扫码</button></div></div>`;
       } else if (currentModal==='revokeDevice') {
         const device=devices.find(item=>item.id===modalPayload.deviceId); title.textContent='退出登录设备';
         body.innerHTML=infoBanner(`验证通过后，「${escapeHtml(device.name)}」上的登录会话将失效。`,'warning') + `<div class="form-row"><span class="form-label">绑定手机</span><div class="h-9 flex items-center mono text-ink-title">${$('mobileMasked').textContent}</div></div>` + codeField('revokeCode'); confirm.textContent='确认退出';
@@ -508,7 +510,7 @@
       if ($('copyInviteLink')) $('copyInviteLink').addEventListener('click',()=>copyText($('inviteLink').textContent,'邀请链接已复制'));
       $('modalBody').querySelectorAll('[data-invite-reset]').forEach(button=>button.addEventListener('click',()=>showInviteReset(button.dataset.inviteReset)));
       if ($('refreshSocialQr')) $('refreshSocialQr').addEventListener('click',()=>{ $('socialQr').innerHTML=qrBits(modalPayload.provider+Date.now()); $('qrState').textContent='二维码已刷新'; toast('二维码已刷新','info'); });
-      if ($('completeSocialBind')) $('completeSocialBind').addEventListener('click',()=>{ const provider=modalPayload.provider; $(`${provider}State`).textContent='已绑定'; document.querySelector(`[data-bind-provider="${provider}"]`).textContent='已绑定'; document.querySelector(`[data-bind-provider="${provider}"]`).disabled=true; closeModal(); toast(`${provider==='wechat'?'微信':'钉钉'}绑定成功`); updateSecuritySummary(); });
+      if ($('completeSocialBind')) $('completeSocialBind').addEventListener('click',()=>{ const provider=modalPayload.provider; $(`${provider}State`).textContent='已绑定'; document.querySelector(`[data-bind-provider="${provider}"]`).textContent='已绑定'; document.querySelector(`[data-bind-provider="${provider}"]`).disabled=true; closeModal(); toast(`${provider==='wechat'?'微信':'钉钉'}绑定成功`); });
     }
     function showInviteReset(kind) {
       const bar=$('inviteConfirmBar'); bar.classList.remove('hidden');
@@ -520,11 +522,12 @@
       const timer=setInterval(()=>{ remaining--; if(remaining<=0){clearInterval(timer);timers.delete(timer);button.disabled=false;button.textContent='获取验证码';}else button.textContent=`${remaining}s 后重试`; },1000); timers.add(timer);
     }
     function openModal(type,payload={}) {
+      modalReturnFocus = document.activeElement;
       closeGlobalPopover(); currentModal=type; modalPayload=payload; if(type==='changeMobile') phoneStep=1;
       $('modalRoot').classList.remove('hidden'); $('modalRoot').classList.add('flex'); document.body.style.overflow='hidden'; renderModal(); pushAnnoScope($('modalPanel'));
     }
     function closeModal() {
-      if (!currentModal) return; currentModal=null; modalPayload={}; $('modalRoot').classList.add('hidden'); $('modalRoot').classList.remove('flex'); document.body.style.overflow=''; popAnnoScope();
+      if (!currentModal) return; currentModal=null; modalPayload={}; $('modalRoot').classList.add('hidden'); $('modalRoot').classList.remove('flex'); document.body.style.overflow=''; popAnnoScope(); modalReturnFocus?.focus?.({preventScroll:true}); modalReturnFocus=null;
     }
 
     function validateCode(id) { const code=value(id); const message=/^\d{6}$/.test(code)?'':'请输入 6 位数字验证码'; setError(id,message); return !message; }
@@ -542,7 +545,7 @@
         else { const mobile=value('newMobile'); const mobileError=!/^1\d{10}$/.test(mobile)?'请输入有效的 11 位手机号':maskMobile(mobile)===$('mobileMasked').textContent?'新手机号不能与原手机号相同':''; setError('newMobile',mobileError); const codeValid=validateCode('newMobileCode'); if(mobileError||!codeValid)return; $('mobileMasked').textContent=maskMobile(mobile); closeModal(); toast('登录手机号已更新'); }
       } else if (currentModal==='bindEmail') {
         const email=value('emailInput'); const emailError=!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)?'请输入有效邮箱地址':''; setError('emailInput',emailError); const codeValid=validateCode('emailCode'); if(emailError||!codeValid)return;
-        const [local,domain]=email.split('@'); $('emailMasked').textContent=`${local.slice(0,1)}***@${domain}`; $('emailStatus').textContent='已绑定'; $('emailStatus').className='status bg-success-bg text-success'; $('bindEmail').textContent='更换'; emailBound=true; closeModal(); toast('邮箱绑定成功'); updateSecuritySummary();
+        const [local,domain]=email.split('@'); $('emailMasked').textContent=`${local.slice(0,1)}***@${domain}`; $('emailStatus').textContent='已绑定'; $('emailStatus').className='status bg-success-bg text-success'; $('bindEmail').textContent='更换'; emailBound=true; closeModal(); toast('邮箱绑定成功');
       } else if (currentModal==='changePassword') {
         const codeValid=validateCode('passwordCode'); const password=value('newPassword'); const passwordError=password.length<6?'新密码至少 6 位':''; setError('newPassword',passwordError); if(!codeValid||passwordError)return; closeModal(); toast('密码已更新');
       } else if (currentModal==='revokeDevice') {
@@ -552,12 +555,9 @@
       }
     }
 
-    function updateSecuritySummary() {
-      const thirdBound=['wechat','dingtalk'].some(provider=>$(`${provider}State`).textContent==='已绑定'); const score=3+(emailBound?1:0)+(thirdBound?1:0); $('securitySummary').innerHTML=`<i data-lucide="shield-check" class="w-3.5 h-3.5"></i>安全项 ${score}/5`; iconRefresh();
-    }
     function refreshDevices() {
       const button=$('refreshDevices'), icon=button.querySelector('svg'); button.disabled=true; if(icon)icon.classList.add('animate-spin');
-      const timer=setTimeout(()=>{ const now='2026-08-13 '+new Date().toLocaleTimeString('zh-CN',{hour12:false}); $('deviceUpdated').textContent=`最近更新：${now}`; button.disabled=false; button.querySelector('svg')?.classList.remove('animate-spin'); toast('设备列表已更新'); timers.delete(timer); },650); timers.add(timer);
+      const timer=setTimeout(()=>{ $('deviceUpdated').textContent=`最近更新：${formatLocalDateTime()}`; button.disabled=false; button.querySelector('svg')?.classList.remove('animate-spin'); toast('设备列表已更新'); timers.delete(timer); },650); timers.add(timer);
     }
 
     function positionPopover(anchor) {
@@ -567,11 +567,11 @@
     function closeGlobalPopover() { $('globalPopover').classList.add('hidden'); }
     function openSupport(kind,anchor) {
       closeGlobalPopover();
-      if(kind==='online'||kind==='always'){ $('serviceTitle').textContent=kind==='always'?'7×24 服务':'在线咨询'; $('serviceRoot').classList.remove('hidden'); $('serviceRoot').classList.add('flex'); document.body.style.overflow='hidden'; pushAnnoScope($('serviceDrawer')); $('chatInput').focus(); return; }
+      if(kind==='online'||kind==='always'){ serviceReturnFocus=document.activeElement; $('serviceTitle').textContent=kind==='always'?'7×24 服务':'在线咨询'; $('serviceRoot').classList.remove('hidden'); $('serviceRoot').classList.add('flex'); document.body.style.overflow='hidden'; pushAnnoScope($('serviceDrawer')); $('chatInput').focus(); return; }
       if(kind==='phone') openGlobalPopover(anchor,`<div class="flex items-start gap-3"><span class="w-9 h-9 rounded bg-primary-bg text-primary flex items-center justify-center"><i data-lucide="phone" class="icon"></i></span><div><strong class="block text-ink-title">电话咨询</strong><p class="mt-1 text-ink-sub">服务热线：400-***-**88</p><p class="mt-1 text-[12px] text-ink-muted">服务时间：7×24 小时</p></div></div>`);
-      else openGlobalPopover(anchor,`<div class="flex gap-4"><div class="qr-grid !w-[112px] !p-1.5 shrink-0">${qrBits('support')}</div><div><strong class="block text-ink-title">扫码咨询</strong><p class="mt-2 leading-6 text-ink-sub">使用云登移动端扫码，联系客户顾问。</p></div></div>`);
+      else openGlobalPopover(anchor,`<div class="flex gap-4"><div class="qr-grid !w-[112px] !p-1.5 shrink-0" role="img" aria-label="演示咨询二维码，不可用于真实扫码">${qrBits('support')}</div><div><strong class="block text-ink-title">扫码咨询演示</strong><p class="mt-2 leading-6 text-ink-sub">演示二维码，不可用于真实扫码。</p></div></div>`);
     }
-    function closeService() { if($('serviceRoot').classList.contains('hidden'))return; $('serviceRoot').classList.add('hidden'); $('serviceRoot').classList.remove('flex'); document.body.style.overflow=''; popAnnoScope(); }
+    function closeService() { if($('serviceRoot').classList.contains('hidden'))return; $('serviceRoot').classList.add('hidden'); $('serviceRoot').classList.remove('flex'); document.body.style.overflow=''; popAnnoScope(); serviceReturnFocus?.focus?.({preventScroll:true}); serviceReturnFocus=null; }
     function sendChat() { const text=value('chatInput'); if(!text){toast('请输入咨询内容','warning');return;} const node=document.createElement('div'); node.className='flex justify-end'; node.innerHTML=`<div class="max-w-[78%] bg-primary text-white rounded-lg p-3 break-words">${escapeHtml(text)}</div>`; $('chatMessages').appendChild(node); $('chatInput').value=''; $('chatCount').textContent='0/300'; $('chatMessages').scrollTop=$('chatMessages').scrollHeight; toast('留言已发送'); }
 
     function pushAnnoScope(scope) { annoScopeStack.push(scope); requestAnimationFrame(renderAnnoBadges); }
@@ -583,8 +583,9 @@
       scope.querySelectorAll('[data-anno]').forEach(element=>{ if(!isVisible(element))return; const rect=element.getBoundingClientRect(); const badge=document.createElement('button'); badge.type='button'; badge.className='anno-badge'; badge.textContent=element.dataset.anno; badge.style.left=Math.min(innerWidth-26,Math.max(2,rect.right-12))+'px'; badge.style.top=Math.min(innerHeight-26,Math.max(2,rect.top-11))+'px'; badge.addEventListener('click',event=>{event.stopPropagation();openAnno(Number(element.dataset.anno));}); layer.appendChild(badge); });
     }
     function toggleAnnotations() { annoVisible=!annoVisible; $('annoToggle').setAttribute('aria-pressed',String(annoVisible)); $('annoToggle').querySelector('span').textContent=annoVisible?'隐藏标注':'显示标注'; $('annoToggle').classList.toggle('bg-danger',annoVisible); $('annoToggle').classList.toggle('bg-ink-muted',!annoVisible); renderAnnoBadges(); }
-    function openAnno(number) { const item=annotations[number]; if(!item)return; $('annoTitle').textContent=`${number}. ${item.title}`; $('annoDesc').innerHTML=item.desc.map(line=>`<p>${escapeHtml(line)}</p>`).join(''); $('annoPopup').classList.remove('hidden'); $('annoPopup').classList.add('flex'); }
-    function closeAnno() { $('annoPopup').classList.add('hidden'); $('annoPopup').classList.remove('flex'); const dialog=$('annoDialog'); dialog.style.position=''; dialog.style.left=''; dialog.style.top=''; }
+    let annoReturnFocus=null;
+    function openAnno(number) { const item=annotations[number]; if(!item)return; const origin=document.querySelector(`[data-anno="${number}"]`); annoReturnFocus=origin?.matches('button,a,input,select,textarea,[tabindex]')?origin:origin?.querySelector('button,a,input,select,textarea,[tabindex]')||$('annoToggle'); $('annoTitle').textContent=`${number}. ${item.title}`; $('annoDesc').innerHTML=item.desc.map(line=>`<p>${escapeHtml(line)}</p>`).join(''); $('annoPopup').classList.remove('hidden'); $('annoPopup').classList.add('flex'); $('closeAnno').focus(); }
+    function closeAnno() { if($('annoPopup').classList.contains('hidden'))return; $('annoPopup').classList.add('hidden'); $('annoPopup').classList.remove('flex'); const dialog=$('annoDialog'); dialog.style.position=''; dialog.style.left=''; dialog.style.top=''; annoReturnFocus?.focus?.({preventScroll:true}); annoReturnFocus=null; }
 
     function makeLongPressDraggable(button) {
       let timer=null,dragging=false,startX=0,startY=0,startLeft=0,startTop=0;
@@ -626,14 +627,14 @@
       document.addEventListener('click',event=>{if(!$('globalPopover').contains(event.target)&&!event.target.closest('#notificationBtn,#languageBtn,#accountMenuBtn,[data-support]'))closeGlobalPopover();});
       $('collapseSidebar').addEventListener('click',()=>{ $('sidebar').classList.toggle('compact'); $('collapseSidebar').querySelector('svg')?.setAttribute('data-lucide',$('sidebar').classList.contains('compact')?'panel-left-open':'panel-left-close'); iconRefresh(); });
       $('mobileMenu').addEventListener('click',()=>{ $('sidebar').classList.add('mobile-open'); $('mobileScrim').classList.remove('hidden'); }); $('mobileScrim').addEventListener('click',()=>{ $('sidebar').classList.remove('mobile-open'); $('mobileScrim').classList.add('hidden'); });
-      document.addEventListener('keydown',event=>{if(event.key==='Escape'){if(!$('annoPopup').classList.contains('hidden'))closeAnno();else if(currentModal)closeModal();else if(!$('serviceRoot').classList.contains('hidden'))closeService();else closeGlobalPopover();}});
+      document.addEventListener('keydown',event=>{if(event.key==='Tab'&&!$('annoPopup').classList.contains('hidden')){event.preventDefault();$('closeAnno').focus();return}if(event.key==='Escape'){if(!$('annoPopup').classList.contains('hidden'))closeAnno();else if(currentModal)closeModal();else if(!$('serviceRoot').classList.contains('hidden'))closeService();else closeGlobalPopover();}});
       window.addEventListener('resize',()=>{renderAnnoBadges();closeGlobalPopover();}); window.addEventListener('scroll',renderAnnoBadges,true);
       $('closeAnno').addEventListener('click',closeAnno); $('annoPopup').addEventListener('click',event=>{if(event.target===$('annoPopup'))closeAnno();});
       makeLongPressDraggable($('annoToggle')); makeDialogDraggable($('annoDrag'),$('annoDialog'));
     }
 
-    renderNav(); renderTeams(); renderCurrentTeam(); renderDevices(); bindPageEvents(); updateSecuritySummary(); iconRefresh();
+    renderNav(); renderTeams(); renderCurrentTeam(); renderDevices(); $('deviceUpdated').textContent=`最近更新：${formatLocalDateTime()}`; bindPageEvents(); iconRefresh();
   </script>
-  <script src="公共导航.js?v=20260813"></script>
+
 </body>
 </html>

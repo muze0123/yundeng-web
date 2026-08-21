@@ -17,7 +17,7 @@
         success:{DEFAULT:'#0FC060',bg:'#E7F9F0'}, warning:{DEFAULT:'#E7772D',bg:'#FDF2E9'},
         danger:{DEFAULT:'#D9001B',bg:'#FFE8EB'}, info:{DEFAULT:'#0091D5',bg:'#E4F4FB'}
       },
-      fontFamily:{ sans:["-apple-system","BlinkMacSystemFont","PingFang SC","Microsoft YaHei","Hiragino Sans GB","Segoe UI","system-ui","sans-serif"], mono:["JetBrains Mono","monospace"] },
+      fontFamily:{ sans:["-apple-system","BlinkMacSystemFont","PingFang SC","Hiragino Sans GB","Microsoft YaHei","Helvetica Neue","Helvetica","Arial","sans-serif"], mono:["JetBrains Mono","monospace"] },
       borderRadius:{DEFAULT:'4px',lg:'8px'}
     }}};
   </script>
@@ -54,7 +54,7 @@
     .btn-secondary:hover { background:#F3F4F6; border-color:#C7CAD1; }
     .btn-text { color:#0066FF; padding:0 6px; }
     .btn-text:hover { color:#0052CC; background:#E6F0FF; }
-    .switch { position:relative; width:40px; height:22px; border-radius:11px; background:#C9CDD4; flex:0 0 40px; transition:background .16s; }
+    .switch { position:relative; width:40px; height:22px; border-radius:11px; background:#C7CAD1; flex:0 0 40px; transition:background .16s; }
     .switch::after { content:""; position:absolute; width:18px; height:18px; top:2px; left:2px; border-radius:50%; background:#FFF; box-shadow:0 1px 3px rgba(0,0,0,.18); transition:transform .16s; }
     .switch.on { background:#0066FF; }
     .switch.on::after { transform:translateX(18px); }
@@ -64,6 +64,8 @@
     .status-pill { height:24px; padding:0 8px; border-radius:4px; display:inline-flex; align-items:center; gap:5px; font-size:12px; white-space:nowrap; }
     .kernel-row { display:grid; grid-template-columns:minmax(170px,1.15fr) minmax(110px,.7fr) minmax(160px,1fr) 112px; align-items:center; min-height:58px; padding:9px 16px; border-bottom:1px solid #F0F1F3; }
     .kernel-row:last-child { border-bottom:0; }
+    .kernel-row>span:last-child { text-align:left!important; }
+    .kernel-row>div:last-child { justify-content:flex-start!important; }
     .pref-row { min-height:64px; display:grid; grid-template-columns:minmax(180px,260px) minmax(280px,500px); align-items:center; gap:24px; }
     .toast { animation:toast-in .2s ease both; }
     @keyframes toast-in { from { transform:translateY(-8px); opacity:0; } to { transform:translateY(0); opacity:1; } }
@@ -96,6 +98,8 @@
       *,*::before,*::after { animation-duration:.01ms!important; transition-duration:.01ms!important; scroll-behavior:auto!important; }
     }
   </style>
+  <link rel="stylesheet" href="公共导航.css?v=20260821a">
+  <script src="公共导航.js?v=20260821a"></script>
 </head>
 <body class="bg-page text-[13px]">
   <div class="flex h-screen min-w-0">
@@ -155,7 +159,7 @@
         </div>
       </header>
 
-      <main id="mainContent" class="flex-1 overflow-auto p-3 md:p-4" tabindex="-1">
+      <main id="mainContent" class="flex-1 overflow-auto p-4" tabindex="-1">
         <section class="min-h-full bg-card rounded-lg overflow-hidden" aria-labelledby="pageTitle">
           <div class="px-5 md:px-6 pt-5 border-b border-line-light">
             <div class="flex items-center justify-between gap-4"><div><h1 id="pageTitle" class="text-[20px] font-bold text-ink-title">设置</h1><p class="mt-1 text-[12px] text-ink-sub">管理本地、个人与团队配置</p></div><span id="saveIndicator" class="hidden text-[12px] text-ink-sub items-center gap-1.5"><i data-lucide="loader-circle" class="w-4 h-4 animate-spin"></i>保存中</span></div>
@@ -323,7 +327,7 @@
       return `<button class="btn btn-secondary" data-kernel-action="${kernel.id}">${label}</button>`;
     }
     function renderLocal() {
-      const rows=kernels.map(kernel=>{const status=statusView(kernel);return `<div class="kernel-row"><div class="flex items-center gap-2 min-w-0"><span class="w-8 h-8 rounded bg-page text-primary flex items-center justify-center shrink-0"><i data-lucide="cpu" class="w-4 h-4"></i></span><strong class="text-ink-title truncate">${kernel.name}</strong>${kernel.tag?'<span class="status-pill bg-info-bg text-info">beta</span>':''}</div><span class="kernel-version mono text-[12px] text-ink-sub">${kernel.version||'—'}</span><div class="kernel-status min-w-0"><span class="status-pill ${status.tone}"><i data-lucide="${status.icon}" class="w-3.5 h-3.5 ${kernel.status==='downloading'?'animate-spin':''}"></i>${status.label}</span>${kernel.status==='downloading'?`<div class="progress-track mt-2 max-w-[180px]"><div class="progress-value" style="width:${kernel.progress}%"></div></div>`:''}</div><div class="flex justify-end">${kernelAction(kernel)}</div></div>`}).join('');
+      const rows=kernels.map(kernel=>{const status=statusView(kernel);return `<div class="kernel-row"><div class="flex items-center gap-2 min-w-0"><span class="w-8 h-8 rounded bg-page text-primary flex items-center justify-center shrink-0"><i data-lucide="cpu" class="w-4 h-4"></i></span><strong class="text-ink-title truncate">${kernel.name}</strong>${kernel.tag?'<span class="status-pill bg-info-bg text-info">beta</span>':''}</div><span class="kernel-version mono text-[12px] text-ink-sub">${kernel.version||'-'}</span><div class="kernel-status min-w-0"><span class="status-pill ${status.tone}"><i data-lucide="${status.icon}" class="w-3.5 h-3.5 ${kernel.status==='downloading'?'animate-spin':''}"></i>${status.label}</span>${kernel.status==='downloading'?`<div class="progress-track mt-2 max-w-[180px]"><div class="progress-value" style="width:${kernel.progress}%"></div></div>`:''}</div><div class="flex justify-end">${kernelAction(kernel)}</div></div>`}).join('');
       return `<section id="software" data-anno="2" class="section-block scroll-mt-4"><div class="flex items-center justify-between gap-4"><div><h2 class="text-[17px] font-semibold text-ink-title">软件版本</h2><p class="mt-1 text-[12px] text-ink-sub">检查客户端版本并保持在受支持范围</p></div><button id="checkVersionBtn" class="btn btn-secondary"><i data-lucide="refresh-cw" class="w-4 h-4"></i>检查更新</button></div><div class="mt-5 rounded-lg bg-page p-5 flex flex-col lg:flex-row lg:items-center justify-between gap-5"><div class="flex items-center gap-4"><span class="w-12 h-12 rounded-lg bg-primary-bg text-primary flex items-center justify-center"><i data-lucide="badge-check" class="w-6 h-6"></i></span><div><p class="text-[12px] text-ink-sub">当前软件版本</p><p class="mono mt-1 text-[20px] font-semibold text-ink-title">Version 4.0.2.4</p><p class="mt-1 text-[12px] text-ink-sub">您当前正在使用 Version 4.0.2.4（更新至最新版本，体验更佳）</p></div></div><span class="status-pill bg-success-bg text-success self-start lg:self-auto"><i data-lucide="circle-check" class="w-4 h-4"></i>已是最新版本</span></div></section><section id="kernel" data-anno="3" class="section-block scroll-mt-4"><div class="flex flex-wrap items-end justify-between gap-3"><div><h2 class="text-[17px] font-semibold text-ink-title">Chromium 内核</h2><p class="mt-1 text-[12px] text-ink-sub">根据环境需求下载或更新指定版本，下载任务会显示实时进度</p></div><button id="localDownloadAll" class="btn btn-secondary"><i data-lucide="download" class="w-4 h-4"></i>全部下载</button></div><div class="mt-4 border border-line-light rounded-lg overflow-hidden"><div class="kernel-row min-h-[42px] bg-page text-[12px] text-ink-sub font-medium"><span>内核</span><span>版本</span><span>状态</span><span class="text-right">操作</span></div>${rows}</div></section>`;
     }
 
@@ -404,7 +408,7 @@
       if($('updateDrawer').classList.contains('hidden'))return;
       const visible=kernels.filter(item=>['147','146','107'].includes(item.id)||item.status==='downloading');
       $('updateSummary').textContent=`${kernels.filter(item=>item.status==='not_downloaded'||item.status==='update_available').length} 项可更新`;
-      $('updateList').innerHTML=visible.map(kernel=>{const status=statusView(kernel);return `<article class="border border-line-light rounded-lg p-4"><div class="flex items-start justify-between gap-3"><div><div class="flex flex-wrap items-center gap-2"><strong class="text-ink-title">${kernel.name.toLowerCase()} 内核</strong><span class="mono text-[11px] text-ink-sub">${kernel.version}</span>${kernel.id==='147'?'<span class="status-pill bg-danger-bg text-danger">NEW</span>':''}</div><ul class="mt-3 pl-5 list-disc text-[12px] leading-6 text-ink-sub">${releaseNotes.map(note=>`<li>${note}</li>`).join('')}</ul></div><span class="status-pill ${status.tone} shrink-0">${status.label}</span></div>${kernel.status==='downloading'?`<div class="mt-4"><div class="flex justify-between text-[11px] text-ink-sub mb-1.5"><span>下载中</span><span class="mono">${Math.round(kernel.progress)}%</span></div><div class="progress-track"><div class="progress-value" style="width:${kernel.progress}%"></div></div></div>`:`<div class="mt-4 flex justify-end">${kernelAction(kernel)}</div>`}</article>`;}).join('');
+      $('updateList').innerHTML=visible.map(kernel=>{const status=statusView(kernel);return `<article class="border border-line-light rounded-lg p-4"><div class="flex items-start justify-between gap-3"><div><div class="flex flex-wrap items-center gap-2"><strong class="text-ink-title">${kernel.name.toLowerCase()} 内核</strong><span class="mono text-[11px] text-ink-sub">${kernel.version}</span>${kernel.id==='147'?'<span class="status-pill bg-danger-bg text-danger">新版本</span>':''}</div><ul class="mt-3 pl-5 list-disc text-[12px] leading-6 text-ink-sub">${releaseNotes.map(note=>`<li>${note}</li>`).join('')}</ul></div><span class="status-pill ${status.tone} shrink-0">${status.label}</span></div>${kernel.status==='downloading'?`<div class="mt-4"><div class="flex justify-between text-[11px] text-ink-sub mb-1.5"><span>下载中</span><span class="mono">${Math.round(kernel.progress)}%</span></div><div class="progress-track"><div class="progress-value" style="width:${kernel.progress}%"></div></div></div>`:`<div class="mt-4 flex justify-end">${kernelAction(kernel)}</div>`}</article>`;}).join('');
       $('updateList').querySelectorAll('[data-kernel-action]').forEach(button=>button.addEventListener('click',()=>downloadKernel(button.dataset.kernelAction)));
       refreshIconsAndAnno();
     }
@@ -429,7 +433,7 @@
     $('closePermission').addEventListener('click',closePermissionModal);$('cancelPermission').addEventListener('click',closePermissionModal);$('confirmPermission').addEventListener('click',confirmPermission);$('permissionModal').addEventListener('click',event=>{if(event.target===$('permissionModal'))closePermissionModal();});
     $('guideBtn').addEventListener('click',()=>{$('helpPopover').classList.toggle('hidden');$('accountPopover').classList.add('hidden');});$('sideHelpBtn').addEventListener('click',()=>{$('helpPopover').classList.toggle('hidden');});$('accountBtn').addEventListener('click',()=>{$('accountPopover').classList.toggle('hidden');$('helpPopover').classList.add('hidden');});$('noticeBtn').addEventListener('click',()=>toast('暂无新通知','info'));
     document.addEventListener('click',event=>{if(!event.target.closest('#guideBtn,#sideHelpBtn,#helpPopover'))$('helpPopover').classList.add('hidden');if(!event.target.closest('#accountBtn,#accountPopover'))$('accountPopover').classList.add('hidden');});
-    $('annoToggle').addEventListener('click',()=>{annoVisible=!annoVisible;$('annoToggle').classList.toggle('bg-primary',annoVisible);$('annoToggle').classList.toggle('bg-ink-muted',!annoVisible);$('annoToggle').setAttribute('aria-pressed',String(annoVisible));$('annoToggle').querySelector('span').textContent=annoVisible?'隐藏标注':'显示标注';renderAnnoBadges();});$('closeAnno').addEventListener('click',closeAnno);$('annoPopup').addEventListener('click',event=>{if(event.target===$('annoPopup'))closeAnno();});
+    $('closeAnno').addEventListener('click',closeAnno);$('annoPopup').addEventListener('click',event=>{if(event.target===$('annoPopup'))closeAnno();});
     $('mainContent').addEventListener('scroll',renderAnnoBadges,{passive:true});window.addEventListener('resize',renderAnnoBadges);
     document.addEventListener('keydown',event=>{if(event.key!=='Escape')return;if(!$('annoPopup').classList.contains('hidden'))closeAnno();else if(!$('permissionModal').classList.contains('hidden'))closePermissionModal();else if(!$('updateDrawer').classList.contains('hidden'))closeUpdateCenter();else{$('helpPopover').classList.add('hidden');$('accountPopover').classList.add('hidden');}});
 
@@ -437,6 +441,7 @@
     renderAll();updateUpdateDot();refreshIconsAndAnno();
     if(new URLSearchParams(location.search).get('panel')==='updates')openUpdateCenter();
   </script>
-  <script src="公共导航.js?v=20260813"></script>
+  <script src="标注交互.js?v=20260814"></script>
+
 </body>
 </html>

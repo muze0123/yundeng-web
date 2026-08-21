@@ -17,14 +17,14 @@
         success:{DEFAULT:'#0FC060',bg:'#E7F9F0'}, warning:{DEFAULT:'#E7772D',bg:'#FDF2E9'},
         danger:{DEFAULT:'#D9001B',bg:'#FFE8EB'}, info:{DEFAULT:'#0091D5',bg:'#E4F4FB'}
       },
-      fontFamily:{ sans:["-apple-system","BlinkMacSystemFont","PingFang SC","Microsoft YaHei","Hiragino Sans GB","Segoe UI","system-ui","sans-serif"], mono:["JetBrains Mono","monospace"] },
+      fontFamily:{ sans:["-apple-system","BlinkMacSystemFont","PingFang SC","Hiragino Sans GB","Microsoft YaHei","Helvetica Neue","Helvetica","Arial","sans-serif"], mono:["JetBrains Mono","monospace"] },
       borderRadius:{ DEFAULT:'4px', lg:'8px' }
     }}};
   </script>
   <style>
     * { box-sizing:border-box; }
     html { scroll-behavior:smooth; }
-    body { margin:0; overflow-x:hidden; font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei','Hiragino Sans GB','Segoe UI',system-ui,sans-serif; color:#3A3F4A; }
+    body { margin:0; overflow-x:hidden; font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Hiragino Sans GB','Microsoft YaHei','Helvetica Neue',Helvetica,Arial,sans-serif; color:#3A3F4A; }
     button, input { font:inherit; }
     .mono { font-family:'JetBrains Mono',monospace; font-variant-numeric:tabular-nums; }
     .topbar { box-shadow:0 4px 12px rgba(26,29,36,.10); }
@@ -48,6 +48,7 @@
       *,*::before,*::after { scroll-behavior:auto!important; animation-duration:.01ms!important; transition-duration:.01ms!important; }
     }
   </style>
+  <link rel="stylesheet" href="../src/assets/styles/global.css?v=20260821a">
 </head>
 <body class="min-h-screen bg-page text-[13px]">
   <!-- 顶部导航栏 -->
@@ -146,8 +147,9 @@
   </div>
 
   <script>
-    // 页面数据：所有入口均对应 Prototype 目录内的真实 HTML 文件。
+    // 页面数据：业务模块通过唯一 SystemFrame 路由打开，文件名用于搜索和路由映射。
     const prototypes = [
+      { id:'home', group:'后台系统', title:'首页', description:'登录后的默认工作台，集中说明环境能力、常用配置路径、热门代理与高频使用指南。', file:'首页.html', icon:'house', status:'业务原型', statusTone:'success', updated:'08-17', size:'单文件', tags:['默认首页','环境介绍','热门代理','使用指南'] },
       { id:'api', group:'后台系统', title:'API', description:'查看本地 API 状态、参数格式、接口目录与 GET /status 契约，其他接口明确标注待后端确认。', file:'API.html', icon:'braces', status:'业务原型', statusTone:'success', updated:'08-13', size:'单文件', tags:['本地API','接口文档','状态检查','自动化'] },
       { id:'rpa', group:'后台系统', title:'RPA', description:'管理本地自动化任务流程、模板市场、计划空态和运行日志，支持流程编辑与环境分配演示。', file:'RPA.html', icon:'bot', status:'业务原型', statusTone:'success', updated:'08-13', size:'单文件', tags:['任务流程','模板市场','计划管理','运行日志'] },
       { id:'plugins', group:'后台系统', title:'插件管理', description:'管理插件市场、我的插件、团队插件、上传插件、授权协议、分组与环境分配。', file:'插件管理.html', icon:'blocks', status:'业务原型', statusTone:'success', updated:'08-13', size:'单文件', tags:['插件市场','上传插件','团队插件','环境分配'] },
@@ -157,13 +159,15 @@
       { id:'transfer', group:'后台系统', title:'分享转移', description:'管理环境分享、资源转移、缓存快照和跨团队交接记录。', file:'分享转移.html', icon:'arrow-right-left', status:'业务原型', statusTone:'success', updated:'08-13', size:'单文件', tags:['环境分享','资源转移','缓存','跨团队'] },
       { id:'logs', group:'后台系统', title:'日志管理', description:'查询团队成员对环境、代理、账号、团队和费用执行的审计记录。', file:'日志管理.html', icon:'scroll-text', status:'业务原型', statusTone:'success', updated:'08-13', size:'单文件', tags:['操作日志','审计','筛选','导出'] },
       { id:'account-settings', group:'后台系统', title:'账号设置', description:'维护团队、个人资料、手机邮箱、密码、第三方绑定和登录设备。', file:'账号设置.html', icon:'key-round', status:'业务原型', statusTone:'success', updated:'08-13', size:'单文件', tags:['个人资料','安全设置','设备','团队切换'] },
-      { id:'billing', group:'后台系统', title:'费用管理', description:'管理云币流水、在线充值、CDKEY、订单与优惠券，支持筛选、详情和安全导出。', file:'费用管理.html', icon:'wallet-cards', status:'业务原型', statusTone:'success', updated:'08-12', size:'单文件', tags:['云币','订单','优惠券','充值'] },
+      { id:'billing', group:'后台系统', title:'费用管理', description:'管理云币流水、订单与优惠券，并从订单进入开票管理，完成资格筛选、申请、抬头维护和进度追踪。', file:'费用管理.html', icon:'wallet-cards', status:'业务原型', statusTone:'success', updated:'08-19', size:'单文件', tags:['云币','订单','开票','抬头'] },
       { id:'store', group:'后台系统', title:'商城', description:'购买平台代理与环境套餐，支持实时试算、购物车和支付前订单确认。', file:'商城.html', icon:'shopping-bag', status:'业务原型', statusTone:'success', updated:'08-12', size:'单文件', tags:['代理购买','套餐','购物车','订单确认'] },
       { id:'proxy-management', group:'后台系统', title:'代理管理', description:'统一管理平台代理、自有代理和代理 API，支持检测、授权、环境分配、续费与安全删除。', file:'代理管理.html', icon:'network', status:'业务原型', statusTone:'success', updated:'08-12', size:'单文件', tags:['平台代理','自有代理','代理API','批量操作'] },
       { id:'browser-create', group:'后台系统', title:'新建浏览器', description:'支持单个、批量、文件导入与一键迁移四种环境创建模式，复用完整指纹配置能力。', file:'新建浏览器.html', icon:'circle-plus', status:'业务原型', statusTone:'success', updated:'08-12', size:'单文件', tags:['单个创建','批量创建','导入','迁移'] },
       { id:'browser-editor', group:'后台系统', title:'编辑浏览器', description:'配置环境信息、浏览器指纹、插件与偏好设置，验证随机指纹覆盖、帮助说明和保存保护流程。', file:'编辑浏览器.html', icon:'monitor-cog', status:'业务原型', statusTone:'success', updated:'08-07 20:30', size:'99.9 KB', tags:['环境配置','浏览器指纹','插件','表单'] },
       { id:'environment', group:'后台系统', title:'环境管理', description:'统一管理浏览器环境，支持筛选、多选、启动、关闭、字段设置及批量运维子流程。', file:'环境管理.html', icon:'monitor-cog', status:'已完成', statusTone:'success', updated:'08-12', size:'单文件', tags:['环境列表','批量操作','弹窗','分页'] },
       { id:'settings', group:'后台系统', title:'设置', description:'维护客户端偏好、启动行为、更新策略、网络与其他全局配置。', file:'设置.html', icon:'settings-2', status:'业务原型', statusTone:'success', updated:'08-13', size:'单文件', tags:['偏好设置','更新','网络','客户端'] },
+      { id:'help', group:'后台系统', title:'帮助', description:'搜索云登使用指南、浏览常见问题，并通过联系支持表单提交问题。', file:'帮助.html', icon:'circle-help', status:'业务原型', statusTone:'success', updated:'08-17', size:'单文件', tags:['帮助中心','使用指南','常见问题','联系支持'] },
+      { id:'onboarding', group:'后台系统', title:'新手引导', description:'通过真实产品截图串联新建环境、购买代理、绑定代理和启动环境，并支持操作步骤自动轮播。', file:'新手引导.html', icon:'route', status:'业务原型', statusTone:'success', updated:'08-17', size:'单文件', tags:['首次登录','全局弹窗','步骤引导','产品截图'] },
       { id:'recycle', group:'后台系统', title:'回收站', description:'恢复或彻底清理已删除的环境、代理、账号和自动化资源。', file:'回收站.html', icon:'trash-2', status:'业务原型', statusTone:'success', updated:'08-13', size:'单文件', tags:['恢复','彻底删除','批量操作','保留期'] },
       { id:'app-shell', group:'后台系统', title:'系统框架', description:'展示云登 PC 端统一应用壳，包含侧栏、顶部导航、路由承载、全局通知与智能助手入口。', file:'系统框架.html', icon:'panel-left', status:'基础框架', statusTone:'info', updated:'08-07 20:28', size:'33.7 KB', tags:['App Shell','全局导航','路由','响应式'] },
       { id:'design-system', group:'设计规范', title:'设计系统', description:'集中查看颜色、字体、间距、组件和配置型长表单规范，作为原型视觉实现的单一事实来源。', file:'设计系统.html', icon:'swatch-book', status:'规范文档', statusTone:'primary', updated:'08-07 20:47', size:'234.1 KB', tags:['Design Token','组件','表单规范','交付标准'] }
@@ -176,11 +180,42 @@
     const annotations = {
       1:{title:'页面分组筛选',desc:['点击“全部 / 后台系统 / 设计规范”切换页面分组。','筛选与搜索关键词共同生效，页面数量会实时更新。']},
       2:{title:'原型搜索',desc:['输入页面名称、简介、标签或文件名进行实时搜索。','按键盘“/”可快速聚焦搜索框；按 Esc 清空关键词。']},
-      3:{title:'原型页面卡片',desc:['卡片由内联数据统一渲染，展示页面状态、简介、标签、更新时间和文件体积。','点击卡片标题或“打开页面”进入对应的真实 HTML 原型。']},
-      4:{title:'打开原型页面',desc:['点击后在当前窗口打开目标 HTML 文件。','所有链接均使用 Prototype 目录内的相对路径，支持双击 index.html 本地预览。']}
+      3:{title:'原型页面卡片',desc:['卡片由内联数据统一渲染，展示页面状态、简介、标签、更新时间和文件体积。','业务模块通过唯一 SystemFrame 路由打开，设计系统等特殊页直接打开自身文件。']},
+      4:{title:'打开原型页面',desc:['点击后在当前窗口进入目标页面。','业务模块链接使用系统框架 page 路由，全部使用相对路径并支持双击 index.html 本地预览。']}
     };
     let activeFilter = '全部';
     let annoVisible = false;
+
+    const systemRouteByFile = {
+      '首页.html':'home',
+      'API.html':'api',
+      'RPA.html':'rpa',
+      '插件管理.html':'plugins',
+      '团队管理.html':'team-management',
+      '成员管理.html':'members',
+      '账号管理.html':'account-management',
+      '分享转移.html':'transfer',
+      '日志管理.html':'logs',
+      '账号设置.html':'account-settings',
+      '费用管理.html':'billing',
+      '商城.html':'store',
+      '代理管理.html':'proxy',
+      '新建浏览器.html':'create',
+      '编辑浏览器.html':'environment',
+      '环境管理.html':'environment',
+      '设置.html':'settings',
+      '帮助.html':'help',
+      '回收站.html':'recycle'
+    };
+    function prototypeHref(item) {
+      if (item.id === 'onboarding') return '系统框架.html?page=home&guide=1';
+      if (item.file === '系统框架.html') return '系统框架.html?page=home';
+      const page = systemRouteByFile[item.file];
+      if (!page) return item.file;
+      const params = new URLSearchParams({ page });
+      if (item.file === '编辑浏览器.html') params.set('module', item.file);
+      return `系统框架.html?${params.toString()}`;
+    }
 
     const $ = id => document.getElementById(id);
     const toneClass = tone => ({success:'bg-success-bg text-success',info:'bg-info-bg text-info',primary:'bg-primary-bg text-primary'}[tone] || 'bg-page text-ink-sub');
@@ -227,13 +262,13 @@
           <span class="h-6 px-2 rounded ${toneClass(item.statusTone)} text-[11px] font-medium flex items-center">${item.status}</span>
         </div>
         <div class="mt-4 flex-1">
-          <a href="${item.file}" class="inline-flex items-center gap-1.5 text-[16px] font-semibold text-ink-title hover:text-primary focus:outline-none"><span>${item.title}</span><i data-lucide="arrow-up-right" class="w-4 h-4"></i></a>
+          <a href="${prototypeHref(item)}" class="inline-flex items-center gap-1.5 text-[16px] font-semibold text-ink-title hover:text-primary focus:outline-none"><span>${item.title}</span><i data-lucide="arrow-up-right" class="w-4 h-4"></i></a>
           <p class="mt-2 text-[13px] leading-6 text-ink-sub">${item.description}</p>
           <div class="mt-3 flex flex-wrap gap-1.5">${item.tags.map(tag=>`<span class="h-6 px-2 rounded bg-page text-[11px] text-ink-sub flex items-center">${tag}</span>`).join('')}</div>
         </div>
         <div class="mt-5 pt-4 border-t border-line-lighter flex items-center justify-between gap-3">
           <div class="min-w-0 text-[11px] text-ink-muted"><span class="mono">${item.updated}</span><span class="mx-1.5">·</span><span class="mono">${item.size}</span></div>
-          <a href="${item.file}" data-anno="4" class="h-8 px-3 rounded bg-primary hover:bg-primary-hover active:bg-primary-active text-white flex items-center gap-1.5 shrink-0"><span>打开页面</span><i data-lucide="arrow-right" class="w-4 h-4"></i></a>
+          <a href="${prototypeHref(item)}" data-anno="4" class="h-8 px-3 rounded bg-primary hover:bg-primary-hover active:bg-primary-active text-white flex items-center gap-1.5 shrink-0"><span>打开页面</span><i data-lucide="arrow-right" class="w-4 h-4"></i></a>
         </div>
       </article>`;
     }
@@ -274,6 +309,5 @@
     renderPrototypes();
     lucide.createIcons();
   </script>
-  <script src="公共导航.js?v=20260813"></script>
 </body>
 </html>

@@ -6,6 +6,8 @@
   <title>回收站 - 云登</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="公共导航.css?v=20260821a">
+  <link rel="stylesheet" href="筛选布局.css?v=20260814">
   <script>
     tailwind.config = {
       theme: {
@@ -25,194 +27,154 @@
   <style>
     * { box-sizing:border-box; letter-spacing:0; }
     html, body { min-height:100%; }
-    body { margin:0; color:#3A3F4A; background:#F7F8FA; font:13px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif; }
+    body { margin:0; color:#3A3F4A; background:#F7F8FA; font:13px/1.5 -apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Helvetica Neue",Helvetica,Arial,sans-serif; }
     button, input, select { font:inherit; }
     button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible { outline:2px solid #0066FF; outline-offset:2px; }
     .mono { font-family:"JetBrains Mono","SFMono-Regular",Consolas,monospace; }
-    .sidebar { width:220px; transition:width .2s ease, transform .2s ease; }
-    .app-main { margin-left:220px; transition:margin-left .2s ease; }
-    body.sidebar-compact .sidebar { width:68px; }
-    body.sidebar-compact .app-main { margin-left:68px; }
-    body.sidebar-compact .sidebar-label, body.sidebar-compact .sidebar-logo-text, body.sidebar-compact .sidebar-section, body.sidebar-compact .sidebar-chevron { display:none; }
-    body.sidebar-compact .sidebar-link { justify-content:center; padding-left:0; padding-right:0; }
-    body.sidebar-compact .sidebar-sub { margin-left:0; padding-left:0; border-left:0; }
-    .sidebar-link { min-height:36px; border-radius:4px; color:#6E7685; }
-    .sidebar-link:hover { background:#F3F4F6; color:#3A3F4A; }
-    .sidebar-link.active { background:#E6F0FF; color:#0066FF; font-weight:600; }
-    .sidebar-link svg { width:17px; height:17px; flex:none; }
-    .type-tab { position:relative; min-width:104px; height:52px; padding:0 16px; display:inline-flex; align-items:center; justify-content:center; gap:7px; color:#6E7685; white-space:nowrap; }
-    .type-tab::after { content:""; position:absolute; right:0; top:17px; width:1px; height:18px; background:#E8EAED; }
-    .type-tab:last-child::after { display:none; }
+    .type-tab { position:relative; min-width:104px; height:40px; padding:0 16px; display:inline-flex; align-items:center; justify-content:center; gap:7px; color:#6E7685; white-space:nowrap; }
     .type-tab:hover { color:#0066FF; background:#F7F8FA; }
     .type-tab.active { color:#0066FF; font-weight:600; }
     .type-tab.active::before { content:""; position:absolute; left:16px; right:16px; bottom:0; height:2px; background:#0066FF; }
-    .control { height:34px; border:1px solid #DFE1E5; border-radius:4px; background:#fff; color:#3A3F4A; }
+    .control { height:32px; border:1px solid #DFE1E5; border-radius:4px; background:#FFFFFF; color:#3A3F4A; }
     .control:hover { border-color:#9DA2AC; }
     .control:focus { border-color:#0066FF; box-shadow:0 0 0 2px #E6F0FF; outline:none; }
-    .btn { height:34px; padding:0 14px; border-radius:4px; display:inline-flex; align-items:center; justify-content:center; gap:7px; white-space:nowrap; font-weight:500; transition:background-color .15s,border-color .15s,color .15s; }
+    .btn { height:32px; padding:0 14px; border-radius:4px; display:inline-flex; align-items:center; justify-content:center; gap:6px; white-space:nowrap; font-weight:500; transition:background-color .15s,border-color .15s,color .15s; }
     .btn-primary { background:#0066FF; color:#fff; }
     .btn-primary:hover:not(:disabled) { background:#0052CC; }
     .btn-secondary { border:1px solid #DFE1E5; background:#fff; color:#3A3F4A; }
     .btn-secondary:hover:not(:disabled) { background:#F3F4F6; border-color:#9DA2AC; }
     .btn-danger { background:#D9001B; color:#fff; }
-    .btn-danger:hover:not(:disabled) { background:#b90017; }
-    .btn-danger-outline { border:1px solid #F1A7B1; background:#fff; color:#D9001B; }
+    .btn-danger:hover:not(:disabled) { filter:brightness(.88); }
+    .btn-danger-outline { border:1px solid #D9001B; background:#FFFFFF; color:#D9001B; }
     .btn-danger-outline:hover:not(:disabled) { background:#FFE8EB; }
     .btn:disabled { opacity:.42; cursor:not-allowed; }
-    .icon-btn { width:34px; height:34px; border:1px solid #DFE1E5; border-radius:4px; display:inline-flex; align-items:center; justify-content:center; background:#fff; color:#6E7685; }
+    .icon-btn { width:32px; height:32px; border:1px solid #DFE1E5; border-radius:4px; display:inline-flex; align-items:center; justify-content:center; background:#FFFFFF; color:#6E7685; }
     .icon-btn:hover { background:#F3F4F6; color:#0066FF; }
-    .data-table { width:100%; min-width:1160px; border-collapse:separate; border-spacing:0; }
-    .data-table th { height:42px; padding:0 12px; background:#F7F8FA; border-bottom:1px solid #DFE1E5; color:#6E7685; font-size:12px; font-weight:500; text-align:left; white-space:nowrap; }
-    .data-table td { height:54px; padding:8px 12px; border-bottom:1px solid #F0F1F3; color:#3A3F4A; vertical-align:middle; }
-    .data-table tbody tr:hover td { background:#F7F8FA; }
-    .data-table tbody tr.selected td { background:#F2F7FF; }
+    .data-table { width:100%; min-width:1160px; border-collapse:collapse; font-size:13px; }
+    .data-table th { height:40px; padding:9px 12px; background:#F0F1F3; border-bottom:1px solid #DFE1E5; color:#6E7685; font-size:12px; font-weight:600; line-height:20px; text-align:left; white-space:nowrap; }
+    .data-table td { height:48px; padding:9px 12px; border-bottom:1px solid #F0F1F3; color:#3A3F4A; vertical-align:middle; }
+    .data-table tbody tr:hover td { background:#F3F4F6; }
+    .data-table tbody tr.selected td { background:#E6F0FF; }
+    .data-table .action-column { position:sticky; right:0; z-index:2; background:#FFFFFF; box-shadow:-1px 0 0 #E8EAED; }
+    .data-table thead .action-column { z-index:3; background:#F0F1F3; }
+    .data-table tbody tr:hover .action-column { background:#F3F4F6; }
+    .data-table tbody tr.selected .action-column { background:#E6F0FF; }
     .row-check { width:15px; height:15px; accent-color:#0066FF; cursor:pointer; }
     .cell-text { display:block; max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-    .tag { height:22px; padding:0 8px; border-radius:4px; display:inline-flex; align-items:center; font-size:11px; background:#E6F0FF; color:#0066FF; }
-    .pg-btn { width:30px; height:30px; border:1px solid #DFE1E5; border-radius:4px; display:inline-flex; align-items:center; justify-content:center; color:#6E7685; background:#fff; }
-    .pg-btn:hover:not(:disabled), .pg-btn.active { border-color:#0066FF; color:#0066FF; background:#E6F0FF; }
-    .pg-btn:disabled { opacity:.4; cursor:not-allowed; }
-    .modal-mask { position:fixed; inset:0; z-index:60; background:rgba(26,29,36,.42); padding:20px; display:flex; align-items:center; justify-content:center; }
-    .modal-panel { width:760px; max-width:100%; max-height:calc(100vh - 40px); overflow:auto; background:#fff; border-radius:8px; box-shadow:0 6px 24px rgba(0,0,0,.12); }
-    .dialog-panel { width:600px; max-width:100%; min-height:250px; background:#fff; border-radius:8px; box-shadow:0 6px 24px rgba(0,0,0,.12); display:flex; flex-direction:column; }
-    .toast { min-width:260px; max-width:420px; padding:11px 14px; border-radius:4px; background:#fff; box-shadow:0 6px 24px rgba(0,0,0,.12); display:flex; align-items:flex-start; gap:9px; border:1px solid #DFE1E5; animation:toast-in .18s ease; }
+    .tag { height:22px; padding:0 8px; border:1px solid #0066FF; border-radius:4px; display:inline-flex; align-items:center; font-size:11px; background:#E6F0FF; color:#0066FF; }
+    .table-actions { display:flex; align-items:center; gap:12px; white-space:nowrap; }
+    .table-action { height:28px; padding:0; border:0; background:transparent; color:#0066FF; font-size:12px; line-height:28px; white-space:nowrap; }
+    .table-action:hover { text-decoration:underline; }
+    .table-action.is-danger { color:#D9001B; }
+    #pagination { display:flex; align-items:center; justify-content:flex-end; flex-wrap:wrap; gap:16px; padding-top:20px; color:#6E7685; font-size:12px; }
+    .pg-nav, .pg-right { display:flex; align-items:center; }
+    .pg-nav { gap:4px; }
+    .pg-right { gap:16px; }
+    .pg-btn, .pg-ellipsis { min-width:30px; height:30px; padding:0 8px; display:inline-flex; align-items:center; justify-content:center; border:1px solid #DFE1E5; border-radius:4px; background:#FFFFFF; color:#3A3F4A; font-size:12px; font-weight:500; line-height:28px; transition:all .15s; }
+    .pg-btn:hover:not(:disabled) { border-color:#0066FF; background:#FFFFFF; color:#0066FF; }
+    .pg-btn.pg-current { border-color:#0066FF; background:#0066FF; color:#FFFFFF; }
+    .pg-btn:disabled:not(.pg-current) { border-color:#DFE1E5; background:#F7F8FA; color:#C7CAD1; cursor:not-allowed; }
+    .pg-ellipsis { border-color:transparent; background:transparent; color:#9DA2AC; font-size:13px; }
+    .pg-select-wrap { position:relative; display:inline-flex; align-items:center; }
+    .pg-select-wrap::after { content:"▼"; position:absolute; right:8px; color:#9DA2AC; font-size:9px; pointer-events:none; }
+    .pg-select { width:92px; height:30px; padding:0 24px 0 8px; border:1px solid #DFE1E5; border-radius:4px; background:#FFFFFF; color:#3A3F4A; font-size:12px; appearance:none; }
+    .pg-select:hover, .pg-jump-input:hover { border-color:#9DA2AC; }
+    .pg-select:focus, .pg-jump-input:focus { border-color:#0066FF; box-shadow:0 0 0 2px #E6F0FF; outline:none; }
+    .pg-jump { display:inline-flex; align-items:center; gap:6px; }
+    .pg-jump-input { width:44px; height:30px; padding:0 6px; border:1px solid #DFE1E5; border-radius:4px; background:#FFFFFF; color:#3A3F4A; text-align:center; }
+    .pg-jump-input[aria-invalid="true"] { border-color:#D9001B; box-shadow:0 0 0 2px #FFE8EB; }
+    .pg-stats { color:#9DA2AC; white-space:nowrap; }
+    .modal-mask { position:fixed; inset:0; z-index:60; background:rgba(0,0,0,.3); padding:20px; display:flex; align-items:center; justify-content:center; }
+    .modal-panel { width:760px; max-width:100%; max-height:calc(100vh - 40px); overflow:auto; background:#FFFFFF; border-radius:8px; box-shadow:0 6px 24px rgba(0,0,0,.12); }
+    .dialog-panel { width:600px; max-width:100%; min-height:250px; background:#FFFFFF; border-radius:8px; box-shadow:0 6px 24px rgba(0,0,0,.12); display:flex; flex-direction:column; }
+    .toast { min-width:260px; max-width:420px; padding:11px 14px; border-radius:4px; background:#FFFFFF; box-shadow:0 6px 24px rgba(0,0,0,.12); display:flex; align-items:flex-start; gap:9px; border:1px solid #DFE1E5; animation:toast-in .18s ease; }
     @keyframes toast-in { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
-    .anno-badge { position:fixed; width:20px; height:20px; border:0; border-radius:50%; background:#0066FF; color:#fff; font:700 11px/20px "JetBrains Mono",monospace; text-align:center; box-shadow:0 2px 6px rgba(0,0,0,.15); pointer-events:auto; cursor:pointer; }
+    .anno-badge { position:fixed; width:20px; height:20px; border:0; border-radius:50%; background:#0066FF; color:#FFFFFF; font:700 11px/20px "JetBrains Mono",monospace; text-align:center; box-shadow:0 2px 8px rgba(0,0,0,.06); pointer-events:auto; cursor:pointer; }
     .anno-badge:hover { transform:scale(1.12); }
     .scroll-thin::-webkit-scrollbar { width:7px; height:7px; }
-    .scroll-thin::-webkit-scrollbar-thumb { background:#C9CDD4; border-radius:8px; }
+    .scroll-thin::-webkit-scrollbar-thumb { background:#9DA2AC; border-radius:8px; }
     @media (max-width:767px) {
-      .sidebar { transform:translateX(-100%); width:220px; z-index:55; }
-      body.mobile-menu-open .sidebar { transform:translateX(0); }
-      .app-main, body.sidebar-compact .app-main { margin-left:0; }
-      body.sidebar-compact .sidebar { width:220px; }
-      body.sidebar-compact .sidebar-label, body.sidebar-compact .sidebar-logo-text, body.sidebar-compact .sidebar-section { display:block; }
-      body.sidebar-compact .sidebar-link { justify-content:flex-start; padding-left:10px; padding-right:10px; }
       .type-tab { min-width:96px; padding:0 12px; }
       .modal-mask { padding:12px; }
       .dialog-panel { min-height:230px; }
     }
+    @media (max-width:720px) {
+      #pagination { justify-content:flex-start; }
+      .pg-right { flex-wrap:wrap; }
+    }
   </style>
+  <script src="公共导航.js?v=20260821a"></script>
 </head>
 <body>
-  <div id="mobileMask" class="hidden fixed inset-0 z-50 bg-black/30 md:hidden"></div>
-
-  <aside id="sidebar" class="sidebar fixed inset-y-0 left-0 z-40 bg-card shadow-[2px_0_8px_rgba(0,0,0,.04)] flex flex-col" aria-label="主导航">
-    <div class="h-14 px-4 flex items-center gap-3 flex-none">
-      <span class="w-8 h-8 rounded bg-primary text-white flex items-center justify-center"><i data-lucide="cloud" class="w-[18px] h-[18px]"></i></span>
-      <span class="sidebar-logo-text text-[17px] font-bold text-ink-title">云登</span>
-    </div>
-    <div class="px-3 pb-3">
-      <a href="新建浏览器.html" class="h-9 rounded bg-primary hover:bg-primary-hover text-white flex items-center justify-center gap-2 font-medium" title="新建浏览器"><i data-lucide="plus" class="w-4 h-4"></i><span class="sidebar-label">新建浏览器</span></a>
-    </div>
-    <nav class="flex-1 min-h-0 overflow-y-auto scroll-thin px-3 pb-3" aria-label="业务模块">
-      <a class="sidebar-link px-2 flex items-center gap-3 mb-1" href="环境管理.html" title="环境管理"><i data-lucide="monitor-cog"></i><span class="sidebar-label">环境管理</span></a>
-      <a class="sidebar-link px-2 flex items-center gap-3 mb-1" href="代理管理.html" title="代理管理"><i data-lucide="network"></i><span class="sidebar-label">代理管理</span></a>
-      <a class="sidebar-link px-2 flex items-center gap-3 mb-1" href="商城.html" title="商城"><i data-lucide="shopping-bag"></i><span class="sidebar-label">商城</span></a>
-      <a class="sidebar-link px-2 flex items-center gap-3 mb-1" href="费用管理.html" title="费用管理"><i data-lucide="receipt-text"></i><span class="sidebar-label">费用管理</span></a>
-
-      <p class="sidebar-section px-2 pt-4 pb-2 text-[11px] text-ink-muted">团队协作</p>
-      <div class="sidebar-sub ml-2 pl-2 border-l border-line-light">
-        <a class="sidebar-link px-2 flex items-center gap-3 mb-1" href="团队管理.html" title="团队管理"><i data-lucide="building-2"></i><span class="sidebar-label">团队管理</span></a>
-        <a class="sidebar-link px-2 flex items-center gap-3 mb-1" href="成员管理.html" title="成员管理"><i data-lucide="users-round"></i><span class="sidebar-label">成员管理</span></a>
-        <a class="sidebar-link px-2 flex items-center gap-3 mb-1" href="分享转移.html" title="分享转移"><i data-lucide="arrow-right-left"></i><span class="sidebar-label">分享转移</span></a>
-        <a class="sidebar-link px-2 flex items-center gap-3 mb-1" href="日志管理.html" title="日志管理"><i data-lucide="scroll-text"></i><span class="sidebar-label">日志管理</span></a>
-      </div>
-
-      <p class="sidebar-section px-2 pt-4 pb-2 text-[11px] text-ink-muted">能力与工具</p>
-      <a class="sidebar-link px-2 flex items-center gap-3 mb-1" href="插件管理.html" title="插件管理"><i data-lucide="blocks"></i><span class="sidebar-label">插件管理</span></a>
-      <a class="sidebar-link px-2 flex items-center gap-3 mb-1" href="API.html" title="API"><i data-lucide="braces"></i><span class="sidebar-label">API</span></a>
-      <a class="sidebar-link px-2 flex items-center gap-3 mb-1" href="RPA.html" title="RPA"><i data-lucide="bot"></i><span class="sidebar-label">RPA</span></a>
-      <a class="sidebar-link active px-2 flex items-center gap-3 mb-1" href="回收站.html" aria-current="page" title="回收站"><i data-lucide="trash-2"></i><span class="sidebar-label">回收站</span></a>
-    </nav>
-    <div class="p-3 border-t border-line-lighter flex-none">
-      <button id="collapseBtn" type="button" class="sidebar-link w-full px-2 flex items-center gap-3" title="收起侧栏"><i data-lucide="panel-left-close"></i><span class="sidebar-label">收起侧栏</span></button>
-    </div>
-  </aside>
-
-  <div class="app-main min-h-screen flex flex-col">
-    <header class="h-14 px-4 md:px-5 bg-card shadow-[0_2px_8px_rgba(0,0,0,.04)] sticky top-0 z-30 flex items-center justify-between gap-3">
-      <div class="min-w-0 flex items-center gap-3">
-        <button id="mobileMenuBtn" type="button" class="icon-btn md:hidden" title="打开导航" aria-label="打开导航"><i data-lucide="menu" class="w-4 h-4"></i></button>
-        <button id="desktopCollapseBtn" type="button" class="hidden md:inline-flex text-ink-muted hover:text-primary" title="切换侧栏" aria-label="切换侧栏"><i data-lucide="panel-left" class="w-5 h-5"></i></button>
-        <span class="h-5 w-px bg-line-light hidden md:block"></span>
-        <div class="min-w-0">
-          <h1 data-anno="1" class="text-[17px] font-semibold text-ink-title truncate">回收站</h1>
-          <p class="text-[11px] text-ink-muted hidden sm:block">恢复或彻底删除已回收资源</p>
-        </div>
-      </div>
-      <div class="flex items-center gap-1.5">
-        <button id="helpBtn" type="button" class="icon-btn border-0" title="帮助" aria-label="帮助"><i data-lucide="circle-help" class="w-[18px] h-[18px]"></i></button>
-        <button id="noticeBtn" type="button" class="icon-btn border-0 relative" title="通知" aria-label="通知"><i data-lucide="bell" class="w-[18px] h-[18px]"></i><span class="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-danger"></span></button>
-        <button id="accountBtn" type="button" class="h-9 px-2 rounded hover:bg-hover flex items-center gap-2" aria-label="打开账号菜单">
-          <span class="w-7 h-7 rounded bg-primary-bg text-primary flex items-center justify-center font-semibold">张</span>
-          <span class="hidden lg:block text-left"><span class="block text-[12px] font-medium text-ink-title">张小登</span><span class="block text-[10px] text-ink-muted">团队管理员</span></span>
-          <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-ink-muted hidden lg:block"></i>
-        </button>
-      </div>
-      <div id="accountPopover" class="hidden absolute right-4 top-[50px] w-56 bg-card border border-line rounded-lg shadow-float p-2">
-        <div class="px-3 py-2 border-b border-line-lighter"><p class="font-medium text-ink-title">云登团队</p><p class="text-[11px] text-ink-muted mt-0.5">团队管理员</p></div>
-        <button type="button" class="w-full h-9 px-3 mt-1 rounded hover:bg-hover text-left flex items-center gap-2"><i data-lucide="settings" class="w-4 h-4"></i>账号设置</button>
-        <button type="button" class="w-full h-9 px-3 rounded hover:bg-hover text-left flex items-center gap-2 text-danger"><i data-lucide="log-out" class="w-4 h-4"></i>退出登录</button>
-      </div>
-    </header>
-
-    <main class="flex-1 min-w-0 p-4 md:p-5">
-      <section class="bg-card border border-line rounded-lg min-h-[calc(100vh-96px)] flex flex-col overflow-hidden" aria-labelledby="recycleTitle">
-        <h2 id="recycleTitle" class="sr-only">回收站数据</h2>
-        <div id="typeTabs" class="flex overflow-x-auto border-b border-line-light scroll-thin" role="tablist" aria-label="回收资源类型"></div>
-
-        <div class="px-4 md:px-5 py-4 border-b border-line-lighter">
-          <div class="flex flex-wrap items-center gap-2.5">
-            <div id="groupControl" class="relative w-[180px]">
-              <select id="groupFilter" data-anno="3" class="control w-full pl-3 pr-8 appearance-none" aria-label="选择分组">
-                <option value="">选择分组</option>
+    <main id="mainContent" class="min-h-screen min-w-0 overflow-auto p-4">
+      <section class="bg-card rounded-lg p-5 md:p-6 mb-4 min-w-0" aria-labelledby="filterTitle">
+        <h2 id="filterTitle" class="sr-only">回收站筛选</h2>
+        <div id="typeTabs" class="flex overflow-x-auto border-b border-line-lighter scroll-thin mb-5" role="tablist" aria-label="回收资源类型"></div>
+        <div class="filter-flow">
+          <div id="groupControl" class="filter-item">
+            <label class="filter-label" for="groupFilter">环境分组</label>
+            <div class="relative">
+              <select id="groupFilter" data-anno="2" class="control w-full pl-3 pr-8 appearance-none" aria-label="环境分组">
+                <option value="">全部分组</option>
               </select>
-              <i data-lucide="chevron-down" class="w-4 h-4 absolute right-2.5 top-2.5 text-ink-muted pointer-events-none"></i>
-            </div>
-
-            <div class="relative w-full sm:w-[340px] lg:w-[400px]">
-              <i data-lucide="search" class="w-4 h-4 absolute left-3 top-[9px] text-ink-muted pointer-events-none"></i>
-              <input id="searchInput" data-anno="4" class="control w-full pl-9 pr-9" maxlength="100" placeholder="搜索或新建搜索条件" aria-label="搜索回收数据">
-              <button id="clearSearchBtn" type="button" class="hidden absolute right-2 top-[7px] text-ink-muted hover:text-ink-body" title="清空搜索" aria-label="清空搜索"><i data-lucide="x" class="w-[18px] h-[18px]"></i></button>
-            </div>
-
-            <div id="actionButtons" class="flex flex-wrap items-center gap-2"></div>
-
-            <div class="ml-0 xl:ml-auto flex items-center gap-2 min-w-0">
-              <span data-anno="5" class="flex items-center gap-1.5 text-[12px] text-info whitespace-nowrap"><i data-lucide="circle-alert" class="w-4 h-4 flex-none"></i>回收站中的数据保存30天后会自动清空</span>
-              <button id="refreshBtn" data-anno="6" type="button" class="icon-btn flex-none" title="刷新列表" aria-label="刷新列表"><i data-lucide="refresh-cw" class="w-4 h-4"></i></button>
+              <i data-lucide="chevron-down" class="w-4 h-4 absolute right-2.5 top-1/2 -translate-y-1/2 text-ink-muted pointer-events-none"></i>
             </div>
           </div>
-          <div id="selectionBar" class="hidden mt-3 h-8 px-3 rounded bg-primary-bg text-primary items-center justify-between gap-3">
-            <span>已选择 <strong id="selectedCount" class="mono">0</strong> 项</span>
-            <button id="clearSelectionBtn" type="button" class="hover:underline">取消选择</button>
+
+          <div class="filter-item">
+            <label class="filter-label" for="searchInput">关键词</label>
+            <div class="relative">
+              <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-ink-muted pointer-events-none"></i>
+              <input id="searchInput" data-anno="3" class="control w-full pl-9 pr-9" maxlength="100" placeholder="搜索名称、账号、ID 或备注" aria-label="搜索回收数据">
+              <button id="clearSearchBtn" type="button" class="hidden absolute right-2 top-1/2 -translate-y-1/2 w-6 h-6 text-ink-muted hover:text-ink-body inline-flex items-center justify-center" title="清空搜索" aria-label="清空搜索"><i data-lucide="x" class="w-4 h-4"></i></button>
+            </div>
+          </div>
+
+          <div class="filter-actions">
+            <button id="queryBtn" data-anno="4" type="button" class="btn btn-primary"><i data-lucide="search" class="w-4 h-4"></i>查询</button>
+            <button id="resetBtn" data-anno="5" type="button" class="btn btn-secondary"><i data-lucide="rotate-ccw" class="w-4 h-4"></i>重置</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="bg-card rounded-lg p-5 md:p-6 min-w-0" aria-labelledby="recycleTitle">
+        <div class="flex items-start justify-between flex-wrap gap-3 mb-4">
+          <div class="min-w-0">
+            <h2 id="recycleTitle" class="inline-block text-[18px] font-semibold text-ink-title"><span id="listTitle">环境回收列表</span></h2>
+            <p data-anno="6" class="mt-1 flex items-start gap-1.5 text-[12px] text-info"><i data-lucide="circle-alert" class="w-4 h-4 flex-none mt-px"></i><span>回收站中的数据保存 30 天后会自动清空</span></p>
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <div id="actionButtons" class="flex flex-wrap items-center gap-2"></div>
+            <button id="refreshBtn" data-anno="8" type="button" class="icon-btn flex-none" title="刷新列表" aria-label="刷新列表"><i data-lucide="refresh-cw" class="w-4 h-4"></i></button>
           </div>
         </div>
 
-        <div id="tableArea" class="flex-1 min-h-[360px] overflow-x-auto scroll-thin"></div>
+        <div id="selectionBar" class="hidden mb-4 h-8 px-3 rounded bg-primary-bg text-primary items-center justify-between gap-3">
+          <span>已选择 <strong id="selectedCount" class="mono">0</strong> 项</span>
+          <button id="clearSelectionBtn" type="button" class="h-8 hover:underline">取消选择</button>
+        </div>
 
-        <footer id="pagination" data-anno="9" class="min-h-[54px] px-4 md:px-5 border-t border-line-lighter flex flex-wrap items-center justify-between gap-3 text-[12px] text-ink-sub"></footer>
+        <div id="tableArea" class="min-h-[360px] min-w-0 overflow-x-auto scroll-thin border border-line rounded" role="region" aria-label="回收站数据列表" tabindex="0"></div>
+        <footer id="pagination" aria-label="回收站列表分页"></footer>
       </section>
     </main>
-  </div>
 
   <div id="confirmModal" class="hidden modal-mask" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
     <div id="confirmPanel" class="dialog-panel">
       <div class="h-14 px-5 border-b border-line flex items-center justify-between flex-none">
-        <h2 id="confirmTitle" data-anno="10" class="text-[16px] font-semibold text-ink-title"></h2>
-        <button id="confirmCloseBtn" type="button" class="text-ink-muted hover:text-ink-body" title="关闭" aria-label="关闭确认弹窗"><i data-lucide="x" class="w-5 h-5"></i></button>
+        <h2 id="confirmTitle" data-anno="11" class="text-[16px] font-semibold text-ink-title"></h2>
+        <button id="confirmCloseBtn" type="button" class="w-8 h-8 inline-flex items-center justify-center text-ink-muted hover:text-ink-body" title="关闭" aria-label="关闭确认弹窗"><i data-lucide="x" class="w-5 h-5"></i></button>
       </div>
       <div class="flex-1 px-6 py-6 flex gap-4">
         <span id="confirmIconWrap" class="w-10 h-10 rounded-full flex items-center justify-center flex-none"><i id="confirmIcon" data-lucide="circle-help" class="w-5 h-5"></i></span>
         <div class="min-w-0 pt-1">
-          <p id="confirmMessage" data-anno="11" class="text-[14px] text-ink-title leading-6"></p>
+          <p id="confirmMessage" data-anno="12" class="text-[14px] text-ink-title leading-6"></p>
           <p id="confirmSubtext" class="text-[12px] text-ink-sub mt-2 leading-5"></p>
         </div>
       </div>
       <div class="h-16 px-5 border-t border-line-lighter flex items-center justify-end gap-2 flex-none">
-        <button id="confirmCancelBtn" data-anno="12" type="button" class="btn btn-secondary min-w-[72px]">取消</button>
-        <button id="confirmSubmitBtn" data-anno="13" type="button" class="btn btn-primary min-w-[72px]">确定</button>
+        <button id="confirmCancelBtn" data-anno="13" type="button" class="btn btn-secondary min-w-[72px]">取消</button>
+        <button id="confirmSubmitBtn" data-anno="14" type="button" class="btn btn-primary min-w-[72px]">确定</button>
       </div>
     </div>
   </div>
@@ -220,10 +182,10 @@
   <div id="detailModal" class="hidden modal-mask" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
     <div id="detailPanel" class="modal-panel">
       <div class="h-14 px-5 border-b border-line flex items-center justify-between sticky top-0 bg-card z-10">
-        <h2 id="detailTitle" data-anno="14" class="text-[16px] font-semibold text-ink-title">查看详情</h2>
-        <button id="detailCloseBtn" data-anno="16" type="button" class="text-ink-muted hover:text-ink-body" title="关闭" aria-label="关闭详情"><i data-lucide="x" class="w-5 h-5"></i></button>
+        <h2 id="detailTitle" data-anno="15" class="text-[16px] font-semibold text-ink-title">查看详情</h2>
+        <button id="detailCloseBtn" data-anno="17" type="button" class="w-8 h-8 inline-flex items-center justify-center text-ink-muted hover:text-ink-body" title="关闭" aria-label="关闭详情"><i data-lucide="x" class="w-5 h-5"></i></button>
       </div>
-      <div id="detailContent" data-anno="15" class="p-5 md:p-6"></div>
+      <div id="detailContent" data-anno="16" class="p-5 md:p-6"></div>
       <div class="h-16 px-5 border-t border-line-lighter flex items-center justify-end">
         <button id="detailDoneBtn" type="button" class="btn btn-primary min-w-[72px]">知道了</button>
       </div>
@@ -235,8 +197,8 @@
   <div id="annoLayer" style="position:fixed;inset:0;pointer-events:none;z-index:9998;"></div>
   <button id="annoToggle" type="button" class="fixed z-[9997] right-2 top-[120px] h-8 px-3 rounded-full bg-ink-muted text-white shadow-soft flex items-center justify-center gap-1.5 cursor-grab select-none touch-none" title="点击显示标注；长按可拖拽" aria-label="显示交互标注，长按可拖拽" aria-pressed="false"><i data-lucide="tags" class="w-4 h-4"></i><span class="text-[12px] font-medium whitespace-nowrap">显示标注</span></button>
   <div id="annoPopup" class="hidden fixed inset-0 z-[9999] bg-black/30 p-4 items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="annoTitle">
-    <div class="w-[520px] max-w-full bg-card rounded-lg shadow-float">
-      <div class="px-5 py-4 border-b border-line flex justify-between items-center"><h2 id="annoTitle" class="text-[16px] font-semibold text-ink-title"></h2><button id="closeAnno" type="button" class="text-ink-muted hover:text-ink-body" aria-label="关闭标注说明"><i data-lucide="x" class="w-5 h-5"></i></button></div>
+    <div id="annoPanel" class="w-[520px] max-w-full bg-card rounded-lg shadow-float" tabindex="-1">
+      <div class="px-5 py-4 border-b border-line flex justify-between items-center"><h2 id="annoTitle" class="text-[16px] font-semibold text-ink-title"></h2><button id="closeAnno" type="button" class="w-8 h-8 inline-flex items-center justify-center text-ink-muted hover:text-ink-body" aria-label="关闭标注说明"><i data-lucide="x" class="w-5 h-5"></i></button></div>
       <div id="annoDesc" class="p-5 text-[14px] text-ink-body leading-7"></div>
     </div>
   </div>
@@ -275,38 +237,63 @@
         {recycleId:'RB-E-0007',id:'7',group:'转移环境',name:'Shopee-SG-运营',account:'sp***772',remark:'新加坡站',tags:['Shopee'],operator:'成员 1938',deletedAt:'2026-07-30 17:46:02',expireAt:'2026-08-29 17:46:02',groupExists:true},
         {recycleId:'RB-E-0005',id:'5',group:'默认分组',name:'Pinterest-素材库',account:'pin***116',remark:'图片素材',tags:['Pinterest'],operator:'成员 1938',deletedAt:'2026-07-30 17:39:28',expireAt:'2026-08-29 17:39:28',groupExists:true},
         {recycleId:'RB-E-0009',id:'9',group:'默认分组',name:'YouTube-频道运营',account:'yt_***_092',remark:'视频发布',tags:['YouTube'],operator:'成员 1938',deletedAt:'2026-07-30 17:31:17',expireAt:'2026-08-29 17:31:17',groupExists:true},
-        {recycleId:'RB-E-0011',id:'11',group:'转移环境',name:'Etsy-US-测试',account:'et***619',remark:'订单流程验证',tags:['Etsy','美国'],operator:'成员 1938',deletedAt:'2026-07-30 17:22:05',expireAt:'2026-08-29 17:22:05',groupExists:true}
+        {recycleId:'RB-E-0011',id:'11',group:'转移环境',name:'Etsy-US-测试',account:'et***619',remark:'订单流程验证',tags:['Etsy','美国'],operator:'成员 1938',deletedAt:'2026-07-30 17:22:05',expireAt:'2026-08-29 17:22:05',groupExists:true},
+        {recycleId:'RB-E-0021',id:'21',group:'默认分组',name:'Walmart-US-运营',account:'wm***381',remark:'商品同步',tags:['Walmart','美国'],operator:'张小登',deletedAt:'2026-07-29 16:48:20',expireAt:'2026-08-28 16:48:20',groupExists:true},
+        {recycleId:'RB-E-0022',id:'22',group:'广告投放',name:'Meta-素材审核',account:'bm***442',remark:'素材复核',tags:['Meta','广告'],operator:'张小登',deletedAt:'2026-07-29 15:32:18',expireAt:'2026-08-28 15:32:18',groupExists:true},
+        {recycleId:'RB-E-0023',id:'23',group:'默认分组',name:'Lazada-MY-店铺',account:'la***063',remark:'马来西亚站',tags:['Lazada'],operator:'成员 1938',deletedAt:'2026-07-29 14:09:45',expireAt:'2026-08-28 14:09:45',groupExists:true},
+        {recycleId:'RB-E-0024',id:'24',group:'转移环境',name:'客服工单-夜班',account:'cs***812',remark:'客服协作',tags:['客服'],operator:'成员 1938',deletedAt:'2026-07-29 11:40:08',expireAt:'2026-08-28 11:40:08',groupExists:true}
       ],
-      account:[],
-      platform_proxy:[],
-      owned_proxy:[],
-      proxy_api:[],
-      rpa_template:[]
+      account:[
+        {recycleId:'RB-A-0108',name:'北美店铺主账号',platform:'Amazon',account:'na***@mail.test',remark:'美国站',operator:'张小登',deletedAt:'2026-08-06 12:10:21',expireAt:'2026-09-05 12:10:21'},
+        {recycleId:'RB-A-0107',name:'广告投放账号',platform:'Google Ads',account:'ad***@mail.test',remark:'搜索广告',operator:'成员 1938',deletedAt:'2026-08-05 18:24:09',expireAt:'2026-09-04 18:24:09'},
+        {recycleId:'RB-A-0105',name:'新加坡店铺',platform:'Shopee',account:'sg***@mail.test',remark:'东南亚组',operator:'张小登',deletedAt:'2026-08-04 09:12:36',expireAt:'2026-09-03 09:12:36'},
+        {recycleId:'RB-A-0102',name:'内容运营账号',platform:'TikTok Shop',account:'tt***@mail.test',remark:'短视频运营',operator:'成员 1938',deletedAt:'2026-08-01 16:08:44',expireAt:'2026-08-31 16:08:44'}
+      ],
+      platform_proxy:[
+        {recycleId:'RB-PP-021',id:'PP-021',name:'美国洛杉矶静态-21',proxyInfo:'198.51.100.21:443',provider:'云登精选',tags:'美国 / 静态',operator:'张小登',deletedAt:'2026-08-06 14:20:16',expireAt:'2026-09-05 14:20:16'},
+        {recycleId:'RB-PP-018',id:'PP-018',name:'英国伦敦住宅-18',proxyInfo:'198.51.100.18:443',provider:'BrightRoute',tags:'英国 / 住宅',operator:'成员 1938',deletedAt:'2026-08-04 11:06:42',expireAt:'2026-09-03 11:06:42'},
+        {recycleId:'RB-PP-014',id:'PP-014',name:'日本东京动态-14',proxyInfo:'动态提取',provider:'云登精选',tags:'日本 / 动态',operator:'张小登',deletedAt:'2026-08-02 17:31:09',expireAt:'2026-09-01 17:31:09'}
+      ],
+      owned_proxy:[
+        {recycleId:'RB-OP-011',id:'OP-011',name:'自有线路-US-11',proxyInfo:'203.0.113.11:8080',proxyType:'HTTP',remark:'广告专用',operator:'张小登',deletedAt:'2026-08-05 13:42:17',expireAt:'2026-09-04 13:42:17'},
+        {recycleId:'RB-OP-009',id:'OP-009',name:'自有线路-SG-09',proxyInfo:'203.0.113.9:1080',proxyType:'SOCKS5',remark:'店铺运营',operator:'成员 1938',deletedAt:'2026-08-03 10:16:30',expireAt:'2026-09-02 10:16:30'},
+        {recycleId:'RB-OP-004',id:'OP-004',name:'自有线路-DE-04',proxyInfo:'203.0.113.4:443',proxyType:'HTTPS',remark:'欧洲站',operator:'张小登',deletedAt:'2026-07-31 19:05:58',expireAt:'2026-08-30 19:05:58'}
+      ],
+      proxy_api:[
+        {recycleId:'RB-API-006',id:'API-006',name:'住宅动态提取-06',proxyType:'HTTP',extractMode:'每次启动提取',extractUrl:'https://proxy.example.test/extract/006',operator:'张小登',deletedAt:'2026-08-05 09:20:18',expireAt:'2026-09-04 09:20:18'},
+        {recycleId:'RB-API-004',id:'API-004',name:'海外静态池-04',proxyType:'SOCKS5',extractMode:'固定时长提取',extractUrl:'https://proxy.example.test/extract/004',operator:'成员 1938',deletedAt:'2026-08-02 12:36:51',expireAt:'2026-09-01 12:36:51'},
+        {recycleId:'RB-API-002',id:'API-002',name:'广告线路池-02',proxyType:'HTTPS',extractMode:'每次打开提取',extractUrl:'https://proxy.example.test/extract/002',operator:'张小登',deletedAt:'2026-07-30 15:42:03',expireAt:'2026-08-29 15:42:03'}
+      ],
+      rpa_template:[
+        {recycleId:'RB-RPA-017',name:'店铺订单批量导出',group:'订单处理',remark:'每日订单归档',operator:'张小登',deletedAt:'2026-08-06 16:04:25',expireAt:'2026-09-05 16:04:25'},
+        {recycleId:'RB-RPA-013',name:'广告数据定时汇总',group:'广告运营',remark:'周报数据源',operator:'成员 1938',deletedAt:'2026-08-04 10:18:39',expireAt:'2026-09-03 10:18:39'},
+        {recycleId:'RB-RPA-009',name:'商品库存检查',group:'店铺运营',remark:'低库存提醒',operator:'张小登',deletedAt:'2026-08-01 17:26:04',expireAt:'2026-08-31 17:26:04'}
+      ]
     };
 
     const state = {
-      currentType:'environment', page:1, pageSize:20, selected:new Set(),
+      currentType:'environment', page:1, pageSize:10, selected:new Set(),
       filters:Object.fromEntries(Object.keys(typeConfig).map(type=>[type,{keyword:'',group:''}])),
-      pendingAction:null, lastFocus:null, operationLoading:false, annoVisible:false, annoScopeStack:[]
+      pendingAction:null, lastFocus:null, operationLoading:false, annoVisible:false, annoScopeStack:[], annoLastFocus:null
     };
-
     const annotations = {
-      1:{title:'页面职责',desc:['回收站集中承接六类软删除资源。','永久删除与到期清除完成后，资源不可从本页恢复。']},
-      2:{title:'资源分类',desc:['点击 Tab 切换环境、账号、平台代理、自有代理、代理 API 和 RPA 模板。','切换后清空当前选择，页码回到 1，并保留各分类自己的查询条件。']},
-      3:{title:'环境分组筛选',desc:['仅环境分类显示分组筛选。','选择后立即刷新当前列表；原分组不存在的记录单独标识。']},
-      4:{title:'搜索条件',desc:['输入当前分类的名称、账号、备注、ID 等可见字段，按 Enter 查询。','搜索词最多 100 字符，清空后恢复默认列表。']},
-      5:{title:'保留期说明',desc:['回收项保留 30 天，期满由服务端自动清除。','前端提示不替代服务端对到期状态的最终判定。']},
-      6:{title:'刷新列表',desc:['保留当前分类和筛选条件，重新读取列表。','刷新会清空已选项，避免对过期页面快照执行批量操作。']},
-      7:{title:'列表与行操作',desc:['表格字段随资源类型变化；环境列表复刻截图中的字段顺序。','行内支持查看详情、恢复和永久删除，敏感字段保持脱敏。']},
-      8:{title:'列表与行操作',desc:['表格字段随资源类型变化；环境列表复刻截图中的字段顺序。','行内支持查看详情、恢复和永久删除，敏感字段保持脱敏。']},
-      9:{title:'分页控制',desc:['默认 20 条/页，支持 20、50、100 条。','页码越界时阻止跳转；本原型默认数据仅占一页。']},
-      10:{title:'确认操作',desc:['弹窗标题明确当前动作。','恢复和不可逆删除使用不同的图标与按钮颜色。']},
-      11:{title:'影响说明',desc:['展示对象类型、数量和不可逆后果。','分类级清空作用于当前分类全部数据，不等同于当前页选择。']},
-      12:{title:'取消',desc:['取消不会提交请求，也不会改变当前列表。','按 Esc 或关闭图标与取消相同。']},
-      13:{title:'确认提交',desc:['提交期间按钮进入 loading 并阻止重复点击。','服务端成功后才更新列表和展示成功提示。']},
-      14:{title:'查看详情',desc:['详情用于确认待操作对象，不提供编辑能力。','关闭后焦点回到原触发按钮。']},
-      15:{title:'脱敏详情',desc:['只展示恢复判断必需的业务字段、删除时间和预计清除时间。','账号、代理凭证、Cookie、令牌和 API 密钥不会在详情出现。']},
-      16:{title:'关闭详情',desc:['点击关闭、知道了或按 Esc 返回列表。','关闭详情不会改变对象状态。']}
+      1:{title:'资源分类',desc:['触发：点击环境、账号、平台代理、自有代理、代理 API 或 RPA 模板 Tab。','响应：切换列表字段和操作能力，当前页回到第 1 页。','规则：清空当前选择，并保留各资源分类自己的筛选条件。']},
+      2:{title:'环境分组筛选',desc:['触发：在环境分类选择分组。','响应：立即刷新当前环境列表并回到第 1 页。','规则：原分组不存在的回收项显示异常提示，恢复后进入未分组。']},
+      3:{title:'关键词筛选',desc:['触发：输入名称、账号、备注或 ID 等关键词。','响应：按 Enter 或点击查询后过滤当前分类列表。','规则：最多输入 100 个字符，仅匹配当前分类配置的可见字段。']},
+      4:{title:'查询',desc:['触发：点击查询按钮。','响应：提交当前筛选条件并刷新列表，页码回到第 1 页。','规则：不改变其他资源分类已保存的筛选条件。']},
+      5:{title:'重置',desc:['触发：点击重置按钮。','响应：清空当前分类的关键词和分组筛选，列表恢复默认数据。','规则：只重置当前分类，不影响其他分类。']},
+      6:{title:'保留期说明',desc:['触发：页面加载或切换资源分类后展示。','响应：提示回收项的 30 天自动清除规则。','规则：前端提示不替代服务端对到期状态的最终判定。']},
+      7:{title:'批量操作',desc:['触发：选择列表项后点击恢复、删除或分类级清空。','响应：打开对应确认弹窗，提交后更新列表并提示结果。','规则：未选择数据或当前分类为空时，对应操作保持禁用。']},
+      8:{title:'刷新列表',desc:['触发：点击刷新图标。','响应：保留当前分类和筛选条件，重新渲染列表。','规则：刷新会清空已选项，避免对过期页面快照执行批量操作。']},
+      9:{title:'列表与行操作',desc:['触发：查看表头、列表行或行内操作链接。','响应：展示字段、脱敏数据，并支持查看详情、恢复和永久删除。','规则：操作列固定在横向滚动区域右侧，账号和代理凭证保持脱敏。']},
+      10:{title:'分页控制',desc:['触发：点击页码、前后页、每页条数或输入页码后回车。','响应：更新当前列表并同步显示总记录数和当前页数。','规则：默认 10 条/页，支持 10、20、50 条；超过 7 页时折叠页码。']},
+      11:{title:'确认操作',desc:['触发：从批量或行内操作打开确认弹窗。','响应：标题明确当前恢复、删除或清空动作。','规则：恢复和不可逆删除使用不同的图标与按钮颜色。']},
+      12:{title:'影响说明',desc:['触发：确认弹窗打开时展示。','响应：说明对象类型、数量和不可逆后果。','规则：分类级清空作用于当前分类全部回收项，不等同于当前页选择。']},
+      13:{title:'取消',desc:['触发：点击取消、关闭图标或按 Esc。','响应：关闭确认弹窗并返回列表。','规则：不提交请求，也不改变当前列表数据。']},
+      14:{title:'确认提交',desc:['触发：点击确定提交恢复或删除操作。','响应：按钮进入加载状态，完成后更新列表并展示结果提示。','规则：处理期间阻止重复点击。']},
+      15:{title:'查看详情',desc:['触发：点击列表中的名称或查看详情。','响应：打开只读详情弹窗，展示当前回收对象信息。','规则：关闭后焦点回到原触发按钮，不提供编辑能力。']},
+      16:{title:'脱敏详情',desc:['触发：详情弹窗打开。','响应：展示恢复判断必需的业务字段、删除时间和预计清除时间。','规则：账号、代理凭证、Cookie、令牌和 API 密钥不会在详情出现。']},
+      17:{title:'关闭详情',desc:['触发：点击关闭、知道了或按 Esc。','响应：关闭详情并返回回收列表。','规则：关闭详情不会改变对象状态。']}
     };
 
     const escapeHtml = value => String(value ?? '-').replace(/[&<>'"]/g, char=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
@@ -314,7 +301,7 @@
     const currentConfig = () => typeConfig[state.currentType];
 
     function renderTabs() {
-      $('typeTabs').innerHTML = Object.entries(typeConfig).map(([type,config])=>`<button type="button" role="tab" aria-selected="${type===state.currentType}" data-type="${type}" ${type===state.currentType?'data-anno="2"':''} class="type-tab ${type===state.currentType?'active':''}"><i data-lucide="${config.icon}" class="w-4 h-4"></i>${config.label}</button>`).join('');
+      $('typeTabs').innerHTML = Object.entries(typeConfig).map(([type,config])=>`<button type="button" role="tab" aria-selected="${type===state.currentType}" data-type="${type}" ${type===state.currentType?'data-anno="1"':''} class="type-tab ${type===state.currentType?'active':''}">${config.label}</button>`).join('');
       $('typeTabs').querySelectorAll('[data-type]').forEach(button=>button.addEventListener('click',()=>switchType(button.dataset.type)));
     }
 
@@ -323,12 +310,13 @@
       $('groupControl').classList.toggle('hidden',!visible);
       if (!visible) return;
       const groups = unique(recycleData.environment.map(item=>item.group));
-      $('groupFilter').innerHTML = '<option value="">选择分组</option>'+groups.map(group=>`<option value="${escapeHtml(group)}">${escapeHtml(group)}</option>`).join('');
+      $('groupFilter').innerHTML = '<option value="">全部分组</option>'+groups.map(group=>`<option value="${escapeHtml(group)}">${escapeHtml(group)}</option>`).join('');
       $('groupFilter').value = state.filters.environment.group;
     }
 
     function renderToolbar() {
       const config=currentConfig(), count=state.selected.size, total=recycleData[state.currentType].length;
+      $('listTitle').textContent=`${config.label}回收列表`;
       const selectedDisabled=count===0?'disabled':'';
       if(config.toolbar==='selection') {
         $('actionButtons').innerHTML=`
@@ -372,10 +360,10 @@
       }
       if(key==='group') return item.groupExists===false?`<span class="inline-flex items-center gap-1 text-warning" title="恢复时进入未分组"><i data-lucide="triangle-alert" class="w-3.5 h-3.5"></i>${escapeHtml(item.group)}</span>`:`<span class="cell-text" title="${escapeHtml(item.group)}">${escapeHtml(item.group)}</span>`;
       if(key==='deletedAt') return `<span class="mono text-[11px] whitespace-nowrap text-ink-sub">${escapeHtml(item.deletedAt)}</span>`;
-      if(key==='actions') return `<div class="flex items-center gap-1.5 whitespace-nowrap">
-        <button type="button" class="h-7 px-2 rounded text-primary hover:bg-primary-bg" data-detail="${item.recycleId}">查看详情</button>
-        <button type="button" class="h-7 px-2 rounded text-primary hover:bg-primary-bg" data-restore="${item.recycleId}">恢复</button>
-        <button type="button" class="h-7 px-2 rounded border border-primary text-primary hover:bg-primary-bg" data-purge="${item.recycleId}">删除</button>
+      if(key==='actions') return `<div class="table-actions">
+        <button type="button" class="table-action" data-detail="${item.recycleId}">查看详情</button>
+        <button type="button" class="table-action" data-restore="${item.recycleId}">恢复</button>
+        <button type="button" class="table-action is-danger" data-purge="${item.recycleId}">删除</button>
       </div>`;
       const value=item[key]??'-';
       return `<span class="cell-text" title="${escapeHtml(value)}">${escapeHtml(value)}</span>`;
@@ -390,15 +378,16 @@
           const allSelected=pageItems.length>0&&pageItems.every(item=>state.selected.has(item.recycleId));
           return `<th style="width:${column.width}px"><input id="selectAll" type="checkbox" class="row-check" ${allSelected?'checked':''} ${pageItems.length===0?'disabled':''} aria-label="选择当前页全部数据"></th>`;
         }
-        return `<th ${index===1?'data-anno="8"':''} style="min-width:${column.width}px">${column.label}</th>`;
+        const actionColumn=column.key==='actions';
+        return `<th class="${actionColumn?'action-column':''}" ${actionColumn?'data-anno="9"':''} style="min-width:${column.width}px">${column.label}</th>`;
       }).join('')}</tr></thead>`;
 
       if(pageItems.length===0) {
         const hasFilter=Boolean(state.filters[state.currentType].keyword||state.filters[state.currentType].group);
-        $('tableArea').innerHTML=`<table class="data-table">${header}</table><div data-anno="8" class="min-h-[390px] flex items-center justify-center px-5"><div class="text-center"><span class="w-16 h-16 rounded-lg bg-page text-ink-muted mx-auto flex items-center justify-center"><i data-lucide="${hasFilter?'search-x':'archive-restore'}" class="w-8 h-8"></i></span><p class="mt-4 text-[15px] font-medium text-ink-title">${hasFilter?'未找到符合条件的数据':'回收站很干净'}</p><p class="mt-1.5 text-[12px] text-ink-muted">${hasFilter?'请调整或清空筛选条件':'去其它的页面逛逛吧'}</p>${hasFilter?'<button id="emptyResetBtn" type="button" class="btn btn-secondary mt-4"><i data-lucide="rotate-ccw" class="w-4 h-4"></i>清空筛选</button>':''}</div></div>`;
+        $('tableArea').innerHTML=`<table class="data-table">${header}</table><div class="min-h-[390px] flex items-center justify-center px-5"><div class="text-center"><span class="w-16 h-16 rounded-lg bg-page text-ink-muted mx-auto flex items-center justify-center"><i data-lucide="${hasFilter?'search-x':'archive-restore'}" class="w-8 h-8"></i></span><p class="mt-4 text-[15px] font-medium text-ink-title">${hasFilter?'未找到符合条件的数据':'回收站很干净'}</p><p class="mt-1.5 text-[12px] text-ink-muted">${hasFilter?'请调整或清空筛选条件':'去其它的页面逛逛吧'}</p>${hasFilter?'<button id="emptyResetBtn" type="button" class="btn btn-secondary mt-4"><i data-lucide="rotate-ccw" class="w-4 h-4"></i>清空筛选</button>':''}</div></div>`;
         $('emptyResetBtn')?.addEventListener('click',clearFilters);
       } else {
-        $('tableArea').innerHTML=`<table class="data-table">${header}<tbody>${pageItems.map(item=>`<tr class="${state.selected.has(item.recycleId)?'selected':''}">${config.columns.map(column=>`<td>${renderCell(item,column.key)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+        $('tableArea').innerHTML=`<table class="data-table">${header}<tbody>${pageItems.map(item=>`<tr class="${state.selected.has(item.recycleId)?'selected':''}">${config.columns.map(column=>`<td class="${column.key==='actions'?'action-column':''}">${renderCell(item,column.key)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
       }
       bindTableEvents();
       renderPagination(all.length,totalPages);
@@ -421,21 +410,30 @@
       $('tableArea').querySelectorAll('[data-purge]').forEach(button=>button.addEventListener('click',()=>openConfirm('purge',[button.dataset.purge],button)));
     }
 
+    function getPageTokens(totalPages,page) {
+      if(totalPages<=7) return Array.from({length:totalPages},(_,index)=>index+1);
+      if(page<=4) return [1,2,3,4,5,'ellipsis',totalPages];
+      if(page>=totalPages-3) return [1,'ellipsis',totalPages-4,totalPages-3,totalPages-2,totalPages-1,totalPages];
+      return [1,'ellipsis',page-1,page,page+1,'ellipsis',totalPages];
+    }
+
     function renderPagination(total,totalPages) {
+      const pageButton=(content,target,disabled=false,active=false,label='')=>`<button type="button" class="pg-btn ${active?'pg-current':''}" data-recycle-page="${target}" ${disabled||active?'disabled':''} ${active?'aria-current="page"':''} ${label?`aria-label="${label}"`:''}>${content}</button>`;
+      const tokens=getPageTokens(totalPages,state.page).map(token=>token==='ellipsis'?'<span class="pg-ellipsis" aria-hidden="true">...</span>':pageButton(token,token,false,token===state.page)).join('');
       $('pagination').innerHTML=`
-        <div class="flex items-center gap-3"><span>共 <strong class="mono text-ink-title">${total}</strong> 条</span><label class="flex items-center gap-1.5"><select id="pageSizeSelect" class="control h-[30px] pl-2 pr-1"><option value="20">20条/页</option><option value="50">50条/页</option><option value="100">100条/页</option></select></label></div>
-        <div class="flex items-center gap-1.5 py-2"><button id="prevPage" class="pg-btn" ${state.page===1?'disabled':''} aria-label="上一页"><i data-lucide="chevron-left" class="w-4 h-4"></i></button><button class="pg-btn active mono" aria-current="page">${state.page}</button><button id="nextPage" class="pg-btn" ${state.page===totalPages?'disabled':''} aria-label="下一页"><i data-lucide="chevron-right" class="w-4 h-4"></i></button><span class="ml-2">前往</span><input id="jumpInput" class="control w-12 h-[30px] text-center mono" value="${state.page}" inputmode="numeric" aria-label="跳转页码"><span>页</span></div>`;
+        <nav class="pg-nav" data-anno="10" aria-label="页码导航">${pageButton('<i data-lucide="chevron-left" class="w-4 h-4"></i>',state.page-1,state.page===1,false,'上一页')}${tokens}${pageButton('<i data-lucide="chevron-right" class="w-4 h-4"></i>',state.page+1,state.page===totalPages,false,'下一页')}</nav>
+        <label class="pg-select-wrap"><span class="sr-only">每页条数</span><select id="pageSizeSelect" class="pg-select" aria-label="每页条数"><option value="10">10 条/页</option><option value="20">20 条/页</option><option value="50">50 条/页</option></select></label>
+        <div class="pg-right"><label class="pg-jump"><span>跳至</span><input id="jumpInput" class="pg-jump-input mono" value="1" inputmode="numeric" maxlength="3" aria-label="跳转页码"><span>页</span></label><span class="pg-stats">共 <strong class="mono text-ink-title">${total}</strong> 条记录&nbsp;&nbsp;第 <strong class="mono text-ink-title">${state.page}</strong>/<strong class="mono text-ink-title">${totalPages}</strong> 页</span></div>`;
       $('pageSizeSelect').value=String(state.pageSize);
       $('pageSizeSelect').addEventListener('change',event=>{state.pageSize=Number(event.target.value);state.page=1;state.selected.clear();renderAll();});
-      $('prevPage').addEventListener('click',()=>{if(state.page>1){state.page--;state.selected.clear();renderAll();}});
-      $('nextPage').addEventListener('click',()=>{if(state.page<totalPages){state.page++;state.selected.clear();renderAll();}});
+      $('pagination').querySelectorAll('[data-recycle-page]').forEach(button=>button.addEventListener('click',()=>{if(button.disabled)return;state.page=Number(button.dataset.recyclePage);state.selected.clear();renderAll();}));
+      $('jumpInput').addEventListener('input',event=>event.target.removeAttribute('aria-invalid'));
       $('jumpInput').addEventListener('keydown',event=>{if(event.key==='Enter')jumpPage(totalPages);});
-      $('jumpInput').addEventListener('blur',()=>{if($('jumpInput').value!==String(state.page))jumpPage(totalPages);});
     }
 
     function jumpPage(totalPages) {
       const target=Number($('jumpInput').value);
-      if(!Number.isInteger(target)||target<1||target>totalPages){toast(`请输入 1-${totalPages} 之间的页码`,'warning');$('jumpInput').value=state.page;return;}
+      if(!Number.isInteger(target)||target<1||target>totalPages){toast(`请输入 1-${totalPages} 之间的页码`,'warning');$('jumpInput').value='1';$('jumpInput').setAttribute('aria-invalid','true');$('jumpInput').focus();return;}
       state.page=target; state.selected.clear(); renderAll();
     }
 
@@ -556,45 +554,38 @@
     }
     function showAnnoPopup(id) {
       const item=annotations[id]; if(!item) return;
+      const origin=document.querySelector(`[data-anno="${id}"]`);
+      state.annoLastFocus=origin?.matches('button,a,input,select,textarea,[tabindex]')?origin:origin?.querySelector('button,a,input,select,textarea,[tabindex]')||$('annoToggle');
       $('annoTitle').textContent=`${id}. ${item.title}`; $('annoDesc').innerHTML=`<ul class="list-disc pl-5 space-y-2">${item.desc.map(text=>`<li>${escapeHtml(text)}</li>`).join('')}</ul>`;
       $('annoPopup').classList.remove('hidden'); $('annoPopup').classList.add('flex'); $('closeAnno').focus();
     }
-    function closeAnnoPopup() { $('annoPopup').classList.add('hidden'); $('annoPopup').classList.remove('flex'); }
-
-    function toggleSidebar() {
-      if(innerWidth<768){document.body.classList.toggle('mobile-menu-open');$('mobileMask').classList.toggle('hidden',!document.body.classList.contains('mobile-menu-open'));}
-      else document.body.classList.toggle('sidebar-compact');
-      setTimeout(renderAnnoBadges,220);
-    }
+    function closeAnnoPopup() { if($('annoPopup').classList.contains('hidden'))return;$('annoPopup').classList.add('hidden'); $('annoPopup').classList.remove('flex');state.annoLastFocus?.focus?.({preventScroll:true});state.annoLastFocus=null; }
 
     $('groupFilter').addEventListener('change',event=>{state.filters.environment.group=event.target.value;state.page=1;state.selected.clear();renderAll();});
     $('searchInput').addEventListener('input',event=>$('clearSearchBtn').classList.toggle('hidden',!event.target.value));
     $('searchInput').addEventListener('keydown',event=>{if(event.key==='Enter'){state.filters[state.currentType].keyword=event.target.value.trim();state.page=1;state.selected.clear();renderAll();}});
+    $('queryBtn').addEventListener('click',()=>{state.filters[state.currentType].keyword=$('searchInput').value.trim();state.page=1;state.selected.clear();renderAll();});
+    $('resetBtn').addEventListener('click',clearFilters);
     $('clearSearchBtn').addEventListener('click',()=>{state.filters[state.currentType].keyword='';$('searchInput').value='';state.page=1;state.selected.clear();renderAll();$('searchInput').focus();});
     $('refreshBtn').addEventListener('click',()=>{state.selected.clear();const icon=$('refreshBtn').querySelector('svg');icon?.classList.add('animate-spin');setTimeout(()=>{icon?.classList.remove('animate-spin');renderAll();toast('列表已刷新','success');},420);});
     $('clearSelectionBtn').addEventListener('click',()=>{state.selected.clear();renderAll();});
     $('confirmCloseBtn').addEventListener('click',closeConfirm); $('confirmCancelBtn').addEventListener('click',closeConfirm); $('confirmSubmitBtn').addEventListener('click',executePendingAction);
     $('detailCloseBtn').addEventListener('click',closeDetail); $('detailDoneBtn').addEventListener('click',closeDetail);
-    $('collapseBtn').addEventListener('click',toggleSidebar); $('desktopCollapseBtn').addEventListener('click',toggleSidebar); $('mobileMenuBtn').addEventListener('click',toggleSidebar); $('mobileMask').addEventListener('click',toggleSidebar);
-    $('accountBtn').addEventListener('click',()=>$('accountPopover').classList.toggle('hidden'));
-    $('helpBtn').addEventListener('click',()=>toast('帮助中心入口已打开，本原型不跳转外部页面','info'));
-    $('noticeBtn').addEventListener('click',()=>toast('暂无新的回收站通知','info'));
     $('annoToggle').addEventListener('click',()=>{state.annoVisible=!state.annoVisible;$('annoToggle').setAttribute('aria-pressed',String(state.annoVisible));$('annoToggle').querySelector('span').textContent=state.annoVisible?'隐藏标注':'显示标注';renderAnnoBadges();});
     $('closeAnno').addEventListener('click',closeAnnoPopup); $('annoPopup').addEventListener('click',event=>{if(event.target===$('annoPopup'))closeAnnoPopup();});
-    document.addEventListener('click',event=>{if(!$('accountBtn').contains(event.target)&&!$('accountPopover').contains(event.target))$('accountPopover').classList.add('hidden');});
     document.addEventListener('keydown',event=>{
+      if(!$('annoPopup').classList.contains('hidden')&&event.key==='Tab'){event.preventDefault();$('closeAnno').focus();return;}
       if(event.key!=='Escape') return;
       if(!$('annoPopup').classList.contains('hidden')) closeAnnoPopup();
       else if(!$('detailModal').classList.contains('hidden')) closeDetail();
       else if(!$('confirmModal').classList.contains('hidden')) closeConfirm();
-      else if(document.body.classList.contains('mobile-menu-open')) toggleSidebar();
     });
-    window.addEventListener('resize',()=>{if(innerWidth>=768){document.body.classList.remove('mobile-menu-open');$('mobileMask').classList.add('hidden');}renderAnnoBadges();});
+    window.addEventListener('resize',renderAnnoBadges);
     window.addEventListener('scroll',renderAnnoBadges,true);
 
     const initialType=location.hash.slice(1); if(typeConfig[initialType]) state.currentType=initialType;
     renderAll();
   </script>
-  <script src="公共导航.js?v=20260813"></script>
+
 </body>
 </html>
