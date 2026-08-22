@@ -32,7 +32,7 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/lucide@latest"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<link rel="stylesheet" href="../src/assets/styles/global.css?v=20260821a">
+<link rel="stylesheet" href="../src/styles/global.css?v=20260821a">
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <!-- 页面底部：lucide.createIcons(); -->
 ```
@@ -59,8 +59,8 @@
 
 **每个页面 = 一个独立** `.html`，无需构建或本地服务器；但后台业务模块的运行入口统一为 `Prototype/系统框架.html?page=<key>`。直接双击业务模块文件时，应使用相对路径自动回到对应的系统框架 URL，再由 Router Outlet 加载该模块，因此“可独立预览”不等于“可独立创建 App Shell”。
 
-- CSS：Tailwind CDN + 页面内 `<style>`；允许按页面需要引用 `Prototype/公共导航.css`、`Prototype/分页器.css`、`Prototype/筛选布局.css`，以及共享字体源 `src/assets/styles/global.css`（后台页由公共导航层统一引入，独立页直接引用）；
-- JS：页面内 `<script>`；允许按页面需要引用 `Prototype/公共导航.js`、`Prototype/分页器.js`、`Prototype/标注交互.js`、`Prototype/侧栏交互.js`；
+- CSS：Tailwind CDN + 页面内 `<style>`；允许按页面需要引用 `Prototype/公共导航.css`、`Prototype/分页器.css`、`Prototype/筛选布局.css`，以及共享字体源 `src/styles/global.css`（后台页由公共导航层统一引入，独立页直接引用）；
+- JS：页面内 `<script>`；允许按页面需要引用 `Prototype/公共导航.js`、`Prototype/分页器.js`、`Prototype/标注交互.js`；旧的 `Prototype/侧栏交互.js` 已废弃，不得新增引用；
 - 数据：mock data 内联（见第六章）；
 - 图片：用占位（色块/图标/`https://placehold.co`），不依赖本地图片。
 **禁止**：白名单以外的本地 `.css`/`.js`/图片依赖、构建工具、模块 import。公共层文件属于单文件自包含规则的唯一例外，必须使用项目列明的文件名并统一缓存参数；不得复制其实现到页面内形成分叉。

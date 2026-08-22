@@ -11,7 +11,7 @@
     #__bundler_thumbnail svg { width: 100%; height: 100%; object-fit: contain; }
     #__bundler_placeholder { color: #999; font-size: 14px; }
   </style>
-  <link rel="stylesheet" href="../src/assets/styles/global.css?v=20260821a">
+  <link rel="stylesheet" href="../src/styles/global.css?v=20260821a">
   <noscript>
     <style>#__bundler_loading { display: none; }</style>
     <div style="position:fixed;bottom:12px;left:12px;font:13px/1.4 -apple-system,BlinkMacSystemFont,'PingFang SC','Hiragino Sans GB','Microsoft YaHei','Helvetica Neue',Helvetica,Arial,sans-serif;color:#999;background:rgba(255,255,255,0.9);padding:6px 12px;border-radius:6px;box-shadow:0 1px 4px rgba(0,0,0,0.08);z-index:10000;">
@@ -181,7 +181,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     // stylesheet to the parsed document before the original head is removed.
     const fontLink = doc.createElement('link');
     fontLink.rel = 'stylesheet';
-    fontLink.href = new URL('../src/assets/styles/global.css?v=20260821a', document.baseURI).href;
+    fontLink.href = new URL('../src/styles/global.css?v=20260821a', document.baseURI).href;
     doc.head.appendChild(fontLink);
     document.documentElement.replaceWith(doc.documentElement);
     const dead = Array.from(document.scripts);
@@ -495,7 +495,7 @@ document.addEventListener('DOMContentLoaded', async function() {
           <tr><td>标准模块访问</td><td><code>系统框架.html?page=&lt;key&gt;</code></td><td>URL、iframe、BrowserChrome 标题与唯一菜单高亮保持一致；TopBar 不显示模块名称。</td></tr>
           <tr><td>业务文件直开</td><td><code>环境管理.html</code></td><td>自动回到对应 SystemFrame URL；iframe 嵌入时不重复跳转。</td></tr>
           <tr><td>前进 / 后退 / 刷新</td><td>顶层历史与 BrowserChrome 导航</td><td>恢复同一模块和高亮；刷新 SystemFrame 后按 page 恢复同一 ModuleFrame，始终只保留一层 App Shell。</td></tr>
-          <tr><td>特殊独立页</td><td><code>index.html</code> / <code>设计系统.html</code> / <code>登录.html</code></td><td>直接运行，不进入 iframe SystemFrame。</td></tr>
+          <tr><td>特殊独立页</td><td><code>index.html</code> / <code>Prototype/设计系统.html</code> / <code>Prototype/登录.html</code></td><td>直接运行，不进入 iframe SystemFrame。</td></tr>
         </tbody>
       </table>
     </div>

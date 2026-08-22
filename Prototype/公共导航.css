@@ -1,4 +1,4 @@
-@import url('../src/assets/styles/global.css?v=20260821a');
+@import url('../src/styles/global.css?v=20260821a');
 
 /* 云登 PC 端公共 App Shell。业务页面只负责主体内容，导航由公共脚本填充。 */
 html[data-yundeng-runtime-pending="true"] body { visibility: hidden; }

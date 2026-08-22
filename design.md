@@ -69,7 +69,7 @@
 | 数字/编号/金额/代码（mono） | `'JetBrains Mono', monospace` |
 
 > 数字、订单号、金额、编码、时间戳等**必须**用 mono 字体，增强数据感与对齐。
-> UI 字体由 `src/assets/styles/global.css` 统一定义系统字体回退链，并在 `body` 开启 WebKit 与 macOS Firefox 抗锯齿；后台公共层统一引入，表单控件继承同一字体。
+> UI 字体由 `src/styles/global.css` 统一定义系统字体回退链，并在 `body` 开启 WebKit 与 macOS Firefox 抗锯齿；后台公共层统一引入，表单控件继承同一字体。
 > JetBrains Mono 通过 CDN 引入：`https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap`
 
 ### 2.2 字号层级（B 端高信息密度）
@@ -551,7 +551,7 @@
 - 768–1279px 保留 220/68px 侧栏与横向可滚动标签；新增标签按钮始终跟随在可滚动标签列表右侧。小于 768px 时侧栏改为 220px 遮罩抽屉、不使用 68px 紧凑态，并隐藏窗口控制点；小于 560px 时隐藏后退/前进和平台名称，保留刷新、Logo、地址框、扩展程序、下载与更多；
 - 页面底部固定操作栏使用方向相反的向上阴影，正文底部需预留其高度，避免最后一项表单被遮挡；
 - 本规则仅适用于后台 App Shell 的顶栏、侧栏与路由内容承载容器。表格、表单控件、弹窗与卡片内部信息分隔仍按各自组件规范使用 `line` 边框。
-- 除 `index.html`、`设计系统.html`、`登录.html` 外，全部后台模块通过 `系统框架.html?page=<key>` 进入唯一 App Shell。菜单、原型导航卡片和跨模块入口不得直接打开业务 HTML；业务 HTML 顶层直开时自动回框架，iframe 嵌入时公共脚本不得再次生成壳层。
+- 除根 `index.html`、`Prototype/设计系统.html`、`Prototype/登录.html` 外，全部后台模块通过 `Prototype/系统框架.html?page=<key>` 进入唯一 App Shell。菜单、原型导航卡片和跨模块入口不得直接打开业务 HTML；业务 HTML 顶层直开时自动回框架，iframe 嵌入时公共脚本不得再次生成壳层。
 - 前进、后退和刷新恢复后，iframe 内容、BrowserChrome 当前标签和菜单高亮必须保持同一状态；模块 query/hash 需要恢复时使用外层 `moduleSearch` / `moduleHash` 命名空间，不得覆盖 `page`。该恢复过程不得产生可见布局跳动。相对 URL 与 iframe 尺寸规则必须在 `file://` 预览下保持一致。
 
 ### 6.2 用户端（小程序，如需）
@@ -594,7 +594,7 @@ tailwind.config = {
 
 > `page`、`card`、`hover`、`block-hover` 必须作为颜色键直接声明，分别生成 `bg-page`、`bg-card`、`bg-hover`、`bg-block-hover`。禁止写成 `bg: { page, card, hover, block-hover }` 或 `'bg-card'` 等颜色键，否则 Tailwind 会生成 `bg-bg-page` / `bg-bg-card` / `bg-bg-hover` / `bg-bg-block-hover`，导致规范类名不生效。
 
-> 字体实现：后台业务页由 `Prototype/公共导航.css` 导入带当前公共缓存版本的 `src/assets/styles/global.css`；独立页在 `<head>` 中直接引用同版本文件。不要使用构建工具专属的 `@/assets/...` 别名，确保 `file://` 双击预览可加载全局字体规则。
+> 字体实现：后台业务页由 `Prototype/公共导航.css` 导入带当前公共缓存版本的 `src/styles/global.css`；独立页在 `<head>` 中直接引用同版本文件。不要使用构建工具专属的 `@/assets/...` 别名，确保 `file://` 双击预览可加载全局字体规则。
 
 ---
 

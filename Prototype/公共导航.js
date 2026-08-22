@@ -133,8 +133,8 @@
 
   function shellRouteHref(key, options = {}) {
     const item = allItems.find(candidate => candidate.key === key) || allItems.find(candidate => candidate.key === DEFAULT_ROUTE_KEY);
-    // 独立壳层页面的首页链接直指自身文件，避免回到系统框架造成壳层嵌套
-    if (!isSystemFrame && !isEmbedded && item.key === DEFAULT_ROUTE_KEY && !options.module) return item.href;
+    // 业务页的品牌入口回到根导航；SystemFrame 内部仍使用 page=home。
+    if (!isSystemFrame && !isEmbedded && item.key === DEFAULT_ROUTE_KEY && !options.module) return '../index.html';
     const moduleFile = allowedModuleFiles.has(options.module) ? options.module : item.href;
     const params = new URLSearchParams();
     params.set('page', item.key);

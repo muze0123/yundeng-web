@@ -50,7 +50,7 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/lucide@latest"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<link rel="stylesheet" href="../src/assets/styles/global.css?v=20260821a">
+<link rel="stylesheet" href="../src/styles/global.css?v=20260821a">
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <!-- 页面底部：lucide.createIcons(); -->
 ```
@@ -77,8 +77,8 @@
 
 **每个页面 = 一个独立** `.html`，无需构建或本地服务器；但后台业务模块的运行入口统一为 `Prototype/系统框架.html?page=<key>`。直接双击业务模块文件时，应使用相对路径自动回到对应的系统框架 URL，再由 Router Outlet 加载该模块，因此“可独立预览”不等于“可独立创建 App Shell”。
 
-- CSS：Tailwind CDN + 页面内 `<style>`；允许按页面需要引用 `Prototype/公共导航.css`、`Prototype/分页器.css`、`Prototype/筛选布局.css`，以及共享字体源 `src/assets/styles/global.css`（后台页由公共导航层统一引入，独立页直接引用）；
-- JS：页面内 `<script>`；允许按页面需要引用 `Prototype/公共导航.js`、`Prototype/分页器.js`、`Prototype/标注交互.js`、`Prototype/侧栏交互.js`；
+- CSS：Tailwind CDN + 页面内 `<style>`；允许按页面需要引用 `Prototype/公共导航.css`、`Prototype/分页器.css`、`Prototype/筛选布局.css`，以及共享字体源 `src/styles/global.css`（后台页由公共导航层统一引入，独立页直接引用）；
+- JS：页面内 `<script>`；允许按页面需要引用 `Prototype/公共导航.js`、`Prototype/分页器.js`、`Prototype/标注交互.js`；旧的 `Prototype/侧栏交互.js` 已废弃，不得新增引用；
 - 数据：mock data 内联（见第六章）；
 - 图片：用占位（色块/图标/`https://placehold.co`），不依赖本地图片。
 **禁止**：白名单以外的本地 `.css`/`.js`/图片依赖、构建工具、模块 import。公共层文件属于单文件自包含规则的唯一例外，必须使用项目列明的文件名并统一缓存参数；不得复制其实现到页面内形成分叉。
@@ -529,7 +529,7 @@ function closeModal() {
 - 只有用户明确要求提交、推送、部署、发布或上线时，才可执行对应的 `git commit`、`git push` 或 Vercel 命令；不得把代码修改授权扩张为版本库或外部部署授权。
 - 提交前先完成第十二章自检；按用户要求保持原子提交。同一页面变更触发的路由、SystemFrame、公共资源版本和文档联动文件应归入同一次提交，避免产生不可运行的中间状态。使用 `git add <明确路径>` 精确暂存，不使用 `git add -A`，不纳入无关改动、临时文件、构建产物或 `node_modules`。
 - Commit message 使用约定式提交，例如 `feat(prototype): ...`、`fix(anno): ...`、`style(design-token): ...`、`chore(nav): ...`。
-- 首次 Vercel 登录或关联项目前，必须确认实际部署目录、入口与目标项目。当前原型入口为 `Prototype/index.html`，不得未经核实假定仓库根目录就是部署根目录。
+- 首次 Vercel 登录或关联项目前，必须确认实际部署目录、入口与目标项目。当前原型入口为 `index.html`，不得未经核实假定仓库根目录就是部署根目录。
 - 部署前检查 SystemFrame 链接、相对路径、中文文件名、`localhost` / 本机绝对路径、外部 CDN、全局系统字体栈与公共资源缓存版本；得到明确授权后方可运行 `vercel --prod`。
 - 部署失败或线上回归时优先评估 `vercel rollback`；执行部署后必须向用户提供实际预览或生产 URL，不能只报告“已部署”。
 
@@ -566,3 +566,19 @@ function closeModal() {
 ---
 
 **说明**：本文件为行为约束，视觉以 `design.md` 为准、内容以各 `PRD.md` 为准。三者分工不重叠，共同约束 Codex 产出一致、规范、可交付的高保真原型。
+
+
+<claude-mem-context>
+# Memory Context
+
+# [云登pc端] recent context, 2026-08-22 10:28am GMT+8
+
+Legend: 🎯session 🔴bugfix 🟣feature 🔄refactor ✅change 🔵discovery ⚖️decision
+Format: ID TIME TYPE TITLE
+Fetch details: get_observations([IDs]) | Search: mem-search skill
+
+Stats: 1 obs (70t read) | 0t work
+
+### Aug 22, 2026
+1816 10:15a ✅ DOHOZZ项目部署相关文件清理请求
+</claude-mem-context>
