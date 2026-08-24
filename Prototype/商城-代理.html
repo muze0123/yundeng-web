@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>云登 - 商城代理</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: { DEFAULT: '#0066FF', hover: '#0052CC', active: '#0047B3', bg: '#E6F0FF' },
+            ink: { title: '#1A1D24', body: '#3A3F4A', sub: '#6E7685', muted: '#9DA2AC' },
+            line: { DEFAULT: '#DFE1E5', light: '#E8EAED', lighter: '#F0F1F3' },
+            page: '#F7F8FA', card: '#FFFFFF', hover: '#F3F4F6', 'block-hover': '#F0F1F3', price: '#FE5416',
+            success: { DEFAULT: '#0FC060', bg: '#E7F9F0' }, warning: { DEFAULT: '#E7772D', bg: '#FDF2E9' },
+            danger: { DEFAULT: '#D9001B', bg: '#FFE8EB' }, info: { DEFAULT: '#0091D5', bg: '#E4F4FB' }
+          },
+          borderRadius: { DEFAULT: '4px', md: '6px', lg: '8px' },
+          fontFamily: {
+            sans: ['-apple-system', 'BlinkMacSystemFont', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', 'Helvetica', 'Arial', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace']
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    :root {
+      --primary: #0066FF;
+      --primary-hover: #0052CC;
+      --primary-active: #0047B3;
+      --primary-bg: #E6F0FF;
+      --ink-title: #1A1D24;
+      --ink-body: #3A3F4A;
+      --ink-sub: #6E7685;
+      --ink-muted: #9DA2AC;
+      --line: #DFE1E5;
+      --line-light: #E8EAED;
+      --line-lighter: #F0F1F3;
+      --page: #F7F8FA;
+      --card: #FFFFFF;
+      --hover: #F3F4F6;
+      --price: #FE5416;
+      --success: #0FC060;
+      --success-bg: #E7F9F0;
+      --warning: #E7772D;
+      --warning-bg: #FDF2E9;
+      --danger: #D9001B;
+      --danger-bg: #FFE8EB;
+      --info: #0091D5;
+      --info-bg: #E4F4FB;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { min-height: 100%; margin: 0; letter-spacing: 0; }
+    body { color: var(--ink-body); background: var(--page); font: 14px/1.5 -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif; }
+    button, input, select { font: inherit; }
+    button { white-space: nowrap; }
+    ::selection { color: var(--ink-title); background: var(--primary-bg); }
+    .hidden { display: none !important; }
+    .mono { font-family: 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+    .store-page { min-width: 0; min-height: 100%; padding-bottom: 24px; overflow: auto; background: var(--page); }
+    #proxyPanel { padding-bottom: 104px; }
+    .surface { min-width: 0; padding: 20px; border-radius: 8px; background: var(--card); }
+    .surface + .surface { margin-top: 16px; }
+
+    .store-tabs { min-width: 0; height: 44px; display: flex; align-items: stretch; gap: 8px; overflow-x: auto; scrollbar-width: none; }
+    .store-tabs::-webkit-scrollbar { display: none; }
+    .store-tab { min-width: 104px; height: 44px; padding: 0 16px; border: 0; border-bottom: 2px solid transparent; display: inline-flex; align-items: center; justify-content: center; gap: 8px; flex: none; color: var(--ink-sub); background: transparent; cursor: pointer; font-size: 14px; line-height: 1; }
+    .store-tab:hover { color: var(--primary); background: var(--hover); }
+    .store-tab[aria-selected="true"] { color: var(--primary); border-bottom-color: var(--primary); font-weight: 600; background: var(--card); }
+    .store-tab svg { width: 16px; height: 16px; }
+
+    .notice-strip { min-height: 44px; padding: 0 12px; display: flex; align-items: center; gap: 10px; border-radius: 8px; color: var(--primary); background: var(--card); }
+    .notice-strip svg { width: 16px; height: 16px; flex: none; }
+    .notice-strip strong { color: var(--primary); }
+    .notice-strip p { min-width: 0; margin: 0; flex: 1; color: var(--primary); }
+    .text-button { height: 28px; padding: 0 4px; border: 0; border-radius: 4px; display: inline-flex; align-items: center; gap: 4px; color: var(--primary); background: transparent; cursor: pointer; }
+    .text-button:hover { color: var(--primary-hover); background: var(--primary-bg); }
+    .notice-strip .text-button { color: var(--ink-sub); }
+    .notice-strip .text-button:hover { color: var(--ink-body); background: var(--hover); }
+    .text-button svg { width: 14px; height: 14px; }
+    .compliance-detail { margin-top: 8px; padding: 16px; border-radius: 8px; background: var(--card); color: var(--ink-body); }
+    .compliance-detail h3 { margin: 0 0 8px; color: var(--ink-title); font-size: 14px; font-weight: 600; }
+    .compliance-detail ol { margin: 0; padding-left: 20px; }
+    .compliance-detail li + li { margin-top: 6px; }
+    #proxyPanel > .surface { margin-top: 10px !important; }
+    .proxy-region-card { min-height: 240px; }
+    .proxy-type-card { min-height: 196px; }
+
+    .section-heading { margin: 0 0 16px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .section-heading h2 { margin: 0; color: var(--ink-title); font-size: 16px; font-weight: 600; }
+    .section-heading p { margin: 0; color: var(--ink-muted); font-size: 12px; }
+    .section-heading .heading-tools { min-width: min(100%, 420px); margin-left: auto; display: grid; grid-template-columns: minmax(240px, 400px) max-content; align-items: center; justify-content: end; gap: 10px; flex: 1 1 420px; }
+
+    .region-search { width: min(400px, 100%); height: 32px; position: relative; }
+    .region-search input { width: 100%; height: 32px; padding: 0 34px 0 10px; border: 1px solid var(--line); border-radius: 4px; color: var(--ink-title); background: var(--card); outline: none; }
+    .region-search input:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(0, 102, 255, .12); }
+    .region-search svg { width: 16px; height: 16px; position: absolute; top: 8px; right: 10px; color: var(--ink-sub); pointer-events: none; }
+    .current-region { min-height: 32px; padding: 0 10px; border-radius: 4px; display: inline-flex; align-items: center; color: var(--primary); background: var(--primary-bg); white-space: nowrap; }
+    .region-field { align-items: start; }
+    .region-options { min-width: 0; display: grid; gap: 10px; }
+    .region-line { min-width: 0; display: grid; grid-template-columns: 44px minmax(0, 1fr); align-items: start; gap: 8px; }
+    .region-line + .region-line { margin-top: 0; }
+    .region-prefix { min-height: 32px; display: flex; align-items: center; justify-content: flex-start; color: var(--ink-muted); white-space: nowrap; }
+    .chip-grid { min-width: 0; display: grid; grid-template-columns: repeat(9, minmax(100px, 1fr)); gap: 8px; }
+    .option-chip { min-width: 0; height: 32px; padding: 0 10px; position: relative; border: 1px solid var(--line-lighter); border-radius: 4px; color: var(--ink-body); background: var(--page); font-size: 14px; white-space: nowrap; cursor: pointer; overflow: visible; }
+    .option-chip:hover { color: var(--primary); border-color: var(--primary); background: var(--card); }
+    .option-chip[aria-pressed="true"] { color: var(--card); border-color: var(--primary); background: var(--primary); }
+    .option-chip .corner-tag { height: 16px; padding: 0 5px; position: absolute; top: -7px; right: 2px; border-radius: 4px; display: inline-flex; align-items: center; color: var(--card); background: var(--price); font-size: 11px; line-height: 16px; }
+    .more-chip { color: var(--primary); background: var(--card); }
+    .more-chip svg { width: 13px; height: 13px; margin-left: 4px; display: inline; vertical-align: -2px; }
+    .region-empty { margin: 0 0 0 52px; padding: 12px; border-radius: 4px; color: var(--ink-sub); background: var(--page); }
+
+    .proxy-type-tabs, .duration-options { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .segment-button { min-width: 128px; height: 32px; padding: 0 14px; position: relative; border: 1px solid var(--line); border-radius: 4px; color: var(--ink-body); background: var(--card); cursor: pointer; }
+    .segment-button:hover { color: var(--primary); border-color: var(--primary); }
+    .segment-button[aria-pressed="true"] { color: var(--card); border-color: var(--primary); background: var(--primary); }
+    .segment-button .discount-tag { height: 18px; padding: 0 5px; position: absolute; top: -9px; right: 4px; border-radius: 4px; color: var(--card); background: var(--price); font-size: 11px; line-height: 18px; }
+
+    .resource-grid { margin-top: 16px; display: grid; grid-template-columns: repeat(3, minmax(190px, 224px)); gap: 10px; }
+    .resource-card { min-width: 0; min-height: 72px; padding: 10px 12px; position: relative; border: 1px solid var(--line); border-radius: 4px; color: var(--ink-body); background: var(--card); text-align: left; cursor: pointer; transition: border-color .15s ease, background-color .15s ease; }
+    .resource-card:hover, .resource-card:focus-visible { border-color: var(--primary); background: var(--card); }
+    .resource-card[aria-pressed="true"], .resource-card[aria-pressed="true"]:hover, .resource-card[aria-pressed="true"]:focus-visible { border-color: var(--primary); background: var(--primary-bg); }
+    .resource-card:disabled { color: var(--ink-muted); border-color: var(--line-lighter); background: var(--page); cursor: not-allowed; }
+    .resource-card .resource-title { display: flex; align-items: center; gap: 6px; color: var(--ink-title); font-weight: 500; }
+    .resource-card .resource-title svg { width: 15px; height: 15px; flex: none; color: var(--ink-sub); }
+    .resource-card .resource-price { margin-top: 8px; color: var(--primary); font: 500 14px/1.4 'JetBrains Mono', monospace; }
+    .resource-card .original-price { margin-left: 6px; color: var(--ink-muted); font: 11px/1.4 'JetBrains Mono', monospace; text-decoration: line-through; }
+    .resource-card .discount-badge { height: 18px; padding: 0 5px; position: absolute; top: -9px; right: 6px; border-radius: 4px; color: var(--card); background: var(--ink-title); font-size: 11px; line-height: 18px; }
+    .resource-card .selected-mark { width: 18px; height: 18px; position: absolute; right: 5px; bottom: 5px; border-radius: 4px; display: none; align-items: center; justify-content: center; color: var(--card); background: var(--primary); }
+    .resource-card[aria-pressed="true"] .selected-mark { display: inline-flex; }
+    .resource-card .selected-mark svg { width: 13px; height: 13px; }
+    .resource-tooltip { width: 240px; padding: 12px; position: absolute; left: 50%; bottom: calc(100% + 10px); z-index: 30; border-radius: 8px; color: var(--ink-body); background: var(--card); box-shadow: 0 6px 24px rgba(0, 0, 0, .12); font-size: 14px; line-height: 1.6; white-space: normal; overflow-wrap: anywhere; opacity: 0; visibility: hidden; pointer-events: none; transform: translate(-50%, 4px); transition: opacity .15s ease, transform .15s ease; }
+    .resource-tooltip::after { content: ''; width: 10px; height: 10px; position: absolute; left: calc(50% - 5px); bottom: -5px; background: var(--card); transform: rotate(45deg); }
+    .resource-tooltip strong { display: block; margin-bottom: 4px; color: var(--ink-title); font-size: 14px; }
+    .resource-card:hover .resource-tooltip, .resource-card:focus-visible .resource-tooltip { opacity: 1; visibility: visible; transform: translate(-50%, 0); }
+
+    .config-form { padding-bottom: 4px; }
+    .field-row { display: grid; grid-template-columns: 88px minmax(0, 1fr); align-items: start; gap: 12px; }
+    .field-row + .field-row { margin-top: 16px; }
+    .field-label { min-height: 32px; display: flex; align-items: center; justify-content: flex-end; color: var(--ink-body); white-space: nowrap; }
+    .field-label:not(:empty)::after { content: '：'; }
+    .field-control { min-width: 0; min-height: 32px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .field-note { color: var(--ink-muted); font-size: 12px; }
+    .control { height: 32px; padding: 0 10px; border: 1px solid var(--line); border-radius: 4px; color: var(--ink-body); background: var(--card); outline: none; }
+    .control:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(0, 102, 255, .12); }
+    select.control { min-width: 200px; padding-right: 28px; }
+    .stepper { height: 32px; display: inline-grid; grid-template-columns: 32px 52px 32px; border: 1px solid var(--line); border-radius: 4px; overflow: hidden; background: var(--card); }
+    .stepper button { width: 32px; height: 30px; padding: 0; border: 0; display: inline-flex; align-items: center; justify-content: center; color: var(--ink-sub); background: var(--card); cursor: pointer; }
+    .stepper button:hover { color: var(--primary); background: var(--primary-bg); }
+    .stepper button:disabled { color: var(--ink-muted); background: var(--page); cursor: not-allowed; }
+    .stepper button svg { width: 14px; height: 14px; }
+    .stepper input { width: 52px; height: 30px; padding: 0 4px; border: 0; border-inline: 1px solid var(--line-lighter); color: var(--ink-title); background: var(--card); text-align: center; outline: none; appearance: textfield; }
+    .stepper input::-webkit-inner-spin-button { appearance: none; }
+    .payment-options { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .payment-option { min-height: 32px; padding: 0 10px; border: 1px solid var(--line); border-radius: 4px; display: inline-flex; align-items: center; gap: 7px; color: var(--ink-body); background: var(--card); cursor: pointer; }
+    .payment-option:hover { color: var(--primary); border-color: var(--primary); }
+    .payment-option:has(input:checked) { color: var(--primary); border-color: var(--primary); background: var(--card); }
+    .payment-option input { width: 14px; height: 14px; margin: 0; accent-color: var(--primary); }
+    .payment-option svg { width: 16px; height: 16px; }
+    .payment-recharge .link-button { color: var(--primary); font-size: 14px; font-weight: 500; }
+    .payment-recharge .link-button:hover { color: var(--primary-hover); text-decoration: underline; text-underline-offset: 3px; }
+    .renew-period { min-width: 128px !important; }
+    .proxy-type-card .proxy-type-tabs,
+    .proxy-type-card .resource-grid,
+    .proxy-type-card .resource-empty { margin-left: 100px; }
+    .resource-empty { min-height: 196px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--ink-sub); text-align: center; }
+    .resource-empty .empty-icon { width: 48px; height: 48px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--primary); background: var(--primary-bg); }
+    .resource-empty .empty-icon svg { width: 24px; height: 24px; }
+    .resource-empty h3 { margin: 12px 0 4px; color: var(--ink-title); font-size: 16px; }
+    .resource-empty p { margin: 0; }
+    .proxy-purchase-card { min-height: 320px; }
+    #proxyPayments input[type="radio"] { appearance: none; width: 14px; height: 14px; position: relative; border: 1px solid var(--line); border-radius: 4px; background: var(--card); }
+    #proxyPayments input[type="radio"]:checked { border-color: var(--primary); background: var(--primary); }
+    #proxyPayments input[type="radio"]:checked::after { content: ''; width: 7px; height: 4px; position: absolute; top: 3px; left: 3px; border-left: 2px solid var(--card); border-bottom: 2px solid var(--card); transform: rotate(-45deg); }
+
+    .proxy-checkout-bar { min-height: 76px; margin: 0; padding: 12px 16px; position: fixed; left: 16px; right: 16px; bottom: 0; z-index: 40; border-radius: 8px 8px 0 0; display: flex; align-items: center; gap: 16px; color: var(--ink-body); background: var(--card); box-shadow: 0 -6px 8px -8px rgba(26, 29, 36, .24); }
+    .checkout-price { min-width: 0; flex: 1; position: relative; }
+    .checkout-price-line { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+    .checkout-price strong { color: var(--price); font: 600 24px/1.2 'JetBrains Mono', monospace; }
+    .checkout-breakdown { margin-top: 5px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; color: var(--ink-muted); font-size: 11px; }
+    .checkout-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+    .checkout-consent { width: auto; display: inline-flex; justify-content: flex-end; color: var(--ink-sub); font-size: 14px; }
+    .checkout-consent > span { white-space: nowrap; }
+    .checkout-consent a { color: var(--primary); font-weight: 500; text-decoration: none; }
+    .checkout-consent a:hover { color: var(--primary-hover); text-decoration: underline; text-underline-offset: 3px; }
+    .checkbox-line { display: inline-flex; align-items: flex-start; gap: 7px; cursor: pointer; }
+    .checkbox-line input { width: 14px; height: 14px; margin: 2px 0 0; accent-color: var(--primary); }
+    .price-detail-popover { width: 320px; max-height: min(555px, 72vh); padding: 20px; position: absolute; left: 0; bottom: calc(100% + 12px); z-index: 60; overflow-y: auto; border-radius: 8px; color: var(--ink-body); background: var(--card); box-shadow: 0 6px 24px rgba(0, 0, 0, .12); }
+    .price-detail-popover h3 { margin: 0 0 16px; color: var(--ink-title); font-size: 16px; font-weight: 600; }
+    .detail-group { padding: 14px 0; border-top: 1px solid var(--line-light); }
+    .detail-group:first-of-type { border-top: 0; }
+    .detail-group h4 { margin: 0 0 10px; color: var(--ink-title); font-size: 14px; font-weight: 600; }
+    .detail-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; padding: 5px 0; }
+    .detail-row span:last-child { color: var(--ink-title); text-align: right; }
+    .detail-help-label { display: inline-flex; align-items: center; gap: 5px; }
+    .detail-help { width: 16px; height: 16px; position: relative; border: 0; border-radius: 999px; display: inline-flex; align-items: center; justify-content: center; color: var(--ink-sub); background: var(--line-lighter); cursor: help; }
+    .detail-help svg { width: 12px; height: 12px; }
+    .detail-help-tip { width: 260px; padding: 10px 12px; position: absolute; left: 0; bottom: calc(100% + 8px); z-index: 70; border-radius: 4px; color: var(--ink-body); background: var(--card); box-shadow: 0 2px 8px rgba(0,0,0,.06); font-size: 12px; line-height: 1.6; text-align: left; white-space: normal; opacity: 0; visibility: hidden; pointer-events: none; transform: translateY(4px); transition: opacity .15s ease, transform .15s ease; }
+    .detail-help:hover .detail-help-tip, .detail-help:focus-visible .detail-help-tip { opacity: 1; visibility: visible; transform: translateY(0); }
+    .detail-formula { margin-top: 2px; color: var(--ink-sub); font-size: 11px; }
+
+    .btn { height: 32px; padding: 0 16px; border: 1px solid transparent; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; font-weight: 500; cursor: pointer; }
+    .btn svg { width: 15px; height: 15px; }
+    .btn-primary { color: var(--card); background: var(--primary); }
+    .btn-primary:hover { background: var(--primary-hover); }
+    .btn-primary:active { background: var(--primary-active); }
+    .btn-default { color: var(--ink-body); border-color: var(--line); background: var(--card); }
+    .btn-default:hover { color: var(--primary); border-color: var(--primary); }
+    .btn-danger { color: var(--danger); border-color: var(--line); background: var(--card); }
+    .btn-danger:hover { border-color: var(--danger); background: var(--danger-bg); }
+    .btn:disabled { color: var(--ink-muted); border-color: var(--line); background: var(--line-lighter); cursor: not-allowed; }
+
+    .modal-mask { position: fixed; inset: 0; z-index: 2000; padding: 16px; display: flex; align-items: center; justify-content: center; background: rgba(0, 0, 0, .3); }
+    .modal-panel { width: 520px; max-width: 92vw; max-height: 88vh; border-radius: 8px; display: flex; flex-direction: column; color: var(--ink-body); background: var(--card); box-shadow: 0 6px 24px rgba(0, 0, 0, .12); }
+    .modal-header { min-height: 56px; padding: 0 20px; border-bottom: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .modal-header h2 { margin: 0; color: var(--ink-title); font-size: 16px; font-weight: 600; }
+    .icon-button { width: 32px; height: 32px; padding: 0; border: 1px solid transparent; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; color: var(--ink-sub); background: transparent; cursor: pointer; }
+    .icon-button:hover { color: var(--ink-title); background: var(--hover); }
+    .icon-button svg { width: 18px; height: 18px; }
+    .payment-order-panel { width: min(1120px, calc(100vw - 32px)); height: min(560px, calc(100vh - 32px)); max-width: none; max-height: calc(100vh - 32px); }
+    .payment-order-header { min-height: 64px; padding: 0 24px; border-bottom: 0; flex: none; }
+    .payment-order-header h2 { font-size: 18px; }
+    .payment-order-body { min-height: 0; padding: 8px 34px 28px; overflow-y: auto; }
+    .payment-alert { min-height: 42px; padding: 10px 12px; border-radius: 4px; display: flex; align-items: center; gap: 8px; color: var(--primary); background: var(--primary-bg); font-weight: 500; }
+    .payment-alert svg { width: 16px; height: 16px; flex: none; }
+    .payment-countdown { color: var(--danger); font-family: 'JetBrains Mono', monospace; }
+    .payment-meta { padding: 18px 12px 20px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; gap: 32px; color: var(--ink-title); font-size: 16px; }
+    .payment-meta-label { margin-right: 16px; color: var(--ink-body); }
+    .payment-content { display: grid; grid-template-columns: minmax(0, 1fr) 260px; align-items: start; gap: 36px; }
+    .payment-order-list { min-width: 0; }
+    .payment-group-toggle { width: 100%; height: 42px; padding: 0 12px; border: 0; display: flex; align-items: center; gap: 10px; color: var(--ink-title); background: var(--line-lighter); font-weight: 600; text-align: left; cursor: pointer; }
+    .payment-group-toggle svg { width: 14px; height: 14px; transition: transform .15s ease; }
+    .payment-group-toggle[aria-expanded="false"] svg { transform: rotate(180deg); }
+    .payment-product-row { min-width: 620px; min-height: 70px; padding: 0 12px; border-bottom: 1px solid var(--line-lighter); display: grid; grid-template-columns: minmax(150px, 1.6fr) 110px 56px 50px 100px 116px; align-items: center; gap: 10px; color: var(--ink-body); }
+    .payment-product-row[hidden] { display: none; }
+    .payment-product-region { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .payment-discount { white-space: nowrap; }
+    .payment-price-stack { display: grid; gap: 2px; white-space: nowrap; }
+    .payment-price-stack strong { color: var(--primary); }
+    .payment-price-help { width: 18px; height: 18px; margin-left: 3px; border-radius: 999px; display: inline-flex; align-items: center; justify-content: center; color: var(--primary); background: var(--primary-bg); vertical-align: -4px; }
+    .payment-price-help svg { width: 12px; height: 12px; }
+    .payment-side { display: flex; flex-direction: column; align-items: center; color: var(--ink-sub); text-align: center; }
+    .payment-side-label { font-size: 14px; }
+    .payment-side-amount { margin-top: 2px; color: var(--primary); font: 600 32px/1.2 'JetBrains Mono', monospace; }
+    .payment-qr { width: 210px; height: 210px; margin-top: 16px; display: block; image-rendering: pixelated; }
+    .payment-scan-tip { margin: 14px 0 0; color: var(--ink-sub); }
+
+    .toast { min-width: 320px; max-width: min(480px, calc(100vw - 32px)); min-height: 44px; padding: 10px 14px; position: fixed; top: 24px; left: 50%; z-index: 2100; border-radius: 8px; display: flex; align-items: center; gap: 10px; color: var(--ink-body); background: var(--card); box-shadow: 0 6px 24px rgba(0, 0, 0, .12); transform: translate(-50%, 0); animation: toast-in .15s ease-out; }
+    .toast svg { width: 18px; height: 18px; flex: none; }
+    .toast[data-tone="success"] svg { color: var(--success); }
+    .toast[data-tone="info"] svg { color: var(--info); }
+    .toast[data-tone="warning"] svg { color: var(--warning); }
+    .toast[data-tone="danger"] svg { color: var(--danger); }
+    @keyframes toast-in { from { opacity: 0; transform: translate(-50%, -6px); } to { opacity: 1; transform: translate(-50%, 0); } }
+
+    /* 云币充值弹窗 */
+    .recharge-balance { display: flex; align-items: center; gap: 12px; padding: 16px; border-radius: 8px; background: var(--primary-bg); margin-bottom: 20px; }
+    .recharge-balance-icon { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--primary); color: #fff; }
+    .recharge-balance-icon svg { width: 22px; height: 22px; }
+    .recharge-balance-info { display: flex; flex-direction: column; gap: 2px; }
+    .recharge-balance-label { font-size: 14px; color: var(--ink-sub); }
+    .recharge-balance-value { font-size: 18px; font-weight: 600; color: var(--ink-title); }
+    .recharge-section { margin-bottom: 18px; }
+    .recharge-section-label { display: block; margin-bottom: 10px; font-size: 14px; font-weight: 500; color: var(--ink-body); }
+    .recharge-amount-options { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+    .recharge-amount-btn { padding: 12px 8px; border: 1px solid var(--line); border-radius: 6px; background: var(--card); cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px; transition: all .15s ease; }
+    .recharge-amount-btn:hover { border-color: var(--primary); background: var(--primary-bg); }
+    .recharge-amount-btn.selected { border-color: var(--primary); background: var(--primary-bg); }
+    .recharge-amount-value { font-size: 15px; font-weight: 600; color: var(--ink-title); }
+    .recharge-amount-coins { font-size: 12px; color: var(--ink-sub); }
+    .recharge-amount-btn.selected .recharge-amount-value { color: var(--primary); }
+    .recharge-custom-input { display: flex; align-items: center; gap: 8px; }
+    .recharge-custom-input .control { flex: 1; height: 36px; }
+    .recharge-custom-unit { font-size: 14px; color: var(--ink-body); }
+    .recharge-bonus { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-radius: 6px; background: var(--success-bg); color: var(--ink-body); font-size: 14px; margin-bottom: 18px; }
+    .recharge-bonus svg { width: 16px; height: 16px; color: var(--success); flex-shrink: 0; }
+    .recharge-payment-options { display: flex; gap: 10px; }
+    .recharge-payment-btn { flex: 1; height: 44px; padding: 0 16px; border: 1px solid var(--line); border-radius: 6px; background: var(--card); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; color: var(--ink-body); font-size: 14px; transition: all .15s ease; position: relative; }
+    .recharge-payment-btn:hover { border-color: var(--primary); }
+    .recharge-payment-btn.selected { border-color: var(--primary); background: var(--primary-bg); color: var(--primary); }
+    .recharge-payment-btn svg { width: 18px; height: 18px; }
+    .recharge-payment-check { width: 16px !important; height: 16px !important; position: absolute; right: 10px; top: 50%; transform: translateY(-50%); opacity: 0; }
+    .recharge-payment-btn.selected .recharge-payment-check { opacity: 1; color: var(--primary); }
+    .recharge-dialog-panel { width: min(960px, calc(100vw - 32px)); max-width: 960px; max-height: min(580px, calc(100vh - 32px)); }
+    .recharge-dialog-panel .modal-header { min-height: 58px; padding: 0 20px; }
+    .recharge-dialog-panel .modal-header h2 { font-size: 16px; }
+    .recharge-dialog-body { padding: 28px 30px 24px; overflow-y: auto; }
+    .recharge-field + .recharge-field { margin-top: 24px; }
+    .recharge-field-label { display: block; margin-bottom: 12px; color: var(--ink-title); font-size: 16px; font-weight: 600; }
+    .recharge-amount-options { display: grid; grid-template-columns: repeat(5, minmax(110px, 1fr)) 150px; gap: 20px; }
+    .recharge-amount-btn, .recharge-custom-option { height: 50px; padding: 0 12px; border: 1px solid var(--line-lighter); border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; gap: 4px; color: var(--primary); background: var(--page); cursor: pointer; }
+    .recharge-amount-btn:hover, .recharge-custom-option:hover { border-color: var(--primary); background: var(--primary-bg); }
+    .recharge-amount-btn.selected, .recharge-custom-option.selected { border-color: var(--primary); background: var(--card); box-shadow: inset 0 0 0 1px var(--primary); }
+    .recharge-amount-btn.selected::after { content: ''; width: 22px; height: 22px; position: absolute; right: -1px; bottom: -1px; border-radius: 6px 0 6px 0; background: var(--primary); }
+    .recharge-amount-btn.selected::before { content: ''; width: 8px; height: 5px; position: absolute; right: 5px; bottom: 6px; z-index: 1; border-left: 2px solid var(--card); border-bottom: 2px solid var(--card); transform: rotate(-45deg); }
+    .recharge-amount-btn { position: relative; }
+    .recharge-amount-value { font-size: 16px; font-weight: 500; }
+    .recharge-custom-option { min-width: 0; }
+    .recharge-custom-option .recharge-custom-prefix { font: 500 16px/1 'JetBrains Mono', monospace; }
+    .recharge-custom-option input { width: 78px; height: 32px; padding: 0 8px; border: 0; color: var(--ink-body); background: transparent; outline: none; font-size: 16px; }
+    .recharge-custom-option input::placeholder { color: var(--ink-muted); }
+    .recharge-info-list { margin: 0; padding: 0; list-style: none; color: var(--ink-sub); font-size: 14px; line-height: 1.7; }
+    .recharge-info-list li { position: relative; padding-left: 14px; }
+    .recharge-info-list li::before { content: ''; width: 5px; height: 5px; position: absolute; left: 0; top: 9px; border-radius: 50%; background: var(--primary); }
+    .recharge-control-row { display: grid; grid-template-columns: 72px minmax(220px, 326px); align-items: center; gap: 12px; }
+    .recharge-control-row .recharge-field-label { margin: 0; font-size: 14px; font-weight: 400; }
+    .recharge-select { width: 326px; max-width: 100%; }
+    .recharge-payment-options { display: flex; gap: 10px; }
+    .recharge-payment-btn { flex: 0 0 158px; height: 40px; justify-content: flex-start; padding: 0 12px; border-radius: 4px; }
+    .recharge-more-row { display: flex; align-items: center; gap: 12px; }
+    .recharge-more-label { width: 72px; color: var(--ink-sub); font-size: 14px; }
+    .recharge-more-methods { height: 34px; padding: 0 10px; border: 1px solid var(--line); border-radius: 4px; display: inline-flex; align-items: center; gap: 8px; color: var(--ink-sub); background: var(--card); }
+    .recharge-more-methods span { width: 24px; height: 20px; border-radius: 3px; display: inline-flex; align-items: center; justify-content: center; color: var(--primary); background: var(--primary-bg); font: 600 9px/1 Arial, sans-serif; }
+    .recharge-more-link { color: var(--primary); font-size: 14px; text-decoration: none; }
+    .recharge-more-link:hover { text-decoration: underline; text-underline-offset: 3px; }
+    .recharge-dialog-footer { min-height: 64px; padding: 0 20px; border-top: 1px solid var(--line-light); display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+    .recharge-support { color: var(--ink-sub); font-size: 12px; }
+    .recharge-support a { color: var(--primary); text-decoration: none; }
+    .recharge-support a:hover { text-decoration: underline; }
+    .recharge-submit-group { display: flex; align-items: center; gap: 20px; }
+    .recharge-payable { color: var(--ink-title); font-size: 14px; }
+    .recharge-payable strong { margin-left: 12px; font: 600 16px/1 'JetBrains Mono', monospace; }
+    .recharge-submit { min-width: 90px; }
+    @media (max-width: 767px) {
+      .recharge-dialog-body { padding: 20px 16px; }
+      .recharge-amount-options { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+      .recharge-custom-option { width: 100%; }
+      .recharge-control-row { grid-template-columns: 1fr; gap: 6px; }
+      .recharge-select { width: 100%; }
+      .recharge-dialog-footer { padding: 12px 16px; align-items: flex-start; flex-direction: column; }
+      .recharge-submit-group { width: 100%; justify-content: flex-end; }
+    }
+
+    :where(button, input, select):focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+    @media (max-width: 1279px) {
+      .chip-grid { grid-template-columns: repeat(4, minmax(100px, 1fr)); }
+      .resource-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 767px) {
+      .surface { padding: 16px; }
+      .section-heading { align-items: flex-start; flex-direction: column; }
+      .section-heading .heading-tools { width: 100%; min-width: 0; margin-left: 0; grid-template-columns: minmax(0, 1fr) max-content; align-items: center; flex: none; }
+      .region-search { width: 100%; }
+      .current-region { width: fit-content; }
+      .region-field { grid-template-columns: 1fr; gap: 6px; }
+      .region-field > .field-label { justify-content: flex-start; }
+      .region-line { grid-template-columns: 44px minmax(0, 1fr); gap: 8px; }
+      .chip-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .region-empty { margin-left: 52px; }
+      .resource-grid { grid-template-columns: 1fr; }
+      .field-row { grid-template-columns: 1fr; gap: 6px; }
+      .field-label { justify-content: flex-start; }
+      #proxyPanel { padding-bottom: 224px; }
+      .proxy-type-card .proxy-type-tabs,
+      .proxy-type-card .resource-grid,
+      .proxy-type-card .resource-empty { margin-left: 0; }
+      .proxy-checkout-bar { left: 16px; right: 16px; border-radius: 8px 8px 0 0; align-items: stretch; flex-direction: column; }
+      .checkout-actions { width: 100%; display: grid; grid-template-columns: 1fr 1fr; }
+      .checkout-actions .btn { width: 100%; }
+      .checkout-consent { grid-column: 1 / -1; justify-content: flex-start; }
+      .price-detail-popover { width: min(320px, calc(100vw - 64px)); }
+      .toast { min-width: 0; width: calc(100vw - 32px); }
+    }
+    @media (max-width: 900px) {
+      .payment-order-panel { height: calc(100vh - 24px); max-height: calc(100vh - 24px); }
+      .payment-order-body { padding: 8px 20px 24px; }
+      .payment-meta { grid-template-columns: 1fr; gap: 8px; }
+      .payment-content { grid-template-columns: 1fr; gap: 24px; }
+      .payment-order-list { overflow-x: auto; }
+      .payment-group-toggle { min-width: 620px; }
+      .payment-side { padding-top: 20px; border-top: 1px solid var(--line-lighter); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+    }
+  </style>
+  <link rel="stylesheet" href="公共导航.css?v=20260824a">
+  <script src="公共导航.js?v=20260824a"></script>
+</head>
+<body class="overflow-hidden">
+  <main id="mainContent" class="store-page" tabindex="-1">
+    <h1 class="sr-only">商城代理</h1>
+    <span id="dirtyBadge" class="hidden" aria-hidden="true"></span>
+    <nav class="surface !p-0 mb-2" aria-label="商城业务范围">
+      <div id="storeTabs" class="store-tabs" role="tablist" aria-label="商城业务范围">
+        <button class="store-tab" type="button" role="tab" aria-selected="true" data-tab="proxy" tabindex="0"><i data-lucide="server"></i><span>代理</span></button>
+        <button class="store-tab" type="button" role="tab" aria-selected="false" data-tab="plan" tabindex="-1"><i data-lucide="package"></i><span>套餐</span></button>
+        <button class="store-tab" type="button" role="tab" aria-selected="false" data-tab="cart" tabindex="-1"><i data-lucide="shopping-cart"></i><span>购物车</span></button>
+      </div>
+    </nav>
+
+    <!-- 代理购买 -->
+    <section id="proxyPanel" role="tabpanel">
+      <div class="notice-strip" role="note">
+        <i data-lucide="info" aria-hidden="true"></i><strong>重要提示</strong><p>使用代理资源前请阅读并了解相关责任边界</p>
+        <button id="toggleCompliance" class="text-button" type="button" aria-expanded="false" aria-controls="complianceDetail"><span>查看购买须知</span><i data-lucide="chevron-right"></i></button>
+      </div>
+      <div id="complianceDetail" class="compliance-detail hidden">
+        <h3>代理资源合规使用说明</h3>
+        <ol><li>本产品不提供任何形式的翻墙服务，代理资源由第三方供应商提供。</li><li>用户应遵守适用法律法规，不得将资源用于违法犯罪、侵害他人权益或未经授权的访问。</li><li>海外代理仅允许在合规网络环境或完成实名认证后使用；数字商品下单后不支持退换。</li></ol>
+      </div>
+
+      <!-- 地域选择 -->
+      <section class="surface proxy-region-card" aria-labelledby="regionTitle">
+        <div class="section-heading"><h2 id="regionTitle">地域</h2><p>选择代理所在的国家与城市</p><div class="heading-tools"><label class="region-search"><span class="sr-only">搜索国家或城市</span><input id="regionSearch" type="search" placeholder="搜索国家或城市" autocomplete="off"><i data-lucide="search" aria-hidden="true"></i></label><span id="currentRegion" class="current-region">当前选择：美国-洛杉矶</span></div></div>
+        <div class="field-row region-field">
+          <span class="field-label">代理地区</span>
+          <div class="region-options">
+            <div class="region-line"><span class="region-prefix">大陆</span><div id="continentOptions" class="chip-grid" aria-label="大洲"></div></div>
+            <div class="region-line"><span class="region-prefix">国家</span><div id="countryOptions" class="chip-grid" aria-label="国家"></div></div>
+            <div class="region-line"><span class="region-prefix">城市</span><div id="cityOptions" class="chip-grid" aria-label="城市"></div></div>
+            <div id="regionEmpty" class="region-empty hidden" role="status">未找到匹配地区，请更换关键词。</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 代理资源 -->
+      <section class="surface proxy-type-card" aria-labelledby="proxyTypeTitle">
+        <div class="section-heading"><h2 id="proxyTypeTitle">代理类型</h2><p>请选择购买的代理类型</p></div>
+        <div id="proxyTypeOptions" class="proxy-type-tabs" role="group" aria-label="代理类型"></div>
+        <div id="resourceGrid" class="resource-grid" aria-live="polite"></div>
+        <div id="resourceEmpty" class="resource-empty hidden" role="status"><span class="empty-icon"><i data-lucide="package-open"></i></span><h3>当前地区暂无可用资源</h3><p>建议切换其他国家或城市。</p></div>
+      </section>
+
+      <!-- 购买配置 -->
+      <section class="surface proxy-purchase-card" aria-labelledby="proxyConfigTitle">
+        <div class="section-heading"><h2 id="proxyConfigTitle">购买配置</h2><p>确认服务周期、数量与优惠</p></div>
+        <form id="proxyForm" class="config-form" novalidate>
+          <div class="field-row"><span class="field-label">购买时长</span><div id="proxyDurationOptions" class="field-control duration-options" role="group" aria-label="代理购买时长"></div></div>
+          <div class="field-row"><label class="field-label" for="proxyQty">购买数量</label><div class="field-control"><div class="stepper"><button type="button" data-step="proxyQty" data-delta="-1" aria-label="减少代理购买数量"><i data-lucide="minus"></i></button><input id="proxyQty" class="mono" type="number" min="1" max="50" value="3" aria-describedby="proxyQtyNote"><button type="button" data-step="proxyQty" data-delta="1" aria-label="增加代理购买数量"><i data-lucide="plus"></i></button></div><i data-lucide="arrow-up" class="w-4 h-4 text-ink-sub"></i><span id="proxyQtyNote" class="sr-only">单次最多购买 50 个</span></div></div>
+        <div class="field-row"><label class="field-label" for="proxyCoupon">选择优惠券</label><div class="field-control"><select id="proxyCoupon" class="control"><option value="0" selected>不使用优惠券</option><option value="10">新客专享减 10 元</option><option value="20">满 100 减 20 元</option></select><span class="field-note">可与资源优惠叠加使用</span></div></div>
+          <div class="field-row"><span class="field-label">自动续费</span><div class="field-control"><label class="checkbox-line"><input id="proxyRenew" type="checkbox"><span>到期后按当前代理配置自动续费</span></label><select id="proxyRenewCycle" class="control renew-period hidden" aria-label="自动续费周期"><option value="1">每 1 个月</option><option value="3">每 3 个月</option><option value="12">每 12 个月</option></select></div></div>
+          <div class="field-row"><span class="field-label">支付方式</span><div id="proxyPayments" class="field-control payment-options" role="radiogroup" aria-label="代理支付方式"></div></div>
+        </form>
+      </section>
+
+      <!-- 底部固定结算栏 -->
+      <footer class="proxy-checkout-bar" aria-label="代理订单结算">
+        <div class="checkout-price"><div class="checkout-price-line"><span>应付金额：</span><strong id="proxyTotal" class="mono">¥45.90</strong><button id="togglePriceDetail" class="text-button" type="button" aria-expanded="false" aria-controls="priceDetailPopover">查看明细</button></div><div class="checkout-breakdown"><span>原价：<b id="proxyOriginal" class="mono font-normal">¥59.90</b></span><span>资源优惠：<b id="proxyPackageDiscount" class="mono font-normal">-¥14.00</b></span><span>优惠券优惠：<b id="proxyCouponDiscount" class="mono font-normal">-¥0.00</b></span></div><aside id="priceDetailPopover" class="price-detail-popover hidden" role="dialog" aria-modal="false" aria-labelledby="priceDetailTitle"></aside></div>
+        <div class="checkout-actions"><label class="checkout-consent checkbox-line"><input id="proxyNotice" type="checkbox"><span>我已阅读并同意<a href="代理购买须知.html" target="_blank" rel="noopener noreferrer">《代理购买须知》</a></span></label><button id="addCart" type="button" class="btn btn-default">加入购物车</button><button id="buyProxy" type="button" class="btn btn-primary">立即购买</button></div>
+      </footer>
+    </section>
+
+    </main>
+
+  <!-- 待支付订单弹窗 -->
+  <div id="orderDialog" class="modal-mask hidden" role="dialog" aria-modal="true" aria-labelledby="orderDialogTitle" aria-hidden="true">
+    <section id="orderDialogPanel" class="modal-panel payment-order-panel" tabindex="-1">
+      <header class="modal-header payment-order-header"><h2 id="orderDialogTitle">待支付订单</h2><button id="closeDialog" class="icon-button" type="button" aria-label="关闭待支付订单弹窗"><i data-lucide="x"></i></button></header>
+      <div id="orderDialogBody" class="payment-order-body"></div>
+    </section>
+  </div>
+  <div id="toast" class="toast hidden" role="status" aria-live="polite"><i data-lucide="circle-check"></i><span></span></div>
+
+  <!-- 云币充值弹窗 -->
+  <div id="rechargeDialog" class="modal-mask hidden" role="dialog" aria-modal="true" aria-labelledby="rechargeDialogTitle" aria-hidden="true">
+    <section id="rechargeDialogPanel" class="modal-panel recharge-dialog-panel" tabindex="-1">
+      <header class="modal-header">
+        <h2 id="rechargeDialogTitle">云币充值</h2>
+        <button id="closeRechargeDialog" class="icon-button" type="button" aria-label="关闭充值弹窗"><i data-lucide="x"></i></button>
+      </header>
+      <div class="recharge-dialog-body">
+        <div class="recharge-field">
+          <label class="recharge-field-label">充值金额</label>
+          <div class="recharge-amount-options" id="rechargeAmountOptions">
+            <button type="button" class="recharge-amount-btn selected" data-amount="50" data-coins="50"><span class="recharge-amount-value mono">¥ 50</span></button>
+            <button type="button" class="recharge-amount-btn" data-amount="500" data-coins="500"><span class="recharge-amount-value mono">¥ 500</span></button>
+            <button type="button" class="recharge-amount-btn" data-amount="1000" data-coins="1000"><span class="recharge-amount-value mono">¥ 1000</span></button>
+            <button type="button" class="recharge-amount-btn" data-amount="5000" data-coins="5000"><span class="recharge-amount-value mono">¥ 5000</span></button>
+            <button type="button" class="recharge-amount-btn" data-amount="10000" data-coins="10000"><span class="recharge-amount-value mono">¥ 10000</span></button>
+            <label class="recharge-custom-option" id="rechargeCustomOption"><span class="recharge-custom-prefix">¥</span><input id="customRechargeAmount" type="number" placeholder="自定义" min="1" max="10000" aria-label="自定义充值金额"></label>
+          </div>
+        </div>
+        <div class="recharge-field">
+          <h3 class="recharge-field-label">关于云币</h3>
+          <ul class="recharge-info-list">
+            <li>云币是云登提供的一种内部结算形式，1元=1云币。</li>
+            <li>云币可以用于购买代理资源，支付时选择云币支付，用多少扣多少。</li>
+            <li>云币充值记录、消费记录、剩余余额，可在费用管理-云币充值页面查看。</li>
+          </ul>
+        </div>
+        <div class="recharge-field recharge-control-row">
+          <label class="recharge-field-label" for="rechargeCoupon">选择优惠券</label>
+          <select id="rechargeCoupon" class="control recharge-select"><option>选择优惠券</option><option>满 100 减 10</option><option>满 500 减 50</option></select>
+        </div>
+        <div class="recharge-field recharge-control-row">
+          <span class="recharge-field-label">支付方式</span>
+          <div class="recharge-payment-options" id="rechargePaymentOptions">
+            <button type="button" class="recharge-payment-btn selected" data-payment="alipay"><i data-lucide="badge-dollar-sign"></i><span>支付宝支付</span><i data-lucide="check-circle" class="recharge-payment-check"></i></button>
+            <button type="button" class="recharge-payment-btn" data-payment="wechat"><i data-lucide="message-circle"></i><span>微信支付</span><i data-lucide="check-circle" class="recharge-payment-check"></i></button>
+          </div>
+        </div>
+        <div class="recharge-field recharge-more-row">
+          <span class="recharge-more-label">更多支付：</span>
+          <span class="recharge-more-methods" aria-label="更多支付方式"><span>银联</span><span>AMEX</span><span>Pay</span><span>VISA</span><span>MC</span></span>
+          <a class="recharge-more-link" href="javascript:void(0)" data-contact-service>（联系在线客服）</a>
+        </div>
+      </div>
+      <footer class="recharge-dialog-footer">
+        <span class="recharge-support">（如有疑问，请联系客服 <a href="javascript:void(0)" data-contact-service>客服</a>）</span>
+        <div class="recharge-submit-group">
+          <span class="recharge-payable">应付金额 <strong id="rechargePayable" class="mono">¥50.00</strong></span>
+          <button id="confirmRecharge" class="btn btn-primary recharge-submit" type="button">提交支付</button>
+        </div>
+      </footer>
+    </section>
+  </div>
+
+  <script>
+    // ---------- Mock 数据 ----------
+    const regions = {
+      continents: ['北美洲', '亚洲', '非洲', '大洋洲', '南美洲', '欧洲', '中东'],
+      countries: {
+        '北美洲': ['美国', '加拿大', '墨西哥', '阿鲁巴', '安圭拉', '安提瓜和巴布达', '巴哈马', '巴拿马', '哥斯达黎加'],
+        '亚洲': ['日本', '新加坡', '越南', '印度尼西亚', '韩国', '菲律宾', '泰国'],
+        '非洲': ['南非', '埃及', '摩洛哥', '肯尼亚', '安哥拉'], '大洋洲': ['澳大利亚', '新西兰'],
+        '南美洲': ['巴西', '阿根廷', '智利', '哥伦比亚'], '欧洲': ['英国', '德国', '法国', '荷兰', '西班牙', '意大利'],
+        '中东': ['阿联酋', '沙特阿拉伯', '以色列', '土耳其']
+      },
+      cities: {
+        '美国': ['洛杉矶', '纽约', '芝加哥', '旧金山', '西雅图', '迈阿密', '达拉斯', '波士顿', '华盛顿', '休斯顿'],
+        '加拿大': ['多伦多', '温哥华', '蒙特利尔', '渥太华'], '墨西哥': ['墨西哥城', '瓜达拉哈拉'],
+        '日本': ['东京', '大阪', '名古屋', '福冈'], '新加坡': ['新加坡'], '越南': ['河内', '平阳', '胡志明市'],
+        '印度尼西亚': ['雅加达', '泗水'], '英国': ['伦敦', '曼彻斯特'], '德国': ['法兰克福', '柏林'],
+        '法国': ['巴黎', '马赛'], '荷兰': ['阿姆斯特丹'], '澳大利亚': ['悉尼', '墨尔本'],
+        '巴西': ['圣保罗', '里约热内卢'], '阿联酋': ['迪拜', '阿布扎比'], '南非': ['约翰内斯堡', '开普敦']
+      }
+    };
+    const proxyTypes = [{ id: 'static', label: '静态住宅' }, { id: 'cloud', label: '云平台' }, { id: 'niche', label: '小众' }];
+    const proxyProducts = [
+      { id: 's28', type: 'static', name: '静态住宅 S28', icon: 'house', price: 45.90, original: 59.90, discount: '7.7折', stock: 36, info: '独享静态住宅线路，适合跨境店铺、社媒账号等需要长期稳定出口的业务。' },
+      { id: 's28-pro', type: 'static', name: '静态住宅 S28 Pro', icon: 'house', price: 72.90, original: 89.90, discount: '8.1折', stock: 18, info: '更低复用率的住宅资源，适合对出口稳定性要求更高的业务。' },
+      { id: 's30', type: 'static', name: '静态住宅 S30', icon: 'house', price: 55.90, original: 69.90, discount: '8折', stock: 0, info: '高质量住宅线路，当前区域库存不足。' },
+      { id: 'huawei', type: 'cloud', name: '云平台 · 华为云', icon: 'cloud', price: 35.90, original: 45.90, discount: '7.8折', stock: 62, info: '云平台固定出口，适合自动化任务、数据接口与服务部署。' },
+      { id: 'google', type: 'cloud', name: '云平台 · 谷歌云 1', icon: 'cloud', price: 39.90, original: 49.90, discount: '8折', stock: 43, info: '谷歌云线路，适合海外 SaaS 与开发测试场景。' },
+      { id: 'aliyun', type: 'cloud', name: '云平台 · 阿里云 1', icon: 'cloud', price: 42.90, original: 52.90, discount: '8.1折', stock: 27, info: '阿里云海外节点，适合电商后台与自动化工作流。' },
+      { id: 's53', type: 'niche', name: '小众 · S53', icon: 'gem', price: 49.90, original: 65.90, discount: '7.6折', stock: 14, info: '适合需要差异化线路或补充主流资源的业务。资源相对稀缺，建议先行验证目标站点。' },
+      { id: 's55', type: 'niche', name: '小众 · S55', icon: 'gem', price: 52.90, original: 68.90, discount: '7.7折', stock: 9, info: '适合小规模验证与特殊地区线路补充。' },
+      { id: 's58', type: 'niche', name: '小众 · S58', icon: 'gem', price: 59.90, original: 79.90, discount: '7.5折', stock: 0, info: '稀缺线路，当前区域已售罄。' }
+    ];
+    const paymentMethods = [
+      { id: 'alipay', label: '支付宝支付', icon: 'badge-dollar-sign' }, { id: 'wechat', label: '微信支付', icon: 'message-circle' },
+      { id: 'coin', label: '账户云币支付', icon: 'coins', suffix: '（我的云币：300）' }
+    ];
+    const mockPaymentQr = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANwAAADcCAYAAAAbWs+BAAAAAklEQVR4AewaftIAAAdwSURBVO3BgY0cSRIEwfDE6K+yPwWoJlBET+4fGWb4S6pqxaSq1kyqas2kqtZMqmrNpKrWTKpqzSe/AeS/RM23ATlRcwLkiZobQP4fqTkB8kTNDSD/JWpOJlW1ZlJVayZVtWZSVWsmVbXmkz+g5qcAeQuQJ2q+Dci3qXkLkBMgJ2qeADlRc0PNTwJyY1JVayZVtWZSVWsmVbVmUlVrPnkRkLeoeQuQEzVvAXJLzQ0gT9S8AcgtNf+PgLxFzRsmVbVmUlVrJlW1ZlJVayZVtWZSVWs++YcBuaXmBMiJmidATtS8BcgNNRvU/IsmVbVmUlVrJlW1ZlJVayZVteaTOlJzAuREzS01J0BO1DwBcqLmpwB5ouZfNKmqNZOqWjOpqjWTqlozqao1n7xIzb8KyLcBeaLmBMiJmltAbqh5AuREzVvU/L+ZVNWaSVWtmVTVmklVrZlU1ZpP/gCQv4GaJ0BO1JwAOVHzBMiJmhMg3wbkiZoTID8FyH/JpKrWTKpqzaSq1kyqas2kqtZMqmrNJ7+h5l+l5qcAOVFzS80NNU+AnKg5AfJEzQ01f4NJVa2ZVNWaSVWtmVTVmklVrfnkN4CcqDkB8pPUnKg5AfJEzQmQEzUnQDYAOVFzAuREzRM1J0C+DchPUvOGSVWtmVTVmklVrZlU1ZpJVa355A8AOVHzFiAnap4AOVFzoubb1LwFyC0gN4A8UXOi5gTIT1JzAuQtQE7UnEyqas2kqtZMqmrNpKrWTKpqzaSq1nzyB9ScALml5gaQJ2pOgLxFzQmQEzW3gJyoeQLkhpoTILeAnKh5i5pbQE7UnAB5AuREzY1JVa2ZVNWaSVWtmVTVmklVrcFfcgnIW9R8G5Bbar4NyLepeQuQG2p+EpCfouZkUlVrJlW1ZlJVayZVtWZSVWs++QNqToA8UXMC5ETNCZBbak6AvAXIiZonar4NyImaEyBvAfIWNd+m5gmQN0yqas2kqtZMqmrNpKrWTKpqzSdLgNwAcqLmCZBvA/IWIG9R8wY1T4C8Rc0NICdqnqg5AfJTJlW1ZlJVayZVtWZSVWsmVbVmUlVrPlmi5gTIiZoTILeA3AJyouYEyAmQJ2q+Tc0JkBM1b1FzC8hPAXJLzY1JVa2ZVNWaSVWtmVTVmklVrfnkN4C8BciJmhtqbgE5UfNtap4AOVFzAuSJmhMg/yogb1HzhklVrZlU1ZpJVa2ZVNWaSVWtwV/yAMgNNU+AfJuatwA5UXMC5JaatwB5g5oNQG6oOQFyS80bgJyoOZlU1ZpJVa2ZVNWaSVWtmVTVmklVrfnkN9T8FDW3gJyoOQHyRM23ATlRcwLk24A8UXMDyBM1N4DcUnMC5JaaN0yqas2kqtZMqmrNpKrWTKpqDf6SB0BO1JwAuaXmBpAnat4C5IaaEyBP1JwAOVHzBMiJmrcAOVHzU4DcUnMC5ImaN0yqas2kqtZMqmrNpKrWTKpqzSf/MWqeALmh5gaatwA5UXMC5ImaEyDfBuREzRMgb1HzhklVrZlU1ZpJVa2ZVNWaSVWtmVTVmk9+Q80JkFtq3gDkiZoTILfUnAA5UfNtat6i5haQv5maJ0DeMKmqNZOqWjOpqjWTqlozqao1k6pag7/kAZAbam4BOVHzNwDyFjVPgJyouQHkiZobQJ6oOQHyFjUnQE7U3AJyouZkUlVrJlW1ZlJVayZVtWZSVWs++QNqfgqQJ2pOgNxS8zcDcqLmFpATNW9RcwvIW4CcqLkxqao1k6paM6mqNZOqWjOpqjWfvAjIEzUnak6AnKh5AuT/jZonQN6i5oaaW0BO1PwUIG8B8kTNGyZVtWZSVWsmVbVmUlVrJlW1ZlJVaz5ZAuSGmhMgT9TcAPJtQJ6oOQFyC8iJmhMgt9ScAPk2IG9R81MmVbVmUlVrJlW1ZlJVayZVteaT31BzQ823qbkF5ETNEyA31NwCcqLmBMgTNT9FzS0gJ2reAuQGkCdqToCcqDmZVNWaSVWtmVTVmklVrZlU1ZpPfgPIf4maEzUnQN4C5ETNLSC3gJyoOVFzC8hPAXKiZgOQEzU3JlW1ZlJVayZVtWZSVWsmVbXmkz+g5qcAuQXkLWpuANmg5gaQt6g5AfIWNW8B8lMmVbVmUlVrJlW1ZlJVayZVtWZSVWs+eRGQt6j5G6h5AuSGmidA3qDmCZAbap4AOQHyU9TcAnKi5mRSVWsmVbVmUlVrJlW1ZlJVaz75h6l5AuQEyImaEyBvAfIWNSdAnqg5AXKi5i1qbgE5UXMC5NsmVbVmUlVrJlW1ZlJVayZVteaTfxiQJ2puADlR8wTIiZq3ALmh5gmQEzW31JwAOQFyS80JkBM13zapqjWTqlozqao1k6paM6mqNZOqWoO/5AGQEzU/BcgTNX8zIE/UfBuQG2reAuREzRMgb1HzhklVrZlU1ZpJVa2ZVNWaSVWt+eQPAPkvAXKi5haQb1NzC8iJmreoOQFyAuQtak6APFHzFiAnam5MqmrNpKrWTKpqzaSq1kyqag3+kqpaMamqNZOqWjOpqjWTqlozqao1/wPrd/bjj42iLQAAAABJRU5ErkJggg==';
+    // ---------- 状态 ----------
+    const pageParams = new URLSearchParams(location.search);
+    const state = {
+      lastFocus: null, pendingOrder: null, regionExpanded: false,
+      proxy: { continent: '北美洲', country: '美国', city: '洛杉矶', type: 'static', productId: 's28', duration: 1, qty: 3, coupon: 0, renew: false, renewCycle: 1, payment: 'alipay', notice: false },
+      recharge: { amount: 50, coins: 50, payment: 'alipay', balance: 300 }
+    };
+    const incomingPresets = {
+      'proxy-us-static': { continent: '北美洲', country: '美国', city: '洛杉矶', type: 'static', productId: 's28', name: '北美静态住宅代理' },
+      'proxy-sg-dynamic': { continent: '亚洲', country: '新加坡', city: '新加坡', type: 'cloud', productId: 'aliyun', name: '东南亚云平台代理' },
+      'proxy-uk-static': { continent: '欧洲', country: '英国', city: '伦敦', type: 'static', productId: 's28-pro', name: '欧洲静态住宅代理' }
+    };
+    const $ = selector => document.querySelector(selector);
+    const $$ = selector => [...document.querySelectorAll(selector)];
+    const money = value => `¥${Number(value || 0).toFixed(2)}`;
+    const clamp = (value, min, max) => Math.min(max, Math.max(min, Number(value) || 0));
+    let toastTimer = null;
+    let paymentCountdownTimer = null;
+    function markDirty() { $('#dirtyBadge').classList.remove('hidden'); }
+    function replaceModuleParams(updater) { const next = new URL(location.href); updater(next.searchParams); history.replaceState(history.state, '', `${next.pathname}${next.search}${next.hash}`); }
+    function clearIncomingProduct() { if (new URLSearchParams(location.search).has('product_id')) replaceModuleParams(params => params.delete('product_id')); }
+    function toast(message, tone = 'success') {
+      const toastEl = $('#toast'); const icons = { success: 'circle-check', info: 'info', warning: 'triangle-alert', danger: 'circle-x' };
+      toastEl.dataset.tone = tone; toastEl.setAttribute('role', tone === 'danger' ? 'alert' : 'status');
+      toastEl.innerHTML = `<i data-lucide="${icons[tone] || icons.info}"></i><span>${message}</span>`;
+      toastEl.classList.remove('hidden'); lucide.createIcons(); clearTimeout(toastTimer); toastTimer = setTimeout(() => toastEl.classList.add('hidden'), 3000);
+    }
+
+    // ---------- 地区与代理 ----------
+    function recommended(label) { return ['美国', '加拿大'].includes(label) ? '推荐' : ['洛杉矶', '纽约', '芝加哥'].includes(label) ? '热门' : ''; }
+    function optionChip(label, selected, dataName) { const tag = recommended(label); return `<button type="button" class="option-chip" data-${dataName}="${label}" aria-pressed="${selected}">${label}${tag ? `<span class="corner-tag">${tag}</span>` : ''}</button>`; }
+    function renderRegions(filter = '') {
+      const query = filter.trim().toLowerCase();
+      $('#continentOptions').innerHTML = regions.continents.map(name => optionChip(name, state.proxy.continent === name, 'continent')).join('');
+      const countries = regions.countries[state.proxy.continent] || [];
+      const filteredCountries = query ? countries.filter(name => name.toLowerCase().includes(query)) : countries;
+      const visibleCountries = state.regionExpanded || query ? filteredCountries : filteredCountries.slice(0, 7);
+      $('#countryOptions').innerHTML = visibleCountries.map(name => optionChip(name, state.proxy.country === name, 'country')).join('') + (!query && countries.length > 6 ? `<button type="button" class="option-chip more-chip" data-region-toggle>${state.regionExpanded ? '收起' : '更多'}<i data-lucide="chevron-${state.regionExpanded ? 'up' : 'down'}"></i></button>` : '');
+      const cities = regions.cities[state.proxy.country] || [];
+      const filteredCities = query ? cities.filter(name => name.toLowerCase().includes(query)) : cities;
+      const visibleCities = state.regionExpanded || query ? filteredCities : filteredCities.slice(0, 8);
+      $('#cityOptions').innerHTML = visibleCities.map(name => optionChip(name, state.proxy.city === name, 'city')).join('') + (!query && cities.length > 8 ? `<button type="button" class="option-chip more-chip" data-region-toggle>${state.regionExpanded ? '收起' : '更多'}<i data-lucide="chevron-${state.regionExpanded ? 'up' : 'down'}"></i></button>` : '');
+      $('#regionEmpty').classList.toggle('hidden', !query || visibleCountries.length > 0 || visibleCities.length > 0);
+      $('#currentRegion').textContent = `当前选择：${state.proxy.country}-${state.proxy.city || '待选择'}`;
+      lucide.createIcons();
+    }
+    function renderProxyTypes() { $('#proxyTypeOptions').innerHTML = proxyTypes.map(type => `<button type="button" class="segment-button" data-proxy-type="${type.id}" aria-pressed="${state.proxy.type === type.id}">${type.label}</button>`).join(''); }
+    function currentProduct() { return proxyProducts.find(item => item.id === state.proxy.productId) || proxyProducts.find(item => item.type === state.proxy.type && item.stock > 0); }
+    function regionHasResources() { return state.proxy.country !== '安哥拉'; }
+    function renderResources() {
+      const displayIds = ['s28', 'huawei', 's53'];
+      const items = displayIds.map(id => proxyProducts.find(item => item.id === id)).filter(Boolean); const noResources = !regionHasResources();
+      $('#resourceGrid').classList.toggle('hidden', noResources); $('#resourceEmpty').classList.toggle('hidden', !noResources);
+      if (noResources) { updateProxyQuote(); lucide.createIcons(); return; }
+      $('#resourceGrid').innerHTML = items.map(item => {
+        const displayName = item.id === 's28' ? '静态住宅 S28' : item.id === 'huawei' ? '云平台 华为云' : '小众 华为云';
+        return `<button type="button" class="resource-card" data-product="${item.id}" aria-pressed="${state.proxy.productId === item.id}"><span class="discount-badge">${item.discount}</span><span class="resource-title"><span class="rounded bg-primary px-1 py-0.5 text-[11px] text-white">${proxyTypes.find(type => type.id === item.type)?.label || '代理'}</span>${displayName}<i data-lucide="info"></i></span><span class="resource-price">${money(item.price)}/月<span class="original-price">原价${money(item.original)}/月</span></span><span class="selected-mark"><i data-lucide="check"></i></span><span class="resource-tooltip"><strong>${item.type === 'niche' ? '小众代理适合什么业务？' : `${displayName}适合什么业务？`}</strong>${item.info}</span></button>`;
+      }).join('');
+      lucide.createIcons();
+    }
+    function renderProxyDurations() {
+      const options = [{ value: 1, label: '1个月' }, { value: 3, label: '3个月' }, { value: 6, label: '6个月' }, { value: 12, label: '12个月' }];
+      $('#proxyDurationOptions').innerHTML = options.map(item => `<button type="button" class="segment-button" data-proxy-duration="${item.value}" aria-pressed="${state.proxy.duration === item.value}">${item.label}</button>`).join('');
+    }
+    function renderPayments() {
+      const current = state.proxy.payment;
+      $('#proxyPayments').innerHTML = paymentMethods.map(method => {
+        const recharge = method.id === 'coin' ? `<span class="payment-recharge"><button class="link-button" type="button" data-recharge>充值</button></span>` : '';
+        const extraClass = method.id === 'coin' ? 'payment-option--wide' : '';
+        const icon = method.id === 'coin' ? '' : `<i data-lucide="${method.icon}"></i>`;
+        const option = `<label class="payment-option ${extraClass}"><input type="radio" name="proxyPayment" value="${method.id}" ${current === method.id ? 'checked' : ''}>${icon}<span>${method.label}${method.suffix ? ` <span class="text-ink-muted">${method.suffix}</span>` : ''}</span>${recharge}</label>`;
+        return option;
+      }).join('');
+      lucide.createIcons();
+    }
+    function proxyQuote() {
+      const product = currentProduct(); if (!product || !regionHasResources()) return { available: false, original: 0, packageDiscount: 0, coupon: 0, total: 0, product };
+      const rates = { 1: 1, 3: .9, 6: .8, 12: .75 }; const bundles = Math.max(1, Math.ceil(state.proxy.qty / 3)); const original = product.original * bundles * state.proxy.duration;
+      const sale = product.price * bundles * state.proxy.duration * rates[state.proxy.duration]; const packageDiscount = Math.max(0, original - sale);
+      const requestedCoupon = Number(state.proxy.coupon) || 0; const coupon = requestedCoupon === 20 && sale < 100 ? 0 : requestedCoupon;
+      return { available: product.stock >= state.proxy.qty, original, packageDiscount, coupon, total: Math.max(0, original - packageDiscount - coupon), product };
+    }
+    function renderPriceDetail(quote) {
+      $('#priceDetailPopover').innerHTML = `<h3 id="priceDetailTitle">订单信息</h3><div class="detail-group"><h4>代理资源</h4><div class="detail-row"><span>资源名称</span><span>${quote.product?.name || '待选择'}</span></div><div class="detail-row"><span>代理地区</span><span>${state.proxy.country}-${state.proxy.city}</span></div><div class="detail-row"><span>购买数量</span><span class="mono">${state.proxy.qty} 个</span></div><div class="detail-row"><span>购买时长</span><span class="mono">${state.proxy.duration} 个月</span></div><div class="detail-row"><span class="detail-help-label">套餐流量<button type="button" class="detail-help" aria-label="查看套餐流量说明"><i data-lucide="circle-help"></i><span class="detail-help-tip" role="tooltip">该套餐可每月使用 10GB 高速流量。限时福利：活动期间不限流量！</span></button></span><span class="mono">10G/月</span></div><div class="detail-row"><span>超出流量资费</span><span>限时免费</span></div></div><div class="detail-group"><div class="detail-row"><span>资源金额</span><span class="mono">${money(quote.original)}</span></div><div class="detail-row"><span>资源优惠</span><span class="mono">-${money(quote.packageDiscount)}</span></div><div class="detail-row"><span>优惠券抵扣金额</span><span class="mono">-${money(quote.coupon)}</span></div></div>`;
+      lucide.createIcons();
+    }
+    function updateProxyQuote() {
+      state.proxy.qty = clamp($('#proxyQty')?.value ?? state.proxy.qty, 1, 50); if ($('#proxyQty')) $('#proxyQty').value = state.proxy.qty;
+      const quote = proxyQuote(); $('#proxyTotal').textContent = money(quote.total); $('#proxyOriginal').textContent = money(quote.original);
+      $('#proxyPackageDiscount').textContent = `-${money(quote.packageDiscount)}`; $('#proxyCouponDiscount').textContent = `-${money(quote.coupon)}`;
+      $('#buyProxy').disabled = !quote.available; $('#addCart').disabled = !quote.available;
+      if (Number(state.proxy.coupon) === 20 && quote.coupon === 0) { state.proxy.coupon = 0; $('#proxyCoupon').value = '0'; }
+      renderPriceDetail(quote); renderPayments();
+    }
+    function selectRegion(kind, value) {
+      if (kind === 'continent') { state.proxy.continent = value; state.proxy.country = regions.countries[value][0]; state.proxy.city = (regions.cities[state.proxy.country] || [])[0] || ''; }
+      else if (kind === 'country') { state.proxy.country = value; state.proxy.city = (regions.cities[value] || [])[0] || ''; } else state.proxy.city = value;
+      clearIncomingProduct(); markDirty(); renderRegions(); renderResources(); updateProxyQuote();
+    }
+
+    // ---------- 支付确认 ----------
+    function paymentLabel() {
+      return paymentMethods.find(item => item.id === state.proxy.payment)?.label || '支付宝支付';
+    }
+    function formatOrderDate(date) {
+      const pad = value => String(value).padStart(2, '0');
+      return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+    }
+    function createPendingOrderNumber(date) {
+      const digits = formatOrderDate(date).replace(/\D/g, '');
+      const suffix = String((date.getMilliseconds() * 97 + state.proxy.qty * 31) % 10000).padStart(4, '0');
+      return `YL${digits}${suffix}`;
+    }
+    function formatPaymentCountdown(seconds) {
+      const minutes = Math.floor(seconds / 60);
+      return `${String(minutes).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`;
+    }
+    function renderPaymentCountdown() {
+      const target = $('#paymentCountdown');
+      if (target && state.pendingOrder) target.textContent = formatPaymentCountdown(state.pendingOrder.remainingSeconds);
+    }
+    function startPaymentCountdown() {
+      if (paymentCountdownTimer) clearInterval(paymentCountdownTimer);
+      renderPaymentCountdown();
+      paymentCountdownTimer = setInterval(() => {
+        if (!state.pendingOrder) return;
+        state.pendingOrder.remainingSeconds = Math.max(0, state.pendingOrder.remainingSeconds - 1);
+        renderPaymentCountdown();
+        if (state.pendingOrder.remainingSeconds === 0) {
+          closeOrderDialog(true);
+          toast('待支付订单已自动取消', 'info');
+        }
+      }, 1000);
+    }
+    function openOrderDialog() {
+      if (!state.proxy.notice) { toast('请先阅读并同意《代理购买须知》', 'warning'); $('#proxyNotice').focus(); return; }
+      const quote = proxyQuote();
+      if (!quote.available) { toast('当前代理库存不足，请重新选择', 'danger'); return; }
+      const createdAt = new Date();
+      const orderNo = createPendingOrderNumber(createdAt);
+      const typeLabel = ({ static: '静态住宅', cloud: '云平台-静态', niche: '小众代理' })[state.proxy.type] || '代理资源';
+      const scanApp = state.proxy.payment === 'wechat' ? '微信' : state.proxy.payment === 'coin' ? '云登客户端' : '支付宝';
+      state.pendingOrder = { kind: 'proxy', total: quote.total, orderNo, createdAt, remainingSeconds: 29 * 60 + 49 };
+      state.lastFocus = document.activeElement;
+      $('#orderDialogTitle').textContent = '待支付订单';
+      $('#orderDialogBody').innerHTML = `
+        <div class="payment-alert" role="status"><i data-lucide="info"></i><span>订单 <strong id="paymentCountdown" class="payment-countdown">29:49</strong> 后订单将自动取消，请在订单取消完成前完成支付！若订单中使用了优惠券，订单取消后会原路返回您的账户中。</span></div>
+        <div class="payment-meta"><span class="mono">${orderNo}</span><span><span class="payment-meta-label">创建时间：</span><span class="mono">${formatOrderDate(createdAt)}</span></span></div>
+        <div class="payment-content">
+          <section class="payment-order-list" aria-label="订单商品明细">
+            <button class="payment-group-toggle" type="button" data-payment-group-toggle aria-expanded="true"><span>${typeLabel}（1）</span><i data-lucide="chevron-up"></i></button>
+            <div id="paymentProductRow" class="payment-product-row">
+              <span class="payment-product-region">${state.proxy.country}-${state.proxy.city}（${quote.product.name}）</span>
+              <span>IPv4 | 5M</span>
+              <span>${state.proxy.duration}个月</span>
+              <span>${state.proxy.qty}个</span>
+              <span class="payment-discount">优惠券抵扣&nbsp; ${money(quote.coupon)}</span>
+              <span class="payment-price-stack"><span>原价 ${money(quote.original)}</span><strong>实付 ${money(quote.total)} <span class="payment-price-help" title="金额以当前试算结果为准"><i data-lucide="info"></i></span></strong></span>
+            </div>
+          </section>
+          <aside class="payment-side" aria-label="支付二维码">
+            <span class="payment-side-label">需要支付金额</span>
+            <strong class="payment-side-amount">${money(quote.total)}</strong>
+            <img class="payment-qr" src="${mockPaymentQr}" alt="${paymentLabel()}二维码（原型）">
+            <p class="payment-scan-tip">请打开${scanApp}扫一扫</p>
+          </aside>
+        </div>`;
+      $('#orderDialog').classList.remove('hidden'); $('#orderDialog').setAttribute('aria-hidden', 'false'); $('#orderDialogPanel').focus({ preventScroll: true }); lucide.createIcons();
+      startPaymentCountdown();
+    }
+    function closeOrderDialog(restore = true) {
+      if (paymentCountdownTimer) { clearInterval(paymentCountdownTimer); paymentCountdownTimer = null; }
+      if ($('#orderDialog').classList.contains('hidden')) return;
+      $('#orderDialog').classList.add('hidden'); $('#orderDialog').setAttribute('aria-hidden', 'true');
+      const returnFocus = state.lastFocus;
+      state.pendingOrder = null;
+      state.lastFocus = null;
+      if (restore) returnFocus?.focus?.({ preventScroll: true });
+    }
+
+    // ---------- 云币充值 ----------
+    function openRechargeDialog() {
+      state.lastFocus = document.activeElement;
+      // Render amount options
+      $$('#rechargeAmountOptions .recharge-amount-btn').forEach(btn => {
+        btn.classList.toggle('selected', btn.dataset.amount === String(state.recharge.amount));
+      });
+      // Update custom input
+      $('#customRechargeAmount').value = '';
+      $('#rechargeCustomOption').classList.remove('selected');
+      // Update payment options
+      $$('#rechargePaymentOptions .recharge-payment-btn').forEach(btn => {
+        btn.classList.toggle('selected', btn.dataset.payment === state.recharge.payment);
+      });
+      updateRechargeBonus();
+      updateRechargePayable();
+      $('#rechargeDialog').classList.remove('hidden');
+      $('#rechargeDialog').setAttribute('aria-hidden', 'false');
+      $('#closeRechargeDialog').focus({ preventScroll: true });
+      lucide.createIcons();
+    }
+    function closeRechargeDialog() {
+      if ($('#rechargeDialog').classList.contains('hidden')) return;
+      $('#rechargeDialog').classList.add('hidden');
+      $('#rechargeDialog').setAttribute('aria-hidden', 'true');
+      if (state.lastFocus) state.lastFocus.focus({ preventScroll: true });
+      state.lastFocus = null;
+    }
+    function updateRechargeBonus() {
+      const amount = state.recharge.amount;
+      const bonus = Math.floor(amount / 10); // 10% bonus
+      const bonusEl = $('.recharge-bonus span strong');
+      if (bonusEl) bonusEl.textContent = bonus;
+    }
+    function updateRechargePayable() {
+      const payable = $('#rechargePayable');
+      if (payable) payable.textContent = money(state.recharge.amount);
+    }
+    function selectRechargeAmount(amount, coins) {
+      state.recharge.amount = Number(amount);
+      state.recharge.coins = Number(coins);
+      $('#customRechargeAmount').value = '';
+      $('#rechargeCustomOption').classList.remove('selected');
+      $$('#rechargeAmountOptions .recharge-amount-btn').forEach(btn => {
+        btn.classList.toggle('selected', btn.dataset.amount === String(amount));
+      });
+      updateRechargeBonus();
+      updateRechargePayable();
+    }
+    function handleCustomAmount(value) {
+      const amount = Math.max(0, Number(value) || 0);
+      state.recharge.amount = amount;
+      state.recharge.coins = amount;
+      $$('#rechargeAmountOptions .recharge-amount-btn').forEach(btn => btn.classList.remove('selected'));
+      $('#rechargeCustomOption').classList.toggle('selected', amount > 0);
+      updateRechargeBonus();
+      updateRechargePayable();
+    }
+
+    // ---------- 云币充值弹窗事件 ----------
+    $('#closeRechargeDialog').addEventListener('click', () => closeRechargeDialog());
+    $('#rechargeDialog').addEventListener('click', event => { if (event.target === $('#rechargeDialog')) closeRechargeDialog(); });
+    $('#rechargeDialog').addEventListener('keydown', event => { if (event.key === 'Escape') closeRechargeDialog(); });
+
+    $('#rechargeAmountOptions').addEventListener('click', event => {
+      const btn = event.target.closest('.recharge-amount-btn');
+      if (btn) selectRechargeAmount(btn.dataset.amount, btn.dataset.coins);
+    });
+    $('#customRechargeAmount').addEventListener('input', event => handleCustomAmount(event.target.value));
+    $('#rechargePaymentOptions').addEventListener('click', event => {
+      const btn = event.target.closest('.recharge-payment-btn');
+      if (btn) {
+        state.recharge.payment = btn.dataset.payment;
+        $$('#rechargePaymentOptions .recharge-payment-btn').forEach(b => b.classList.toggle('selected', b === btn));
+      }
+    });
+    $('#rechargePaymentOptions').addEventListener('keydown', event => {
+      const btn = event.target.closest('.recharge-payment-btn');
+      if (btn && ['Enter', ' '].includes(event.key)) {
+        event.preventDefault();
+        state.recharge.payment = btn.dataset.payment;
+        $$('#rechargePaymentOptions .recharge-payment-btn').forEach(b => b.classList.toggle('selected', b === btn));
+      }
+    });
+    document.querySelectorAll('[data-contact-service]').forEach(link => link.addEventListener('click', event => {
+      event.preventDefault();
+      toast('在线客服入口为原型演示', 'info');
+    }));
+    $('#confirmRecharge').addEventListener('click', () => {
+      if (state.recharge.amount <= 0) { toast('请输入充值金额', 'warning'); return; }
+      // Simulate recharge
+      state.recharge.balance += state.recharge.coins;
+      closeRechargeDialog();
+      toast(`充值成功！获得 ${state.recharge.coins} 云币，当前余额 ${state.recharge.balance} 云币`, 'success');
+      updateProxyQuote();
+    });
+
+    // ---------- 交互绑定 ----------
+    $('#toggleCompliance').addEventListener('click', () => {
+      const expanded = $('#toggleCompliance').getAttribute('aria-expanded') === 'true';
+      $('#toggleCompliance').setAttribute('aria-expanded', String(!expanded));
+      $('#toggleCompliance').innerHTML = `<span>${expanded ? '查看购买须知' : '收起购买须知'}</span><i data-lucide="${expanded ? 'chevron-right' : 'chevron-up'}"></i>`;
+      $('#complianceDetail').classList.toggle('hidden', expanded); lucide.createIcons();
+    });
+    function navigateToStoreTab(tab) {
+      const search = `?tab=${tab}`;
+      const file = tab === 'plan' ? '商城-套餐.html' : tab === 'cart' ? '商城-购物车.html' : '商城-代理.html';
+      if (window.parent !== window) {
+        window.parent.postMessage({ type: 'yundeng:route', file, search, hash: '' }, '*');
+        return;
+      }
+      location.replace(`../index.html?page=store&module=${encodeURIComponent(file)}&moduleSearch=${encodeURIComponent(search.slice(1))}`);
+    }
+    $('#storeTabs').addEventListener('click', event => {
+      const button = event.target.closest('[data-tab]');
+      if (button && button.dataset.tab !== 'proxy') navigateToStoreTab(button.dataset.tab);
+    });
+    $('#storeTabs').addEventListener('keydown', event => {
+      if (!['ArrowLeft', 'ArrowRight'].includes(event.key)) return;
+      event.preventDefault();
+      const tabs = $$('[data-tab]');
+      const index = tabs.indexOf(event.target.closest('[data-tab]'));
+      const next = (index + (event.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length;
+      if (tabs[next].dataset.tab !== 'proxy') navigateToStoreTab(tabs[next].dataset.tab);
+    });
+    $('#regionSearch').addEventListener('input', event => renderRegions(event.target.value));
+    $('#regionSearch').addEventListener('keydown', event => { if (event.key !== 'Enter') return; event.preventDefault(); $('#countryOptions [data-country], #cityOptions [data-city]')?.click(); });
+    $('#proxyPanel').addEventListener('click', event => {
+      const continent = event.target.closest('[data-continent]'), country = event.target.closest('[data-country]'), city = event.target.closest('[data-city]');
+      const type = event.target.closest('[data-proxy-type]'), product = event.target.closest('[data-product]'), duration = event.target.closest('[data-proxy-duration]');
+      if (continent) selectRegion('continent', continent.dataset.continent);
+      else if (country) selectRegion('country', country.dataset.country);
+      else if (city) selectRegion('city', city.dataset.city);
+      else if (event.target.closest('[data-region-toggle]')) { state.regionExpanded = !state.regionExpanded; renderRegions($('#regionSearch').value); }
+      else if (type) { state.proxy.type = type.dataset.proxyType; state.proxy.productId = proxyProducts.find(item => item.type === state.proxy.type && item.stock > 0)?.id || ''; clearIncomingProduct(); markDirty(); renderProxyTypes(); renderResources(); updateProxyQuote(); }
+      else if (product && !product.disabled) { state.proxy.productId = product.dataset.product; state.proxy.type = currentProduct()?.type || state.proxy.type; clearIncomingProduct(); markDirty(); renderProxyTypes(); renderResources(); updateProxyQuote(); }
+      else if (duration) { state.proxy.duration = Number(duration.dataset.proxyDuration); markDirty(); renderProxyDurations(); updateProxyQuote(); }
+      const step = event.target.closest('[data-step]'); if (step) { const input = $(`#${step.dataset.step}`); input.value = clamp(Number(input.value) + Number(step.dataset.delta), Number(input.min || 0), Number(input.max || 9999)); input.dispatchEvent(new Event('input', { bubbles: true })); }
+      if (event.target.closest('[data-recharge]')) { event.preventDefault(); openRechargeDialog(); }
+    });
+    $('#proxyQty').addEventListener('input', () => { markDirty(); updateProxyQuote(); });
+    $('#proxyCoupon').addEventListener('change', event => { state.proxy.coupon = Number(event.target.value); markDirty(); updateProxyQuote(); });
+    $('#proxyRenew').addEventListener('change', event => { state.proxy.renew = event.target.checked; $('#proxyRenewCycle').classList.toggle('hidden', !event.target.checked); markDirty(); updateProxyQuote(); });
+    $('#proxyRenewCycle').addEventListener('change', event => { state.proxy.renewCycle = Number(event.target.value); markDirty(); });
+    $('#proxyPayments').addEventListener('change', event => { if (event.target.name === 'proxyPayment') { state.proxy.payment = event.target.value; markDirty(); } });
+    $('#proxyNotice').addEventListener('change', event => { state.proxy.notice = event.target.checked; });
+    function openPriceDetail() { $('#togglePriceDetail').setAttribute('aria-expanded', 'true'); $('#priceDetailPopover').classList.remove('hidden'); }
+    function closePriceDetail() { $('#togglePriceDetail').setAttribute('aria-expanded', 'false'); $('#priceDetailPopover').classList.add('hidden'); }
+    $('#togglePriceDetail').addEventListener('click', () => { if ($('#priceDetailPopover').classList.contains('hidden')) openPriceDetail(); else closePriceDetail(); });
+    $('#addCart').addEventListener('click', () => {
+      const quote = proxyQuote();
+      if (!quote.available) { toast('当前代理库存不足，请重新选择', 'danger'); return; }
+      markDirty();
+      toast('已加入购物车');
+    });
+    $('#buyProxy').addEventListener('click', () => openOrderDialog());
+
+    $('#closeDialog').addEventListener('click', () => closeOrderDialog());
+    $('#orderDialog').addEventListener('click', event => { if (event.target === $('#orderDialog')) closeOrderDialog(); });
+    $('#orderDialogBody').addEventListener('click', event => {
+      const toggle = event.target.closest('[data-payment-group-toggle]');
+      if (!toggle) return;
+      const expanded = toggle.getAttribute('aria-expanded') === 'true';
+      toggle.setAttribute('aria-expanded', String(!expanded));
+      $('#paymentProductRow').hidden = expanded;
+      toggle.querySelector('svg')?.setAttribute('data-lucide', expanded ? 'chevron-down' : 'chevron-up');
+      lucide.createIcons();
+    });
+    document.addEventListener('click', event => { if (!event.target.closest('.checkout-price') && !$('#priceDetailPopover').classList.contains('hidden')) { $('#priceDetailPopover').classList.add('hidden'); $('#togglePriceDetail').setAttribute('aria-expanded', 'false'); } });
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape') {
+        if (!$('#rechargeDialog').classList.contains('hidden')) { closeRechargeDialog(); return; }
+        if (!$('#orderDialog').classList.contains('hidden')) { closeOrderDialog(); return; }
+        if (!$('#priceDetailPopover').classList.contains('hidden')) { $('#priceDetailPopover').classList.add('hidden'); $('#togglePriceDetail').setAttribute('aria-expanded', 'false'); $('#togglePriceDetail').focus(); }
+      }
+      if (event.key === 'Tab' && !$('#orderDialog').classList.contains('hidden')) { const focusable = $$('#orderDialog button:not(:disabled), #orderDialog img, #orderDialog [tabindex]:not([tabindex="-1"])').filter(node => node.getClientRects().length); if (!focusable.length) return; const first = focusable[0], last = focusable.at(-1); if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); } else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); } }
+    });
+
+    // ---------- 初始化 ----------
+    function applyIncomingSelection() { const preset = incomingPresets[pageParams.get('product_id')]; if (!preset) return; Object.assign(state.proxy, preset); toast(`已带入热门代理：${preset.name}`, 'info'); }
+    applyIncomingSelection(); renderRegions(); renderProxyTypes(); renderResources(); renderProxyDurations(); updateProxyQuote(); lucide.createIcons();
+  </script>
+</body>
+</html>

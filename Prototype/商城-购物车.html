@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>云登 - 商城-购物车</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: { DEFAULT: '#0066FF', hover: '#0052CC', active: '#0047B3', bg: '#E6F0FF' },
+            ink: { title: '#1A1D24', body: '#3A3F4A', sub: '#6E7685', muted: '#9DA2AC' },
+            line: { DEFAULT: '#DFE1E5', light: '#E8EAED', lighter: '#F0F1F3' },
+            page: '#F7F8FA', card: '#FFFFFF', hover: '#F3F4F6', price: '#FE5416',
+            success: { DEFAULT: '#0FC060', bg: '#E7F9F0' }, warning: { DEFAULT: '#E7772D', bg: '#FDF2E9' },
+            danger: { DEFAULT: '#D9001B', bg: '#FFE8EB' }, info: { DEFAULT: '#0091D5', bg: '#E4F4FB' }
+          },
+          borderRadius: { DEFAULT: '4px', md: '6px', lg: '8px' },
+          fontFamily: {
+            sans: ['-apple-system', 'BlinkMacSystemFont', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', 'Helvetica', 'Arial', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace']
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    :root { --primary:#0066FF; --primary-hover:#0052CC; --ink-title:#1A1D24; --ink-body:#3A3F4A; --ink-sub:#6E7685; --ink-muted:#9DA2AC; --line:#DFE1E5; --line-light:#E8EAED; --line-lighter:#F0F1F3; --page:#F7F8FA; --card:#FFFFFF; --hover:#F3F4F6; --price:#FE5416; --success:#0FC060; --success-bg:#E7F9F0; --warning:#E7772D; --danger:#D9001B; --danger-bg:#FFE8EB; --info:#0091D5; --info-bg:#E4F4FB; --primary-bg:#E6F0FF; }
+    * { box-sizing: border-box; }
+    html, body { min-height: 100%; margin: 0; letter-spacing: 0; }
+    body { color: var(--ink-body); background: var(--page); font: 13px/1.5 -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif; }
+    button, input, select { font: inherit; }
+    button { white-space: nowrap; }
+    .hidden { display: none !important; }
+    .mono { font-family: 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums; }
+    .store-page { min-width: 0; min-height: 100%; padding-bottom: 24px; overflow: auto; background: var(--page); }
+    .surface { min-width: 0; padding: 20px; border-radius: 8px; background: var(--card); }
+    .cart-layout > .surface { padding: 0; }
+    .store-tabs { min-width: 0; height: 44px; display: flex; align-items: stretch; gap: 8px; overflow-x: auto; scrollbar-width: none; }
+    .store-tabs::-webkit-scrollbar { display: none; }
+    .store-tab { min-width: 104px; height: 44px; padding: 0 16px; border: 0; border-bottom: 2px solid transparent; display: inline-flex; align-items: center; justify-content: center; gap: 8px; flex: none; color: var(--ink-sub); background: transparent; cursor: pointer; font-size: 14px; line-height: 1; }
+    .store-tab:hover { color: var(--primary); background: var(--hover); }
+    .store-tab[aria-selected="true"] { color: var(--primary); border-bottom-color: var(--primary); font-weight: 600; background: var(--card); }
+    .store-tab svg { width: 16px; height: 16px; }
+    .cart-badge { min-width: 20px; height: 20px; padding: 0 5px; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; color: var(--primary); background: var(--primary-bg); font: 500 11px/1 'JetBrains Mono', monospace; }
+    .cart-layout { display: grid; grid-template-columns: minmax(0, 1fr) 310px; gap: 16px; align-items: start; }
+    .order-summary { width: 310px; min-width: 0; position: sticky; top: 0; }
+    .cart-toolbar { padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; gap: 16px; border-bottom: 1px solid var(--line-lighter); background: var(--card); }
+    .cart-toolbar-left, .cart-toolbar-actions { min-width: 0; display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+    .checkbox-line { display: inline-flex; align-items: flex-start; gap: 7px; cursor: pointer; }
+    .checkbox-line input { width: 14px; height: 14px; margin: 2px 0 0; accent-color: var(--primary); }
+    .cart-toolbar-title { display: flex; align-items: center; gap: 10px; color: var(--ink-title); font-size: 14px; font-weight: 600; }
+    .cart-toolbar-title .mono { color: var(--primary); }
+    .cart-toolbar-link { padding: 0; border: 0; display: inline-flex; align-items: center; gap: 6px; color: var(--ink-sub); background: transparent; cursor: pointer; }
+    .cart-toolbar-link:hover { color: var(--primary); }
+    .cart-toolbar-link:disabled { color: var(--ink-muted); cursor: not-allowed; }
+    .cart-group-list { display: grid; }
+    .cart-group { border-top: 1px solid var(--line-light); background: var(--card); }
+    .cart-group:first-child { border-top: 0; }
+    .cart-group-header { min-height: 58px; padding: 0 16px; display: flex; align-items: center; justify-content: space-between; gap: 16px; background: var(--hover); cursor: pointer; }
+    .cart-group-header-main { min-width: 0; display: flex; align-items: center; gap: 10px; flex: 1; }
+    .cart-group-summary { min-width: 0; display: inline-flex; align-items: center; gap: 10px; }
+    .cart-group-title { min-width: 0; color: var(--ink-title); font-size: 14px; font-weight: 600; }
+    .cart-group-count { color: var(--ink-sub); font-size: 13px; font-weight: 500; }
+    .cart-group-toggle { width: 24px; height: 24px; padding: 0; border: 0; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; color: var(--ink-sub); background: transparent; cursor: pointer; }
+    .cart-group-toggle:hover { color: var(--primary); background: var(--primary-bg); }
+    .cart-group-toggle svg { width: 16px; height: 16px; }
+    .cart-group-body { border-top: 1px solid var(--line-light); overflow-x: auto; }
+    .cart-group.collapsed .cart-group-body { display: none; }
+    .cart-row { min-width: 1240px; padding: 18px 0 16px 48px; display: grid; grid-template-columns: minmax(280px, 1fr) 280px 96px 280px minmax(140px, .8fr) 44px; gap: 20px; align-items: center; border-top: 1px solid var(--line-lighter); }
+    .cart-row:first-child { border-top: 0; }
+    .cart-row:hover { background: var(--hover); }
+    .cart-row-main { min-width: 0; display: flex; gap: 12px; align-items: flex-start; }
+    .cart-row-main .checkbox-line { margin-top: 3px; flex: none; }
+    .cart-row-title { min-width: 0; display: grid; gap: 2px; }
+    .cart-row-title strong { color: var(--ink-title); font-size: 14px; font-weight: 600; line-height: 1.35; }
+    .cart-row-sub { color: var(--ink-sub); font-size: 12px; line-height: 1.4; }
+    .cart-traffic-copy { margin-top: 6px; display: grid; gap: 2px; color: var(--ink-sub); font-size: 12px; line-height: 1.4; }
+    .cart-traffic-copy span { white-space: nowrap; }
+    .cart-traffic-copy .mono { color: var(--ink-body); }
+    .cart-mini-select { width: 280px; min-width: 280px; height: 32px; padding: 0 30px 0 10px; border: 1px solid var(--line); border-radius: 4px; color: var(--ink-body); background: var(--card); outline: none; }
+    .cart-mini-select:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(0,102,255,.12); }
+    .cart-quantity { display: inline-grid; grid-template-columns: 28px 44px 28px; height: 32px; border: 1px solid var(--line); border-radius: 4px; overflow: hidden; background: var(--card); }
+    .cart-quantity button { border: 0; color: var(--ink-sub); background: var(--card); cursor: pointer; }
+    .cart-quantity button:hover { color: var(--primary); background: var(--primary-bg); }
+    .cart-quantity button:disabled { color: var(--ink-muted); background: var(--page); cursor: not-allowed; }
+    .cart-quantity input { width: 44px; border: 0; border-inline: 1px solid var(--line-lighter); text-align: center; background: var(--card); outline: none; }
+    .cart-price { min-width: 0; display: flex; flex-direction: column; gap: 4px; align-items: flex-start; }
+    .cart-price-raw { color: var(--ink-title); font-size: 14px; font-weight: 600; }
+    .cart-price-paid { display: inline-flex; align-items: center; gap: 8px; color: var(--primary); font-size: 16px; font-weight: 700; }
+    .cart-price-info { width: 18px; height: 18px; position: relative; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; color: var(--primary); background: var(--primary-bg); cursor: help; }
+    .cart-price-info svg { width: 12px; height: 12px; }
+    .cart-price-tip { width: 260px; padding: 10px 12px; position: fixed; left: 0; top: 0; z-index: 200; border-radius: 8px; color: var(--ink-body); background: var(--card); box-shadow: 0 6px 24px rgba(0,0,0,.12); font-size: 12px; line-height: 1.55; opacity: 0; visibility: hidden; pointer-events: none; transform: translateY(4px); transition: opacity .15s ease, transform .15s ease; }
+    .cart-price-tip.is-visible { opacity: 1; visibility: visible; transform: translateY(0); }
+    .cart-price-tip::after { content: ''; width: 10px; height: 10px; position: absolute; right: 16px; bottom: -5px; background: var(--card); transform: rotate(45deg); }
+    .cart-price-tip > span { display: block; white-space: nowrap; }
+    .cart-price-tip .accent { color: var(--price); }
+    .cart-price-tip .free { color: var(--success); }
+    .cart-row-actions { display: flex; align-items: center; justify-content: flex-end; padding: 2px 20px 0 0; }
+    .delete-icon-button { width: 24px; height: 24px; padding: 0; border: 0; display: inline-flex; align-items: center; justify-content: center; color: var(--ink-muted); background: transparent; cursor: pointer; }
+    .delete-icon-button:hover { color: var(--danger); }
+    .delete-icon-button svg { width: 17px; height: 17px; }
+    .cart-empty { min-height: 320px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--ink-sub); text-align: center; }
+    .cart-empty .empty-icon { width: 48px; height: 48px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--primary); background: var(--primary-bg); }
+    .cart-empty h3 { margin: 12px 0 4px; color: var(--ink-title); font-size: 16px; }
+    .summary-card, .summary-payment, .summary-total-card { width: 100%; padding: 16px 20px; border-radius: 8px; background: var(--card); }
+    .summary-payment, .summary-total-card { margin-top: 10px; }
+    .summary-title-row, .summary-total-top { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+    .summary-title-row h2 { margin: 0; color: var(--ink-title); font-size: 16px; font-weight: 600; }
+    .selected-count { color: var(--ink-sub); }
+    .summary-selected-list { display: grid; gap: 12px; margin-top: 12px; }
+    .summary-selected-item { display: flex; align-items: flex-start; gap: 12px; }
+    .summary-item-main { min-width: 0; flex: 1; }
+    .summary-item-title { color: var(--ink-title); font-size: 14px; font-weight: 600; }
+    .summary-item-spec { margin-top: 4px; color: var(--ink-muted); font-size: 12px; line-height: 1.45; }
+    .summary-item-price { margin-left: auto; display: flex; align-items: center; gap: 10px; white-space: nowrap; }
+    .summary-item-close { width: 14px; height: 14px; padding: 0; border: 0; color: var(--ink-sub); background: transparent; cursor: pointer; }
+    .summary-item-close svg { width: 14px; height: 14px; }
+    .summary-overview { margin: 16px -20px 0; padding: 10px 20px 0; border-top: 1px solid var(--line-lighter); }
+    .summary-overview-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; padding: 6px 0; color: var(--ink-sub); }
+    .summary-overview-row strong, .summary-overview-row span:last-child { color: var(--ink-title); text-align: right; }
+    .summary-payment h3 { margin: 0 0 12px; color: var(--ink-title); font-size: 16px; font-weight: 600; }
+    .summary-payment-options { display: grid; gap: 12px; }
+    .summary-payment-option { min-height: 42px; padding: 0 12px; border: 1px solid var(--line); border-radius: 4px; display: flex; align-items: center; justify-content: center; gap: 8px; color: var(--ink-body); background: var(--card); cursor: pointer; }
+    .summary-payment-option:hover, .summary-payment-option.is-selected { color: var(--primary); border-color: var(--primary); background: var(--primary-bg); }
+    .payment-label { display: flex; align-items: center; gap: 8px; }
+    .payment-label svg { width: 16px; height: 16px; }
+    .payment-balance { color: var(--ink-sub); }
+    .payment-recharge { margin-left: auto; }
+    .payment-recharge button { height: 24px; padding: 0 10px; border: 0; border-radius: 4px; color: var(--primary); background: var(--primary-bg); cursor: pointer; }
+    .summary-total-top span { color: var(--ink-title); font-size: 14px; font-weight: 400; }
+    .summary-total-top strong { color: var(--ink-title); font: 400 16px/1.4 'JetBrains Mono', monospace; }
+    .summary-primary-submit { width: 100%; height: 52px; margin-top: 18px; border: 0; border-radius: 8px; color: var(--card); background: var(--primary); font-size: 16px; font-weight: 600; cursor: pointer; }
+    .summary-primary-submit:disabled { color: var(--ink-muted); background: var(--line-lighter); cursor: not-allowed; }
+    .summary-agreement { margin-top: 16px; color: var(--ink-sub); font-size: 12px; }
+    .summary-agreement a { color: var(--primary); font-weight: 600; text-decoration: none; }
+    .summary-agreement a:hover { text-decoration: underline; }
+    .modal-mask { position: fixed; inset: 0; z-index: 2000; padding: 16px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,.3); }
+    .modal-mask.hidden { display: none; }
+    .modal-panel { width: 520px; max-width: 92vw; max-height: 88vh; border-radius: 8px; display: flex; flex-direction: column; background: var(--card); box-shadow: 0 6px 24px rgba(0,0,0,.12); }
+    .modal-header { min-height: 56px; padding: 0 20px; border-bottom: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between; }
+    .modal-header h2 { margin: 0; color: var(--ink-title); font-size: 16px; }
+    .modal-body { padding: 20px; overflow: auto; }
+    .modal-footer { padding: 16px 20px; border-top: 1px solid var(--line); display: flex; justify-content: flex-end; gap: 12px; }
+    .btn { height: 32px; padding: 0 16px; border: 1px solid transparent; border-radius: 4px; cursor: pointer; }
+    .btn-default { color: var(--ink-body); border-color: var(--line); background: var(--card); }
+    .btn-primary { color: var(--card); background: var(--primary); }
+    .detail-row { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 12px; padding: 6px 0; }
+    .info-callout { margin-top: 16px; padding: 12px; border-radius: 4px; color: var(--info); background: var(--info-bg); }
+    @media (max-width: 980px) { .cart-layout { grid-template-columns: 1fr; } .order-summary { width: 100%; position: static; } }
+    @media (max-width: 767px) { .cart-toolbar { align-items: flex-start; flex-direction: column; } .cart-layout { gap: 12px; } }
+    :where(button, input, select):focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+  </style>
+  <link rel="stylesheet" href="公共导航.css?v=20260824a">
+  <script src="公共导航.js?v=20260824a"></script>
+</head>
+<body class="overflow-hidden">
+  <main id="mainContent" class="store-page" tabindex="-1">
+    <h1 class="sr-only">商城-购物车</h1>
+    <span id="dirtyBadge" class="hidden" aria-hidden="true"></span>
+    <nav class="surface !p-0 mb-2" aria-label="商城业务范围">
+      <div id="storeTabs" class="store-tabs" role="tablist" aria-label="商城业务范围">
+        <button id="tabProxy" class="store-tab" type="button" role="tab" aria-selected="false" data-tab="proxy"><i data-lucide="server"></i><span>代理</span></button>
+        <button id="tabPlan" class="store-tab" type="button" role="tab" aria-selected="false" data-tab="plan" tabindex="-1"><i data-lucide="package"></i><span>套餐</span></button>
+        <button id="tabCart" class="store-tab" type="button" role="tab" aria-selected="true" data-tab="cart" tabindex="0"><i data-lucide="shopping-cart"></i><span>购物车</span><span id="cartBadge" class="cart-badge">8</span></button>
+      </div>
+    </nav>
+    <section id="cartPanel" class="cart-layout" aria-labelledby="cartTitle">
+      <section class="surface" aria-labelledby="cartTitle">
+        <div class="cart-toolbar">
+          <div class="cart-toolbar-left">
+            <label class="checkbox-line"><input id="checkAll" type="checkbox" aria-label="全选可结算商品"><span class="cart-toolbar-title">购物车 <span id="cartCountText" class="mono">已选择 0（共0条）</span></span></label>
+            <button id="clearSelected" class="cart-toolbar-link" type="button"><i data-lucide="trash-2" style="width:18px;height:18px;"></i>批量删除</button>
+          </div>
+          <div class="cart-toolbar-actions"><button id="clearCart" class="cart-toolbar-link" type="button">清空失效商品</button></div>
+        </div>
+        <div id="cartEmpty" class="cart-empty hidden"><span class="empty-icon"><i data-lucide="shopping-cart"></i></span><h3>购物车暂无商品</h3><p>可从商城代理或套餐页面添加商品</p></div>
+        <div id="cartGroupWrap" class="cart-group-list"></div>
+      </section>
+      <aside id="cartSummary" class="order-summary" aria-labelledby="cartSummaryTitle"></aside>
+    </section>
+  </main>
+  <div id="orderDialog" class="modal-mask hidden" role="dialog" aria-modal="true" aria-labelledby="orderDialogTitle">
+    <section class="modal-panel" tabindex="-1"><header class="modal-header"><h2 id="orderDialogTitle">确认订单</h2><button id="closeDialog" class="icon-button" type="button" aria-label="关闭确认弹窗"><i data-lucide="x"></i></button></header><div id="orderDialogBody" class="modal-body"></div><footer class="modal-footer"><button id="cancelDialog" class="btn btn-default" type="button">取消</button><button id="confirmDemo" class="btn btn-primary" type="button">确认演示</button></footer></section>
+  </div>
+  <script>
+    const paymentMethods = [
+      { id:'alipay', label:'支付宝支付', icon:'badge-dollar-sign' },
+      { id:'wechat', label:'微信支付', icon:'message-circle' },
+      { id:'coin', label:'账户云币支付', icon:'coins', suffix:'（我的云币：300）' }
+    ];
+    const initialCart = [
+      { id:101, type:'代理', name:'静态住宅 S28', spec:'美国-洛杉矶 · 随机号段 · 1个月', region:'美国-洛杉矶', segment:'随机号段', duration:1, packageTraffic:'10G/月', overageRate:'限时免费', unit:59.90, qty:1, discount:14, baseDiscount:14, couponDiscount:0, couponLabel:'未选择优惠券', status:'valid', checked:true },
+      { id:102, type:'代理', name:'云平台 · 华为云', spec:'日本-东京 · 随机号段 · 3个月', region:'日本-东京', segment:'随机号段', duration:3, packageTraffic:'10G/月', overageRate:'限时免费', unit:96.93, qty:1, discount:10, baseDiscount:10, couponDiscount:0, couponLabel:'未选择优惠券', status:'valid', checked:true },
+      { id:103, type:'套餐', name:'套餐升级', spec:'美国-凤凰城（资源Hy）', region:'美国-凤凰城（资源Hy）', segment:'', duration:1, unit:100, qty:1, discount:50, baseDiscount:50, couponDiscount:0, couponLabel:'未选择优惠券', status:'valid', checked:true },
+      { id:104, type:'代理', name:'小众 · S53', spec:'英国-伦敦 · 自定义号段 · 1个月', region:'英国-伦敦', segment:'自定义号段', duration:1, packageTraffic:'10G/月', overageRate:'限时免费', unit:49.90, qty:1, discount:0, baseDiscount:0, couponDiscount:0, couponLabel:'未选择优惠券', status:'low-stock', checked:false },
+      { id:105, type:'代理', name:'静态住宅 S28 Pro', spec:'加拿大-多伦多 · 6个月', region:'加拿大-多伦多', segment:'6个月', duration:6, packageTraffic:'10G/月', overageRate:'限时免费', unit:349.90, qty:1, discount:42, baseDiscount:42, couponDiscount:0, couponLabel:'未选择优惠券', status:'price-changed', checked:true },
+      { id:106, type:'代理', name:'云平台 · 阿里云 1', spec:'新加坡 · 1个月', region:'新加坡', segment:'1个月', duration:1, packageTraffic:'10G/月', overageRate:'限时免费', unit:42.90, qty:2, discount:8, baseDiscount:8, couponDiscount:0, couponLabel:'未选择优惠券', status:'valid', checked:false },
+      { id:107, type:'代理', name:'小众 · S58', spec:'德国-法兰克福 · 12个月', region:'德国-法兰克福', segment:'12个月', duration:12, packageTraffic:'10G/月', overageRate:'限时免费', unit:539.10, qty:1, discount:0, baseDiscount:0, couponDiscount:0, couponLabel:'未选择优惠券', status:'sold-out', checked:false },
+      { id:108, type:'套餐', name:'原套餐续费', spec:'美国-洛杉矶（资源_Ipv） · 号段：146.71.35.0/24', region:'美国-洛杉矶（资源_Ipv）', segment:'号段：146.71.35.0/24', duration:12, unit:320, qty:1, discount:64, baseDiscount:64, couponDiscount:0, couponLabel:'未选择优惠券', status:'quote-expired', checked:false }
+    ];
+    const state = { cart: initialCart.map(item => ({ ...item })), cartNotice:false, cartPayment:'alipay' };
+    const $ = selector => document.querySelector(selector);
+    const $$ = selector => [...document.querySelectorAll(selector)];
+    const money = value => `¥${Number(value || 0).toFixed(2)}`;
+    const clamp = (value, min, max) => Math.min(max, Math.max(min, Number(value) || 0));
+    const selectable = item => ['valid','low-stock'].includes(item.status);
+    const selectedCartItems = () => state.cart.filter(item => item.checked);
+    const cartItemAmount = item => Math.max(0, item.unit * item.qty - (item.baseDiscount ?? item.discount ?? 0) - (item.couponDiscount ?? 0));
+    const cartGroupCollapsed = type => localStorage.getItem(`yundeng-store-cart-group-${type}`) === '1';
+    const setCartGroupCollapsed = (type, collapsed) => localStorage.setItem(`yundeng-store-cart-group-${type}`, collapsed ? '1' : '0');
+    function navigateToStoreTab(tab) {
+      const search = `?tab=${tab}`;
+      const file = tab === 'plan' ? '商城-套餐.html' : tab === 'cart' ? '商城-购物车.html' : '商城-代理.html';
+      if (window.parent !== window) {
+        window.parent.postMessage({ type: 'yundeng:route', file, search, hash: '' }, '*');
+        return;
+      }
+      location.replace(`../index.html?page=store&module=${encodeURIComponent(file)}&moduleSearch=${encodeURIComponent(search.slice(1))}`);
+    }
+    function renderCouponTooltip(item) {
+      return `<div class="cart-price-tip"><span>折扣优惠金额：<span class="accent">-${money(item.baseDiscount)}</span></span><span>首月免费优惠金额：<span class="free">-${money(item.freeDiscount || 0)}</span></span><span>优惠券：<span class="accent">${item.couponLabel}</span></span></div>`;
+    }
+    function showPriceTip(info) {
+      const tip = info.querySelector('.cart-price-tip');
+      if (!tip) return;
+      const anchor = info.getBoundingClientRect();
+      tip.classList.add('is-visible');
+      const size = tip.getBoundingClientRect();
+      const gap = 10;
+      const edge = 8;
+      let left = anchor.right - size.width;
+      let top = anchor.top - size.height - gap;
+      if (top < edge) top = anchor.bottom + gap;
+      left = Math.max(edge, Math.min(left, window.innerWidth - size.width - edge));
+      tip.style.left = `${left}px`;
+      tip.style.top = `${top}px`;
+    }
+    function hidePriceTip(info) {
+      const tip = info.querySelector('.cart-price-tip');
+      if (!tip) return;
+      tip.classList.remove('is-visible');
+      tip.style.left = '';
+      tip.style.top = '';
+    }
+    function renderCartDetails(item) {
+      const disabled = selectable(item) ? '' : 'disabled';
+      const durationOptions = [1,3,6,12];
+      const couponOptions = ['未选择优惠券','满 100 减 50','专享减 20'];
+      return `<select class="cart-mini-select" data-cart-duration="${item.id}" aria-label="${item.name}购买时长">${durationOptions.map(value => `<option value="${value}" ${value === item.duration ? 'selected' : ''}>${value}个月</option>`).join('')}</select><div class="cart-quantity"><button type="button" data-cart-qty="${item.id}" data-delta="-1" ${disabled} aria-label="减少数量"><i data-lucide="minus"></i></button><input class="mono" value="${item.qty}" readonly aria-label="购买数量"><button type="button" data-cart-qty="${item.id}" data-delta="1" ${disabled} aria-label="增加数量"><i data-lucide="plus"></i></button></div><select class="cart-mini-select" data-cart-coupon="${item.id}" aria-label="${item.name}优惠券">${couponOptions.map(value => `<option value="${value}" ${value === item.couponLabel ? 'selected' : ''}>${value}</option>`).join('')}</select><div class="cart-price"><div class="cart-price-raw">原价 ${money(item.unit)}</div><div class="cart-price-paid">实付 ${money(cartItemAmount(item))}<span class="cart-price-info" tabindex="0" aria-label="查看价格明细"><i data-lucide="info"></i>${renderCouponTooltip(item)}</span></div></div>`;
+    }
+    function cartGroups() { return ['代理','套餐'].map(type => ({ type, items:state.cart.filter(item => item.type === type) })).filter(group => group.items.length); }
+    function renderSummary(selected, total, blocked) {
+      $('#cartSummary').innerHTML = `<section class="summary-card"><div class="summary-title-row"><h2 id="cartSummaryTitle">订单信息</h2><span class="selected-count">已选择 ${selected.length}</span></div><div class="summary-selected-list">${selected.map(item => `<div class="summary-selected-item"><div class="summary-item-main"><div class="summary-item-title">${item.type === '套餐' ? item.region : item.name}</div><div class="summary-item-spec">${item.region}${item.segment ? ` · ${item.segment}` : ''} · ${item.duration}个月 · ${item.qty}个</div></div><div class="summary-item-price"><span class="mono">${money(cartItemAmount(item))}</span><button class="summary-item-close" type="button" data-delete-cart="${item.id}" aria-label="移除商品"><i data-lucide="x"></i></button></div></div>`).join('') || '<div class="summary-item-spec">当前未选择商品</div>'}</div><div class="summary-overview"><div class="summary-overview-row"><span>订单总金额</span><strong class="mono">${money(selected.reduce((sum,item) => sum + item.unit * item.qty, 0))}</strong></div><div class="summary-overview-row"><span>子订单数</span><span class="mono">${selected.length}</span></div><div class="summary-overview-row"><span>共减</span><span class="mono">${money(selected.reduce((sum,item) => sum + item.discount, 0))}</span></div><div class="summary-overview-row"><span>合计</span><strong class="mono">${money(total)}</strong></div></div></section><section class="summary-payment"><h3>支付方式</h3><div class="summary-payment-options">${paymentMethods.map(method => `<div class="summary-payment-option ${state.cartPayment === method.id ? 'is-selected' : ''}" role="radio" tabindex="0" aria-checked="${state.cartPayment === method.id}" data-cart-payment="${method.id}"><span class="payment-label"><i data-lucide="${method.icon}"></i><span>${method.label}</span>${method.suffix ? `<span class="payment-balance">${method.suffix}</span>` : ''}</span>${method.id === 'coin' ? '<span class="payment-recharge"><button type="button" data-recharge>充值</button></span>' : ''}</div>`).join('')}</div></section><section class="summary-total-card"><div class="summary-total-top"><span>实际应付金额</span><strong class="mono">${money(total)}</strong></div><button id="checkout" class="summary-primary-submit" type="button" ${selected.length === 0 || blocked.length ? 'disabled' : ''}>提交支付</button><label class="checkbox-line summary-agreement"><input id="cartNotice" type="checkbox" ${state.cartNotice ? 'checked' : ''}><span>请认真阅读并同意云登浏览器<a href="代理购买须知.html" target="_blank" rel="noopener noreferrer">《代理购买须知》</a></span></label></section>`;
+    }
+    function renderCart() {
+      const selected = selectedCartItems();
+      const validSelected = selected.filter(selectable);
+      const blocked = selected.filter(item => !selectable(item));
+      const total = validSelected.reduce((sum,item) => sum + cartItemAmount(item), 0);
+      const available = state.cart.filter(selectable);
+      $('#cartCountText').innerHTML = `<span>已选择 </span><span class="mono text-primary">${selected.length}</span><span>（共${state.cart.length}条）</span>`;
+      $('#checkAll').checked = available.length > 0 && available.every(item => item.checked);
+      $('#checkAll').indeterminate = available.some(item => item.checked) && !available.every(item => item.checked);
+      $('#checkAll').disabled = available.length === 0;
+      $('#clearSelected').disabled = selected.length === 0;
+      $('#clearCart').disabled = !state.cart.some(item => !selectable(item));
+      $('#cartEmpty').classList.toggle('hidden', state.cart.length > 0);
+      $('#cartGroupWrap').classList.toggle('hidden', state.cart.length === 0);
+      $('#cartGroupWrap').innerHTML = cartGroups().map(group => {
+        const groupItems = group.items.filter(selectable);
+        const groupSelected = groupItems.filter(item => item.checked);
+        const collapsed = cartGroupCollapsed(group.type);
+        return `<article class="cart-group ${collapsed ? 'collapsed' : ''}" data-cart-group="${group.type}"><header class="cart-group-header" data-group-toggle="${group.type}" role="button" tabindex="0" aria-expanded="${String(!collapsed)}"><div class="cart-group-header-main"><span class="cart-group-summary"><input type="checkbox" data-group-check="${group.type}" ${groupItems.length && groupItems.every(item => item.checked) ? 'checked' : ''} ${groupItems.length === 0 ? 'disabled' : ''} aria-label="选择${group.type}商品"><span class="cart-group-title">${group.type === '代理' ? '全球家庭住宅-静态' : '云平台套餐'}</span></span><span class="cart-group-count mono">已选择 ${groupSelected.length}（共${group.items.length}条）</span></div><button type="button" class="cart-group-toggle" data-group-toggle="${group.type}" aria-label="${collapsed ? '展开' : '收起'} ${group.type}"><i data-lucide="${collapsed ? 'chevron-down' : 'chevron-up'}"></i></button></header><div class="cart-group-body">${group.items.map(item => `<div class="cart-row" data-cart-row="${item.id}"><div class="cart-row-main"><label class="checkbox-line"><input type="checkbox" data-cart-check="${item.id}" ${item.checked ? 'checked' : ''} ${selectable(item) ? '' : 'disabled'} aria-label="选择商品"><span class="cart-row-title"><strong>${item.type === '套餐' ? item.region : `${item.region}（${item.name}）`}</strong>${item.segment ? `<span class="cart-row-sub">${item.segment}</span>` : ''}${item.type === '代理' ? `<span class="cart-traffic-copy"><span class="mono">${item.packageTraffic || '10G/月'}</span><span>${item.overageRate || '限时免费'}</span></span>` : ''}</span></label></div>${renderCartDetails(item)}<div class="cart-row-actions"><button class="delete-icon-button" type="button" data-delete-cart="${item.id}" aria-label="删除商品"><i data-lucide="trash-2"></i></button></div></div>`).join('')}</div></article>`;
+      }).join('');
+      renderSummary(selected, total, blocked);
+      lucide.createIcons();
+    }
+    function openOrderDialog() {
+      const selected = selectedCartItems().filter(selectable);
+      if (selected.length === 0) return;
+      $('#orderDialogBody').innerHTML = `<p>请核对购物车商品和支付金额。</p><div class="detail-row"><strong>商品数量</strong><span>${selected.length} 件</span></div><div class="detail-row"><strong>应付金额</strong><strong class="mono text-primary">${money(selected.reduce((sum,item) => sum + cartItemAmount(item), 0))}</strong></div><div class="info-callout">原型只演示支付前确认，不会创建真实订单或发起扣款。</div>`;
+      $('#orderDialog').classList.remove('hidden');
+    }
+    $('#cartPanel').addEventListener('click', event => {
+      const qty = event.target.closest('[data-cart-qty]'), remove = event.target.closest('[data-delete-cart]'), payment = event.target.closest('[data-cart-payment]'), header = event.target.closest('.cart-group-header'), toggle = event.target.closest('[data-group-toggle]'), clearSelected = event.target.closest('#clearSelected');
+      if (qty) { const item = state.cart.find(row => row.id === Number(qty.dataset.cartQty)); if (item) item.qty = clamp(item.qty + Number(qty.dataset.delta), 1, 50); renderCart(); return; }
+      if (clearSelected) { state.cart = state.cart.filter(item => !item.checked); renderCart(); return; }
+      if (remove) { state.cart = state.cart.filter(item => item.id !== Number(remove.dataset.deleteCart)); renderCart(); return; }
+      if (payment) { state.cartPayment = payment.dataset.cartPayment; renderCart(); return; }
+      if (event.target.closest('[data-recharge]')) return;
+      if (toggle && header && !event.target.closest('input, select, button:not([data-group-toggle])')) { const group = header.closest('.cart-group'); const collapsed = !group.classList.contains('collapsed'); group.classList.toggle('collapsed', collapsed); setCartGroupCollapsed(header.dataset.groupToggle, collapsed); header.setAttribute('aria-expanded', String(!collapsed)); lucide.createIcons(); return; }
+      if (event.target.closest('#checkout')) openOrderDialog();
+    });
+    $('#cartPanel').addEventListener('pointerover', event => {
+      const info = event.target.closest('.cart-price-info');
+      if (info && !info.contains(event.relatedTarget)) showPriceTip(info);
+    });
+    $('#cartPanel').addEventListener('pointerout', event => {
+      const info = event.target.closest('.cart-price-info');
+      if (info && !info.contains(event.relatedTarget)) hidePriceTip(info);
+    });
+    $('#cartPanel').addEventListener('focusin', event => {
+      const info = event.target.closest('.cart-price-info');
+      if (info) showPriceTip(info);
+    });
+    $('#cartPanel').addEventListener('focusout', event => {
+      const info = event.target.closest('.cart-price-info');
+      if (info && !info.contains(event.relatedTarget)) hidePriceTip(info);
+    });
+    $('#cartPanel').addEventListener('keydown', event => {
+      const header = event.target.closest('.cart-group-header');
+      if (header && ['Enter',' '].includes(event.key) && !event.target.closest('input, button')) { event.preventDefault(); header.click(); }
+      const payment = event.target.closest('[data-cart-payment]');
+      if (payment && ['Enter',' '].includes(event.key)) { event.preventDefault(); state.cartPayment = payment.dataset.cartPayment; renderCart(); }
+    });
+    $('#storeTabs').addEventListener('click', event => {
+      const button = event.target.closest('[data-tab]');
+      if (!button || button.dataset.tab === 'cart') return;
+      navigateToStoreTab(button.dataset.tab);
+    });
+    $('#storeTabs').addEventListener('keydown', event => {
+      if (!['ArrowLeft', 'ArrowRight'].includes(event.key)) return;
+      event.preventDefault();
+      const tabs = $$('[data-tab]');
+      const index = tabs.indexOf(event.target.closest('[data-tab]'));
+      const next = (index + (event.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length;
+      if (tabs[next].dataset.tab !== 'cart') navigateToStoreTab(tabs[next].dataset.tab);
+    });
+    $('#cartPanel').addEventListener('change', event => {
+      const check = event.target.closest('[data-cart-check]'), groupCheck = event.target.closest('[data-group-check]'), duration = event.target.closest('[data-cart-duration]'), coupon = event.target.closest('[data-cart-coupon]');
+      if (check) { const item = state.cart.find(row => row.id === Number(check.dataset.cartCheck)); if (item) item.checked = check.checked; renderCart(); }
+      else if (groupCheck) { state.cart.filter(item => item.type === groupCheck.dataset.groupCheck && selectable(item)).forEach(item => { item.checked = groupCheck.checked; }); renderCart(); }
+      else if (duration) { const item = state.cart.find(row => row.id === Number(duration.dataset.cartDuration)); if (item) item.duration = Number(duration.value); renderCart(); }
+      else if (coupon) { const item = state.cart.find(row => row.id === Number(coupon.dataset.cartCoupon)); if (item) { item.couponLabel = coupon.value; item.couponDiscount = coupon.value.includes('50') ? 50 : coupon.value.includes('20') ? 20 : 0; item.discount = item.baseDiscount + item.couponDiscount; } renderCart(); }
+      if (event.target.id === 'cartNotice') state.cartNotice = event.target.checked;
+    });
+    $('#checkAll').addEventListener('change', event => { state.cart.forEach(item => { item.checked = event.target.checked && selectable(item); }); renderCart(); });
+    $('#clearCart').addEventListener('click', () => { state.cart = state.cart.filter(selectable); renderCart(); });
+    $('#closeDialog').addEventListener('click', () => $('#orderDialog').classList.add('hidden'));
+    $('#cancelDialog').addEventListener('click', () => $('#orderDialog').classList.add('hidden'));
+    $('#confirmDemo').addEventListener('click', () => $('#orderDialog').classList.add('hidden'));
+    renderCart();
+  </script>
+</body>
+</html>

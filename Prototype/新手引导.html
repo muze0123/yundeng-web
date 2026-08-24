@@ -101,8 +101,8 @@
     .guide-button-primary{min-width:126px;border:1px solid #0066FF;color:#fff;background:#0066FF}
     .guide-button-primary:hover{border-color:#0052CC;background:#0052CC}
     .guide-button-primary:active{border-color:#0047B3;background:#0047B3}
-    .anno-badge{position:fixed;width:20px;height:20px;border:0;border-radius:50%;background:#0066FF;color:#fff;font:700 11px/20px 'JetBrains Mono',monospace;text-align:center;box-shadow:0 2px 6px rgba(0,0,0,.15);pointer-events:auto;z-index:9998}
-    .anno-badge:hover{transform:scale(1.16)}
+    
+    
     @keyframes guide-progress{from{transform:scaleX(0)}to{transform:scaleX(1)}}
     @keyframes guide-spin{to{transform:rotate(360deg)}}
     @media(max-width:1279px){
@@ -179,9 +179,9 @@
   <main id="guidePanel" class="guide-shell" aria-labelledby="guideTitle">
     <aside class="guide-rail" aria-label="新手引导步骤">
       <div class="guide-rail-title">新手引导</div>
-      <div id="mainTabs" class="guide-main-tabs" role="tablist" aria-orientation="vertical" data-anno="1"></div>
+      <div id="mainTabs" class="guide-main-tabs" role="tablist" aria-orientation="vertical"></div>
       <div class="guide-rail-footer">
-        <a id="fullGuideLink" class="guide-link" data-anno="4" href="https://www.yunlogin.com/help/1639" target="_blank" rel="noopener noreferrer">
+        <a id="fullGuideLink" class="guide-link" href="https://www.yunlogin.com/help/1639" target="_blank" rel="noopener noreferrer">
           <i data-lucide="book-open-text" aria-hidden="true"></i><span>查看完整指南</span><i data-lucide="arrow-up-right" aria-hidden="true"></i>
         </a>
       </div>
@@ -193,14 +193,14 @@
           <h1 id="guideTitle" tabindex="-1"></h1>
           <p id="guideDescription"></p>
         </div>
-        <button id="closeGuide" type="button" class="icon-button" data-anno="7" aria-label="关闭新手引导" title="关闭新手引导"><i data-lucide="x" aria-hidden="true"></i></button>
+        <button id="closeGuide" type="button" class="icon-button" aria-label="关闭新手引导" title="关闭新手引导"><i data-lucide="x" aria-hidden="true"></i></button>
       </header>
 
       <div id="carouselRegion" class="guide-carousel" aria-label="操作步骤与产品截图">
-        <div id="operationTabs" class="operation-track" role="tablist" aria-label="操作步骤" data-anno="2"></div>
+        <div id="operationTabs" class="operation-track" role="tablist" aria-label="操作步骤"></div>
       </div>
 
-      <figure id="shotFigure" class="guide-shot" data-anno="3">
+      <figure id="shotFigure" class="guide-shot">
         <div id="shotStage" class="shot-stage">
           <div id="shotLoading" class="shot-loading" role="status"><i data-lucide="loader-circle" aria-hidden="true"></i><span>正在加载产品画面</span></div>
           <img id="shotFocus" class="shot-image shot-image-focus" alt="">
@@ -213,9 +213,9 @@
       <div class="guide-tip"><i data-lucide="circle-alert" aria-hidden="true"></i><span id="guideTip"></span></div>
 
       <footer class="guide-footer">
-        <button id="previousButton" type="button" class="guide-button guide-button-secondary" data-anno="5"><span>上一步</span></button>
-        <button id="nextButton" type="button" class="guide-button guide-button-secondary" data-anno="5"><span>下一步</span></button>
-        <button id="ctaButton" type="button" class="guide-button guide-button-primary" data-anno="6"><span></span></button>
+        <button id="previousButton" type="button" class="guide-button guide-button-secondary"><span>上一步</span></button>
+        <button id="nextButton" type="button" class="guide-button guide-button-secondary"><span>下一步</span></button>
+        <button id="ctaButton" type="button" class="guide-button guide-button-primary"><span></span></button>
       </footer>
     </section>
   </main>
@@ -240,7 +240,7 @@
         ]
       },
       {
-        title:'购买代理',subtitle:'获取匹配业务的网络出口',description:'代理为环境提供网络出口。请根据业务地区、线路类型、数量和使用周期选择合适的代理资源。',tip:'支付前请核对地区、线路、数量和有效期；结果以订单状态为准。',cta:'购买代理',route:{page:'store',file:'商城.html'},operations:[
+        title:'购买代理',subtitle:'获取匹配业务的网络出口',description:'代理为环境提供网络出口。请根据业务地区、线路类型、数量和使用周期选择合适的代理资源。',tip:'支付前请核对地区、线路、数量和有效期；结果以订单状态为准。',cta:'购买代理',route:{page:'store',file:'商城-代理.html'},operations:[
           {title:'进入代理商城',description:'进入“商城”，选择“代理购买”分类',asset:'proxy_purchase_enter.png',alt:'云登商城代理购买页面与代理分类选中状态',focus:[0.5,0.5,25,22],position:'center top'},
           {title:'选择代理方案',description:'选择代理类型、地区、资源、数量和使用时长',asset:'proxy_purchase_config.png',alt:'代理类型、地区、资源和购买时长配置区域',focus:[2,5,58,78],position:'center center'},
           {title:'核对订单并支付',description:'阅读购买须知，选择支付方式后提交订单',asset:'proxy_purchase_pay.png',alt:'代理订单信息、支付方式、购买须知与立即购买按钮',focus:[78,2,21,64],position:'center center'}
@@ -478,7 +478,7 @@
     function closeGuide(method='button'){
       resetGuide(false);
       if(window.parent!==window){window.parent.postMessage({type:'yundeng:onboarding-close',method},'*');return}
-      location.href='系统框架.html?page=environment';
+      location.href='../index.html?page=environment';
     }
 
     function navigateToCurrent(){
@@ -486,7 +486,7 @@
       clearTimer();
       $('ctaButton').disabled=true;
       if(window.parent!==window){window.parent.postMessage({type:'yundeng:onboarding-navigate',...step.route},'*');return}
-      location.href=`系统框架.html?page=${encodeURIComponent(step.route.page)}`;
+      location.href=`../index.html?page=${encodeURIComponent(step.route.page)}`;
     }
 
     function showToast(message){

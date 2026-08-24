@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>云登 - 代理购买须知</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = { theme: { extend: { colors: {
+      primary: { DEFAULT: '#0066FF', hover: '#0052CC', active: '#0047B3', bg: '#E6F0FF' },
+      ink: { title: '#1A1D24', body: '#3A3F4A', sub: '#6E7685', muted: '#9DA2AC' },
+      line: { DEFAULT: '#DFE1E5', light: '#E8EAED', lighter: '#F0F1F3' },
+      page: '#F7F8FA', card: '#FFFFFF', hover: '#F3F4F6', info: { DEFAULT: '#0091D5', bg: '#E4F4FB' }
+    }, borderRadius: { DEFAULT: '4px', lg: '8px' }, fontFamily: { mono: ['JetBrains Mono', 'monospace'] } } } };
+  </script>
+  <style>
+    :root { --page:#F7F8FA; --card:#FFFFFF; --ink-title:#1A1D24; --ink-body:#3A3F4A; --ink-sub:#6E7685; --ink-muted:#9DA2AC; --line-light:#E8EAED; --primary:#0066FF; --primary-bg:#E6F0FF; }
+    * { box-sizing: border-box; }
+    html, body { min-height: 100%; margin: 0; letter-spacing: 0; }
+    body { color: var(--ink-body); background: var(--page); font: 13px/1.6 -apple-system,BlinkMacSystemFont,'PingFang SC','Hiragino Sans GB','Microsoft YaHei','Helvetica Neue',Helvetica,Arial,sans-serif; }
+    .notice-page { min-height: 100%; padding: 16px; background: var(--page); }
+    .notice-card { max-width: 960px; margin: 0 auto; padding: 24px; border-radius: 8px; background: var(--card); }
+    .notice-title { margin: 0; color: var(--ink-title); font-size: 20px; font-weight: 600; }
+    .notice-meta { margin: 8px 0 0; color: var(--ink-muted); }
+    .notice-section { margin-top: 24px; }
+    .notice-section h2 { margin: 0 0 8px; color: var(--ink-title); font-size: 16px; font-weight: 600; }
+    .notice-section ol { margin: 0; padding-left: 22px; }
+    .notice-section li + li { margin-top: 8px; }
+    .notice-callout { margin-top: 20px; padding: 12px 14px; border-radius: 4px; display: flex; align-items: flex-start; gap: 8px; color: var(--ink-body); background: var(--primary-bg); }
+    .notice-callout svg { width: 16px; height: 16px; margin-top: 3px; flex: none; color: var(--primary); }
+    @media (max-width: 767px) { .notice-page { padding: 12px; } .notice-card { padding: 20px 16px; } }
+  </style>
+  <link rel="stylesheet" href="公共导航.css?v=20260824a">
+  <script src="公共导航.js?v=20260824a"></script>
+</head>
+<body>
+  <main class="notice-page" id="mainContent">
+    <article class="notice-card" aria-labelledby="noticeTitle">
+      <h1 id="noticeTitle" class="notice-title">代理购买须知</h1>
+      <p class="notice-meta">请在购买前阅读并确认以下内容。</p>
+      <section class="notice-section">
+        <h2>使用边界</h2>
+        <ol>
+          <li>云登不提供任何形式的翻墙服务，代理资源由第三方供应商提供。</li>
+          <li>用户应遵守适用法律法规，不得将代理资源用于违法犯罪、侵害他人权益或未经授权的访问。</li>
+          <li>海外代理仅允许在合规网络环境或完成实名认证后使用。</li>
+        </ol>
+      </section>
+      <section class="notice-section">
+        <h2>购买与售后</h2>
+        <ol>
+          <li>下单前请核对代理地区、资源类型、数量、购买时长、优惠和支付方式。</li>
+          <li>代理属于数字商品，正式下单后不支持退换；库存、价格和可用性以支付前最新试算结果为准。</li>
+          <li>如遇资源、价格或支付状态异常，请先停止提交并联系管理员或客服处理。</li>
+        </ol>
+      </section>
+      <div class="notice-callout" role="note"><i data-lucide="info" aria-hidden="true"></i><span>本页面仅展示购买前须知，不会创建订单或发起支付。</span></div>
+    </article>
+  </main>
+  <script>lucide.createIcons();</script>
+</body>
+</html>

@@ -1,15 +1,19 @@
 (function () {
   'use strict';
 
-  const ASSET_VERSION = '20260821a';
+  const ASSET_VERSION = '20260824a';
   const DEFAULT_ROUTE_KEY = 'home';
   const ONBOARDING_ICON_HTML = '<i data-lucide="compass" class="yundeng-onboarding-icon" aria-hidden="true"></i>';
+  const ACCOUNT_TRAFFIC_USAGE = Object.freeze([
+    { key: 'plan', label: '套餐流量', used: 6.4, remaining: 3.6, total: 10, note: '每月 1 日重置', noteIcon: 'refresh-cw' },
+    { key: 'package', label: '流量包', used: 18.5, remaining: 31.5, total: 50, note: '2026-11-22 到期', noteIcon: 'calendar-clock' }
+  ]);
 
   const NAV = [
     { key: 'home', label: '首页', icon: 'house', href: '首页.html' },
     { key: 'environment', label: '环境管理', icon: 'monitor-cog', href: '环境管理.html' },
     { key: 'proxy', label: '代理管理', icon: 'network', href: '代理管理.html' },
-    { key: 'store', label: '商城', icon: 'shopping-bag', href: '商城.html' },
+    { key: 'store', label: '商城', icon: 'shopping-bag', href: '商城-代理.html' },
     { key: 'billing', label: '费用管理', icon: 'wallet-cards', href: '费用管理.html' },
     { key: 'team', label: '团队', icon: 'users-round', group: true, children: [
       { key: 'team-management', label: '团队管理', icon: 'building-2', href: '团队管理.html' },
@@ -34,16 +38,53 @@
   const allItems = NAV.flatMap(item => item.children || [item]).concat(EXTRA);
   const basename = decodeURIComponent(location.pathname.split('/').pop() || 'index.html');
   const searchParams = new URLSearchParams(location.search);
-  const shellParamNames = new Set(['page', 'module', 'moduleHash', 'moduleSearch', 'embedded', 'guide']);
+  const shellParamNames = new Set(['page', 'module', 'moduleHash', 'moduleSearch', 'embedded', 'guide', 'indexHost']);
   const isSystemFrame = basename === '系统框架.html';
-  const isEmbedded = window.top !== window.self;
+  const isIndexHosted = isSystemFrame && searchParams.get('indexHost') === '1';
+  const isEmbedded = window.top !== window.self && !isIndexHosted;
   const pageAliases = { '系统框架.html':DEFAULT_ROUTE_KEY, '首页.html':DEFAULT_ROUTE_KEY, '编辑浏览器.html':'environment' };
+  const moduleAliases = {
+    '代理购买须知.html': 'store',
+    '商城-代理.html': 'store',
+    '商城-套餐.html': 'store',
+    '商城-购物车.html': 'store'
+  };
+  const requestedPageAliases = Object.freeze({
+    '首页':'home',
+    '环境管理':'environment',
+    '代理管理':'proxy',
+    '商城':'store',
+    '商城代理':'store',
+    '费用管理':'billing',
+    '费管理':'billing',
+    '团队管理':'team-management',
+    '成员管理':'members',
+    '账号管理':'account-management',
+    '分享转移':'transfer',
+    '日志管理':'logs',
+    '账号设置':'account-settings',
+    '插件管理':'plugins',
+    'API':'api',
+    'RPA':'rpa',
+    '回收站':'recycle',
+    '新建浏览器':'create',
+    '设置':'settings',
+    '帮助':'help'
+  });
+  const normalizeRequestedPage = value => requestedPageAliases[String(value || '').trim()] || value;
   const requestedPage = searchParams.get('page');
-  const requestedItem = isSystemFrame && requestedPage
-    ? allItems.find(item => item.key === requestedPage || item.label === requestedPage || item.href === requestedPage)
+  const normalizedRequestedPage = normalizeRequestedPage(requestedPage);
+  const requestedItem = isSystemFrame && normalizedRequestedPage
+    ? allItems.find(item => item.key === normalizedRequestedPage || item.label === normalizedRequestedPage || item.href === normalizedRequestedPage)
     : null;
   const routeItem = requestedItem || allItems.find(item => item.key === DEFAULT_ROUTE_KEY);
-  const allowedModuleFiles = new Set(allItems.map(item => item.href).concat('编辑浏览器.html'));
+  const allowedModuleFiles = new Set(allItems.map(item => item.href).concat(
+    '编辑浏览器.html',
+    '代理购买须知.html',
+    '商城-代理.html',
+    '商城-套餐.html',
+    '商城-购物车.html'
+  ));
   // 业务模块直开统一回到 SystemFrame；仅允许显式嵌入态在当前文档承载业务内容。
   const STANDALONE_FILES = new Set();
   const requestedModule = searchParams.get('module');
@@ -57,12 +98,10 @@
   const pageLabel = isSystemFrame
     ? (routedModule === '编辑浏览器.html' ? '编辑浏览器' : routeItem?.label || '首页')
     : ({ 'index.html':'原型导航', '系统框架.html':'系统框架', '编辑浏览器.html':'编辑浏览器' })[basename] || allItems.find(item => item.key === pageKey)?.label || document.title.replace(/^云登\s*[·-]?\s*|\s*[-·]\s*云登$/g, '');
-  const shellAnnotationsEnabled = isSystemFrame;
-  const shellAnno = id => shellAnnotationsEnabled ? `data-anno="${id}"` : '';
-  const refreshAnnotations = () => requestAnimationFrame(() => {
-    window.renderAnnoBadges?.();
-    window.renderAnno?.();
-  });
+  function reportIndexHostRoute() {
+    if (!isIndexHosted || window.parent === window) return;
+    window.parent.postMessage({ type: 'yundeng:index-route-state', page: pageKey, search: location.search }, '*');
+  }
   const shellStateKey = 'yundeng-sidebar-expanded-v3';
   const shellTransitionKey = 'yundeng-sidebar-transition-v1';
   const compactStateKey = 'yundeng-sidebar-compact-v1';
@@ -70,6 +109,7 @@
   function itemForModule(file) {
     if (['首页.html', '系统框架.html', 'index.html'].includes(file)) return allItems.find(item => item.key === DEFAULT_ROUTE_KEY);
     if (file === '编辑浏览器.html') return allItems.find(item => item.key === 'environment');
+    if (moduleAliases[file]) return allItems.find(item => item.key === moduleAliases[file]);
     return allItems.find(item => item.href === file) || null;
   }
 
@@ -121,7 +161,7 @@
     try {
       const url = new URL(href, location.href);
       const targetBasename = decodeURIComponent(url.pathname.split('/').pop() || '');
-      if (targetBasename !== '系统框架.html') return;
+      if (targetBasename !== '系统框架.html' && targetBasename !== 'index.html') return;
       const targetPageKey = url.searchParams.get('page');
       const targetGroup = groupForPageKey(targetPageKey);
       const currentGroup = groupForPageKey(pageKey);
@@ -156,6 +196,8 @@
     if (namespacedModuleParams.size) params.set('moduleSearch', namespacedModuleParams.toString());
     const hash = String(options.hash || '').replace(/^#/, '');
     if (hash) params.set('moduleHash', hash);
+    if (!isSystemFrame && !isEmbedded) return `../index.html?${params.toString()}`;
+    if (isIndexHosted) params.set('indexHost', '1');
     return `系统框架.html?${params.toString()}`;
   }
 
@@ -287,20 +329,20 @@
         <div class="yundeng-window-controls" aria-hidden="true"><span class="is-danger"></span><span class="is-warning"></span><span class="is-success"></span></div>
         <div class="yundeng-tab-cluster">
           <div id="yundeng-browser-tabs" class="yundeng-browser-tabs" role="tablist" aria-label="浏览器标签页"></div>
-          <button type="button" id="yundeng-new-tab" class="yundeng-browser-button yundeng-new-tab" ${shellAnno(3)} title="新增标签页" aria-label="新增标签页"><i data-lucide="plus"></i></button>
+          <button type="button" id="yundeng-new-tab" class="yundeng-browser-button yundeng-new-tab" title="新增标签页" aria-label="新增标签页"><i data-lucide="plus"></i></button>
         </div>
       </div>
       <div class="yundeng-browser-toolbar">
-        <div class="yundeng-history-actions" ${shellAnno(4)}>
+        <div class="yundeng-history-actions" >
           <button type="button" id="yundeng-browser-back" class="yundeng-browser-button" title="后退" aria-label="后退"><i data-lucide="arrow-left"></i></button>
           <button type="button" id="yundeng-browser-forward" class="yundeng-browser-button" title="前进" aria-label="前进"><i data-lucide="arrow-right"></i></button>
           <button type="button" id="yundeng-browser-reload" class="yundeng-browser-button" title="重新加载" aria-label="重新加载"><i data-lucide="rotate-cw"></i></button>
         </div>
-        <form id="yundeng-address-form" class="yundeng-address-form" ${shellAnno(5)} role="search"><i data-lucide="search" aria-hidden="true"></i><input id="yundeng-address-input" type="text" autocomplete="off" spellcheck="false" aria-label="搜索或输入地址"><button type="button" id="yundeng-bookmark-button" class="yundeng-bookmark-button" data-yundeng-tooltip="为此标签页添加书签" title="为此标签页添加书签" aria-label="为此标签页添加书签" aria-pressed="false"><i data-lucide="star"></i></button></form>
+        <form id="yundeng-address-form" class="yundeng-address-form" role="search"><i data-lucide="search" aria-hidden="true"></i><input id="yundeng-address-input" type="text" autocomplete="off" spellcheck="false" aria-label="搜索或输入地址"><button type="button" id="yundeng-bookmark-button" class="yundeng-bookmark-button" data-yundeng-tooltip="为此标签页添加书签" title="为此标签页添加书签" aria-label="为此标签页添加书签" aria-pressed="false"><i data-lucide="star"></i></button></form>
         <div class="yundeng-browser-actions">
-          <button type="button" id="yundeng-extensions-button" class="yundeng-browser-button" ${shellAnno(6)} title="扩展程序" aria-label="扩展程序" aria-haspopup="dialog" aria-controls="yundeng-extensions-panel" aria-expanded="false"><i data-lucide="puzzle"></i></button>
-          <button type="button" id="yundeng-download-button" class="yundeng-browser-button" ${shellAnno(7)} title="下载内容" aria-label="下载内容" aria-haspopup="dialog" aria-controls="yundeng-download-panel" aria-expanded="false"><i data-lucide="download"></i></button>
-          <button type="button" id="yundeng-more-button" class="yundeng-browser-button" ${shellAnno(8)} title="更多" aria-label="更多" aria-haspopup="menu" aria-controls="yundeng-more-panel" aria-expanded="false"><i data-lucide="ellipsis-vertical"></i></button>
+          <button type="button" id="yundeng-extensions-button" class="yundeng-browser-button" title="扩展程序" aria-label="扩展程序" aria-haspopup="dialog" aria-controls="yundeng-extensions-panel" aria-expanded="false"><i data-lucide="puzzle"></i></button>
+          <button type="button" id="yundeng-download-button" class="yundeng-browser-button" title="下载内容" aria-label="下载内容" aria-haspopup="dialog" aria-controls="yundeng-download-panel" aria-expanded="false"><i data-lucide="download"></i></button>
+          <button type="button" id="yundeng-more-button" class="yundeng-browser-button" title="更多" aria-label="更多" aria-haspopup="menu" aria-controls="yundeng-more-panel" aria-expanded="false"><i data-lucide="ellipsis-vertical"></i></button>
           <div id="yundeng-extensions-panel" class="yundeng-browser-panel yundeng-extensions-panel hidden" role="dialog" aria-label="扩展程序" aria-modal="false" tabindex="-1">
             <div class="yundeng-panel-header"><strong>扩展程序</strong><button type="button" class="yundeng-panel-close" data-browser-panel-close title="关闭扩展程序" aria-label="关闭扩展程序"><i data-lucide="x"></i></button></div>
             <div class="yundeng-panel-copy"><strong>完全访问权限</strong><p>这些扩展程序可以查看和更改此网站上的信息。</p></div>
@@ -375,10 +417,9 @@
         : tab.historyIndex >= tab.history.length - 1;
     };
     const renderTabs = () => {
-      tabsHost.innerHTML = tabs.map(tab => `<div class="yundeng-browser-tab" ${tab.id === activeTabId ? shellAnno(1) : ''} data-tab-id="${tab.id}" data-active="${tab.id === activeTabId}" role="tab" aria-selected="${tab.id === activeTabId}" tabindex="${tab.id === activeTabId ? '0' : '-1'}" title="${escapeHtml(tab.title)}"><span class="yundeng-browser-tab-mark">云</span><span class="yundeng-browser-tab-title">${escapeHtml(tab.title)}</span><button type="button" class="yundeng-close-tab" ${tab.id === activeTabId ? shellAnno(2) : ''} data-close-tab="${tab.id}" title="关闭标签页" aria-label="关闭${escapeHtml(tab.title)}"><i data-lucide="x"></i></button></div>`).join('');
+      tabsHost.innerHTML = tabs.map(tab => `<div class="yundeng-browser-tab" data-tab-id="${tab.id}" data-active="${tab.id === activeTabId}" role="tab" aria-selected="${tab.id === activeTabId}" tabindex="${tab.id === activeTabId ? '0' : '-1'}" title="${escapeHtml(tab.title)}"><span class="yundeng-browser-tab-mark">云</span><span class="yundeng-browser-tab-title">${escapeHtml(tab.title)}</span><button type="button" class="yundeng-close-tab" data-close-tab="${tab.id}" title="关闭标签页" aria-label="关闭${escapeHtml(tab.title)}"><i data-lucide="x"></i></button></div>`).join('');
       syncBrowserControls();
       window.lucide?.createIcons?.();
-      refreshAnnotations();
     };
     const selectTab = id => { if (!tabs.some(tab => tab.id === id)) return; activeTabId = id; renderTabs(); tabsHost.querySelector(`[data-tab-id="${id}"]`)?.scrollIntoView({ block:'nearest', inline:'nearest' }); };
     const addTab = () => { const tab = makeTab(); tabs.push(tab); activeTabId = tab.id; renderTabs(); addressInput.focus(); addressInput.select(); announce('已新增标签页'); };
@@ -449,17 +490,6 @@
     };
     let panelReturnFocus = moreButton;
     const extensionMoreMenu = browser.querySelector('#yundeng-extension-more-menu');
-    const annotationToggle = document.getElementById('annoToggle');
-    let annotationToggleWasHidden = Boolean(annotationToggle?.hidden);
-    const hideAnnotationToggle = () => {
-      if (!annotationToggle) return;
-      annotationToggleWasHidden = Boolean(annotationToggle.hidden);
-      annotationToggle.hidden = true;
-    };
-    const restoreAnnotationToggle = () => {
-      if (!annotationToggle || annotationToggleWasHidden) return;
-      annotationToggle.hidden = false;
-    };
     const closeExtensionMoreMenu = () => {
       if (!extensionMoreMenu) return;
       extensionMoreMenu.hidden = true;
@@ -474,14 +504,12 @@
       extensionsButton.setAttribute('aria-expanded', 'false');
       downloadButton.setAttribute('aria-expanded', 'false');
       moreButton.setAttribute('aria-expanded', 'false');
-      restoreAnnotationToggle();
     };
     const togglePanel = (panel, button) => {
       const shouldOpen = panel.classList.contains('hidden');
       closePanels();
       if (shouldOpen) {
         panelReturnFocus = button;
-        hideAnnotationToggle();
         panel.classList.remove('hidden');
         button.setAttribute('aria-expanded', 'true');
       }
@@ -583,7 +611,7 @@
 
   function createShellSidebar(sidebar) {
     sidebar.className = 'sidebar';
-    sidebar.innerHTML = `<div class="yundeng-create-wrap"><a class="yundeng-create" href="${shellRouteHref('create')}" ${shellAnno(10)} title="新建浏览器"><i data-lucide="plus" class="w-4"></i><span class="create-label">新建浏览器</span></a></div><nav id="yundeng-primary-nav" aria-label="业务模块"></nav><div class="yundeng-sidebar-bottom"><div class="yundeng-sidebar-divider"></div><a class="yundeng-bottom-link" data-active="${pageKey === 'settings'}" href="${shellRouteHref('settings')}" title="设置"><i data-lucide="settings-2" class="menu-icon"></i><span class="bottom-label">设置</span></a><a class="yundeng-bottom-link" data-active="${pageKey === 'help'}" href="${shellRouteHref('help')}" title="帮助"><i data-lucide="circle-help" class="menu-icon"></i><span class="bottom-label">帮助</span></a></div><button type="button" id="collapseBtn" class="yundeng-sidebar-toggle" ${shellAnno(11)} title="收起侧栏" aria-label="收起侧栏" aria-expanded="true"><i data-lucide="triangle" class="yundeng-solid-arrow"></i></button>`;
+    sidebar.innerHTML = `<div class="yundeng-create-wrap"><a class="yundeng-create" href="${shellRouteHref('create')}" title="新建浏览器"><i data-lucide="plus" class="w-4"></i><span class="create-label">新建浏览器</span></a></div><nav id="yundeng-primary-nav" aria-label="业务模块"></nav><div class="yundeng-sidebar-bottom"><div class="yundeng-sidebar-divider"></div><a class="yundeng-bottom-link" data-active="${pageKey === 'settings'}" href="${shellRouteHref('settings')}" title="设置"><i data-lucide="settings-2" class="menu-icon"></i><span class="bottom-label">设置</span></a><a class="yundeng-bottom-link" data-active="${pageKey === 'help'}" href="${shellRouteHref('help')}" title="帮助"><i data-lucide="circle-help" class="menu-icon"></i><span class="bottom-label">帮助</span></a></div><button type="button" id="collapseBtn" class="yundeng-sidebar-toggle" title="收起侧栏" aria-label="收起侧栏" aria-expanded="true"><i data-lucide="triangle" class="yundeng-solid-arrow"></i></button>`;
   }
 
   function normalizeExistingSidebar(sidebar) {
@@ -604,13 +632,13 @@
   function itemLink(item, child) {
     const active = pageKey === item.key;
     const icon = child ? '' : `<i data-lucide="${item.icon}" class="menu-icon"></i>`;
-    return `<a href="${shellRouteHref(item.key)}" class="yundeng-menu-link ${child ? 'yundeng-secondary-link' : ''}" ${shellAnno(12)} data-active="${active}" data-page-key="${item.key}" title="${item.label}">${icon}<span class="menu-label nav-label truncate">${item.label}</span></a>`;
+    return `<a href="${shellRouteHref(item.key)}" class="yundeng-menu-link ${child ? 'yundeng-secondary-link' : ''}" data-active="${active}" data-page-key="${item.key}" title="${item.label}">${icon}<span class="menu-label nav-label truncate">${item.label}</span></a>`;
   }
 
   function renderNav(nav) {
     syncExpandedGroupsForPage(pageKey, consumeExpandedGroupTransition(pageKey));
     const expanded = readExpandedGroups();
-    nav.innerHTML = NAV.map(item => item.group ? `<div class="yundeng-group"><button type="button" class="yundeng-group-toggle" ${shellAnno(13)} data-active="${item.children.some(child => child.key === pageKey)}" aria-expanded="${expanded[item.key] !== false}" data-group-key="${item.key}"><i data-lucide="${item.icon}" class="menu-icon"></i><span class="menu-label nav-label">${item.label}</span><i data-lucide="chevron-down" class="yundeng-group-chevron w-3.5 h-3.5 ml-auto"></i></button><div class="yundeng-subnav" data-expanded="${expanded[item.key] !== false}">${item.children.map(child => itemLink(child, true)).join('')}</div></div>` : itemLink(item, false)).join('');
+    nav.innerHTML = NAV.map(item => item.group ? `<div class="yundeng-group"><button type="button" class="yundeng-group-toggle" data-active="${item.children.some(child => child.key === pageKey)}" aria-expanded="${expanded[item.key] !== false}" data-group-key="${item.key}"><i data-lucide="${item.icon}" class="menu-icon"></i><span class="menu-label nav-label">${item.label}</span><i data-lucide="chevron-down" class="yundeng-group-chevron w-3.5 h-3.5 ml-auto"></i></button><div class="yundeng-subnav" data-expanded="${expanded[item.key] !== false}">${item.children.map(child => itemLink(child, true)).join('')}</div></div>` : itemLink(item, false)).join('');
     window.lucide?.createIcons?.();
   }
 
@@ -619,8 +647,19 @@
     topbar.dataset.yundengTopbar = 'true';
     const hadDirty = isSystemFrame || Boolean(document.getElementById('dirtyBadge'));
     topbar.className = '';
-    topbar.innerHTML = `<div class="yundeng-topbar-start"><button type="button" id="mobileMenu" class="yundeng-mobile-menu yundeng-icon-button" aria-label="展开导航" aria-controls="sidebar" aria-expanded="false"><i data-lucide="menu"></i></button><a class="yundeng-platform-brand" ${shellAnno(9)} href="${shellRouteHref(DEFAULT_ROUTE_KEY)}" aria-label="云登首页"><span class="yundeng-platform-mark">云</span><span class="yundeng-platform-name">云登</span></a>${hadDirty ? '<span id="dirtyBadge" class="yundeng-dirty hidden">有未保存修改</span>' : ''}</div><div class="yundeng-topbar-actions"><button type="button" id="helpBtn" class="yundeng-icon-button" ${shellAnno(14)} aria-label="新手引导" data-yundeng-tooltip="新手引导" aria-haspopup="dialog" aria-controls="yundengOnboardingPanel" aria-expanded="false">${ONBOARDING_ICON_HTML}</button><button type="button" id="noticeBtn" class="yundeng-icon-button" ${shellAnno(15)} aria-label="通知" data-yundeng-tooltip="通知" aria-haspopup="dialog" aria-expanded="false"><i data-lucide="bell"></i></button><button type="button" id="languageBtn" class="yundeng-icon-button" ${shellAnno(16)} aria-label="界面语言" data-yundeng-tooltip="界面语言" aria-haspopup="dialog" aria-expanded="false"><i data-lucide="languages"></i></button><span class="yundeng-divider"></span><button type="button" id="accountBtn" class="yundeng-account" ${shellAnno(17)} aria-label="账号菜单" aria-haspopup="dialog" aria-expanded="false"><span class="yundeng-avatar">张</span><span class="yundeng-account-name">张小登</span><i data-lucide="chevron-down" class="yundeng-account-chevron"></i></button></div>`;
+    topbar.innerHTML = `<div class="yundeng-topbar-start"><button type="button" id="mobileMenu" class="yundeng-mobile-menu yundeng-icon-button" aria-label="展开导航" aria-controls="sidebar" aria-expanded="false"><i data-lucide="menu"></i></button><a class="yundeng-platform-brand" href="${shellRouteHref(DEFAULT_ROUTE_KEY)}" aria-label="云登首页"><span class="yundeng-platform-mark">云</span><span class="yundeng-platform-name">云登</span></a>${hadDirty ? '<span id="dirtyBadge" class="yundeng-dirty hidden">有未保存修改</span>' : ''}</div><div class="yundeng-topbar-actions"><button type="button" id="helpBtn" class="yundeng-icon-button" aria-label="新手引导" data-yundeng-tooltip="新手引导" aria-haspopup="dialog" aria-controls="yundengOnboardingPanel" aria-expanded="false">${ONBOARDING_ICON_HTML}</button><button type="button" id="noticeBtn" class="yundeng-icon-button" aria-label="通知" data-yundeng-tooltip="通知" aria-haspopup="dialog" aria-expanded="false"><i data-lucide="bell"></i></button><button type="button" id="languageBtn" class="yundeng-icon-button" aria-label="界面语言" data-yundeng-tooltip="界面语言" aria-haspopup="dialog" aria-expanded="false"><i data-lucide="languages"></i></button><span class="yundeng-divider"></span><button type="button" id="accountBtn" class="yundeng-account" aria-label="账号菜单" aria-haspopup="dialog" aria-expanded="false"><span class="yundeng-avatar"></span><span class="yundeng-account-name">17723500832的团队</span><i data-lucide="chevron-down" class="yundeng-account-chevron"></i></button></div>`;
     window.lucide?.createIcons?.();
+  }
+
+  function emitToast(message, kind = 'info') {
+    const host = document.getElementById('toastContainer');
+    if (!host) return;
+    const node = document.createElement('div');
+    const palette = { info: 'bg-info', success: 'bg-success', warning: 'bg-warning', danger: 'bg-danger' };
+    node.className = `toast ${palette[kind] || palette.info} text-white px-4 py-2 rounded shadow-[0_2px_8px_rgba(0,0,0,.12)] text-[13px]`;
+    node.textContent = message;
+    host.appendChild(node);
+    setTimeout(() => node.remove(), 2800);
   }
 
   function setupPopovers(topbar) {
@@ -639,7 +678,127 @@
     };
     const notices = make('notices', '通知', '<div class="px-4 py-3 border-b border-line flex items-center justify-between gap-4"><strong>通知</strong><button type="button" data-yundeng-read class="text-primary">全部已读</button></div><div class="px-4 py-4 text-[12px] text-ink-sub">暂无新的未读通知</div>');
     const language = make('languages', '界面语言', '<div class="px-3 py-3"><div class="text-[12px] text-ink-sub mb-2">当前界面语言</div><button type="button" data-lang="简体中文" aria-current="true" class="w-full text-left px-3 py-2 rounded bg-primary-bg text-primary">简体中文</button></div>');
-    const account = make('account', '账号菜单', `<div class="px-3 py-2 text-[12px] text-ink-sub border-b border-line-lighter">团队管理员</div><a href="${shellRouteHref('account-settings')}" class="block px-3 py-2 rounded hover:bg-hover">账号设置</a><a href="${shellRouteHref('settings')}" class="block px-3 py-2 rounded hover:bg-hover">偏好设置</a>`);
+    const trafficUsageHtml = ACCOUNT_TRAFFIC_USAGE.map(item => {
+      const usedPercent = Math.min(100, Math.max(0, item.used / item.total * 100));
+      const formatAmount = value => `${Number.isInteger(value) ? value : value.toFixed(1)} GB`;
+      return `
+        <article class="yundeng-account-traffic-item" data-traffic-kind="${item.key}">
+          <div class="yundeng-account-traffic-item-head">
+            <strong>${item.label}</strong>
+            <span><b class="mono">${formatAmount(item.remaining)}</b> 剩余</span>
+          </div>
+          <div class="yundeng-account-traffic-track" role="progressbar" aria-label="${item.label}已使用 ${formatAmount(item.used)}，总量 ${formatAmount(item.total)}" aria-valuemin="0" aria-valuemax="${item.total}" aria-valuenow="${item.used}">
+            <span class="yundeng-account-traffic-fill" style="width:${usedPercent}%"></span>
+          </div>
+          <div class="yundeng-account-traffic-metrics">
+            <span><em>已使用</em><b class="mono">${formatAmount(item.used)}</b></span>
+            <span><em>剩余</em><b class="mono">${formatAmount(item.remaining)}</b></span>
+            <span><em>总流量</em><b class="mono">${formatAmount(item.total)}</b></span>
+          </div>
+          <div class="yundeng-account-traffic-note"><i data-lucide="${item.noteIcon}" aria-hidden="true"></i><span>${item.note}</span></div>
+        </article>`;
+    }).join('');
+    const account = make('account', '账号菜单', `
+      <div class="yundeng-account-panel">
+        <a class="yundeng-account-head" href="${shellRouteHref('account-settings')}" data-account-nav="profile" aria-label="进入账号设置">
+          <span class="yundeng-account-head-avatar" aria-hidden="true"></span>
+          <span class="yundeng-account-head-copy">
+            <span class="yundeng-account-title-row">
+              <span class="yundeng-account-title">17723500832的团队</span>
+            </span>
+            <span class="yundeng-account-subtitle-row">
+              <span>未认证</span>
+              <span class="yundeng-account-dot" aria-hidden="true"></span>
+              <span>团队创始人</span>
+            </span>
+          </span>
+          <i data-lucide="chevron-right" class="yundeng-account-head-chevron" aria-hidden="true"></i>
+        </a>
+
+        <section class="yundeng-account-section" aria-label="账户资产">
+          <div class="yundeng-account-balance">
+            <div class="yundeng-account-balance-item">
+              <div class="yundeng-account-balance-top">
+                <span class="yundeng-account-balance-label">云币数</span>
+                <button type="button" class="yundeng-account-balance-action" data-account-action="recharge">充值</button>
+              </div>
+              <div class="yundeng-account-balance-value mono">0.00</div>
+            </div>
+            <div class="yundeng-account-balance-item">
+              <div class="yundeng-account-balance-top">
+                <span class="yundeng-account-balance-label">代理数</span>
+                <button type="button" class="yundeng-account-balance-action" data-account-action="purchase">购买</button>
+              </div>
+              <div class="yundeng-account-balance-value mono">2</div>
+            </div>
+          </div>
+        </section>
+
+        <button type="button" class="yundeng-account-vip" data-account-action="vip">
+          <span class="yundeng-account-vip-left">
+            <span class="yundeng-account-vip-mark" aria-hidden="true"><i data-lucide="gem"></i></span>
+            <span class="yundeng-account-vip-copy">VIP 开通VIP套餐享更多环境席位</span>
+          </span>
+          <span class="yundeng-account-vip-badge">立即购买</span>
+        </button>
+
+        <section class="yundeng-account-section" aria-label="套餐概览">
+          <div class="yundeng-account-package">
+            <div class="yundeng-account-package-item">
+              <div class="yundeng-account-package-count mono">9/10</div>
+              <div class="yundeng-account-package-label">环境数</div>
+            </div>
+            <div class="yundeng-account-package-item">
+              <div class="yundeng-account-package-count mono">1/1</div>
+              <div class="yundeng-account-package-label">用户数</div>
+            </div>
+            <div class="yundeng-account-package-expired">试用套餐已过期</div>
+          </div>
+        </section>
+
+        <section class="yundeng-account-traffic" aria-labelledby="yundengAccountTrafficTitle">
+          <div class="yundeng-account-traffic-heading">
+            <h3 id="yundengAccountTrafficTitle">流量使用</h3>
+            <button type="button" class="yundeng-account-traffic-action" data-account-action="traffic-package"><i data-lucide="shopping-bag" aria-hidden="true"></i><span>购买流量包</span></button>
+          </div>
+          <div class="yundeng-account-traffic-list">${trafficUsageHtml}</div>
+        </section>
+
+        <section class="yundeng-account-menu" aria-label="账号功能">
+          <a href="${shellRouteHref('account-settings')}" class="yundeng-account-menu-item" data-account-action="settings">
+            <i data-lucide="user-round-cog" class="yundeng-account-menu-icon" aria-hidden="true"></i>
+            <span class="menu-label">账号设置</span>
+            <i data-lucide="chevron-right" class="yundeng-account-list-chevron" aria-hidden="true"></i>
+          </a>
+          <a href="${shellRouteHref('members')}" class="yundeng-account-menu-item" data-account-action="invite">
+            <i data-lucide="users-round" class="yundeng-account-menu-icon" aria-hidden="true"></i>
+            <span class="menu-label">邀请成员</span>
+            <i data-lucide="chevron-right" class="yundeng-account-list-chevron" aria-hidden="true"></i>
+          </a>
+          <a href="${shellRouteHref('plugins')}" class="yundeng-account-menu-item" data-account-action="plugins">
+            <i data-lucide="blocks" class="yundeng-account-menu-icon" aria-hidden="true"></i>
+            <span class="menu-label">我的插件</span>
+            <i data-lucide="chevron-right" class="yundeng-account-list-chevron" aria-hidden="true"></i>
+          </a>
+          <a href="${shellRouteHref('help')}" class="yundeng-account-menu-item" data-account-action="help">
+            <i data-lucide="circle-help" class="yundeng-account-menu-icon" aria-hidden="true"></i>
+            <span class="menu-label">帮助中心</span>
+            <i data-lucide="chevron-right" class="yundeng-account-list-chevron" aria-hidden="true"></i>
+          </a>
+          <button type="button" class="yundeng-account-menu-item" data-account-action="reward">
+            <i data-lucide="gift" class="yundeng-account-menu-icon" aria-hidden="true"></i>
+            <span class="menu-label">推广奖励</span>
+            <i data-lucide="chevron-right" class="yundeng-account-list-chevron" aria-hidden="true"></i>
+          </button>
+          <div class="yundeng-account-menu-logout">
+            <button type="button" class="yundeng-account-menu-item yundeng-account-logout" data-account-action="logout">
+              <i data-lucide="log-out" class="yundeng-account-menu-icon" aria-hidden="true"></i>
+              <span class="menu-label">退出登录</span>
+            </button>
+          </div>
+        </section>
+      </div>
+    `);
     const pairs = [['noticeBtn', notices], ['languageBtn', language], ['accountBtn', account]];
     let activeButton = null;
     let closeTimer = null;
@@ -687,6 +846,39 @@
       node.addEventListener('mouseenter', cancelScheduledClose);
       node.addEventListener('mouseleave', scheduleClose);
     });
+    account.addEventListener('click', event => {
+      const action = event.target.closest('[data-account-action]')?.dataset.accountAction;
+      if (!action) return;
+      if (action === 'profile' || action === 'settings') {
+        close(false);
+        return;
+      }
+      event.preventDefault();
+      event.stopPropagation();
+      close(false);
+      if (action === 'recharge') {
+        window.yundengNavigateShell ? window.yundengNavigateShell(shellRouteHref('billing')) : location.assign(shellRouteHref('billing'));
+      } else if (action === 'purchase') {
+        const href = shellRouteHref('store', { moduleSearch: 'tab=proxy' });
+        window.yundengNavigateShell ? window.yundengNavigateShell(href) : location.assign(href);
+      } else if (action === 'traffic-package') {
+        const href = shellRouteHref('store', { moduleSearch: 'purchase=traffic_package&proxy_type=dynamic&focus=traffic-pack' });
+        window.yundengNavigateShell ? window.yundengNavigateShell(href) : location.assign(href);
+      } else if (action === 'invite') {
+        window.yundengNavigateShell ? window.yundengNavigateShell(shellRouteHref('members')) : location.assign(shellRouteHref('members'));
+      } else if (action === 'plugins') {
+        window.yundengNavigateShell ? window.yundengNavigateShell(shellRouteHref('plugins')) : location.assign(shellRouteHref('plugins'));
+      } else if (action === 'help') {
+        window.yundengNavigateShell ? window.yundengNavigateShell(shellRouteHref('help')) : location.assign(shellRouteHref('help'));
+      } else if (action === 'vip') {
+        const href = shellRouteHref('store', { moduleSearch: 'tab=proxy' });
+        window.yundengNavigateShell ? window.yundengNavigateShell(href) : location.assign(href);
+      } else if (action === 'reward') {
+        emitToast('推广奖励功能将在后续版本接入', 'info');
+      } else if (action === 'logout') {
+        location.href = '登录.html';
+      }
+    });
     document.addEventListener('click', event => { if (!event.target.closest('.yundeng-popover')) close(false); });
     document.addEventListener('keydown', event => { if (event.key === 'Escape' && activeButton) close(true); });
   }
@@ -701,29 +893,19 @@
     overlay.id = 'yundengOnboardingOverlay';
     overlay.className = 'yundeng-onboarding-overlay';
     overlay.hidden = true;
-    overlay.innerHTML = `<section id="yundengOnboardingPanel" class="yundeng-onboarding-panel" role="dialog" aria-modal="true" aria-label="新手引导" aria-owns="yundengOnboardingAnnotationToggle" tabindex="-1"><div class="yundeng-onboarding-loading" role="status"><i data-lucide="loader-circle" aria-hidden="true"></i><span>正在准备新手引导</span></div><iframe id="yundengOnboardingFrame" class="yundeng-onboarding-frame" title="新手引导" loading="eager"></iframe></section><button id="yundengOnboardingAnnotationToggle" class="yundeng-onboarding-annotation-toggle" type="button" aria-pressed="false" aria-controls="yundengOnboardingFrame" aria-label="显示新手引导标注，长按可调整纵向位置" title="点击显示标注，长按调整位置"><i data-lucide="tags" aria-hidden="true"></i><span>显示标注</span></button>`;
+    overlay.innerHTML = `<section id="yundengOnboardingPanel" class="yundeng-onboarding-panel" role="dialog" aria-modal="true" aria-label="新手引导" tabindex="-1"><div class="yundeng-onboarding-loading" role="status"><i data-lucide="loader-circle" aria-hidden="true"></i><span>正在准备新手引导</span></div><iframe id="yundengOnboardingFrame" class="yundeng-onboarding-frame" title="新手引导" loading="eager"></iframe></section>`;
     document.body.appendChild(overlay);
 
     const panel = overlay.querySelector('#yundengOnboardingPanel');
     const frame = overlay.querySelector('#yundengOnboardingFrame');
     const loading = overlay.querySelector('.yundeng-onboarding-loading');
-    const guideAnnotationToggle = overlay.querySelector('#yundengOnboardingAnnotationToggle');
     const consumedKey = 'yundeng-new-user-guide-auto-consumed-v1';
     const previewSessionKey = 'yundeng-new-user-guide-preview-session-v1';
-    const annotationPositionKey = 'yundeng-onboarding-annotation-toggle-position-v1';
     let frameReady = false;
     let pendingSource = null;
     let returnFocus = null;
-    let annotationToggleWasHidden = false;
-    let annotationLayerWasHidden = false;
     let assistantButtonWasHidden = false;
     let backgroundInertStates = [];
-    let annotationPointerId = null;
-    let annotationPointerStartY = 0;
-    let annotationPointerStartTop = 0;
-    let annotationPressTimer = null;
-    let annotationDragging = false;
-    let suppressAnnotationClick = false;
 
     const markConsumed = () => {
       try { localStorage.setItem(consumedKey, new Date().toISOString()); } catch (_) {}
@@ -737,52 +919,15 @@
     const hasPreviewSession = () => {
       try { return sessionStorage.getItem(previewSessionKey) === '1'; } catch (_) { return false; }
     };
-    const syncGuideAnnotationToggle = visible => {
-      const active = Boolean(visible);
-      guideAnnotationToggle.setAttribute('aria-pressed', String(active));
-      guideAnnotationToggle.dataset.annotationVisible = String(active);
-      guideAnnotationToggle.setAttribute('aria-label', `${active ? '隐藏' : '显示'}新手引导标注，长按可调整纵向位置`);
-      guideAnnotationToggle.title = `点击${active ? '隐藏' : '显示'}标注，长按调整位置`;
-      const label = guideAnnotationToggle.querySelector('span');
-      if (label) label.textContent = active ? '隐藏标注' : '显示标注';
-    };
-    const placeGuideAnnotationToggle = top => {
-      const height = guideAnnotationToggle.getBoundingClientRect().height || 32;
-      const safeTop = Math.min(Math.max(top, 8), Math.max(8, innerHeight - height - 8));
-      guideAnnotationToggle.style.top = `${safeTop}px`;
-      guideAnnotationToggle.style.transform = 'none';
-      return safeTop;
-    };
-    const restoreGuideAnnotationPosition = () => {
-      try {
-        const saved = JSON.parse(localStorage.getItem(annotationPositionKey) || '{}');
-        if (Number.isFinite(saved.top)) placeGuideAnnotationToggle(saved.top);
-      } catch (_) {}
-    };
-    const clearAnnotationPressTimer = () => {
-      clearTimeout(annotationPressTimer);
-      annotationPressTimer = null;
-    };
     const hideBackgroundTools = () => {
-      window.closeAnnoPopup?.();
       document.querySelector('[data-yundeng-assistant-close]')?.click();
       document.querySelector('#assistantDrawer:not(.hidden) [data-close="assistantDrawer"]')?.click();
-      const annotationToggle = document.getElementById('annoToggle');
-      const annotationLayer = document.getElementById('annoLayer');
       const assistantButton = document.querySelector('#assistantBtn, #assistantButton, [data-yundeng-assistant-button]');
-      annotationToggleWasHidden = Boolean(annotationToggle?.hidden);
-      annotationLayerWasHidden = Boolean(annotationLayer?.hidden);
       assistantButtonWasHidden = Boolean(assistantButton?.hidden);
-      if (annotationToggle) annotationToggle.hidden = true;
-      if (annotationLayer) annotationLayer.hidden = true;
       if (assistantButton) assistantButton.hidden = true;
     };
     const restoreBackgroundTools = () => {
-      const annotationToggle = document.getElementById('annoToggle');
-      const annotationLayer = document.getElementById('annoLayer');
       const assistantButton = document.querySelector('#assistantBtn, #assistantButton, [data-yundeng-assistant-button]');
-      if (annotationToggle) annotationToggle.hidden = annotationToggleWasHidden;
-      if (annotationLayer) annotationLayer.hidden = annotationLayerWasHidden;
       if (assistantButton) assistantButton.hidden = assistantButtonWasHidden;
     };
     const setBackgroundInert = inert => {
@@ -804,13 +949,10 @@
       hideBackgroundTools();
       setBackgroundInert(true);
       overlay.hidden = false;
-      syncGuideAnnotationToggle(false);
       document.body.classList.add('yundeng-onboarding-open');
       trigger.setAttribute('aria-expanded', 'true');
-      window.pushAnnoScope?.(panel);
       frame.contentWindow?.postMessage({ type: 'yundeng:onboarding-reset', source }, '*');
       requestAnimationFrame(() => {
-        restoreGuideAnnotationPosition();
         frame.focus({ preventScroll: true });
       });
     };
@@ -824,10 +966,8 @@
     const close = (restoreFocus = true) => {
       if (overlay.hidden) return;
       overlay.hidden = true;
-      syncGuideAnnotationToggle(false);
       document.body.classList.remove('yundeng-onboarding-open');
       trigger.setAttribute('aria-expanded', 'false');
-      window.popAnnoScope?.(panel);
       setBackgroundInert(false);
       restoreBackgroundTools();
       if (restoreFocus) (returnFocus?.isConnected ? returnFocus : trigger).focus({ preventScroll: true });
@@ -838,65 +978,6 @@
       event.preventDefault();
       event.stopPropagation();
       requestOpen('topbar');
-    });
-    guideAnnotationToggle.style.touchAction = 'none';
-    guideAnnotationToggle.style.userSelect = 'none';
-    guideAnnotationToggle.addEventListener('pointerdown', event => {
-      if (event.button !== undefined && event.button !== 0) return;
-      annotationPointerId = event.pointerId;
-      annotationPointerStartY = event.clientY;
-      annotationPointerStartTop = guideAnnotationToggle.getBoundingClientRect().top;
-      annotationDragging = false;
-      suppressAnnotationClick = false;
-      clearAnnotationPressTimer();
-      annotationPressTimer = setTimeout(() => {
-        if (annotationPointerId !== event.pointerId) return;
-        annotationDragging = true;
-        guideAnnotationToggle.dataset.dragging = 'true';
-        guideAnnotationToggle.setPointerCapture?.(annotationPointerId);
-      }, 350);
-    });
-    guideAnnotationToggle.addEventListener('pointermove', event => {
-      if (event.pointerId !== annotationPointerId) return;
-      const deltaY = event.clientY - annotationPointerStartY;
-      if (!annotationDragging) {
-        if (Math.abs(deltaY) > 6) {
-          clearAnnotationPressTimer();
-          suppressAnnotationClick = true;
-        }
-        return;
-      }
-      event.preventDefault();
-      placeGuideAnnotationToggle(annotationPointerStartTop + deltaY);
-    });
-    const finishAnnotationPointer = event => {
-      if (event.pointerId !== annotationPointerId) return;
-      clearAnnotationPressTimer();
-      if (annotationDragging) {
-        const top = placeGuideAnnotationToggle(guideAnnotationToggle.getBoundingClientRect().top);
-        try { localStorage.setItem(annotationPositionKey, JSON.stringify({ top })); } catch (_) {}
-        suppressAnnotationClick = true;
-      }
-      if (guideAnnotationToggle.hasPointerCapture?.(annotationPointerId)) guideAnnotationToggle.releasePointerCapture(annotationPointerId);
-      annotationPointerId = null;
-      annotationDragging = false;
-      delete guideAnnotationToggle.dataset.dragging;
-    };
-    guideAnnotationToggle.addEventListener('pointerup', finishAnnotationPointer);
-    guideAnnotationToggle.addEventListener('pointercancel', finishAnnotationPointer);
-    guideAnnotationToggle.addEventListener('click', event => {
-      event.preventDefault();
-      event.stopPropagation();
-      if (suppressAnnotationClick) {
-        suppressAnnotationClick = false;
-        return;
-      }
-      frame.contentWindow?.postMessage({ type: 'yundeng:onboarding-annotation-toggle' }, '*');
-    });
-    guideAnnotationToggle.addEventListener('keydown', event => {
-      if (event.key !== 'Tab') return;
-      event.preventDefault();
-      frame.contentWindow?.postMessage({ type: 'yundeng:onboarding-focus-edge', edge: event.shiftKey ? 'last' : 'first' }, '*');
     });
     overlay.addEventListener('click', event => {
       if (event.target !== overlay) return;
@@ -911,14 +992,6 @@
     });
     window.addEventListener('message', event => {
       if (event.source !== frame.contentWindow || !event.data) return;
-      if (event.data.type === 'yundeng:onboarding-annotation-state') {
-        syncGuideAnnotationToggle(event.data.visible);
-        return;
-      }
-      if (event.data.type === 'yundeng:onboarding-focus-annotation') {
-        if (!overlay.hidden) guideAnnotationToggle.focus({ preventScroll: true });
-        return;
-      }
       if (event.data.type === 'yundeng:onboarding-ready') {
         frameReady = true;
         loading.hidden = true;
@@ -961,10 +1034,6 @@
         loading.innerHTML = '<i data-lucide="circle-alert" aria-hidden="true"></i><span>新手引导加载较慢，请稍候</span>';
         window.lucide?.createIcons?.();
       }, 4000);
-    });
-    window.addEventListener('resize', () => {
-      if (overlay.hidden || !guideAnnotationToggle.style.top) return;
-      placeGuideAnnotationToggle(parseFloat(guideAnnotationToggle.style.top));
     });
 
     frame.src = '新手引导.html?embedded=guide';
@@ -1012,27 +1081,19 @@
     const input = overlay.querySelector('#yundengAssistantInput');
     const reply = overlay.querySelector('[data-yundeng-assistant-reply]');
     let returnFocus = null;
-    let annotationToggleWasHidden = false;
 
     const focusableElements = () => Array.from(panel.querySelectorAll('button:not([disabled]), input:not([disabled]), [href], [tabindex]:not([tabindex="-1"])')).filter(node => !node.hidden && node.getAttribute('aria-hidden') !== 'true');
     const open = () => {
       if (!overlay.hidden) return;
       returnFocus = document.activeElement;
-      const annotationToggle = document.getElementById('annoToggle');
-      annotationToggleWasHidden = Boolean(annotationToggle?.hidden);
-      if (annotationToggle) annotationToggle.hidden = true;
       overlay.hidden = false;
       button.setAttribute('aria-expanded', 'true');
-      window.pushAnnoScope?.(panel);
       requestAnimationFrame(() => input.focus({ preventScroll: true }));
     };
     const close = () => {
       if (overlay.hidden) return;
       overlay.hidden = true;
       button.setAttribute('aria-expanded', 'false');
-      window.popAnnoScope?.(panel);
-      const annotationToggle = document.getElementById('annoToggle');
-      if (annotationToggle) annotationToggle.hidden = annotationToggleWasHidden;
       (returnFocus?.isConnected ? returnFocus : button).focus({ preventScroll: true });
       returnFocus = null;
     };
@@ -1118,20 +1179,6 @@
       if (window.parent === window) return;
       window.parent.postMessage(message, '*');
     };
-    const syncAnnotations = visible => {
-      const toggle = document.getElementById('annoToggle');
-      if (!toggle) return;
-      const stored = document.body.dataset.yundengAnnotationsVisible;
-      const current = stored == null ? toggle.getAttribute('aria-pressed') === 'true' : stored === 'true';
-      if (current === Boolean(visible)) return;
-      if (typeof window.toggleAnnotations === 'function') window.toggleAnnotations();
-      else toggle.click();
-      document.body.dataset.yundengAnnotationsVisible = String(Boolean(visible));
-      requestAnimationFrame(() => {
-        window.renderAnnoBadges?.();
-        window.renderAnno?.();
-      });
-    };
     const reportDirty = () => {
       const badge = document.getElementById('dirtyBadge');
       const dirty = Boolean(badge && !badge.classList.contains('hidden') && !badge.hidden);
@@ -1164,7 +1211,7 @@
       let targetSearch = target.search;
       let targetHash = target.hash;
       let item = itemForModule(file);
-      if (file === '系统框架.html') {
+      if (file === '系统框架.html' || file === 'index.html') {
         const page = target.searchParams.get('page');
         item = allItems.find(candidate => candidate.key === page || candidate.label === page || candidate.href === page) || item;
         const moduleFile = target.searchParams.get('module');
@@ -1185,7 +1232,6 @@
 
     window.addEventListener('message', event => {
       if (event.source !== window.parent || !event.data) return;
-      if (event.data.type === 'yundeng:annotations') syncAnnotations(event.data.visible);
       if (event.data.type === 'yundeng:prepare-navigation') {
         const requestId = event.data.requestId;
         const dirtyBadge = document.getElementById('dirtyBadge');
@@ -1230,8 +1276,6 @@
     requestAnimationFrame(() => {
       window.lucide?.createIcons?.();
       window.YDPager?.enhanceLegacy?.(document);
-      window.renderAnnoBadges?.();
-      window.renderAnno?.();
       window.dispatchEvent(new Event('resize'));
       reportDirty();
       postToShell({ type: 'yundeng:module-ready', file: basename, search: location.search, hash: location.hash, title: document.title });
@@ -1256,8 +1300,6 @@
     let moduleBackgroundRequestedHidden = false;
     const syncModuleBackgroundControls = hidden => {
       const controls = [
-        document.getElementById('annoToggle'),
-        document.getElementById('annoLayer'),
         document.querySelector('#assistantBtn, #assistantButton, [data-yundeng-assistant-button]')
       ].filter(Boolean);
       if (hidden) {
@@ -1299,8 +1341,6 @@
       event.preventDefault();
       event.returnValue = '';
     });
-    const annotationsVisible = () => document.getElementById('annoToggle')?.getAttribute('aria-pressed') === 'true';
-    const syncAnnotations = () => frame.contentWindow?.postMessage({ type: 'yundeng:annotations', visible: annotationsVisible() }, '*');
     let prepareSequence = 0;
     const prepareWaiters = new Map();
     const prepareChildNavigation = () => new Promise(resolve => {
@@ -1338,7 +1378,9 @@
       if (!options.confirmed && !confirmDiscard()) return false;
       return finishNavigation(() => {
         syncExpandedGroupsForHref(href);
-        if (options.replace) location.replace(href);
+        if (isIndexHosted && window.parent !== window) {
+          window.parent.postMessage({ type: 'yundeng:index-route-request', href }, '*');
+        } else if (options.replace) location.replace(href);
         else location.assign(href);
       });
     };
@@ -1348,7 +1390,13 @@
       if (!browserNavigation) return false;
       if (browserNavigation && ((delta < 0 && !browserNavigation.canGoBack) || (delta > 0 && !browserNavigation.canGoForward))) return false;
       if (!confirmDiscard()) return false;
-      return finishNavigation(() => history.go(delta));
+      return finishNavigation(() => {
+        if (isIndexHosted && window.parent !== window) {
+          window.parent.postMessage({ type: 'yundeng:index-history', delta }, '*');
+        } else {
+          history.go(delta);
+        }
+      });
     };
     window.yundengReloadShell = async () => {
       if (!confirmDiscard()) return false;
@@ -1357,7 +1405,6 @@
 
     frame.addEventListener('load', () => {
       syncModuleBackgroundControls(moduleBackgroundRequestedHidden);
-      syncAnnotations();
     });
     frame.addEventListener('error', showLoadFailure);
     window.addEventListener('message', event => {
@@ -1399,10 +1446,8 @@
           return;
         }
         syncModuleRouteState(event.data);
-        syncAnnotations();
       }
     });
-    document.getElementById('annoToggle')?.addEventListener('click', () => setTimeout(syncAnnotations, 0));
     window.lucide?.createIcons?.();
     return frame;
   }
@@ -1412,15 +1457,15 @@
     const collapse = sidebar.querySelector('#collapseBtn');
     let compact = false;
     try { compact = localStorage.getItem(compactStateKey) === 'true'; } catch (_) {}
-    const setCompact = (value, persist = true) => { compact = value; sidebar.classList.toggle('compact', compact); if (collapse) { collapse.title = compact ? '展开侧栏' : '收起侧栏'; collapse.setAttribute('aria-label', collapse.title); collapse.setAttribute('aria-expanded', String(!compact)); collapse.innerHTML = '<i data-lucide="triangle" class="yundeng-solid-arrow"></i>'; } if (persist) { try { localStorage.setItem(compactStateKey, String(compact)); } catch (_) {} } window.lucide?.createIcons?.(); window.dispatchEvent(new CustomEvent('yundeng:sidebar-toggle', { detail: { compact } })); refreshAnnotations(); setTimeout(refreshAnnotations, 240); };
+    const setCompact = (value, persist = true) => { compact = value; sidebar.classList.toggle('compact', compact); if (collapse) { collapse.title = compact ? '展开侧栏' : '收起侧栏'; collapse.setAttribute('aria-label', collapse.title); collapse.setAttribute('aria-expanded', String(!compact)); collapse.innerHTML = '<i data-lucide="triangle" class="yundeng-solid-arrow"></i>'; } if (persist) { try { localStorage.setItem(compactStateKey, String(compact)); } catch (_) {} } window.lucide?.createIcons?.(); window.dispatchEvent(new CustomEvent('yundeng:sidebar-toggle', { detail: { compact } })); };
     setCompact(compact, false);
     collapse && (collapse.onclick = () => setCompact(!compact));
     const mobile = topbar?.querySelector('#mobileMenu, .yundeng-mobile-menu');
-    const setMobileOpen = open => { sidebar.classList.toggle('yundeng-mobile-open', open); backdrop.dataset.open = String(open); backdrop.setAttribute('aria-hidden', String(!open)); mobile?.setAttribute('aria-expanded', String(open)); refreshAnnotations(); setTimeout(refreshAnnotations, 240); };
+    const setMobileOpen = open => { sidebar.classList.toggle('yundeng-mobile-open', open); backdrop.dataset.open = String(open); backdrop.setAttribute('aria-hidden', String(!open)); mobile?.setAttribute('aria-expanded', String(open)); };
     mobile && (mobile.onclick = () => setMobileOpen(!sidebar.classList.contains('yundeng-mobile-open')));
     backdrop.onclick = () => setMobileOpen(false);
     const nav = document.getElementById('yundeng-primary-nav');
-    nav?.addEventListener('click', e => { const group = e.target.closest('[data-group-key]'); if (!group) return; e.preventDefault(); const sub = group.nextElementSibling; const expanded = group.getAttribute('aria-expanded') !== 'true'; group.setAttribute('aria-expanded', String(expanded)); sub.dataset.expanded = String(expanded); try { const saved = JSON.parse(localStorage.getItem(shellStateKey) || '{}'); saved[group.dataset.groupKey] = expanded; localStorage.setItem(shellStateKey, JSON.stringify(saved)); } catch (_) {} refreshAnnotations(); setTimeout(refreshAnnotations, 240); });
+    nav?.addEventListener('click', e => { const group = e.target.closest('[data-group-key]'); if (!group) return; e.preventDefault(); const sub = group.nextElementSibling; const expanded = group.getAttribute('aria-expanded') !== 'true'; group.setAttribute('aria-expanded', String(expanded)); sub.dataset.expanded = String(expanded); try { const saved = JSON.parse(localStorage.getItem(shellStateKey) || '{}'); saved[group.dataset.groupKey] = expanded; localStorage.setItem(shellStateKey, JSON.stringify(saved)); } catch (_) {} });
     document.addEventListener('click', e => {
       const link = e.target.closest('a.yundeng-menu-link, a.yundeng-create, a.yundeng-bottom-link');
       if (!link) return;
@@ -1452,7 +1497,12 @@
       return;
     }
     if (isSystemFrame && requestedPage && !requestedItem) {
-      location.replace(shellRouteHref(DEFAULT_ROUTE_KEY, { search: location.search }));
+      const fallbackHref = shellRouteHref(DEFAULT_ROUTE_KEY, { search: location.search });
+      if (isIndexHosted && window.parent !== window) {
+        window.parent.postMessage({ type: 'yundeng:index-route-request', href: fallbackHref }, '*');
+      } else {
+        location.replace(fallbackHref);
+      }
       return;
     }
     addStyles();
@@ -1480,11 +1530,8 @@
     document.body.classList.add('yundeng-shell-ready');
     delete document.documentElement.dataset.yundengRuntimePending;
     document.dispatchEvent(new CustomEvent('yundeng:shell-ready', { detail: { pageKey, pageLabel } }));
+    reportIndexHostRoute();
     requestAnimationFrame(() => {
-      const annotationToggle = document.getElementById('annoToggle');
-      if (annotationToggle && annotationToggle.getBoundingClientRect().top < 140) annotationToggle.style.top = '156px';
-      window.renderAnnoBadges?.();
-      window.renderAnno?.();
       window.dispatchEvent(new Event('resize'));
     });
   }

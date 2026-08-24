@@ -7,7 +7,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap">
-  <link rel="stylesheet" href="公共导航.css?v=20260821a">
+  <link rel="stylesheet" href="公共导航.css?v=20260824a">
   <link rel="stylesheet" href="筛选布局.css?v=20260814">
   <link rel="stylesheet" href="分页器.css?v=20260814">
   <script>
@@ -94,9 +94,7 @@
     .permission-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; }
     .check-row { min-height:34px; padding:7px 9px; border:1px solid #E8EAED; border-radius:4px; display:flex; align-items:center; gap:8px; }
     .toast { position:fixed; top:72px; left:50%; z-index:11000; transform:translateX(-50%); max-width:min(520px,calc(100vw - 32px)); padding:9px 14px; border-radius:4px; color:#FFFFFF; background:#1A1D24; box-shadow:0 4px 16px rgba(0,0,0,.16); }
-    .anno-badge { position:fixed; width:20px; height:20px; padding:0; border:0; border-radius:50%; display:flex; align-items:center; justify-content:center; pointer-events:auto; color:#FFFFFF; background:#0066FF; box-shadow:0 2px 8px rgba(0,0,0,.16); font:600 11px/1 "JetBrains Mono",monospace; }
     .anno-list { margin:0; padding-left:20px; display:flex; flex-direction:column; gap:8px; }
-    #annoToggle { cursor:grab; }
     .hidden { display:none !important; }
     @media (max-width:900px) {
       .team-layout { grid-template-columns:minmax(0,1fr); }
@@ -123,7 +121,7 @@
     }
     @media (prefers-reduced-motion:reduce) { .btn { transition:none; } .btn:active:not(:disabled) { transform:none; } }
   </style>
-  <script src="公共导航.js?v=20260821a"></script>
+  <script src="公共导航.js?v=20260824a"></script>
 </head>
 <body>
   <div id="yundeng-shell" class="flex h-screen min-h-screen overflow-hidden">
@@ -138,7 +136,7 @@
                 <span class="w-10 h-10 rounded bg-primary-bg text-primary flex items-center justify-center shrink-0"><i data-lucide="building-2" class="w-5 h-5"></i></span>
                 <div class="min-w-0"><h1 class="font-semibold text-ink-title truncate">云登运营团队</h1><p id="teamMemberSummary" class="text-[12px] text-ink-sub mt-0.5">16 名成员</p></div>
               </div>
-              <button id="certBtn" type="button" data-anno="1" class="badge badge-warning mt-3">未认证，去认证</button>
+              <button id="certBtn" type="button" class="badge badge-warning mt-3">未认证，去认证</button>
               <p class="text-[11px] text-ink-muted mt-2">套餐到期：2026-09-30</p>
             </div>
             <nav id="sectionTabs" class="team-section-nav" role="tablist" aria-orientation="vertical">
@@ -149,7 +147,6 @@
               <button type="button" class="section-tab" role="tab" id="tab-logins" aria-controls="loginsPanel" aria-selected="false" tabindex="-1" data-section="logins"><i data-lucide="monitor-check" class="w-4 h-4"></i><span>登录请求</span></button>
             </nav>
           </aside>
-
           <div class="content-stack">
             <section id="membersPanel" role="tabpanel" aria-labelledby="tab-members">
               <div class="panel filter-panel mb-4">
@@ -157,20 +154,19 @@
                   <label class="filter-item"><span class="filter-label">姓名或账号</span><input id="memberKeyword" class="field" type="search" placeholder="搜索昵称或账号" autocomplete="off"></label>
                   <label class="filter-item"><span class="filter-label">所在部门</span><select id="memberDept" class="field"><option value="">全部部门</option><option>默认部门</option><option>跨境运营</option><option>内容增长</option><option>客户成功</option></select></label>
                   <label class="filter-item"><span class="filter-label">角色</span><select id="memberRole" class="field"><option value="">全部角色</option><option>创始人</option><option>经理</option><option>财务</option><option>环境配置员</option><option>环境操作员</option><option>内容审核员</option></select></label>
-                  <label class="filter-item"><span class="filter-label">人员状态</span><select id="memberStatus" data-anno="2" class="field"><option value="">全部状态</option><option>正常</option><option>已禁用</option></select></label>
+                  <label class="filter-item"><span class="filter-label">人员状态</span><select id="memberStatus" class="field"><option value="">全部状态</option><option>正常</option><option>已禁用</option></select></label>
                   <div class="filter-actions"><button id="memberSearch" type="button" class="btn btn-primary">查询</button><button id="memberReset" type="button" class="btn btn-default">重置</button></div>
                 </div>
               </div>
               <div class="panel data-panel">
-                <div class="panel-head"><div><h2 data-anno="3" class="panel-title inline-block">成员列表</h2><p id="memberResultText" class="panel-note mt-1">当前显示全部成员</p></div><button id="inviteBtn" type="button" data-anno="4" class="btn btn-primary"><i data-lucide="user-plus" class="w-4 h-4"></i><span>邀请成员</span></button></div>
+                <div class="panel-head"><div><h2 class="panel-title inline-block">成员列表</h2><p id="memberResultText" class="panel-note mt-1">当前显示全部成员</p></div><button id="inviteBtn" type="button" class="btn btn-primary"><i data-lucide="user-plus" class="w-4 h-4"></i><span>邀请成员</span></button></div>
                 <div class="table-scroll"><table><thead><tr><th>姓名 / 账号</th><th>所在部门</th><th>角色</th><th>人员状态</th><th>联系方式</th><th>最后登录时间</th><th>在线状态</th><th>操作</th></tr></thead><tbody id="memberBody"></tbody></table></div>
                 <div id="memberPagination" class="pt-5" aria-label="成员列表分页"></div>
               </div>
             </section>
-
             <section id="departmentsPanel" role="tabpanel" aria-labelledby="tab-departments" hidden>
               <div class="panel data-panel">
-                <div class="panel-head"><div><h2 data-anno="5" class="panel-title inline-block">部门管理</h2><p class="panel-note mt-1">按部门维护管理员与成员归属</p></div><button id="addDept" type="button" class="btn btn-primary"><i data-lucide="plus" class="w-4 h-4"></i><span>添加子部门</span></button></div>
+                <div class="panel-head"><div><h2 class="panel-title inline-block">部门管理</h2><p class="panel-note mt-1">按部门维护管理员与成员归属</p></div><button id="addDept" type="button" class="btn btn-primary"><i data-lucide="plus" class="w-4 h-4"></i><span>添加子部门</span></button></div>
                 <div class="workspace-split">
                   <div class="workspace-nav" role="tablist" aria-label="部门列表">
                     <button type="button" class="subnav-button" role="tab" aria-selected="true" data-dept-tab="默认部门"><span>默认部门</span><span class="mono">4</span></button>
@@ -182,14 +178,12 @@
                 </div>
               </div>
             </section>
-
             <section id="rolesPanel" role="tabpanel" aria-labelledby="tab-roles" hidden>
               <div class="panel data-panel">
-                <div class="panel-head"><div><h2 data-anno="6" class="panel-title inline-block">角色管理</h2><p class="panel-note mt-1">配置模块权限和角色成员</p></div><button id="addRole" type="button" class="btn btn-primary"><i data-lucide="plus" class="w-4 h-4"></i><span>添加角色</span></button></div>
+                <div class="panel-head"><div><h2 class="panel-title inline-block">角色管理</h2><p class="panel-note mt-1">配置模块权限和角色成员</p></div><button id="addRole" type="button" class="btn btn-primary"><i data-lucide="plus" class="w-4 h-4"></i><span>添加角色</span></button></div>
                 <div class="workspace-split"><div id="roleList" class="workspace-nav" role="tablist" aria-label="角色列表"></div><div id="roleDetail" class="workspace-detail" role="tabpanel"></div></div>
               </div>
             </section>
-
             <section id="applicationsPanel" role="tabpanel" aria-labelledby="tab-applications" hidden>
               <div class="panel data-panel">
                 <div class="panel-head"><div><h2 class="panel-title">成员申请</h2><p class="panel-note mt-1">审批加入当前团队的成员申请</p></div></div>
@@ -201,7 +195,6 @@
                 <div id="applicationContent" role="tabpanel" class="pt-4"></div>
               </div>
             </section>
-
             <section id="loginsPanel" role="tabpanel" aria-labelledby="tab-logins" hidden>
               <div class="panel filter-panel mb-4">
                 <div class="filter-flow">
@@ -213,7 +206,7 @@
                 </div>
               </div>
               <div class="panel data-panel">
-                <div class="panel-head"><div><h2 data-anno="7" class="panel-title inline-block">登录请求</h2><p id="loginResultText" class="panel-note mt-1">当前显示全部请求</p></div></div>
+                <div class="panel-head"><div><h2 class="panel-title inline-block">登录请求</h2><p id="loginResultText" class="panel-note mt-1">当前显示全部请求</p></div></div>
                 <div class="table-scroll"><table><thead><tr><th>请求授权用户</th><th>请求授权姓名</th><th>终端识别码</th><th>MAC 地址</th><th>本机网络</th><th>申请时间</th><th>状态</th><th>操作</th></tr></thead><tbody id="loginBody"></tbody></table></div>
                 <div id="loginPagination" class="pt-5" aria-label="登录请求分页"></div>
               </div>
@@ -222,28 +215,15 @@
         </div>
       </main>
     </div>
-  </div>
-
-  <button id="annoToggle" type="button" class="fixed z-[9997] right-2 top-[120px] h-8 px-3 rounded-full bg-ink-sub text-white shadow flex items-center gap-1.5" aria-pressed="false"><i data-lucide="tags" class="w-4 h-4"></i><span class="text-[12px]">显示标注</span></button>
-  <div id="annoLayer" class="fixed inset-0 pointer-events-none z-[9998]"></div>
-
-  <div id="businessModal" class="modal-mask hidden" aria-hidden="true">
-    <section id="businessModalPanel" data-anno="8" class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="businessModalTitle" tabindex="-1">
+  </div>  <div id="businessModal" class="modal-mask hidden" aria-hidden="true">
+    <section id="businessModalPanel" class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="businessModalTitle" tabindex="-1">
       <header class="modal-header"><h2 id="businessModalTitle" class="text-[16px] font-semibold text-ink-title"></h2><button id="businessModalClose" type="button" class="btn btn-default btn-icon" aria-label="关闭弹窗"><i data-lucide="x" class="w-4 h-4"></i></button></header>
       <div id="businessModalBody" class="modal-body"></div>
       <footer class="modal-footer"><button type="button" class="btn btn-default" data-close-business>取消</button><button id="businessModalConfirm" type="button" class="btn btn-primary">确定</button></footer>
     </section>
+  </div>    </section>
   </div>
-
-  <div id="annoPopup" class="modal-mask hidden !z-[10003]" aria-hidden="true">
-    <section id="annoPanel" class="modal-panel !w-[520px]" role="dialog" aria-modal="true" aria-labelledby="annoTitle" tabindex="-1">
-      <header class="modal-header"><h2 id="annoTitle" class="text-[16px] font-semibold text-ink-title"></h2><button id="annoClose" type="button" class="btn btn-default btn-icon" aria-label="关闭标注说明"><i data-lucide="x" class="w-4 h-4"></i></button></header>
-      <div id="annoDesc" class="modal-body"></div>
-    </section>
-  </div>
-
   <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
-
   <script src="分页器.js?v=20260814"></script>
   <script>
     const $ = selector => document.querySelector(selector);
@@ -299,9 +279,7 @@
       '待审批':[{time:'2026-08-14 08:16',name:'黄云',contact:'193****6028',status:'待审批'}],
       '已通过':[{time:'2026-08-10 13:42',name:'林可',contact:'156****7731',status:'已通过'},{time:'2026-08-08 09:25',name:'何川',contact:'180****1146',status:'已通过'}],
       '不通过':[{time:'2026-07-28 15:37',name:'曹宁',contact:'133****8021',status:'不通过'}]
-    };
-    const annotations = {
-      1:{title:'团队认证',desc:['展示当前认证状态和可选流程。','原型不采集真实证件、银行卡或人脸信息。']},
+    }; /*
       2:{title:'成员组合筛选',desc:['支持姓名或账号、部门、角色和状态组合查询。','查询和重置都会回到成员列表第一页。']},
       3:{title:'成员列表',desc:['成员数据覆盖创始人、管理角色、普通角色与禁用状态。','分页支持 10、20、50 条每页以及页码跳转。']},
       4:{title:'邀请成员',desc:['提供二维码与邀请链接两种演示入口。','重置凭证只更新演示反馈，不生成真实邀请凭证。']},
@@ -309,18 +287,13 @@
       6:{title:'角色管理',desc:['按角色查看成员数量、描述和已授予模块权限。','支持配置成员、复制及编辑角色。']},
       7:{title:'登录请求',desc:['日期、用户信息、终端识别码和状态筛选真实生效。','待处理请求可进入允许或拒绝确认流程。']},
       8:{title:'业务确认弹窗',desc:['弹窗打开后焦点进入首个可操作控件。','Tab 键限制在弹窗内，Escape 关闭后焦点返回触发位置。']}
-    };
-
+    */
     let memberRows = members.slice();
     let loginRows = loginRequests.slice();
     let activeRoleIndex = 0;
     let modalReturnFocus = null;
     let modalConfirmHandler = null;
-    let annoReturnFocus = null;
-    let annoReturnId = '';
-    let annoVisible = false;
-    let toastTimer = null;
-
+let toastTimer = null;
     function toast(message) {
       const node = $('#toast');
       node.textContent = message;
@@ -343,7 +316,6 @@
       const type = status === '正常' || status === '已允许' || status === '已通过' ? 'success' : status === '待处理' || status === '待审批' ? 'warning' : 'danger';
       return `<span class="badge badge-${type}">${status}</span>`;
     }
-
     const memberPager = new YDPager($('#memberPagination'), {
       total_count: members.length, current_page:1, page_size:10, page_size_options:[10,20,50], toast,
       onChange:renderMemberRows
@@ -352,7 +324,6 @@
       total_count: loginRequests.length, current_page:1, page_size:10, page_size_options:[10,20,50], toast,
       onChange:renderLoginRows
     });
-
     function renderMemberRows() {
       const state = memberPager.getState();
       const start = (state.current_page - 1) * state.page_size;
@@ -362,8 +333,7 @@
         return `<tr><td><strong class="text-ink-title">${member.name}</strong><div class="mono text-[11px] text-ink-sub">${member.account}</div></td><td>${member.dept}</td><td>${member.role}</td><td>${badge(member.status)}</td><td class="mono">${member.phone}</td><td class="mono">${member.login}</td><td>${member.online ? '<span class="text-success">在线</span>' : '<span class="text-ink-muted">离线</span>'}</td><td><span class="action-set"><button type="button" class="text-action" data-member-edit="${index}">${member.role === '创始人' ? '查看' : '编辑'}</button>${member.role === '创始人' ? '' : `<button type="button" class="text-action" data-member-transfer="${index}">转移</button>`}</span></td></tr>`;
       }).join('') : '<tr><td colspan="8"><div class="empty-state">暂无符合条件的成员</div></td></tr>';
       $('#memberResultText').textContent = `筛选结果 ${memberRows.length} 条`;
-      lucide.createIcons();
-      renderAnnoBadges();
+      lucide.createIcons()
     }
     function applyMemberFilters() {
       const keyword = $('#memberKeyword').value.trim().toLowerCase();
@@ -374,7 +344,6 @@
       memberPager.setState({total_count:memberRows.length,current_page:1},{silent:true});
       renderMemberRows();
     }
-
     function renderLoginRows() {
       const state = loginPager.getState();
       const start = (state.current_page - 1) * state.page_size;
@@ -385,8 +354,7 @@
         return `<tr><td class="mono">${item.user}</td><td>${item.name}</td><td class="mono">${item.device}</td><td class="mono">${item.mac}</td><td class="mono">${item.network}</td><td class="mono">${item.time}</td><td>${badge(item.status)}</td><td>${actions}</td></tr>`;
       }).join('') : '<tr><td colspan="8"><div class="empty-state">暂无符合条件的登录请求</div></td></tr>';
       $('#loginResultText').textContent = `筛选结果 ${loginRows.length} 条`;
-      lucide.createIcons();
-      renderAnnoBadges();
+      lucide.createIcons()
     }
     function applyLoginFilters() {
       const start = $('#loginStart').value;
@@ -402,7 +370,6 @@
       loginPager.setState({total_count:loginRows.length,current_page:1},{silent:true});
       renderLoginRows();
     }
-
     function switchSection(section, focusTab = false) {
       $$('[data-section]').forEach(tab => {
         const active = tab.dataset.section === section;
@@ -415,8 +382,7 @@
         const active = name === section;
         panel.hidden = !active;
         panel.classList.toggle('hidden', !active);
-      });
-      renderAnnoBadges();
+      })
     }
     $('#sectionTabs').addEventListener('click', event => {
       const tab = event.target.closest('[data-section]');
@@ -434,14 +400,12 @@
       else next = (current - 1 + tabs.length) % tabs.length;
       switchSection(tabs[next].dataset.section, true);
     });
-
     function renderDepartment(name = '默认部门') {
       $$('[data-dept-tab]').forEach(button => button.setAttribute('aria-selected', String(button.dataset.deptTab === name)));
       const item = departments.find(dept => dept.name === name);
       $('#departmentBody').innerHTML = `<tr><td><strong>${item.name}</strong></td><td class="mono">${item.count}</td><td>${item.manager}</td><td><span class="action-set"><button type="button" class="text-action" data-dept-action="invite">邀请成员</button><button type="button" class="text-action" data-dept-action="transfer">转移成员</button></span></td></tr>`;
     }
     $$('[data-dept-tab]').forEach(button => button.addEventListener('click', () => renderDepartment(button.dataset.deptTab)));
-
     function renderRoles() {
       $('#roleList').innerHTML = roles.map((role,index) => `<button type="button" class="subnav-button" role="tab" aria-selected="${index === activeRoleIndex}" data-role-index="${index}"><span>${role.name}</span><span class="mono">${role.members}</span></button>`).join('');
       const role = roles[activeRoleIndex];
@@ -454,7 +418,6 @@
       activeRoleIndex = Number(button.dataset.roleIndex);
       renderRoles();
     });
-
     function renderApplications(status = '待审批') {
       $$('[data-app-status]').forEach(tab => {
         const active = tab.dataset.appStatus === status;
@@ -477,7 +440,6 @@
       renderApplications(tabs[next].dataset.appStatus);
       tabs[next].focus();
     });
-
     function openBusinessModal({title, body, confirmText = '确定', danger = false, onConfirm = null}) {
       modalReturnFocus = document.activeElement;
       modalConfirmHandler = onConfirm;
@@ -487,8 +449,7 @@
       $('#businessModalConfirm').className = danger ? 'btn btn-danger' : 'btn btn-primary';
       $('#businessModal').classList.remove('hidden');
       $('#businessModal').setAttribute('aria-hidden','false');
-      lucide.createIcons();
-      renderAnnoBadges();
+      lucide.createIcons()
       requestAnimationFrame(() => {
         const firstControl = $('#businessModalBody').querySelector('input:not([disabled]),select:not([disabled]),textarea:not([disabled]),button:not([disabled]),a[href]') || $('#businessModalClose');
         if (firstControl) firstControl.focus();
@@ -500,8 +461,7 @@
       $('#businessModal').classList.add('hidden');
       $('#businessModal').setAttribute('aria-hidden','true');
       $('#businessModalBody').innerHTML = '';
-      modalConfirmHandler = null;
-      renderAnnoBadges();
+      modalConfirmHandler = null
       if (restore) modalReturnFocus?.focus();
     }
     $('#businessModalClose').addEventListener('click', () => closeBusinessModal());
@@ -513,7 +473,6 @@
       closeBusinessModal();
       toast('演示操作已完成，未修改真实团队数据');
     });
-
     function requiredValue(selector, message) {
       const field = $(selector);
       if (field && !field.value.trim()) { field.classList.add('is-error'); field.focus(); toast(message); return false; }
@@ -528,7 +487,6 @@
       const modules = ['新建浏览器','环境管理','代理管理','插件管理','费用管理','商城','回收站','窗口同步','API','RPA','团队管理','账号管理','分享转移','日志管理','账号设置'];
       openBusinessModal({title:isNew ? '添加角色' : '编辑角色',confirmText:'保存角色',body:`<div class="form-grid"><label class="form-item"><span>角色名称</span><input id="requiredField" class="field" value="${role.name}" placeholder="请输入角色名称"></label><label class="form-item"><span>归属角色组</span><select class="field"><option>默认角色组</option><option>系统角色组</option></select></label><label class="form-item md:col-span-2"><span>角色描述</span><input class="field" value="${role.desc}" placeholder="请输入角色描述"></label></div><fieldset class="mt-5"><legend class="font-semibold text-ink-title">模块权限</legend><div class="permission-grid mt-3">${modules.map(module => `<label class="check-row"><input type="checkbox" aria-label="授予${module}权限" ${role.permissions.includes(module) ? 'checked' : ''}><span>${module}</span></label>`).join('')}</div></fieldset>`,onConfirm:() => requiredValue('#requiredField','请输入角色名称')});
     }
-
     document.addEventListener('click', event => {
       const edit = event.target.closest('[data-member-edit]');
       if (edit) {
@@ -554,7 +512,6 @@
       if (event.target.closest('#copyInvite')) { navigator.clipboard?.writeText($('#inviteLink').value); toast('演示邀请链接已复制'); }
       if (event.target.closest('[data-reset-invite]')) toast('演示邀请凭证已重置');
     });
-
     $('#memberSearch').addEventListener('click', applyMemberFilters);
     $('#memberKeyword').addEventListener('keydown', event => { if (event.key === 'Enter') applyMemberFilters(); });
     $('#memberReset').addEventListener('click', () => { $('#memberKeyword').value = ''; $('#memberDept').value = ''; $('#memberRole').value = ''; $('#memberStatus').value = ''; applyMemberFilters(); });
@@ -565,63 +522,12 @@
     $('#certBtn').addEventListener('click', () => openBusinessModal({title:'团队实名认证',confirmText:'知道了',body:'<div class="p-3 rounded bg-warning-bg text-warning mb-4">原型不采集姓名、身份证、企业代码、银行卡或人脸信息。</div><div class="space-y-4"><div><h3 class="font-semibold text-ink-title">个人认证</h3><p class="text-ink-sub mt-1">信息认证、刷脸认证、认证结果</p></div><div><h3 class="font-semibold text-ink-title">企业法人认证</h3><p class="text-ink-sub mt-1">企业资料、法人身份校验、法人人脸认证</p></div><div><h3 class="font-semibold text-ink-title">企业对公转账认证</h3><p class="text-ink-sub mt-1">企业资料、对公银行验证、认证结果</p></div></div>'}));
     $('#addDept').addEventListener('click', () => openBusinessModal({title:'添加子部门',confirmText:'确定添加',body:'<div class="form-grid"><label class="form-item"><span>上级部门</span><select class="field"><option>云登运营团队</option><option>默认部门</option><option>跨境运营</option></select></label><label class="form-item"><span>部门名称</span><input id="requiredField" class="field" placeholder="请输入部门名称"></label></div>',onConfirm:() => requiredValue('#requiredField','请输入部门名称')}));
     $('#addRole').addEventListener('click', () => roleEditor(true));
-
-    function renderAnnoBadges() {
-      const layer = $('#annoLayer');
-      layer.innerHTML = '';
-      if (!annoVisible || !$('#annoPopup').classList.contains('hidden')) return;
-      const scope = $('#businessModal').classList.contains('hidden') ? document : $('#businessModalPanel');
-      scope.querySelectorAll('[data-anno]').forEach(target => {
-        if (!target.getClientRects().length) return;
-        const rect = target.getBoundingClientRect();
-        if (rect.bottom < 0 || rect.top > innerHeight) return;
-        const button = document.createElement('button');
-        button.type = 'button';
-        button.className = 'anno-badge';
-        button.textContent = target.dataset.anno;
-        button.style.left = `${Math.max(8,Math.min(innerWidth - 28,rect.right - 10))}px`;
-        button.style.top = `${Math.max(8,Math.min(innerHeight - 28,rect.top - 10))}px`;
-        button.setAttribute('aria-label',`查看交互说明 ${target.dataset.anno}`);
-        button.setAttribute('aria-haspopup','dialog');
-        button.dataset.annoId = target.dataset.anno;
-        button.addEventListener('click', () => showAnnoPopup(target.dataset.anno, button));
-        layer.appendChild(button);
-      });
-    }
-    function showAnnoPopup(id, trigger) {
-      const item = annotations[id];
-      if (!item) return;
-      annoReturnFocus = trigger || document.activeElement;
-      annoReturnId = String(id);
-      $('#annoTitle').textContent = `${id}. ${item.title}`;
-      $('#annoDesc').innerHTML = `<ul class="anno-list">${item.desc.map(text => `<li>${text}</li>`).join('')}</ul>`;
-      $('#annoPopup').classList.remove('hidden');
-      $('#annoPopup').setAttribute('aria-hidden','false');
-      renderAnnoBadges();
-      requestAnimationFrame(() => $('#annoClose').focus());
-    }
-    function closeAnnoPopup() {
-      if ($('#annoPopup').classList.contains('hidden')) return;
-      $('#annoPopup').classList.add('hidden');
-      $('#annoPopup').setAttribute('aria-hidden','true');
-      renderAnnoBadges();
-      const replacementBadge = $(`#annoLayer [data-anno-id="${annoReturnId}"]`);
-      const focusTarget = replacementBadge || (annoReturnFocus?.isConnected ? annoReturnFocus : $('#annoToggle'));
-      focusTarget?.focus();
-    }
-    $('#annoClose').addEventListener('click', closeAnnoPopup);
-    $('#annoPopup').addEventListener('click', event => { if (event.target === event.currentTarget) closeAnnoPopup(); });
-    $('#mainContent').addEventListener('scroll', renderAnnoBadges, {passive:true});
-    window.addEventListener('resize', renderAnnoBadges);
     document.addEventListener('keydown', event => {
       if (event.key === 'Escape') {
-        if (!$('#annoPopup').classList.contains('hidden')) { event.preventDefault(); closeAnnoPopup(); return; }
         if (!$('#businessModal').classList.contains('hidden')) { event.preventDefault(); closeBusinessModal(); return; }
       }
-      if (!$('#annoPopup').classList.contains('hidden')) trapFocus(event,$('#annoPanel'));
       else if (!$('#businessModal').classList.contains('hidden')) trapFocus(event,$('#businessModalPanel'));
     });
-
     renderDepartment();
     renderRoles();
     renderApplications();
@@ -629,7 +535,5 @@
     renderLoginRows();
     lucide.createIcons();
   </script>
-  <script src="标注交互.js?v=20260814"></script>
-
 </body>
 </html>

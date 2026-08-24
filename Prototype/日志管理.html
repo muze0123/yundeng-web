@@ -13,10 +13,10 @@
     tailwind.config={theme:{extend:{colors:{primary:{DEFAULT:'#0066FF',hover:'#0052CC',bg:'#E6F0FF'},ink:{title:'#1A1D24',body:'#3A3F4A',sub:'#6E7685',muted:'#9DA2AC'},line:{DEFAULT:'#DFE1E5',light:'#E8EAED',lighter:'#F0F1F3'},page:'#F7F8FA',card:'#FFFFFF',hover:'#F3F4F6',success:{DEFAULT:'#0FC060',bg:'#E7F9F0'},warning:{DEFAULT:'#E7772D',bg:'#FDF2E9'},danger:{DEFAULT:'#D9001B',bg:'#FFE8EB'},info:{DEFAULT:'#0091D5',bg:'#E4F4FB'}}}}};
   </script>
   <style>
-    *{box-sizing:border-box}body{margin:0;font:13px/1.5 -apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei','Segoe UI',system-ui,sans-serif}.mono{font-family:'JetBrains Mono',monospace;font-variant-numeric:tabular-nums}.field{height:32px;border:1px solid #DFE1E5;border-radius:4px;padding:0 10px;background:#fff;outline:none}.field:focus{border-color:#0066FF;box-shadow:0 0 0 2px #E6F0FF}.field[aria-invalid="true"]{border-color:#D9001B}.btn{height:32px;padding:0 12px;border-radius:4px;display:inline-flex;align-items:center;justify-content:center;gap:6px;font-weight:500}.btn-primary{background:#0066FF;color:#fff}.btn-primary:hover{background:#0052CC}.btn-default{background:#fff;border:1px solid #DFE1E5;color:#3A3F4A}.btn-default:hover{background:#F3F4F6}.card{background:#fff;border-radius:8px}.data-table{width:100%;border-collapse:collapse;font-size:13px}.data-table th{background:#F0F1F3;color:#6E7685;font-size:12px;font-weight:600;padding:9px 12px;border-bottom:1px solid #DFE1E5;text-align:left;white-space:nowrap}.data-table td{padding:9px 12px;border-bottom:1px solid #F0F1F3;color:#3A3F4A;vertical-align:middle;line-height:20px}.data-table tbody tr:hover{background:#F3F4F6}.tag{height:22px;padding:0 8px;border-radius:4px;display:inline-flex;align-items:center;font-size:12px}.date-range{display:flex;align-items:center;gap:4px}.date-range .field{min-width:0;flex:1}.date-sep{margin:0 2px;color:#9DA2AC;font-size:14px;flex:none}.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:1100;display:flex;align-items:center;justify-content:center;padding:16px}.hidden{display:none!important}.toast{position:fixed;right:24px;top:72px;z-index:1300;background:#1A1D24;color:#fff;padding:10px 16px;border-radius:4px;box-shadow:0 4px 18px #0003}.anno-badge{position:fixed;width:20px;height:20px;border:0;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;background:#0066FF;font:600 11px/1 'JetBrains Mono',monospace;pointer-events:auto;box-shadow:0 2px 8px rgba(0,0,0,.12)}th,td{white-space:nowrap}
+    *{box-sizing:border-box}body{margin:0;font:13px/1.5 -apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei','Segoe UI',system-ui,sans-serif}.mono{font-family:'JetBrains Mono',monospace;font-variant-numeric:tabular-nums}.field{height:32px;border:1px solid #DFE1E5;border-radius:4px;padding:0 10px;background:#fff;outline:none}.field:focus{border-color:#0066FF;box-shadow:0 0 0 2px #E6F0FF}.field[aria-invalid="true"]{border-color:#D9001B}.btn{height:32px;padding:0 12px;border-radius:4px;display:inline-flex;align-items:center;justify-content:center;gap:6px;font-weight:500}.btn-primary{background:#0066FF;color:#fff}.btn-primary:hover{background:#0052CC}.btn-default{background:#fff;border:1px solid #DFE1E5;color:#3A3F4A}.btn-default:hover{background:#F3F4F6}.card{background:#fff;border-radius:8px}.data-table{width:100%;border-collapse:collapse;font-size:13px}.data-table th{background:#F0F1F3;color:#6E7685;font-size:12px;font-weight:600;padding:9px 12px;border-bottom:1px solid #DFE1E5;text-align:left;white-space:nowrap}.data-table td{padding:9px 12px;border-bottom:1px solid #F0F1F3;color:#3A3F4A;vertical-align:middle;line-height:20px}.data-table tbody tr:hover{background:#F3F4F6}.tag{height:22px;padding:0 8px;border-radius:4px;display:inline-flex;align-items:center;font-size:12px}.date-range{display:flex;align-items:center;gap:4px}.date-range .field{min-width:0;flex:1}.date-sep{margin:0 2px;color:#9DA2AC;font-size:14px;flex:none}.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:1100;display:flex;align-items:center;justify-content:center;padding:16px}.hidden{display:none!important}.toast{position:fixed;right:24px;top:72px;z-index:1300;background:#1A1D24;color:#fff;padding:10px 16px;border-radius:4px;box-shadow:0 4px 18px #0003}th,td{white-space:nowrap}
   </style>
-  <link rel="stylesheet" href="公共导航.css?v=20260821a">
-  <script src="公共导航.js?v=20260821a"></script>
+  <link rel="stylesheet" href="公共导航.css?v=20260824a">
+  <script src="公共导航.js?v=20260824a"></script>
 </head>
 <body class="bg-page text-ink-body overflow-hidden">
   <div class="h-screen flex">
@@ -27,39 +27,34 @@
         <div>
           <section class="card p-5 md:p-6 mb-4">
             <div class="filter-flow">
-              <label data-anno="1" class="filter-item"><span class="filter-label">操作时间</span><span class="date-range"><input id="startDate" type="text" class="field" placeholder="开始日期" aria-label="开始时间"><span class="date-sep">至</span><input id="endDate" type="text" class="field" placeholder="结束日期" aria-label="结束时间"></span></label>
-              <label data-anno="2" class="filter-item"><span class="block text-ink-sub mb-1">操作模块</span><select id="moduleFilter" class="field w-full"><option value="">全部模块</option><option>环境管理</option><option>代理管理</option><option>账号管理</option><option>团队管理</option><option>费用管理</option></select></label>
-              <label data-anno="3" class="filter-item"><span class="block text-ink-sub mb-1">成员 / 内容</span><input id="keyword" class="field w-full" placeholder="搜索成员、对象或操作内容"></label>
+              <label class="filter-item"><span class="filter-label">操作时间</span><span class="date-range"><input id="startDate" type="text" class="field" placeholder="开始日期" aria-label="开始时间"><span class="date-sep">至</span><input id="endDate" type="text" class="field" placeholder="结束日期" aria-label="结束时间"></span></label>
+              <label class="filter-item"><span class="block text-ink-sub mb-1">操作模块</span><select id="moduleFilter" class="field w-full"><option value="">全部模块</option><option>环境管理</option><option>代理管理</option><option>账号管理</option><option>团队管理</option><option>费用管理</option></select></label>
+              <label class="filter-item"><span class="block text-ink-sub mb-1">成员 / 内容</span><input id="keyword" class="field w-full" placeholder="搜索成员、对象或操作内容"></label>
               <div class="filter-actions"><button id="searchBtn" class="btn btn-primary"><i data-lucide="search" class="w-4"></i>查询</button><button id="resetBtn" class="btn btn-default">重置</button></div>
             </div>
           </section>
-
           <section class="card p-5 md:p-6">
-            <div class="flex items-center justify-between flex-wrap gap-3 mb-4"><div class="flex items-center gap-3"><h2 data-anno="4" class="inline-block text-[18px] font-semibold text-ink-title">操作日志</h2><span id="count" class="text-[12px] text-ink-sub mono" role="status" aria-live="polite"></span></div><div class="flex items-center gap-2 flex-wrap"><button id="exportBtn" data-anno="5" class="btn btn-default"><i data-lucide="download" class="w-4"></i>导出当前结果</button><button id="refreshBtn" class="w-8 h-8 rounded hover:bg-hover text-ink-sub" title="刷新" aria-label="刷新日志"><i data-lucide="refresh-cw" class="w-4 mx-auto"></i></button></div></div>
+            <div class="flex items-center justify-between flex-wrap gap-3 mb-4"><div class="flex items-center gap-3"><h2 class="inline-block text-[18px] font-semibold text-ink-title">操作日志</h2><span id="count" class="text-[12px] text-ink-sub mono" role="status" aria-live="polite"></span></div><div class="flex items-center gap-2 flex-wrap"><button id="exportBtn" class="btn btn-default"><i data-lucide="download" class="w-4"></i>导出当前结果</button><button id="refreshBtn" class="w-8 h-8 rounded hover:bg-hover text-ink-sub" title="刷新" aria-label="刷新日志"><i data-lucide="refresh-cw" class="w-4 mx-auto"></i></button></div></div>
             <div class="overflow-x-auto">
               <table class="data-table min-w-[920px]">
                 <thead><tr><th>操作时间</th><th>操作成员</th><th>模块</th><th>操作类型</th><th>操作对象</th><th>结果</th><th>IP 地址</th><th>操作</th></tr></thead>
                 <tbody id="logBody"></tbody>
               </table>
             </div>
-            <div id="logPagination" data-anno="6" class="flex items-center justify-end flex-wrap gap-4 pt-5 text-[12px]" aria-label="操作日志分页"></div>
+            <div id="logPagination" class="flex items-center justify-end flex-wrap gap-4 pt-5 text-[12px]" aria-label="操作日志分页"></div>
           </section>
         </div>
       </main>
     </div>
   </div>
-
   <div id="detailModal" class="modal-bg hidden" aria-hidden="true">
-    <section id="detailPanel" data-anno="7" class="w-[760px] max-w-[92vw] bg-card rounded-lg shadow-[0_6px_24px_rgba(0,0,0,.12)] overflow-hidden" role="dialog" aria-modal="true" aria-labelledby="detailTitle" aria-describedby="detailContent" tabindex="-1">
+    <section id="detailPanel" class="w-[760px] max-w-[92vw] bg-card rounded-lg shadow-[0_6px_24px_rgba(0,0,0,.12)] overflow-hidden" role="dialog" aria-modal="true" aria-labelledby="detailTitle" aria-describedby="detailContent" tabindex="-1">
       <header class="h-14 px-5 border-b border-line flex items-center justify-between"><h2 id="detailTitle" class="text-[16px] font-semibold text-ink-title">日志详情</h2><button id="closeDetail" class="w-8 h-8 rounded hover:bg-hover" aria-label="关闭"><i data-lucide="x" class="w-4 mx-auto"></i></button></header>
       <div id="detailContent" class="px-6 py-8 grid grid-cols-[100px_minmax(0,1fr)] gap-x-4 gap-y-3"></div>
       <footer class="px-6 py-4 border-t border-line flex justify-end"><button id="doneDetail" class="btn btn-primary">完成</button></footer>
     </section>
   </div>
-  <div id="toast" class="toast hidden" role="status" aria-live="polite" aria-atomic="true"></div>
-  <div id="annoLayer" class="fixed inset-0 pointer-events-none z-[9998]"></div><button id="annoToggle" type="button" class="fixed right-2 top-[120px] z-[9997] h-8 px-3 rounded-full bg-ink-muted text-white shadow-[0_2px_8px_rgba(0,0,0,.12)] flex items-center justify-center gap-1.5" aria-pressed="false"><i data-lucide="tags" class="w-4 h-4"></i><span class="text-[12px] font-medium">显示标注</span></button>
-  <div id="annoPopup" class="modal-bg hidden !z-[9999]" role="dialog" aria-modal="true" aria-labelledby="annoTitle"><section id="annoPanel" class="w-[520px] max-w-[92vw] rounded-lg bg-white shadow-[0_6px_24px_rgba(0,0,0,.12)]" tabindex="-1"><header class="h-14 px-5 border-b border-line flex items-center justify-between"><h2 id="annoTitle" class="text-[16px] font-semibold text-ink-title"></h2><button id="closeAnno" type="button" class="w-8 h-8 rounded hover:bg-hover" aria-label="关闭标注说明"><i data-lucide="x" class="w-4 mx-auto"></i></button></header><div id="annoDesc" class="p-5 leading-7 text-ink-body"></div></section></div>
-
+  <div id="toast" class="toast hidden" role="status" aria-live="polite" aria-atomic="true"></div></section></div>
   <script src="分页器.js?v=20260814"></script>
   <script>
     const logs=[
@@ -79,21 +74,17 @@
     const $=id=>document.getElementById(id);
     const escapeHtml=value=>String(value).replace(/[&<>'"]/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
     const tone=result=>result==='成功'?'bg-success-bg text-success':result==='失败'?'bg-danger-bg text-danger':'bg-warning-bg text-warning';
-    const annotations={1:{title:'操作时间',desc:'按开始日期和结束日期筛选日志；开始日期不能晚于结束日期。'},2:{title:'操作模块',desc:'按环境、代理、账号、团队或费用模块缩小日志范围。'},3:{title:'成员与内容搜索',desc:'搜索操作成员、操作类型、操作对象或变更摘要。'},4:{title:'操作日志',desc:'展示团队内关键操作、执行结果和脱敏 IP 地址。'},5:{title:'导出结果',desc:'原型仅模拟导出当前筛选后的脱敏日志，不会生成真实文件。'},6:{title:'日志分页',desc:'默认每页 10 条，支持页码、页大小和跳转。'},7:{title:'日志详情',desc:'集中查看单条日志的对象、结果与变更摘要。'}};
-    let shown=logs.slice(),page=1,pageSize=10,lastFocused=null,logPager,annoVisible=false,lastAnnoFocus=null;
-    const annoScope=[];
+    let shown=logs.slice(),page=1,pageSize=10,lastFocused=null,logPager;
     const formatDate=date=>{const pad=value=>String(value).padStart(2,'0');return `${date.getFullYear()}-${pad(date.getMonth()+1)}-${pad(date.getDate())}`};
     const todayValue=()=>formatDate(new Date());
     const monthStartValue=()=>{const date=new Date();return formatDate(new Date(date.getFullYear(),date.getMonth(),1))};
     const setupDateField=(field,value)=>{field.type='text';field.value=value;field.addEventListener('focus',()=>{field.type='date'});field.addEventListener('blur',()=>{if(!field.value)field.type='text'})};
-
     function toast(message){
       $('toast').textContent=message;
       $('toast').classList.remove('hidden');
       clearTimeout($('toast').timer);
       $('toast').timer=setTimeout(()=>$('toast').classList.add('hidden'),1800);
     }
-
     function renderRows(){
       const rows=shown.slice((page-1)*pageSize,page*pageSize);
       $('logBody').innerHTML=rows.map(log=>{
@@ -102,9 +93,7 @@
       }).join('')||'<tr><td colspan="8" class="py-20 text-center text-ink-sub">暂无符合条件的日志</td></tr>';
       $('count').textContent=`共 ${shown.length} 条`;
       lucide.createIcons();
-      requestAnimationFrame(renderAnnoBadges);
     }
-
     function applyFilters(resetPage=false){
       const start=$('startDate').value,end=$('endDate').value;
       $('startDate').removeAttribute('aria-invalid');$('endDate').removeAttribute('aria-invalid');
@@ -123,28 +112,22 @@
       renderRows();
       return true;
     }
-
     function openDetail(index){
       const log=logs[index];
       lastFocused=document.activeElement;
       $('detailContent').innerHTML=Object.entries({操作时间:log.time,操作成员:log.user,操作模块:log.module,操作类型:log.action,操作对象:log.target,执行结果:log.result,IP地址:log.ip,变更摘要:log.detail}).map(([label,value])=>`<span class="text-ink-sub">${label}</span><span class="text-ink-body break-all">${escapeHtml(value)}</span>`).join('');
       $('detailModal').classList.remove('hidden');
       $('detailModal').setAttribute('aria-hidden','false');
-      annoScope.push($('detailPanel'));
       lucide.createIcons();
       $('closeDetail').focus();
     }
-
     function closeDetail(){
       if($('detailModal').classList.contains('hidden'))return;
       $('detailModal').classList.add('hidden');
       $('detailModal').setAttribute('aria-hidden','true');
-      if(annoScope.at(-1)===$('detailPanel'))annoScope.pop();
-      renderAnnoBadges();
       lastFocused?.focus();
       lastFocused=null;
     }
-
     function trapFocus(event,panel){
       if(event.key!=='Tab')return;
       const focusable=[...panel.querySelectorAll('button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])')].filter(node=>node.offsetParent!==null);
@@ -153,11 +136,6 @@
       if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}
       else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}
     }
-
-    function renderAnnoBadges(){const layer=$('annoLayer');layer.innerHTML='';if(!annoVisible)return;(annoScope.at(-1)||document).querySelectorAll('[data-anno]').forEach(element=>{if(element.closest('.hidden'))return;const rect=element.getBoundingClientRect();if(!rect.width||!rect.height)return;const badge=document.createElement('button');badge.type='button';badge.className='anno-badge';badge.textContent=element.dataset.anno;badge.style.left=`${Math.min(innerWidth-24,Math.max(2,rect.right-10))}px`;badge.style.top=`${Math.min(innerHeight-24,Math.max(2,rect.top-10))}px`;badge.setAttribute('aria-label',`查看交互说明 ${element.dataset.anno}`);badge.onclick=()=>openAnno(element.dataset.anno);layer.appendChild(badge)})}
-    function openAnno(id){const item=annotations[id];if(!item)return;lastAnnoFocus=document.querySelector(`[data-anno="${id}"]`)||document.activeElement;$('annoTitle').textContent=`${id}. ${item.title}`;$('annoDesc').textContent=item.desc;$('annoPopup').classList.remove('hidden');$('closeAnno').focus()}
-    function closeAnno(){if($('annoPopup').classList.contains('hidden'))return;$('annoPopup').classList.add('hidden');lastAnnoFocus?.focus?.({preventScroll:true});lastAnnoFocus=null}
-
     logPager=new YDPager($('logPagination'),{total_count:logs.length,current_page:1,page_size:10,page_size_options:[10,20,50],toast,onChange(next){page=next.current_page;pageSize=next.page_size;renderRows();}});
     $('searchBtn').onclick=()=>applyFilters(true);
     $('resetBtn').onclick=()=>{$('startDate').value=monthStartValue();$('endDate').value=todayValue();$('moduleFilter').value='';$('keyword').value='';applyFilters(true);};
@@ -166,13 +144,8 @@
     $('logBody').onclick=event=>{const button=event.target.closest('[data-detail]');if(button)openDetail(Number(button.dataset.detail));};
     $('closeDetail').onclick=$('doneDetail').onclick=closeDetail;
     $('detailModal').onclick=event=>{if(event.target===$('detailModal'))closeDetail();};
-    $('closeAnno').onclick=closeAnno;$('annoPopup').onclick=event=>{if(event.target===$('annoPopup'))closeAnno()};
-    document.addEventListener('keydown',event=>{if(!$('annoPopup').classList.contains('hidden')){if(event.key==='Escape'){event.preventDefault();closeAnno();return;}trapFocus(event,$('annoPanel'));return}if($('detailModal').classList.contains('hidden'))return;if(event.key==='Escape'){event.preventDefault();closeDetail();return;}trapFocus(event,$('detailPanel'));});
-    addEventListener('resize',renderAnnoBadges);addEventListener('scroll',renderAnnoBadges,true);
     setupDateField($('startDate'),monthStartValue());setupDateField($('endDate'),todayValue());applyFilters(true);
     lucide.createIcons();
   </script>
-  <script src="标注交互.js?v=20260814"></script>
-
 </body>
 </html>

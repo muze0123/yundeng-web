@@ -242,9 +242,29 @@ body[data-yundeng-shell] .yundeng-topbar-actions .yundeng-icon-button[data-yunde
 }
 body[data-yundeng-shell] .yundeng-icon-button:active,
 body[data-yundeng-shell] #collapseBtn:active { transform: translateY(1px); }
-body[data-yundeng-shell] .yundeng-account { height: 34px; padding: 0 4px; border: 0; border-radius: 4px; display: inline-flex; align-items: center; gap: 8px; color: #3A3F4A; background: transparent; cursor: pointer; }
+body[data-yundeng-shell] .yundeng-account { height: 34px; padding: 0 4px; border: 0; border-radius: 4px; display: inline-flex; align-items: center; gap: 8px; color: #3A3F4A; background: transparent; cursor: pointer; font-size: 14px; line-height: 1.3; }
 body[data-yundeng-shell] .yundeng-account:hover { background: #F3F4F6; }
+body[data-yundeng-shell] .yundeng-account-name { font-weight: 500; white-space: nowrap; }
 body[data-yundeng-shell] .yundeng-avatar { width: 28px; height: 28px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; color: #0066FF; background: #E6F0FF; font-weight: 600; }
+body[data-yundeng-shell] .yundeng-avatar {
+  overflow: hidden;
+  border: 1px solid #DFE1E5;
+  background:
+    radial-gradient(circle at 38% 34%, rgba(255,255,255,.94) 0 10%, transparent 11%),
+    radial-gradient(circle at 52% 40%, #1A1D24 0 12%, transparent 13%),
+    radial-gradient(circle at 44% 60%, #3A3F4A 0 18%, transparent 19%),
+    radial-gradient(circle at 50% 50%, #9DA2AC 0 48%, #6E7685 49% 64%, #DFE1E5 65% 100%);
+  position: relative;
+}
+body[data-yundeng-shell] .yundeng-avatar::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 50% 28%, rgba(255,255,255,.88) 0 7%, transparent 8%),
+    radial-gradient(circle at 34% 72%, rgba(255,255,255,.28) 0 8%, transparent 9%);
+  mix-blend-mode: screen;
+}
 body[data-yundeng-shell] .yundeng-divider { width: 1px; height: 20px; margin: 0 4px; background: #DFE1E5; }
 body[data-yundeng-shell] .yundeng-dirty { padding: 2px 8px; border-radius: 4px; color: #E7772D; background: #FDF2E9; font-size: 11px; }
 body[data-yundeng-shell] .yundeng-dirty.hidden { display: none; }
@@ -331,6 +351,478 @@ body[data-yundeng-shell] .yundeng-popover {
 body[data-yundeng-shell] .yundeng-popover.hidden { display: none; }
 body[data-yundeng-shell] .yundeng-popover button,
 body[data-yundeng-shell] .yundeng-popover a { font: inherit; color: inherit; }
+body[data-yundeng-shell] #accountPopover,
+body[data-yundeng-shell] #yundeng-account {
+  width: 340px;
+  min-width: 340px;
+  max-width: calc(100vw - 16px);
+  max-height: calc(100dvh - 156px);
+  padding: 20px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+  border-color: #E8EAED;
+}
+body[data-yundeng-shell] #accountPopover::-webkit-scrollbar,
+body[data-yundeng-shell] #yundeng-account::-webkit-scrollbar { width: 6px; }
+body[data-yundeng-shell] #accountPopover::-webkit-scrollbar-thumb,
+body[data-yundeng-shell] #yundeng-account::-webkit-scrollbar-thumb { border-radius: 999px; background: #DFE1E5; }
+body[data-yundeng-shell] #accountPopover::-webkit-scrollbar-track,
+body[data-yundeng-shell] #yundeng-account::-webkit-scrollbar-track { background: transparent; }
+body[data-yundeng-shell] .yundeng-account-panel { display: flex; flex-direction: column; gap: 0; }
+body[data-yundeng-shell] .yundeng-account-head {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+body[data-yundeng-shell] .yundeng-account-head:hover .yundeng-account-title,
+body[data-yundeng-shell] .yundeng-account-head:hover .yundeng-account-head-chevron {
+  color: #0066FF;
+}
+body[data-yundeng-shell] .yundeng-account-head-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  flex: none;
+  overflow: hidden;
+  border: 1px solid #DFE1E5;
+  background:
+    radial-gradient(circle at 38% 34%, rgba(255,255,255,.92) 0 10%, transparent 11%),
+    radial-gradient(circle at 52% 40%, #1A1D24 0 12%, transparent 13%),
+    radial-gradient(circle at 44% 60%, #3A3F4A 0 18%, transparent 19%),
+    radial-gradient(circle at 50% 50%, #9DA2AC 0 48%, #6E7685 49% 64%, #DFE1E5 65% 100%);
+  position: relative;
+}
+body[data-yundeng-shell] .yundeng-account-head-avatar::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 50% 28%, rgba(255,255,255,.88) 0 7%, transparent 8%),
+    radial-gradient(circle at 34% 72%, rgba(255,255,255,.32) 0 8%, transparent 9%);
+  mix-blend-mode: screen;
+}
+body[data-yundeng-shell] .yundeng-account-head-copy { min-width: 0; flex: 1; display: flex; flex-direction: column; gap: 2px; }
+body[data-yundeng-shell] .yundeng-account-title-row {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+body[data-yundeng-shell] .yundeng-account-title {
+  min-width: 0;
+  color: #3A3F4A;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 20px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+body[data-yundeng-shell] .yundeng-account-subtitle-row {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #9DA2AC;
+  font-size: 12px;
+  line-height: 18px;
+}
+body[data-yundeng-shell] .yundeng-account-dot {
+  width: 3px;
+  height: 3px;
+  border-radius: 999px;
+  flex: none;
+  background: #DFE1E5;
+}
+body[data-yundeng-shell] .yundeng-account-head-chevron,
+body[data-yundeng-shell] .yundeng-account-list-chevron {
+  width: 16px;
+  height: 16px;
+  flex: none;
+  color: #9DA2AC;
+}
+body[data-yundeng-shell] .yundeng-account-section {
+  min-width: 0;
+  padding: 0;
+}
+body[data-yundeng-shell] .yundeng-account-balance {
+  margin-top: 28px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 0;
+}
+body[data-yundeng-shell] .yundeng-account-balance-item {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+body[data-yundeng-shell] .yundeng-account-balance-item + .yundeng-account-balance-item {
+  padding-left: 16px;
+  border-left: 1px solid #E8EAED;
+}
+body[data-yundeng-shell] .yundeng-account-balance-top {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+body[data-yundeng-shell] .yundeng-account-balance-label {
+  min-width: 0;
+  color: #6E7685;
+  font-size: 13px;
+  line-height: 18px;
+}
+body[data-yundeng-shell] .yundeng-popover .yundeng-account-balance-action {
+  min-width: 34px;
+  height: 20px;
+  padding: 0 4px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: #0066FF;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 20px;
+  cursor: pointer;
+  text-align: center;
+}
+body[data-yundeng-shell] .yundeng-popover .yundeng-account-balance-action:hover,
+body[data-yundeng-shell] .yundeng-popover .yundeng-account-balance-action:focus-visible {
+  background: #E6F0FF;
+  box-shadow: inset 0 0 0 1px rgba(0,102,255,.08);
+}
+body[data-yundeng-shell] .yundeng-account-balance-value {
+  color: #1A1D24;
+  font: 500 24px/28px 'JetBrains Mono', monospace;
+  letter-spacing: 0;
+}
+body[data-yundeng-shell] .yundeng-account-vip {
+  width: 100%;
+  min-height: 48px;
+  margin-top: 20px;
+  padding: 10px 10px 10px 9px;
+  border: 0;
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  color: #fff;
+  background: linear-gradient(90deg, #5B9EFF 0%, #0066FF 54%, #0052CC 100%);
+  box-shadow: 0 6px 24px rgba(0,102,255,.24);
+  cursor: pointer;
+}
+body[data-yundeng-shell] .yundeng-account-vip::after {
+  content: '';
+  position: absolute;
+  left: -18px;
+  right: -18px;
+  bottom: -28px;
+  height: 38px;
+  border-radius: 50% 50% 0 0;
+  background: rgba(255,255,255,.28);
+  pointer-events: none;
+}
+body[data-yundeng-shell] .yundeng-account-vip:hover {
+  background: linear-gradient(90deg, #6AA8FF 0%, #0052CC 58%, #0047B3 100%);
+}
+body[data-yundeng-shell] .yundeng-account-vip-left {
+  min-width: 0;
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+body[data-yundeng-shell] .yundeng-account-vip-mark {
+  width: 18px;
+  height: 18px;
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+body[data-yundeng-shell] .yundeng-account-vip-mark svg {
+  width: 18px;
+  height: 18px;
+}
+body[data-yundeng-shell] .yundeng-account-vip-copy {
+  min-width: 0;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 18px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+body[data-yundeng-shell] .yundeng-account-vip-badge {
+  min-height: 26px;
+  padding: 0 11px;
+  border-radius: 9999px;
+  position: relative;
+  z-index: 1;
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #0066FF;
+  background: #E6F0FF;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.16);
+}
+body[data-yundeng-shell] .yundeng-account-package {
+  min-width: 0;
+  margin-top: 24px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px 24px;
+  padding: 0 14px;
+}
+body[data-yundeng-shell] .yundeng-account-package-item {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+}
+body[data-yundeng-shell] .yundeng-account-package-count {
+  min-width: 0;
+  color: #3A3F4A;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 20px;
+}
+body[data-yundeng-shell] .yundeng-account-package-label {
+  color: #6E7685;
+  font-size: 12px;
+  line-height: 16px;
+}
+body[data-yundeng-shell] .yundeng-account-package-expired {
+  grid-column: 1 / -1;
+  padding-top: 0;
+  color: #9DA2AC;
+  font-size: 12px;
+  line-height: 16px;
+  text-align: center;
+}
+body[data-yundeng-shell] .yundeng-account-traffic {
+  min-width: 0;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid #E8EAED;
+}
+body[data-yundeng-shell] .yundeng-account-traffic-heading {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+body[data-yundeng-shell] .yundeng-account-traffic-heading h3 {
+  margin: 0;
+  color: #1A1D24;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+}
+body[data-yundeng-shell] .yundeng-popover .yundeng-account-traffic-action {
+  min-height: 28px;
+  padding: 0 8px;
+  border: 1px solid #0066FF;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  flex: none;
+  color: #0066FF;
+  background: #fff;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 18px;
+  cursor: pointer;
+}
+body[data-yundeng-shell] .yundeng-popover .yundeng-account-traffic-action:hover,
+body[data-yundeng-shell] .yundeng-popover .yundeng-account-traffic-action:focus-visible {
+  background: #E6F0FF;
+  outline: 0;
+}
+body[data-yundeng-shell] .yundeng-account-traffic-action svg { width: 14px; height: 14px; }
+body[data-yundeng-shell] .yundeng-account-traffic-list {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+body[data-yundeng-shell] .yundeng-account-traffic-item {
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid #E8EAED;
+  border-radius: 6px;
+  background: #F7F8FA;
+}
+body[data-yundeng-shell] .yundeng-account-traffic-item-head {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+body[data-yundeng-shell] .yundeng-account-traffic-item-head strong {
+  color: #3A3F4A;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 18px;
+}
+body[data-yundeng-shell] .yundeng-account-traffic-item-head span {
+  color: #6E7685;
+  font-size: 11px;
+  line-height: 16px;
+  white-space: nowrap;
+}
+body[data-yundeng-shell] .yundeng-account-traffic-item-head b {
+  color: #0066FF;
+  font-size: 12px;
+  font-weight: 600;
+}
+body[data-yundeng-shell] .yundeng-account-traffic-track {
+  width: 100%;
+  height: 6px;
+  margin-top: 10px;
+  border-radius: 999px;
+  display: block;
+  overflow: hidden;
+  background: #DFE1E5;
+}
+body[data-yundeng-shell] .yundeng-account-traffic-fill {
+  height: 100%;
+  border-radius: inherit;
+  display: block;
+  background: #0066FF;
+  transition: width .22s ease;
+}
+body[data-yundeng-shell] .yundeng-account-traffic-metrics {
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0;
+}
+body[data-yundeng-shell] .yundeng-account-traffic-metrics > span {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+body[data-yundeng-shell] .yundeng-account-traffic-metrics > span + span {
+  padding-left: 8px;
+  border-left: 1px solid #E8EAED;
+}
+body[data-yundeng-shell] .yundeng-account-traffic-metrics em {
+  color: #9DA2AC;
+  font-size: 11px;
+  font-style: normal;
+  line-height: 16px;
+}
+body[data-yundeng-shell] .yundeng-account-traffic-metrics b {
+  color: #3A3F4A;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 16px;
+  white-space: nowrap;
+}
+body[data-yundeng-shell] .yundeng-account-traffic-note {
+  min-width: 0;
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #9DA2AC;
+  font-size: 11px;
+  line-height: 16px;
+}
+body[data-yundeng-shell] .yundeng-account-traffic-note svg { width: 12px; height: 12px; flex: none; }
+body[data-yundeng-shell] .yundeng-account-traffic + .yundeng-account-menu {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #E8EAED;
+}
+body[data-yundeng-shell] .yundeng-account-menu {
+  margin-top: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding-top: 0;
+}
+body[data-yundeng-shell] .yundeng-account-menu-item {
+  width: 100%;
+  min-height: 34px;
+  padding: 0 0;
+  border: 0;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  justify-content: flex-start;
+  color: #3A3F4A;
+  background: transparent;
+  cursor: pointer;
+  text-decoration: none;
+}
+body[data-yundeng-shell] .yundeng-account-menu-item:hover { background: #F3F4F6; }
+body[data-yundeng-shell] .yundeng-account-menu-item .menu-label {
+  min-width: 0;
+  flex: 0 1 auto;
+  color: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 18px;
+  text-align: left;
+}
+body[data-yundeng-shell] .yundeng-account-menu-icon {
+  width: 16px;
+  height: 16px;
+  flex: none;
+  color: #6E7685;
+}
+body[data-yundeng-shell] .yundeng-account-menu-item:hover .yundeng-account-menu-icon,
+body[data-yundeng-shell] .yundeng-account-menu-item:hover .yundeng-account-list-chevron {
+  color: #3A3F4A;
+}
+body[data-yundeng-shell] .yundeng-account-menu-item .yundeng-account-list-chevron {
+  margin-left: auto;
+}
+body[data-yundeng-shell] .yundeng-account-menu-logout {
+  margin-top: 10px;
+  border-top: 1px solid #E8EAED;
+  padding-top: 10px;
+}
+body[data-yundeng-shell] .yundeng-account-logout {
+  color: #3A3F4A;
+}
+body[data-yundeng-shell] .yundeng-account-logout:hover {
+  color: #D9001B;
+  background: #FFE8EB;
+}
+body[data-yundeng-shell] .yundeng-account-logout .yundeng-account-menu-icon,
+body[data-yundeng-shell] .yundeng-account-logout .yundeng-account-list-chevron {
+  color: #6E7685;
+}
 body[data-yundeng-shell] .yundeng-assistant-button {
   width: 44px;
   height: 44px;
@@ -509,44 +1001,10 @@ body[data-yundeng-shell] .yundeng-onboarding-loading {
 }
 body[data-yundeng-shell] .yundeng-onboarding-loading[hidden] { display: none !important; }
 body[data-yundeng-shell] .yundeng-onboarding-loading svg { width: 18px; height: 18px; animation: yundeng-onboarding-spin .8s linear infinite; }
-body[data-yundeng-shell] .yundeng-onboarding-annotation-toggle {
-  position: fixed;
-  top: 50%;
-  right: 8px;
-  z-index: 5;
-  min-width: 32px;
-  height: 32px;
-  padding: 0 12px;
-  border: 0;
-  border-radius: 9999px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  color: #fff;
-  background: #9DA2AC;
-  box-shadow: 0 2px 8px rgba(0,0,0,.12);
-  transform: translateY(-50%);
-  cursor: grab;
-  transition: background-color .16s ease, box-shadow .16s ease;
-}
-body[data-yundeng-shell] .yundeng-onboarding-annotation-toggle:hover { background: #6E7685; box-shadow: 0 4px 14px rgba(0,0,0,.16); }
-body[data-yundeng-shell] .yundeng-onboarding-annotation-toggle:focus-visible { outline: 2px solid #0066FF; outline-offset: 2px; }
-body[data-yundeng-shell] .yundeng-onboarding-annotation-toggle[aria-pressed="true"] { background: #0066FF; }
-body[data-yundeng-shell] .yundeng-onboarding-annotation-toggle[aria-pressed="true"]:hover { background: #0052CC; }
-body[data-yundeng-shell] .yundeng-onboarding-annotation-toggle[data-dragging="true"] { cursor: grabbing; }
-body[data-yundeng-shell] .yundeng-onboarding-annotation-toggle svg { width: 16px; height: 16px; flex: none; }
-body[data-yundeng-shell] .yundeng-onboarding-annotation-toggle span { color: inherit; font-size: 12px; font-weight: 500; white-space: nowrap; }
 @keyframes yundeng-onboarding-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes yundeng-onboarding-spin { to { transform: rotate(360deg); } }
-@media (max-width: 1399px) {
-  body[data-yundeng-shell] .yundeng-onboarding-annotation-toggle { width: 32px; padding: 0; }
-  body[data-yundeng-shell] .yundeng-onboarding-annotation-toggle span { display: none; }
-}
 @media (min-width: 768px) and (max-width: 1100px) {
   body[data-yundeng-shell] .yundeng-onboarding-panel { width: min(960px, calc(100vw - 48px)); height: min(660px, calc(100dvh - 48px)); }
-  body[data-yundeng-shell] .yundeng-onboarding-annotation-toggle { right: 0; width: 24px; min-width: 24px; border-radius: 9999px 0 0 9999px; }
-  body[data-yundeng-shell] .yundeng-onboarding-annotation-toggle svg { width: 14px; height: 14px; }
 }
 @media (min-width: 768px) and (max-width: 900px) {
   body[data-yundeng-shell] .yundeng-onboarding-panel { width: min(760px, calc(100vw - 48px)); height: min(600px, calc(100dvh - 48px)); }
@@ -560,14 +1018,10 @@ body[data-yundeng-shell] .yundeng-mobile-backdrop {
   background: rgba(26,29,36,.28);
 }
 body[data-yundeng-shell] .yundeng-mobile-backdrop[data-open="true"] { display: block; }
-body[data-yundeng-shell] #annoToggle { top: 156px; }
-body[data-yundeng-shell] #annoToggle[hidden] { display: none !important; }
 body[data-yundeng-shell] #toastContainer { top: 148px !important; }
 @media (max-width: 767px) {
   body[data-yundeng-shell] .yundeng-onboarding-overlay { padding: 0; }
   body[data-yundeng-shell] .yundeng-onboarding-panel { width: 100vw; height: 100vh; height: 100dvh; border-radius: 0; }
-  body[data-yundeng-shell] .yundeng-onboarding-annotation-toggle { right: 0; width: 24px; min-width: 24px; padding: 0; border-radius: 9999px 0 0 9999px; }
-  body[data-yundeng-shell] .yundeng-onboarding-annotation-toggle svg { width: 14px; height: 14px; }
   body[data-yundeng-shell] .yundeng-window-controls { display: none; }
   body[data-yundeng-shell] .yundeng-browser-tab { min-width: 160px; flex-basis: 200px; }
   body[data-yundeng-shell] [data-yundeng-topbar] { padding: 0 12px !important; }
@@ -617,6 +1071,7 @@ body[data-yundeng-shell] #toastContainer { top: 148px !important; }
   body[data-yundeng-shell] .yundeng-subnav,
   body[data-yundeng-shell] .yundeng-group-chevron,
   body[data-yundeng-shell] .yundeng-sidebar-toggle { transition: none !important; }
+  body[data-yundeng-shell] .yundeng-account-traffic-fill { transition: none !important; }
   body[data-yundeng-shell] .yundeng-icon-button:active,
   body[data-yundeng-shell] #collapseBtn:active { transform: none; }
 }

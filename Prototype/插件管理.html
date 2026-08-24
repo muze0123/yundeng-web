@@ -47,14 +47,13 @@
     .modal-mask.hidden { display:none; }
     .modal-panel { width:760px; max-width:100%; max-height:calc(100dvh - 32px); border-radius:8px; display:flex; flex-direction:column; background:#FFFFFF; box-shadow:0 6px 24px rgba(0,0,0,.12); }
     .toast { position:fixed; top:16px; left:50%; z-index:2200; transform:translateX(-50%); padding:9px 16px; border-radius:4px; color:#FFFFFF; background:#1A1D24; box-shadow:0 2px 8px rgba(0,0,0,.12); }
-    .anno-badge { position:fixed; width:20px; height:20px; border:0; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#FFFFFF; background:#0066FF; font:600 11px/1 'JetBrains Mono',monospace; pointer-events:auto; box-shadow:0 2px 8px rgba(0,0,0,.12); }
     :where(button,input,select,textarea):focus-visible { outline:2px solid #0066FF; outline-offset:2px; }
     @media (max-width:1100px) { .plugin-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
     @media (max-width:720px) { .panel { padding:16px; } .plugin-grid { grid-template-columns:1fr; } .category-row { display:block; } .category-label { width:auto; padding:0 0 6px; } .catalog-head .btn { width:100%; } }
     @media (prefers-reduced-motion:reduce) { *,*::before,*::after { transition:none!important; animation:none!important; } }
   </style>
-  <link rel="stylesheet" href="公共导航.css?v=20260821a">
-  <script src="公共导航.js?v=20260821a"></script>
+  <link rel="stylesheet" href="公共导航.css?v=20260824a">
+  <script src="公共导航.js?v=20260824a"></script>
 </head>
 <body class="overflow-hidden">
   <div id="yundeng-shell" class="flex h-screen overflow-hidden">
@@ -67,45 +66,38 @@
           <section class="panel mb-4" aria-label="插件筛选">
             <div class="flex items-center justify-between gap-4 mb-5">
               <div id="moduleTabs" class="tablist flex-1" role="tablist" aria-label="插件范围"></div>
-              <button id="uploadBtn" data-anno="1" class="btn btn-primary"><i data-lucide="upload" class="w-4 h-4"></i>上传插件</button>
+              <button id="uploadBtn" class="btn btn-primary"><i data-lucide="upload" class="w-4 h-4"></i>上传插件</button>
             </div>
             <div id="marketCategories" class="space-y-3 mb-5">
-              <div class="category-row"><span class="category-label">功能分类</span><div id="funcCats" data-anno="2" class="category-options"></div></div>
+              <div class="category-row"><span class="category-label">功能分类</span><div id="funcCats" class="category-options"></div></div>
               <div class="category-row"><span class="category-label">电商分类</span><div id="bizCats" class="category-options"></div></div>
             </div>
             <div class="filter-flow">
               <label class="filter-item"><span class="filter-label">浏览器内核</span><select id="kernelFilter" class="control"><option>全部内核</option><option>谷歌</option><option>火狐</option></select></label>
               <label class="filter-item owned-filter hidden"><span class="filter-label">全局状态</span><select id="globalFilter" class="control"><option>全部状态</option><option>已开启</option><option>未开启</option></select></label>
               <label class="filter-item owned-filter hidden"><span class="filter-label">环境分配</span><select id="assignFilter" class="control"><option>全部状态</option><option>已分配</option><option>未分配</option></select></label>
-              <label class="filter-item" data-anno="3"><span class="filter-label">搜索插件</span><input id="searchInput" class="control" placeholder="搜索插件名称或简介"></label>
+              <label class="filter-item"><span class="filter-label">搜索插件</span><input id="searchInput" class="control" placeholder="搜索插件名称或简介"></label>
               <div class="filter-actions"><button id="queryBtn" class="btn btn-primary"><i data-lucide="search" class="w-4 h-4"></i>查询</button><button id="resetBtn" class="btn btn-default">重置</button></div>
             </div>
           </section>
-
           <section class="bg-white rounded-lg p-5 md:p-6" aria-labelledby="listTitle">
-            <div class="catalog-head"><div><h2 id="listTitle" data-anno="4" class="inline-block text-[18px] font-semibold text-ink-title">插件市场</h2><span id="resultCount" class="ml-2 text-[12px] text-ink-sub" aria-live="polite"></span></div><button id="createGroupBtn" data-anno="8" class="btn btn-default hidden"><i data-lucide="folder-plus" class="w-4 h-4"></i><span>创建我的分组</span></button></div>
+            <div class="catalog-head"><div><h2 id="listTitle" class="inline-block text-[18px] font-semibold text-ink-title">插件市场</h2><span id="resultCount" class="ml-2 text-[12px] text-ink-sub" aria-live="polite"></span></div><button id="createGroupBtn" class="btn btn-default hidden"><i data-lucide="folder-plus" class="w-4 h-4"></i><span>创建我的分组</span></button></div>
             <div id="pluginList" class="plugin-grid"></div>
             <div id="emptyState" class="hidden min-h-[300px] flex flex-col items-center justify-center text-center p-8"><span class="w-12 h-12 rounded-lg bg-primary-bg text-primary flex items-center justify-center"><i data-lucide="search-x" class="w-6 h-6"></i></span><h3 class="mt-3 text-[15px] font-semibold text-ink-title">暂无符合条件的插件</h3><p class="mt-1 text-[12px] text-ink-sub">请调整筛选条件后重试</p></div>
-            <div id="pluginPagination" data-anno="5" aria-label="插件列表分页"></div>
+            <div id="pluginPagination" aria-label="插件列表分页"></div>
           </section>
         </div>
       </main>
     </div>
   </div>
-
   <div id="pluginModal" class="modal-mask hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-hidden="true">
-    <section id="modalPanel" data-anno="10" class="modal-panel">
+    <section id="modalPanel" class="modal-panel">
       <header class="h-14 px-5 border-b border-line flex items-center justify-between shrink-0"><h2 id="modalTitle" class="text-[16px] font-semibold text-ink-title"></h2><button id="modalClose" class="btn btn-default w-8 px-0" aria-label="关闭弹窗"><i data-lucide="x" class="w-4 h-4"></i></button></header>
       <div id="modalBody" class="p-5 overflow-auto"></div>
       <footer class="px-5 py-4 border-t border-line flex justify-end gap-2 shrink-0"><button id="modalCancel" class="btn btn-default">取消</button><button id="modalConfirm" class="btn btn-primary">确定</button></footer>
     </section>
   </div>
-
-  <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
-  <div id="annoLayer" class="fixed inset-0 pointer-events-none z-[9998]"></div>
-  <button id="annoToggle" class="fixed right-2 top-[120px] z-[9997] h-8 px-3 rounded-full bg-ink-muted text-white shadow-[0_2px_8px_rgba(0,0,0,.12)] flex items-center justify-center gap-1.5" aria-pressed="false"><i data-lucide="tags" class="w-4 h-4"></i><span class="text-[12px] font-medium">显示标注</span></button>
-  <div id="annoPopup" class="modal-mask hidden z-[9999]" role="dialog" aria-modal="true" aria-labelledby="annoTitle" aria-hidden="true"><section class="w-[520px] max-w-full rounded-lg bg-white shadow-[0_6px_24px_rgba(0,0,0,.12)]"><header class="px-5 py-4 border-b border-line flex items-center justify-between"><h2 id="annoTitle" class="text-[16px] font-semibold text-ink-title"></h2><button id="annoClose" class="btn btn-default w-8 px-0" aria-label="关闭标注说明"><i data-lucide="x" class="w-4 h-4"></i></button></header><div id="annoDesc" class="p-5 text-[14px] leading-7"></div></section></div>
-
+  <div id="toast" class="toast hidden" role="status" aria-live="polite"></div></section></div>
   <script src="分页器.js?v=20260814"></script>
   <script>
     const $=selector=>document.querySelector(selector);
@@ -132,10 +124,8 @@
     ];
     let plugins=pluginSeed.map((item,index)=>({id:index+1,name:item[0],desc:item[1],func:item[2],biz:item[3],kernel:item[4],icon:item[5],downloads:item[6],source:item[7],added:item[8],envs:item[9],global:index%4===0,teamVisible:index%3===0,group:'未分组',version:`v${index%3+1}.${index%5}.0`}));
     const state={tab:'market',func:'热门推荐',biz:'全部',page:1,pageSize:10,modalKey:'',lastFocus:null};
-    let pager=null,annoVisible=false;
+    let pager=null;
     const tabMeta={market:'插件市场',mine:'我的插件',team:'团队插件'};
-    const annotations={1:{title:'上传插件',desc:['支持商店链接和安装包两种来源。','原型仅校验表单，不上传真实文件。']},2:{title:'插件分类',desc:['功能分类与电商分类会共同参与市场筛选。']},3:{title:'插件搜索',desc:['可按名称、简介、来源和分类查询。']},4:{title:'插件列表',desc:['市场、我的插件和团队插件共用同一套筛选与分页。']},5:{title:'列表分页',desc:['默认每页 10 条，支持 10、20、50 条。']},8:{title:'插件分组',desc:['我的插件和团队插件可建立独立分组。']},10:{title:'业务弹窗',desc:['授权、分配、全局状态和删除均需明确确认。']}};
-
     function toast(message){const node=$('#toast');node.textContent=message;node.classList.remove('hidden');clearTimeout(node.timer);node.timer=setTimeout(()=>node.classList.add('hidden'),2200)}
     function renderTabs(){
       $('#moduleTabs').innerHTML=Object.entries(tabMeta).map(([key,label])=>`<button type="button" class="tab" role="tab" data-tab="${key}" aria-selected="${state.tab===key}" tabindex="${state.tab===key?0:-1}">${label}</button>`).join('');
@@ -169,16 +159,15 @@
       $('#pluginList').classList.toggle('hidden',visible.length===0);$('#emptyState').classList.toggle('hidden',visible.length!==0);
       if(!pager)pager=new YDPager('#pluginPagination',{total_count:rows.length,current_page:state.page,page_size:state.pageSize,page_size_options:[10,20,50],onChange:next=>{state.page=next.current_page;state.pageSize=next.page_size;renderList()},toast});
       else pager.setState({total_count:rows.length,current_page:state.page,page_size:state.pageSize},{silent:true});
-      lucide.createIcons();renderAnnoBadges();
+      lucide.createIcons()
     }
     function render(){renderTabs();renderCategories();$('#marketCategories').classList.toggle('hidden',state.tab!=='market');$$('.owned-filter').forEach(node=>node.classList.toggle('hidden',state.tab==='market'));$('#createGroupBtn').classList.toggle('hidden',state.tab==='market');$('#createGroupBtn span').textContent=state.tab==='team'?'创建团队分组':'创建我的分组';renderList()}
-
     function uploadBody(){return `<div class="space-y-4"><label class="block"><span class="block mb-1.5">插件商店链接</span><input id="requiredField" class="control" placeholder="请输入 Chrome 或 Firefox 插件商店链接"></label><div class="p-3 rounded bg-warning-bg text-warning">第三方插件由对应开发者提供，请在授权前核对权限范围。</div><div class="border border-line rounded p-4"><strong class="text-ink-title">上传安装包</strong><p class="mt-2 text-[12px] text-ink-sub leading-6">支持 crx、xpi 和 zip，单个文件不超过 50MB。</p><button type="button" class="btn btn-default mt-3"><i data-lucide="file-up" class="w-4 h-4"></i>选择安装包</button></div></div>`}
     function authBody(plugin){return `<p class="mb-4">添加 <strong>${escapeHtml(plugin.name)}</strong> 前需要确认授权范围。</p><div class="space-y-3"><label class="flex gap-2"><input id="agreeUser" type="checkbox">我已阅读并同意用户授权协议</label><label class="flex gap-2"><input id="agreePrivacy" type="checkbox">我已阅读并同意隐私协议</label><label class="flex gap-2"><input id="toTeam" type="checkbox">同步收录到团队插件</label></div>`}
     function assignBody(){return `<div class="grid md:grid-cols-2 gap-4"><div class="border border-line rounded p-3 space-y-2"><strong class="text-ink-title">环境分组</strong><label class="block"><input type="checkbox" checked> 默认分组</label><label class="block"><input type="checkbox"> 店铺运营</label><label class="block"><input type="checkbox"> 广告投放</label></div><div class="space-y-2"><strong class="text-ink-title">选择环境</strong>${['北美店铺-01','欧洲广告-02','新加坡运营-03','素材检查-04'].map(name=>`<label class="block border border-line rounded p-2"><input type="checkbox" data-env> ${name}</label>`).join('')}</div></div>`}
     function groupBody(){return `<label class="block mb-4"><span class="block mb-1.5">分组名称</span><input id="requiredField" class="control" maxlength="30" placeholder="请输入分组名称"></label><label class="block"><span class="block mb-1.5">备注</span><textarea class="control" maxlength="100" placeholder="请输入备注"></textarea></label>`}
-    function openModal(title,body,confirm,key){state.lastFocus=document.activeElement;state.modalKey=key;$('#modalTitle').textContent=title;$('#modalBody').innerHTML=body;$('#modalConfirm').textContent=confirm||'确定';$('#pluginModal').classList.remove('hidden');$('#pluginModal').setAttribute('aria-hidden','false');lucide.createIcons();requestAnimationFrame(()=>($('#modalBody').querySelector('input,select,textarea,button')||$('#modalConfirm')).focus());renderAnnoBadges()}
-    function closeModal(){if($('#pluginModal').classList.contains('hidden'))return;$('#pluginModal').classList.add('hidden');$('#pluginModal').setAttribute('aria-hidden','true');state.modalKey='';state.lastFocus?.focus?.({preventScroll:true});state.lastFocus=null;renderAnnoBadges()}
+    function openModal(title,body,confirm,key){state.lastFocus=document.activeElement;state.modalKey=key;$('#modalTitle').textContent=title;$('#modalBody').innerHTML=body;$('#modalConfirm').textContent=confirm||'确定';$('#pluginModal').classList.remove('hidden');$('#pluginModal').setAttribute('aria-hidden','false');lucide.createIcons();requestAnimationFrame(()=>($('#modalBody').querySelector('input,select,textarea,button')||$('#modalConfirm')).focus())}
+    function closeModal(){if($('#pluginModal').classList.contains('hidden'))return;$('#pluginModal').classList.add('hidden');$('#pluginModal').setAttribute('aria-hidden','true');state.modalKey='';state.lastFocus?.focus?.({preventScroll:true});state.lastFocus=null}
     function confirmModal(){
       const [action,id]=state.modalKey.split(':'),plugin=plugins.find(item=>item.id===Number(id));
       if(action==='add'){if(!$('#agreeUser').checked||!$('#agreePrivacy').checked){toast('请先确认授权协议和隐私协议');return}plugin.added=true;plugin.teamVisible=$('#toTeam').checked;closeModal();render();toast('插件已添加到演示列表');return}
@@ -187,11 +176,6 @@
       if(action==='delete'){plugins=plugins.filter(item=>item.id!==plugin.id);closeModal();state.page=1;render();toast('插件已从演示列表删除');return}
       const required=$('#requiredField');if(required&&!required.value.trim()){required.classList.add('invalid');required.focus();toast('请填写必填项');return}closeModal();toast('演示操作已完成');
     }
-
-    function openAnnotation(id){const item=annotations[id];if(!item)return;$('#annoTitle').textContent=`${id}. ${item.title}`;$('#annoDesc').innerHTML=`<ul class="list-disc pl-5 space-y-2">${item.desc.map(text=>`<li>${escapeHtml(text)}</li>`).join('')}</ul>`;$('#annoPopup').classList.remove('hidden');$('#annoPopup').setAttribute('aria-hidden','false');$('#annoClose').focus()}
-    function closeAnnotation(){if($('#annoPopup').classList.contains('hidden'))return;$('#annoPopup').classList.add('hidden');$('#annoPopup').setAttribute('aria-hidden','true')}
-    function renderAnnoBadges(){const layer=$('#annoLayer');layer.innerHTML='';if(!annoVisible)return;const scope=$('#pluginModal').classList.contains('hidden')?document:$('#modalPanel');scope.querySelectorAll('[data-anno]').forEach(target=>{if(target.offsetParent===null)return;const rect=target.getBoundingClientRect();if(rect.bottom<0||rect.top>innerHeight)return;const badge=document.createElement('button');badge.type='button';badge.className='anno-badge';badge.textContent=target.dataset.anno;badge.style.left=Math.max(0,Math.min(innerWidth-22,rect.right-10))+'px';badge.style.top=Math.max(0,rect.top-10)+'px';badge.setAttribute('aria-label',`查看交互说明 ${target.dataset.anno}`);badge.onclick=()=>openAnnotation(target.dataset.anno);layer.append(badge)})}
-
     document.addEventListener('click',event=>{
       const tabButton=event.target.closest('[data-tab]');if(tabButton){state.tab=tabButton.dataset.tab;state.page=1;render();return}
       const funcButton=event.target.closest('[data-func]');if(funcButton){state.func=funcButton.dataset.func;state.page=1;render();return}
@@ -205,13 +189,8 @@
     $('#uploadBtn').onclick=()=>openModal('上传插件',uploadBody(),'确定','upload');
     $('#createGroupBtn').onclick=()=>openModal(state.tab==='team'?'创建团队分组':'创建我的分组',groupBody(),'创建','group');
     $('#modalClose').onclick=$('#modalCancel').onclick=closeModal;$('#modalConfirm').onclick=confirmModal;$('#pluginModal').onclick=event=>{if(event.target===$('#pluginModal'))closeModal()};
-    $('#annoClose').onclick=closeAnnotation;$('#annoPopup').onclick=event=>{if(event.target===$('#annoPopup'))closeAnnotation()};
     $('#pluginModal').addEventListener('keydown',event=>{if(event.key!=='Tab')return;const items=$$('#pluginModal button:not(:disabled),#pluginModal input:not(:disabled),#pluginModal select:not(:disabled),#pluginModal textarea:not(:disabled)').filter(node=>node.offsetParent!==null);if(!items.length)return;const first=items[0],last=items.at(-1);if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus()}else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus()}});
-    document.addEventListener('keydown',event=>{if(event.key!=='Escape')return;if(!$('#annoPopup').classList.contains('hidden'))closeAnnotation();else closeModal()});
-    $('#mainContent').addEventListener('scroll',renderAnnoBadges,{passive:true});
     render();lucide.createIcons();
   </script>
-  <script src="标注交互.js?v=20260814"></script>
-
 </body>
 </html>

@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>商城 - 套餐</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#315BFF',
+            success: '#22B573',
+            ink: '#252525',
+            muted: '#8A8F98',
+            line: '#E8EAED',
+            surface: '#F7F8FA'
+          },
+          fontFamily: {
+            sans: ['PingFang SC', 'Microsoft YaHei', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace']
+          }
+        }
+      }
+    };
+  </script>
+  <link rel="stylesheet" href="公共导航.css?v=20260824a">
+  <style>
+    :root {
+      --primary: #315bff;
+      --success: #22b573;
+      --ink: #252525;
+      --muted: #8a8f98;
+      --line: #e8eaed;
+      --surface: #f7f8fa;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--surface); color: var(--ink); font-family: PingFang SC, Microsoft YaHei, sans-serif; }
+    button, input, select { font: inherit; }
+    .package-page { min-height: 100vh; padding: 8px; }
+    .package-layout { display: grid; grid-template-columns: minmax(720px, 1fr) 340px; gap: 8px; min-height: calc(100vh - 16px); }
+    .panel { background: #fff; border-radius: 6px; box-shadow: 0 1px 5px rgba(28, 35, 49, .07); }
+    .surface { min-width: 0; padding: 20px; border-radius: 8px; background: #fff; }
+    .store-tabs { min-width: 0; height: 44px; display: flex; align-items: stretch; gap: 8px; overflow-x: auto; scrollbar-width: none; }
+    .store-tabs::-webkit-scrollbar { display: none; }
+    .store-tab { min-width: 104px; height: 44px; padding: 0 16px; border: 0; border-bottom: 2px solid transparent; display: inline-flex; align-items: center; justify-content: center; gap: 8px; flex: none; color: #6e7685; background: transparent; cursor: pointer; font-size: 14px; line-height: 1; }
+    .store-tab:hover { color: #0066ff; background: #f3f4f6; }
+    .store-tab[aria-selected="true"] { color: #0066ff; border-bottom-color: #0066ff; font-weight: 600; background: #fff; }
+    .store-tab svg { width: 16px; height: 16px; }
+    .main-panel { padding: 24px 22px 40px; }
+    .summary-panel { padding: 0; overflow: hidden; align-self: start; }
+    .field-row { display: grid; grid-template-columns: 78px minmax(0, 1fr); gap: 18px; align-items: start; margin-bottom: 24px; }
+    .field-label { display: flex; align-items: center; justify-content: flex-end; text-align: right; white-space: nowrap; line-height: 32px; color: #464b52; font-size: 14px; }
+    .control-column { min-width: 0; }
+    .type-options, .duration-options, .payment-options { display: flex; gap: 8px; flex-wrap: wrap; }
+    .choice-button, .duration-button, .payment-option { border: 1px solid var(--line); background: #fafafa; color: #444; border-radius: 3px; height: 32px; font-size: 14px; }
+    .choice-button { width: 126px; }
+    .choice-button.active, .duration-button.active { color: #fff; background: var(--primary); border-color: var(--primary); }
+    .duration-button { width: 126px; position: relative; }
+    .discount { position: absolute; right: -2px; top: -10px; padding: 1px 5px; color: #fff; background: #ff6c3d; border-radius: 5px 5px 2px 2px; font-size: 12px; line-height: 18px; }
+    .duration-selector { position: relative; padding-bottom: 22px; }
+    .range-wrap { position: relative; height: 48px; padding-right: 50px; }
+    .range-track { position: relative; height: 24px; }
+    .range-track::before { content: ""; position: absolute; left: 0; right: 0; top: 12px; height: 4px; border-radius: 4px; background: linear-gradient(to right, var(--primary) 0 var(--fill), #f1f3f5 var(--fill) 100%); }
+    .range-input { position: absolute; inset: 0 0 auto 0; width: 100%; height: 24px; margin: 0; appearance: none; background: transparent; cursor: pointer; z-index: 2; }
+    .range-input::-webkit-slider-runnable-track { height: 4px; background: transparent; }
+    .range-input::-moz-range-track { height: 4px; background: transparent; }
+    .range-input::-webkit-slider-thumb { width: 16px; height: 16px; margin-top: -6px; appearance: none; border: 0; border-radius: 50%; background: var(--primary); }
+    .range-input::-moz-range-thumb { width: 16px; height: 16px; border: 0; border-radius: 50%; background: var(--primary); }
+    .range-labels { position: relative; height: 24px; margin-top: 1px; color: #a0a4aa; font-family: JetBrains Mono, monospace; font-size: 13px; }
+    .range-label { position: absolute; left: var(--tick-position); transform: translateX(-50%); white-space: nowrap; }
+    .range-label:first-child { transform: none; }
+    .range-label:last-child { transform: translateX(-100%); }
+    .stepper-line { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; min-height: 32px; }
+    .stepper { display: inline-flex; width: 126px; height: 32px; border: 1px solid var(--line); border-radius: 3px; overflow: hidden; background: #fafafa; vertical-align: middle; font-size: 14px; }
+    .stepper button { width: 36px; border: 0; background: transparent; color: #333; cursor: pointer; font-size: 14px; }
+    .stepper button:hover { background: #eef2ff; }
+    .stepper input { width: 54px; border: 0; outline: 0; text-align: center; color: #444; background: transparent; font-size: 14px; }
+    .inline-note { color: #4b4f56; font-size: 14px; white-space: nowrap; }
+    .help-icon { width: 18px; height: 18px; position: relative; display: inline-flex; flex: 0 0 18px; align-items: center; justify-content: center; color: #636a73; cursor: help; }
+    .help-icon[data-tooltip]::after { width: 238px; padding: 8px 10px; position: absolute; left: 50%; bottom: calc(100% + 9px); z-index: 30; border: 1px solid #e8eaed; border-radius: 4px; color: #4b5057; background: #fff; box-shadow: 0 4px 14px rgba(28,35,49,.12); content: attr(data-tooltip); font-size: 12px; line-height: 1.55; text-align: left; white-space: normal; opacity: 0; visibility: hidden; pointer-events: none; transform: translate(-50%, 4px); transition: opacity .15s ease, transform .15s ease; }
+    .help-icon[data-tooltip]::before { content: ""; width: 8px; height: 8px; position: absolute; left: 50%; bottom: calc(100% + 5px); z-index: 31; border-right: 1px solid #e8eaed; border-bottom: 1px solid #e8eaed; background: #fff; opacity: 0; visibility: hidden; pointer-events: none; transform: translateX(-50%) rotate(45deg); transition: opacity .15s ease; }
+    .help-icon[data-tooltip]:hover::after, .help-icon[data-tooltip]:focus-within::after,
+    .help-icon[data-tooltip]:hover::before, .help-icon[data-tooltip]:focus-within::before { opacity: 1; visibility: visible; }
+    .help-icon[data-tooltip]:hover::after, .help-icon[data-tooltip]:focus-within::after { transform: translate(-50%, 0); }
+    .expiry-note { position: absolute; top: 40px; left: 0; margin: 0; color: #9a9fa6; font-size: 13px; white-space: nowrap; }
+    .compare-row { display: flex; align-items: center; gap: 18px; margin-top: 8px; }
+    .compare-card { width: 248px; padding: 16px 18px; border: 1px solid #edf0f3; border-radius: 5px; box-shadow: 0 2px 7px rgba(28,35,49,.06); }
+    .compare-line { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; color: #81868e; font-size: 14px; }
+    .compare-line:last-child { margin-bottom: 0; }
+    .compare-value { color: #34383d; font-family: JetBrains Mono, monospace; font-weight: 600; }
+    .compare-value.highlight { color: var(--primary); }
+    .green-arrow { width: 18px; height: 18px; display: inline-flex; align-items: center; justify-content: center; margin-left: 5px; border-radius: 50%; color: var(--success); background: #e7f9f0; vertical-align: -4px; }
+    .green-arrow svg { width: 12px; height: 12px; stroke-width: 2.5; }
+    .arrow-between { color: #444; font-size: 26px; }
+    .select-control { width: 168px; height: 32px; border: 1px solid var(--line); border-radius: 3px; padding: 0 10px; color: #4b4f56; background: #fafafa; font-size: 14px; }
+    .check-line { display: inline-flex; align-items: center; gap: 8px; color: #555a62; font-size: 14px; }
+    .check-line input, .payment-option input { accent-color: var(--primary); }
+    .payment-option { display: inline-flex; min-width: 126px; align-items: center; gap: 8px; padding: 0 10px; }
+    .payment-option.active { color: var(--primary); border-color: var(--primary); background: #fff; }
+    .coin-option { min-width: 214px; justify-content: flex-start; }
+    .recharge-button { margin-left: auto; color: var(--primary); border: 0; background: transparent; cursor: pointer; font-size: 14px; }
+    .modal-mask { position: fixed; inset: 0; z-index: 40; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(0,0,0,.3); }
+    .modal-mask.hidden { display: none; }
+    .recharge-dialog-panel { width: min(960px, calc(100vw - 32px)); max-height: min(580px, calc(100vh - 32px)); overflow: hidden; }
+    .modal-header { min-height: 58px; padding: 0 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--line); }
+    .modal-header h2 { margin: 0; color: #252525; font-size: 16px; font-weight: 600; }
+    .icon-button { width: 32px; height: 32px; padding: 0; border: 0; display: inline-flex; align-items: center; justify-content: center; color: #636a73; background: transparent; cursor: pointer; }
+    .icon-button:hover { color: #252525; background: #f3f4f6; }
+    .icon-button svg { width: 18px; height: 18px; }
+    .recharge-dialog-body { padding: 28px 30px 24px; overflow-y: auto; }
+    .recharge-field + .recharge-field { margin-top: 24px; }
+    .recharge-field-label { display: block; margin-bottom: 12px; color: #252525; font-size: 16px; font-weight: 600; }
+    .recharge-amount-options { display: grid; grid-template-columns: repeat(5, minmax(110px, 1fr)) 150px; gap: 20px; }
+    .recharge-amount-btn, .recharge-custom-option { height: 50px; padding: 0 12px; border: 1px solid #f0f1f3; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; gap: 4px; color: var(--primary); background: #f7f8fa; cursor: pointer; }
+    .recharge-amount-btn { position: relative; }
+    .recharge-amount-btn:hover, .recharge-custom-option:hover { border-color: var(--primary); background: #e6f0ff; }
+    .recharge-amount-btn.selected, .recharge-custom-option.selected { border-color: var(--primary); background: #fff; box-shadow: inset 0 0 0 1px var(--primary); }
+    .recharge-amount-btn.selected::after { content: ""; width: 22px; height: 22px; position: absolute; right: -1px; bottom: -1px; border-radius: 6px 0 6px 0; background: var(--primary); }
+    .recharge-amount-btn.selected::before { content: ""; width: 8px; height: 5px; position: absolute; right: 5px; bottom: 6px; z-index: 1; border-left: 2px solid #fff; border-bottom: 2px solid #fff; transform: rotate(-45deg); }
+    .recharge-amount-value { font: 500 16px/1 JetBrains Mono, monospace; }
+    .recharge-custom-prefix { font: 500 16px/1 JetBrains Mono, monospace; }
+    .recharge-custom-option input { width: 78px; height: 32px; padding: 0 8px; border: 0; outline: 0; color: #4b4f56; background: transparent; font-size: 16px; }
+    .recharge-custom-option input::placeholder { color: #9da2ac; }
+    .recharge-info-list { margin: 0; padding: 0; list-style: none; color: #6e7685; font-size: 14px; line-height: 1.7; }
+    .recharge-info-list li { position: relative; padding-left: 14px; }
+    .recharge-info-list li::before { content: ""; width: 5px; height: 5px; position: absolute; left: 0; top: 9px; border-radius: 50%; background: var(--primary); }
+    .recharge-control-row { display: grid; grid-template-columns: 72px minmax(220px, 326px); align-items: center; gap: 12px; }
+    .recharge-control-row .recharge-field-label { margin: 0; font-size: 14px; font-weight: 400; }
+    .recharge-select { width: 326px; max-width: 100%; height: 32px; padding: 0 10px; border: 1px solid var(--line); border-radius: 4px; color: #4b4f56; background: #fff; font-size: 14px; }
+    .recharge-payment-options { display: flex; gap: 10px; }
+    .recharge-payment-btn { flex: 0 0 158px; height: 40px; padding: 0 12px; border: 1px solid var(--line); border-radius: 4px; display: inline-flex; align-items: center; justify-content: flex-start; gap: 8px; color: #3a3f4a; background: #fff; cursor: pointer; font-size: 14px; }
+    .recharge-payment-btn:hover, .recharge-payment-btn.selected { color: var(--primary); border-color: var(--primary); background: #e6f0ff; }
+    .recharge-payment-btn svg { width: 18px; height: 18px; }
+    .recharge-payment-check { margin-left: auto; opacity: 0; }
+    .recharge-payment-btn.selected .recharge-payment-check { opacity: 1; }
+    .recharge-more-row { display: flex; align-items: center; gap: 12px; }
+    .recharge-more-label { width: 72px; color: #6e7685; font-size: 14px; }
+    .recharge-more-methods { height: 34px; padding: 0 10px; border: 1px solid var(--line); border-radius: 4px; display: inline-flex; align-items: center; gap: 8px; color: #6e7685; background: #fff; }
+    .recharge-more-methods span { width: 24px; height: 20px; border-radius: 3px; display: inline-flex; align-items: center; justify-content: center; color: var(--primary); background: #e6f0ff; font: 600 9px/1 Arial, sans-serif; }
+    .recharge-more-link { color: var(--primary); font-size: 14px; text-decoration: none; }
+    .recharge-dialog-footer { min-height: 64px; padding: 0 20px; border-top: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+    .recharge-support { color: #6e7685; font-size: 12px; }
+    .recharge-support a { color: var(--primary); text-decoration: none; }
+    .recharge-submit-group { display: flex; align-items: center; gap: 20px; }
+    .recharge-payable { color: #252525; font-size: 14px; }
+    .recharge-payable strong { margin-left: 12px; font: 600 16px/1 JetBrains Mono, monospace; }
+    .recharge-submit { min-width: 90px; height: 32px; padding: 0 16px; border: 0; border-radius: 4px; color: #fff; background: var(--primary); cursor: pointer; }
+    @media (max-width: 767px) {
+      .recharge-dialog-body { padding: 20px 16px; }
+      .recharge-amount-options { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+      .recharge-custom-option { width: 100%; }
+      .recharge-control-row { grid-template-columns: 1fr; gap: 6px; }
+      .recharge-select { width: 100%; }
+      .recharge-dialog-footer { padding: 12px 16px; align-items: flex-start; flex-direction: column; }
+      .recharge-submit-group { width: 100%; justify-content: flex-end; }
+    }
+    .summary-title { padding: 18px 18px; border-bottom: 1px solid var(--line); font-weight: 600; }
+    .summary-section { padding: 18px; border-bottom: 1px solid #f0f1f3; }
+    .summary-section:last-child { border-bottom: 0; }
+    .summary-heading { margin-bottom: 16px; font-size: 14px; font-weight: 600; }
+    .summary-line { display: flex; justify-content: space-between; align-items: center; min-height: 28px; color: #60656c; font-size: 14px; }
+    .summary-line.indent { padding-left: 14px; color: #92969d; }
+    .summary-value { color: #4b5057; font-family: JetBrains Mono, monospace; }
+    .summary-value.highlight { color: var(--primary); }
+    .collapse-button { display: inline-flex; align-items: center; gap: 3px; padding: 0; border: 0; color: #60656c; background: transparent; cursor: pointer; }
+    .collapse-button:hover, .collapse-button:focus-visible { background: transparent; }
+    .collapse-button svg { width: 14px; height: 14px; }
+    .total-card { margin-top: 8px; padding: 18px; }
+    .total-line { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; color: #5b6067; font-size: 14px; }
+    .total-price { color: #252525; font-family: JetBrains Mono, monospace; font-size: 24px; font-weight: 600; }
+    .submit-button { width: 100%; height: 36px; border: 0; border-radius: 4px; color: #fff; background: var(--primary); cursor: pointer; }
+    .submit-button:hover { filter: brightness(.96); }
+    .fine-print { margin-top: 10px; color: #a2a6ac; text-align: center; font-size: 12px; }
+    .toast { position: fixed; left: 50%; bottom: 28px; transform: translateX(-50%); padding: 9px 16px; border-radius: 4px; color: #fff; background: rgba(37,37,37,.88); opacity: 0; pointer-events: none; transition: opacity .2s; z-index: 20; }
+    .toast.show { opacity: 1; }
+    @media (max-width: 1100px) {
+      .package-layout { grid-template-columns: minmax(640px, 1fr) 300px; }
+      .compare-card { width: 220px; }
+    }
+    @media (max-width: 820px) {
+      .package-layout { grid-template-columns: 1fr; }
+      .summary-panel { order: -1; }
+    }
+    @media (max-width: 600px) {
+      .main-panel { padding: 18px 14px 28px; }
+      .field-row { grid-template-columns: 1fr; gap: 6px; margin-bottom: 18px; }
+      .field-label { line-height: 24px; }
+      .compare-row { align-items: stretch; flex-direction: column; }
+      .compare-card { width: 100%; }
+      .arrow-between { display: none; }
+    }
+  </style>
+  <script src="公共导航.js?v=20260824a"></script>
+</head>
+  <body>
+  <main class="package-page">
+    <nav class="surface !p-0 mb-2" aria-label="商城业务范围">
+      <div class="store-tabs" role="tablist" aria-label="商城业务范围">
+        <button id="tabProxy" class="store-tab" type="button" role="tab" aria-selected="false" data-tab="proxy" tabindex="-1"><i data-lucide="server"></i><span>代理</span></button>
+        <button id="tabPlan" class="store-tab" type="button" role="tab" aria-selected="true" data-tab="plan" tabindex="0"><i data-lucide="package"></i><span>套餐</span></button>
+        <button id="tabCart" class="store-tab" type="button" role="tab" aria-selected="false" data-tab="cart" tabindex="-1"><i data-lucide="shopping-cart"></i><span>购物车</span></button>
+      </div>
+    </nav>
+    <div class="package-layout">
+      <section class="panel main-panel" aria-label="套餐购买">
+        <div class="field-row">
+          <label class="field-label">购买类型：</label>
+          <div class="control-column type-options">
+            <button class="choice-button active" data-mode="upgrade">套餐升级</button>
+            <button class="choice-button" data-mode="renew">原套餐续费</button>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <label class="field-label">新增环境数：</label>
+          <div class="control-column">
+            <div class="range-wrap">
+              <div class="range-track" id="rangeTrack" style="--fill: 0%;">
+                <input id="envRange" class="range-input" type="range" min="0" max="100" step="1" value="0" aria-label="新增环境数">
+              </div>
+              <div class="range-labels" aria-hidden="true">
+                <span class="range-label" style="--tick-position: 0%;">0</span>
+                <span class="range-label" style="--tick-position: 7%;">10</span>
+                <span class="range-label" style="--tick-position: 16%;">20</span>
+                <span class="range-label" style="--tick-position: 27%;">50</span>
+                <span class="range-label" style="--tick-position: 40%;">100</span>
+                <span class="range-label" style="--tick-position: 100%;">10k+</span>
+              </div>
+            </div>
+            <div class="stepper-line">
+              <span class="stepper" aria-label="浏览器环境数量">
+                <button type="button" data-step="envs" data-delta="-1" aria-label="减少环境数">−</button>
+                <input id="envCount" inputmode="numeric" value="0" aria-label="环境数">
+                <button type="button" data-step="envs" data-delta="1" aria-label="增加环境数">＋</button>
+              </span>
+              <span class="inline-note">¥0.90 / 浏览器环境</span>
+              <span class="help-icon" tabindex="0" data-tooltip="浏览器环境是可独立运行和管理的浏览器实例，按新增数量计费。" aria-label="浏览器环境说明"><i data-lucide="circle-help"></i></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <label class="field-label">新增成员数：</label>
+          <div class="control-column">
+            <div class="stepper-line">
+            <span class="stepper" aria-label="成员数量">
+              <button type="button" data-step="members" data-delta="-1" aria-label="减少成员数">−</button>
+              <input id="memberCount" inputmode="numeric" value="0" aria-label="成员数">
+              <button type="button" data-step="members" data-delta="1" aria-label="增加成员数">＋</button>
+            </span>
+            <span class="help-icon" tabindex="0" data-tooltip="成员数是可加入当前套餐并使用团队资源的账号数量。" aria-label="成员数说明"><i data-lucide="circle-help"></i></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <label class="field-label">购买时长：</label>
+          <div class="control-column">
+            <div class="duration-selector">
+              <div class="duration-options">
+                <button class="duration-button active" data-duration="0">原套餐到期</button>
+                <button class="duration-button" data-duration="30">30天<span class="discount">8.5折</span></button>
+                <button class="duration-button" data-duration="90">90天<span class="discount">8折</span></button>
+                <button class="duration-button" data-duration="180">180天<span class="discount">7.5折</span></button>
+                <button class="duration-button" data-duration="360">360天<span class="discount">5折</span></button>
+              </div>
+              <div class="expiry-note" id="durationExpiry">2025-12-06 到期</div>
+            </div>
+            <div class="compare-row">
+              <article class="compare-card">
+                <div class="compare-line"><span>原套餐</span><strong class="compare-value">2025-12-06 到期</strong></div>
+                <div class="compare-line"><span>浏览器环境数</span><strong class="compare-value">10</strong></div>
+                <div class="compare-line"><span>成员数</span><strong class="compare-value">3</strong></div>
+              </article>
+              <span class="arrow-between" aria-hidden="true">→</span>
+              <article class="compare-card">
+                <div class="compare-line"><span>新套餐</span><strong class="compare-value highlight"><span id="planExpiry">2025-12-26 到期</span><span class="green-arrow"><i data-lucide="arrow-up"></i></span></strong></div>
+                <div class="compare-line"><span>浏览器环境数</span><strong class="compare-value highlight"><span id="planEnvsValue">110</span><span class="green-arrow"><i data-lucide="arrow-up"></i></span></strong></div>
+                <div class="compare-line"><span>成员数</span><strong class="compare-value">3</strong></div>
+              </article>
+            </div>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <label class="field-label">优惠券：</label>
+          <div class="control-column">
+            <select class="select-control" aria-label="优惠券"><option>满100减50</option><option>不使用优惠券</option></select>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <label class="field-label">自动续费：</label>
+          <div class="control-column">
+            <label class="check-line"><input type="checkbox"> 到期自动续费（请确认扣款账户余额充足）</label>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <label class="field-label">支付方式：</label>
+          <div class="control-column payment-options">
+            <label class="payment-option active"><input type="radio" name="payment" value="alipay" checked> <span>支付宝支付</span></label>
+            <label class="payment-option"><input type="radio" name="payment" value="wechat"> <span>微信支付</span></label>
+            <label class="payment-option coin-option"><input type="radio" name="payment" value="coin"> <span>账户云币支付</span><span class="text-gray-400">（我的云币：300）</span><button type="button" class="recharge-button" id="rechargeButton">充值</button></label>
+          </div>
+        </div>
+      </section>
+
+      <aside class="summary-panel panel" aria-label="订单信息">
+        <div class="summary-title">订单信息</div>
+        <section class="summary-section">
+          <div class="summary-heading">新套餐信息</div>
+          <div class="summary-line">
+            <button type="button" class="collapse-button" data-collapse="envs"><span>总浏览器环境数</span><i data-lucide="chevron-up"></i></button>
+            <span class="summary-value highlight">110<span class="green-arrow"><i data-lucide="arrow-up"></i></span></span>
+          </div>
+          <div id="envDetails">
+            <div class="summary-line indent"><span>付费环境数</span><span class="summary-value">100</span></div>
+            <div class="summary-line indent"><span>赠送环境数</span><span class="summary-value">10</span></div>
+          </div>
+          <div class="summary-line">
+            <button type="button" class="collapse-button" data-collapse="members"><span>总成员数</span><i data-lucide="chevron-up"></i></button>
+            <span class="summary-value">3</span>
+          </div>
+          <div id="memberDetails">
+            <div class="summary-line indent"><span>付费成员数</span><span class="summary-value">2</span></div>
+            <div class="summary-line indent"><span>赠送成员数</span><span class="summary-value">1</span></div>
+          </div>
+          <div class="summary-line"><span>到期时间</span><span class="summary-value highlight"><span id="summaryExpiry">2025-12-26（剩余30天）</span><span class="green-arrow"><i data-lucide="arrow-up"></i></span></span></div>
+        </section>
+        <section class="summary-section">
+          <div class="summary-line"><span>套餐费用</span><span class="summary-value">¥188.00<span class="green-arrow"><i data-lucide="arrow-up"></i></span></span></div>
+          <div class="summary-line"><span>现套餐抵扣金额</span><span class="summary-value">-¥88.00</span></div>
+          <div class="text-xs text-gray-400">（套餐总价/总天数*剩余天数）</div>
+          <div class="summary-line mt-2"><span>优惠券抵扣金额</span><span class="summary-value">-¥0.00</span></div>
+        </section>
+        <section class="panel total-card">
+          <div class="total-line"><span>总价</span><strong class="total-price">¥100.00</strong></div>
+          <button type="button" class="submit-button" id="submitButton">提交支付</button>
+          <div class="fine-print">减配套餐系统不会退费请慎重操作</div>
+        </section>
+      </aside>
+    </div>
+  </main>
+  <div id="rechargeDialog" class="modal-mask hidden" role="dialog" aria-modal="true" aria-labelledby="rechargeDialogTitle" aria-hidden="true">
+    <section id="rechargeDialogPanel" class="panel recharge-dialog-panel" tabindex="-1">
+      <header class="modal-header">
+        <h2 id="rechargeDialogTitle">云币充值</h2>
+        <button id="closeRechargeDialog" class="icon-button" type="button" aria-label="关闭充值弹窗"><i data-lucide="x"></i></button>
+      </header>
+      <div class="recharge-dialog-body">
+        <div class="recharge-field">
+          <label class="recharge-field-label">充值金额</label>
+          <div class="recharge-amount-options" id="rechargeAmountOptions">
+            <button type="button" class="recharge-amount-btn selected" data-amount="50"><span class="recharge-amount-value">¥ 50</span></button>
+            <button type="button" class="recharge-amount-btn" data-amount="500"><span class="recharge-amount-value">¥ 500</span></button>
+            <button type="button" class="recharge-amount-btn" data-amount="1000"><span class="recharge-amount-value">¥ 1000</span></button>
+            <button type="button" class="recharge-amount-btn" data-amount="5000"><span class="recharge-amount-value">¥ 5000</span></button>
+            <button type="button" class="recharge-amount-btn" data-amount="10000"><span class="recharge-amount-value">¥ 10000</span></button>
+            <label class="recharge-custom-option" id="rechargeCustomOption"><span class="recharge-custom-prefix">¥</span><input id="customRechargeAmount" type="number" placeholder="自定义" min="1" max="10000" aria-label="自定义充值金额"></label>
+          </div>
+        </div>
+        <div class="recharge-field">
+          <h3 class="recharge-field-label">关于云币</h3>
+          <ul class="recharge-info-list">
+            <li>云币是云登提供的一种内部结算形式，1元=1云币。</li>
+            <li>云币可以用于购买套餐与代理资源，支付时选择云币支付，用多少扣多少。</li>
+            <li>云币充值记录、消费记录、剩余余额，可在费用管理-云币充值页面查看。</li>
+          </ul>
+        </div>
+        <div class="recharge-field recharge-control-row">
+          <label class="recharge-field-label" for="rechargeCoupon">选择优惠券</label>
+          <select id="rechargeCoupon" class="recharge-select"><option>选择优惠券</option><option>满 100 减 10</option><option>满 500 减 50</option></select>
+        </div>
+        <div class="recharge-field recharge-control-row">
+          <span class="recharge-field-label">支付方式</span>
+          <div class="recharge-payment-options" id="rechargePaymentOptions">
+            <button type="button" class="recharge-payment-btn selected" data-payment="alipay"><i data-lucide="badge-dollar-sign"></i><span>支付宝支付</span><i data-lucide="check-circle" class="recharge-payment-check"></i></button>
+            <button type="button" class="recharge-payment-btn" data-payment="wechat"><i data-lucide="message-circle"></i><span>微信支付</span><i data-lucide="check-circle" class="recharge-payment-check"></i></button>
+          </div>
+        </div>
+        <div class="recharge-field recharge-more-row">
+          <span class="recharge-more-label">更多支付：</span>
+          <span class="recharge-more-methods" aria-label="更多支付方式"><span>银联</span><span>AMEX</span><span>Pay</span><span>VISA</span><span>MC</span></span>
+          <a class="recharge-more-link" href="#" data-contact-service>（联系在线客服）</a>
+        </div>
+      </div>
+      <footer class="recharge-dialog-footer">
+        <span class="recharge-support">（如有疑问，请联系客服 <a href="#" data-contact-service>客服</a>）</span>
+        <div class="recharge-submit-group">
+          <span class="recharge-payable">应付金额 <strong id="rechargePayable">¥50.00</strong></span>
+          <button id="confirmRecharge" class="recharge-submit" type="button">提交支付</button>
+        </div>
+      </footer>
+    </section>
+  </div>
+  <div id="toast" class="toast" role="status"></div>
+  <script>
+    (() => {
+      const stops = [[0, 0], [7, 10], [16, 20], [27, 50], [40, 100], [100, 10000]];
+      const state = { envs: 0, members: 0, duration: 0, rechargeAmount: 50, rechargePayment: 'alipay', lastFocus: null };
+      const durationExpiry = {
+        0: '2025-12-06 到期',
+        30: '2025-12-26 到期',
+        90: '2026-02-24 到期',
+        180: '2026-05-25 到期',
+        360: '2026-11-21 到期'
+      };
+      const $ = (selector) => document.querySelector(selector);
+      const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+      const sliderPosition = (value) => {
+        for (let index = 0; index < stops.length - 1; index += 1) {
+          const [leftPosition, leftValue] = stops[index];
+          const [rightPosition, rightValue] = stops[index + 1];
+          if (value <= rightValue) return leftPosition + ((value - leftValue) / (rightValue - leftValue)) * (rightPosition - leftPosition);
+        }
+        return 100;
+      };
+      const snapValue = (position) => stops.reduce((best, stop) => Math.abs(stop[0] - position) < Math.abs(best[0] - position) ? stop : best, stops[0])[1];
+      const showToast = (message) => {
+        const toast = $('#toast');
+        toast.textContent = message;
+        toast.classList.add('show');
+        window.clearTimeout(showToast.timer);
+        showToast.timer = window.setTimeout(() => toast.classList.remove('show'), 1800);
+      };
+      const money = (value) => `¥${Number(value || 0).toFixed(2)}`;
+      const updateRechargePayable = () => {
+        $('#rechargePayable').textContent = money(state.rechargeAmount);
+      };
+      const openRechargeDialog = () => {
+        state.lastFocus = document.activeElement;
+        $('#rechargeDialog').classList.remove('hidden');
+        $('#rechargeDialog').setAttribute('aria-hidden', 'false');
+        $('#customRechargeAmount').value = '';
+        $('#rechargeCustomOption').classList.remove('selected');
+        document.querySelectorAll('.recharge-amount-btn').forEach((button) => {
+          button.classList.toggle('selected', Number(button.dataset.amount) === state.rechargeAmount);
+        });
+        document.querySelectorAll('.recharge-payment-btn').forEach((button) => {
+          button.classList.toggle('selected', button.dataset.payment === state.rechargePayment);
+        });
+        updateRechargePayable();
+        lucide.createIcons();
+        $('#closeRechargeDialog').focus({ preventScroll: true });
+      };
+      const closeRechargeDialog = (restore = true) => {
+        $('#rechargeDialog').classList.add('hidden');
+        $('#rechargeDialog').setAttribute('aria-hidden', 'true');
+        if (restore) state.lastFocus?.focus?.({ preventScroll: true });
+        state.lastFocus = null;
+      };
+      const render = () => {
+        const position = sliderPosition(state.envs);
+        $('#rangeTrack').style.setProperty('--fill', `${position}%`);
+        $('#envRange').value = position;
+        $('#envCount').value = state.envs;
+        $('#memberCount').value = state.members;
+        const activeDuration = document.querySelector(`[data-duration="${state.duration}"]`);
+        $('#durationExpiry').textContent = durationExpiry[state.duration];
+        $('#durationExpiry').style.left = `${activeDuration?.offsetLeft || 0}px`;
+        $('#planExpiry').textContent = durationExpiry[state.duration];
+        $('#summaryExpiry').textContent = `${durationExpiry[state.duration].replace(' 到期', '')}（剩余30天）`;
+        $('#planEnvsValue').textContent = String(110 + state.envs);
+        lucide.createIcons();
+      };
+      function navigateToStoreTab(tab) {
+        const search = `?tab=${tab}`;
+        if (window.parent !== window) {
+          const file = tab === 'plan' ? '商城-套餐.html' : tab === 'cart' ? '商城-购物车.html' : '商城-代理.html';
+          window.parent.postMessage({ type: 'yundeng:route', file, search, hash: '' }, '*');
+          return;
+        }
+        const file = tab === 'plan' ? '商城-套餐.html' : tab === 'cart' ? '商城-购物车.html' : '商城-代理.html';
+        location.replace(`../index.html?page=store&module=${encodeURIComponent(file)}&moduleSearch=${encodeURIComponent(search.slice(1))}`);
+      }
+      document.querySelectorAll('[data-mode]').forEach((button) => button.addEventListener('click', () => {
+        document.querySelectorAll('[data-mode]').forEach((item) => item.classList.toggle('active', item === button));
+      }));
+      document.querySelectorAll('[data-duration]').forEach((button) => button.addEventListener('click', () => {
+        state.duration = Number(button.dataset.duration);
+        document.querySelectorAll('[data-duration]').forEach((item) => item.classList.toggle('active', item === button));
+        render();
+      }));
+      $('#envRange').addEventListener('input', (event) => {
+        state.envs = snapValue(Number(event.target.value));
+        render();
+      });
+      document.querySelectorAll('[data-step]').forEach((button) => button.addEventListener('click', () => {
+        const key = button.dataset.step;
+        state[key] = clamp(state[key] + Number(button.dataset.delta), 0, key === 'envs' ? 10000 : 100);
+        render();
+      }));
+      $('#envCount').addEventListener('change', (event) => { state.envs = clamp(Number.parseInt(event.target.value, 10) || 0, 0, 10000); render(); });
+      $('#memberCount').addEventListener('change', (event) => { state.members = clamp(Number.parseInt(event.target.value, 10) || 0, 0, 100); render(); });
+      document.querySelectorAll('[data-collapse]').forEach((button) => button.addEventListener('click', () => {
+        const target = button.dataset.collapse === 'envs' ? $('#envDetails') : $('#memberDetails');
+        const icon = button.querySelector('svg');
+        const hidden = target.hidden;
+        target.hidden = !hidden;
+        icon.setAttribute('data-lucide', hidden ? 'chevron-up' : 'chevron-down');
+        lucide.createIcons();
+      }));
+      document.querySelectorAll('[data-tab]').forEach((button) => button.addEventListener('click', () => {
+        const tab = button.dataset.tab;
+        if (tab !== 'plan') navigateToStoreTab(tab);
+      }));
+      $('#rechargeButton').addEventListener('click', openRechargeDialog);
+      $('#closeRechargeDialog').addEventListener('click', () => closeRechargeDialog());
+      $('#rechargeDialog').addEventListener('click', (event) => {
+        if (event.target === $('#rechargeDialog')) closeRechargeDialog();
+      });
+      $('#rechargeAmountOptions').addEventListener('click', (event) => {
+        const button = event.target.closest('.recharge-amount-btn');
+        if (!button) return;
+        state.rechargeAmount = Number(button.dataset.amount);
+        $('#customRechargeAmount').value = '';
+        $('#rechargeCustomOption').classList.remove('selected');
+        document.querySelectorAll('.recharge-amount-btn').forEach((item) => item.classList.toggle('selected', item === button));
+        updateRechargePayable();
+      });
+      $('#customRechargeAmount').addEventListener('input', (event) => {
+        state.rechargeAmount = clamp(Number(event.target.value) || 0, 0, 10000);
+        document.querySelectorAll('.recharge-amount-btn').forEach((item) => item.classList.remove('selected'));
+        $('#rechargeCustomOption').classList.toggle('selected', state.rechargeAmount > 0);
+        updateRechargePayable();
+      });
+      $('#rechargePaymentOptions').addEventListener('click', (event) => {
+        const button = event.target.closest('.recharge-payment-btn');
+        if (!button) return;
+        state.rechargePayment = button.dataset.payment;
+        document.querySelectorAll('.recharge-payment-btn').forEach((item) => item.classList.toggle('selected', item === button));
+      });
+      document.querySelectorAll('[data-contact-service]').forEach((link) => link.addEventListener('click', (event) => {
+        event.preventDefault();
+        showToast('在线客服入口为原型演示');
+      }));
+      $('#confirmRecharge').addEventListener('click', () => {
+        if (state.rechargeAmount <= 0) {
+          showToast('请输入充值金额');
+          $('#customRechargeAmount').focus();
+          return;
+        }
+        closeRechargeDialog(false);
+        showToast(`已提交云币充值：${money(state.rechargeAmount)}`);
+      });
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && !$('#rechargeDialog').classList.contains('hidden')) closeRechargeDialog();
+      });
+      $('#submitButton').addEventListener('click', () => showToast('请先选择支付方式'));
+      render();
+    })();
+  </script>
+</body>
+</html>
