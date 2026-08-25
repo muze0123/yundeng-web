@@ -32,7 +32,7 @@
   </script>
   <link rel="stylesheet" href="筛选布局.css?v=20260817y">
   <link rel="stylesheet" href="分页器.css?v=20260817y">
-  <link rel="stylesheet" href="公共导航.css?v=20260824a">
+  <link rel="stylesheet" href="公共导航.css?v=20260825a">
   <style>
     * { box-sizing: border-box; }
     html, body { min-height: 100%; }
@@ -450,7 +450,7 @@
     }
   </style>
   <script src="分页器.js?v=20260817y"></script>
-  <script src="公共导航.js?v=20260824a"></script>
+  <script src="公共导航.js?v=20260825a"></script>
 </head>
 <body class="bg-page text-ink-body overflow-hidden">
   <main id="mainContent" class="h-screen overflow-y-auto p-4" aria-label="代理管理业务内容">
@@ -968,10 +968,10 @@
       var platformSeeds = [
         { name: '美国洛杉矶静态', endpoint: '203.0.113.18:8000', protocol: 'HTTPS', addressType: 'IPv4', service: '云平台', status: '运行中', renew: true, expiresAt: '2026-09-30 23:59', tags: ['美国站'], remark: '主店铺线路', environments: ['14-云登浏览器_1'], authorizedTo: ['张小登'] },
         { name: '英国伦敦住宅', endpoint: '198.51.100.27:9000', protocol: 'HTTP', addressType: 'IPv4', service: '全球家庭住宅-静态', status: '即将到期', renew: false, expiresAt: '2026-08-20 23:59', tags: ['欧洲站'], remark: '旺季备用', environments: [], authorizedTo: ['李运营'] },
-        { name: '新加坡动态住宅', endpoint: '203.0.113.96:1080', protocol: 'SOCKS5', addressType: 'IPv4', service: '海外动态', status: '自动续费中', renew: true, expiresAt: '2026-08-28 23:59', tags: ['东南亚'], remark: '-', environments: ['16-云登浏览器_3'], authorizedTo: ['1938'] },
+        { name: '新加坡动态住宅', endpoint: '203.0.113.96:1080', protocol: 'SOCKS5', addressType: 'IPv4', service: '海外动态', status: '自动续费中', renew: true, expiresAt: '2026-08-28 23:59', tags: ['东南亚'], remark: '-', environments: ['16-云登浏览器_3'], authorizedTo: ['1938'], packageTraffic: '10G/月', overageRate: '限时免费', trafficUsed: 6.4, trafficRemaining: 3.6, trafficTotal: 10, trafficResetAt: '2026-09-01', trafficPackage: '10 GB / 90 天' },
         { name: '德国法兰克福静态', endpoint: '198.51.100.68:8080', protocol: 'HTTPS', addressType: 'IPv4', service: '云平台', status: '已过期', renew: false, expiresAt: '2026-08-14 23:59', tags: ['欧洲站'], remark: '待续费', environments: ['21-DE-Shop'], authorizedTo: ['张小登', '李运营'] },
         { name: '日本东京家庭住宅', endpoint: '203.0.113.122:8443', protocol: 'HTTPS', addressType: 'IPv4', service: '全球家庭住宅-静态', status: '运行中', renew: false, expiresAt: '2026-10-12 23:59', tags: ['日本站'], remark: '-', environments: [], authorizedTo: ['测试员'] },
-        { name: '巴西圣保罗动态', endpoint: '198.51.100.145:1081', protocol: 'SOCKS5', addressType: 'IPv4', service: '海外动态', status: '运行中', renew: true, expiresAt: '2026-09-18 23:59', tags: ['南美站'], remark: '广告账户', environments: ['27-BR-Ads'], authorizedTo: ['李运营'] }
+        { name: '巴西圣保罗动态', endpoint: '198.51.100.145:1081', protocol: 'SOCKS5', addressType: 'IPv4', service: '海外动态', status: '运行中', renew: true, expiresAt: '2026-09-18 23:59', tags: ['南美站'], remark: '广告账户', environments: ['27-BR-Ads'], authorizedTo: ['李运营'], packageTraffic: '10G/月', overageRate: '限时免费', trafficUsed: 2.1, trafficRemaining: 7.9, trafficTotal: 10, trafficResetAt: '2026-09-01', trafficPackage: '5 GB / 30 天' }
       ];
       var ownedSeeds = [
         { name: '洛杉矶本地转发', endpoint: '192.0.2.17:7897', protocol: 'HTTP', addressType: 'IPv4', status: '可用', expiresAt: '2026-10-01 00:00', remark: '开发机转发', environments: ['3-云登浏览器', '11-指纹测试'], authorizedTo: ['***'], tags: ['本地'] },
@@ -1547,7 +1547,7 @@
             '<span class="text-ink-sub">扣款账户：余额账户（尾号 1938）</span>' +
           '</div>' +
           '<div class="mt-4 overflow-x-auto border border-line rounded-md">' +
-            '<table class="data-table min-w-[620px]"><thead><tr><th>代理</th><th>原到期时间</th><th>新到期时间</th><th>金额</th></tr></thead><tbody id="renewPreviewBody"></tbody></table>' +
+            '<table class="data-table min-w-[840px]"><thead><tr><th>代理</th><th>原到期时间</th><th>新到期时间</th><th>套餐流量</th><th>超出流量资费</th><th>金额</th></tr></thead><tbody id="renewPreviewBody"></tbody></table>' +
           '</div>' +
           '<div class="mt-3 text-right">预计总金额：<b id="renewTotal" class="mono text-primary"></b></div>' +
           '<p class="mt-2 text-[12px] text-warning">已过期但尚未注销的代理仍可续费；供应商已注销的代理不可恢复。</p>' +
@@ -1559,7 +1559,13 @@
         var items = modalContext.items;
         $('#renewPreviewBody').innerHTML = items.map(function (item) {
           var newExpires = addMonths(item.expiresAt, months);
-          return '<tr><td><b>' + escapeHtml(item.name) + '</b><div class="mono text-[11px] text-ink-muted">' + escapeHtml(item.id) + '</div></td><td class="mono">' + escapeHtml(item.expiresAt) + '</td><td class="mono">' + escapeHtml(newExpires) + '</td><td class="mono">¥' + (29 * months).toFixed(2) + '</td></tr>';
+          var isTrafficProxy = item.service === '海外动态' || item.packageTraffic;
+          var packageTraffic = isTrafficProxy ? (item.packageTraffic || '10G/月') : '-';
+          var overageRate = isTrafficProxy ? (item.overageRate || '限时免费') : '-';
+          var usageText = isTrafficProxy
+            ? '<div class="text-[11px] text-ink-muted">已用 ' + Number(item.trafficUsed || 0).toFixed(1) + 'G · 剩余 ' + Number(item.trafficRemaining || 0).toFixed(1) + 'G</div>'
+            : '';
+          return '<tr><td><b>' + escapeHtml(item.name) + '</b><div class="mono text-[11px] text-ink-muted">' + escapeHtml(item.id) + '</div></td><td class="mono">' + escapeHtml(item.expiresAt) + '</td><td class="mono">' + escapeHtml(newExpires) + '</td><td>' + escapeHtml(packageTraffic) + usageText + '</td><td>' + escapeHtml(overageRate) + '</td><td class="mono">¥' + (29 * months).toFixed(2) + '</td></tr>';
         }).join('');
         $('#renewTotal').textContent = '¥' + (items.length * 29 * months).toFixed(2);
       }
@@ -2026,6 +2032,28 @@
       function openDetailDrawer(item) {
         drawerLastFocus = document.activeElement;
         $('#detailDrawerSubtitle').textContent = item.name + ' · ' + item.id;
+        var hasTrafficUsage = item.service === '海外动态' || item.packageTraffic;
+        var trafficTotal = Math.max(0, Number(item.trafficTotal == null ? 10 : item.trafficTotal));
+        var trafficUsed = Math.max(0, Math.min(trafficTotal, Number(item.trafficUsed == null ? 0 : item.trafficUsed)));
+        var trafficRemaining = Math.max(0, Number(item.trafficRemaining == null ? trafficTotal - trafficUsed : item.trafficRemaining));
+        var trafficPercent = trafficTotal ? Math.min(100, Math.round(trafficUsed / trafficTotal * 1000) / 10) : 0;
+        var trafficSection = hasTrafficUsage
+          ? '<section class="mt-6">' +
+            '<div class="flex items-center justify-between gap-3"><h4 class="inline-block text-[16px] font-semibold text-ink-title">流量使用</h4><span class="mono text-[12px] text-ink-muted">' + trafficPercent.toFixed(1) + '% 已使用</span></div>' +
+            '<div class="mt-3 p-3 rounded-md border border-line bg-page">' +
+              '<div class="flex items-center justify-between gap-3 text-[12px]"><span class="text-ink-sub">套餐流量</span><b class="mono text-ink-title">' + escapeHtml(item.packageTraffic || '10G/月') + '</b></div>' +
+              '<div class="mt-2 h-2 rounded bg-line-lighter overflow-hidden" role="progressbar" aria-label="套餐流量已使用 ' + trafficUsed.toFixed(1) + 'G，总量 ' + trafficTotal.toFixed(1) + 'G" aria-valuemin="0" aria-valuemax="' + trafficTotal + '" aria-valuenow="' + trafficUsed + '"><div class="h-full rounded bg-primary" style="width:' + trafficPercent + '%"></div></div>' +
+              '<dl class="info-grid mt-3">' +
+                '<div class="info-item"><dt>已使用</dt><dd class="mono">' + trafficUsed.toFixed(1) + 'G</dd></div>' +
+                '<div class="info-item"><dt>剩余流量</dt><dd class="mono">' + trafficRemaining.toFixed(1) + 'G</dd></div>' +
+                '<div class="info-item"><dt>总流量</dt><dd class="mono">' + trafficTotal.toFixed(1) + 'G</dd></div>' +
+                '<div class="info-item"><dt>超出流量资费</dt><dd>' + escapeHtml(item.overageRate || '限时免费') + '</dd></div>' +
+                (item.trafficPackage ? '<div class="info-item"><dt>已购流量包</dt><dd>' + escapeHtml(item.trafficPackage) + '</dd></div>' : '') +
+                '<div class="info-item"><dt>重置时间</dt><dd class="mono">' + escapeHtml(item.trafficResetAt || '-') + '</dd></div>' +
+              '</dl>' +
+            '</div>' +
+          '</section>'
+          : '';
         $('#detailDrawerBody').innerHTML = '<section>' +
           '<h4 class="inline-block text-[16px] font-semibold text-ink-title">基础信息</h4>' +
           '<dl class="info-grid mt-3">' +
@@ -2037,6 +2065,7 @@
             '<div class="info-item"><dt>到期时间</dt><dd class="mono">' + escapeHtml(item.expiresAt || '-') + '</dd></div>' +
           '</dl>' +
         '</section>' +
+        trafficSection +
         '<section class="mt-6">' +
           '<h4 class="inline-block text-[16px] font-semibold text-ink-title">最近检测</h4>' +
           '<dl class="info-grid mt-3">' +

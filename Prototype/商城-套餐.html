@@ -26,7 +26,7 @@
       }
     };
   </script>
-  <link rel="stylesheet" href="公共导航.css?v=20260824a">
+  <link rel="stylesheet" href="公共导航.css?v=20260825a">
   <style>
     :root {
       --primary: #315bff;
@@ -40,7 +40,7 @@
     body { margin: 0; background: var(--surface); color: var(--ink); font-family: PingFang SC, Microsoft YaHei, sans-serif; }
     button, input, select { font: inherit; }
     .package-page { min-height: 100vh; padding: 8px; }
-    .package-layout { display: grid; grid-template-columns: minmax(720px, 1fr) 340px; gap: 8px; min-height: calc(100vh - 16px); }
+    .package-layout { display: grid; grid-template-columns: minmax(720px, 1fr) 340px; gap: 8px; min-height: calc(100vh - 16px); align-items: start; }
     .panel { background: #fff; border-radius: 6px; box-shadow: 0 1px 5px rgba(28, 35, 49, .07); }
     .surface { min-width: 0; padding: 20px; border-radius: 8px; background: #fff; }
     .store-tabs { min-width: 0; height: 44px; display: flex; align-items: stretch; gap: 8px; overflow-x: auto; scrollbar-width: none; }
@@ -49,7 +49,7 @@
     .store-tab:hover { color: #0066ff; background: #f3f4f6; }
     .store-tab[aria-selected="true"] { color: #0066ff; border-bottom-color: #0066ff; font-weight: 600; background: #fff; }
     .store-tab svg { width: 16px; height: 16px; }
-    .main-panel { padding: 24px 22px 40px; }
+    .main-panel { padding: 24px 22px 40px; align-self: start; }
     .summary-panel { padding: 0; overflow: hidden; align-self: start; }
     .field-row { display: grid; grid-template-columns: 78px minmax(0, 1fr); gap: 18px; align-items: start; margin-bottom: 24px; }
     .field-label { display: flex; align-items: center; justify-content: flex-end; text-align: right; white-space: nowrap; line-height: 32px; color: #464b52; font-size: 14px; }
@@ -77,6 +77,8 @@
     .stepper { display: inline-flex; width: 126px; height: 32px; border: 1px solid var(--line); border-radius: 3px; overflow: hidden; background: #fafafa; vertical-align: middle; font-size: 14px; }
     .stepper button { width: 36px; border: 0; background: transparent; color: #333; cursor: pointer; font-size: 14px; }
     .stepper button:hover { background: #eef2ff; }
+    .stepper button:disabled { color: #b8bdc5; background: transparent; cursor: not-allowed; }
+    .stepper button:disabled:hover { background: transparent; }
     .stepper input { width: 54px; border: 0; outline: 0; text-align: center; color: #444; background: transparent; font-size: 14px; }
     .inline-note { color: #4b4f56; font-size: 14px; white-space: nowrap; }
     .help-icon { width: 18px; height: 18px; position: relative; display: inline-flex; flex: 0 0 18px; align-items: center; justify-content: center; color: #636a73; cursor: help; }
@@ -100,6 +102,10 @@
     .check-line input, .payment-option input { accent-color: var(--primary); }
     .payment-option { display: inline-flex; min-width: 126px; align-items: center; gap: 8px; padding: 0 10px; }
     .payment-option.active { color: var(--primary); border-color: var(--primary); background: #fff; }
+    .payment-method-icon { width: 16px; height: 16px; flex: 0 0 16px; object-fit: contain; }
+    .coin-option > svg { display: none; }
+    .payment-balance-refresh { width: 24px; height: 24px; padding: 0; border: 0; display: inline-flex; align-items: center; justify-content: center; color: var(--primary); background: transparent; cursor: pointer; }
+    .payment-balance-refresh svg { width: 15px; height: 15px; }
     .coin-option { min-width: 214px; justify-content: flex-start; }
     .recharge-button { margin-left: auto; color: var(--primary); border: 0; background: transparent; cursor: pointer; font-size: 14px; }
     .modal-mask { position: fixed; inset: 0; z-index: 40; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(0,0,0,.3); }
@@ -176,6 +182,46 @@
     .fine-print { margin-top: 10px; color: #a2a6ac; text-align: center; font-size: 12px; }
     .toast { position: fixed; left: 50%; bottom: 28px; transform: translateX(-50%); padding: 9px 16px; border-radius: 4px; color: #fff; background: rgba(37,37,37,.88); opacity: 0; pointer-events: none; transition: opacity .2s; z-index: 20; }
     .toast.show { opacity: 1; }
+    .payment-dialog-mask { position: fixed; inset: 0; z-index: 50; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(0,0,0,.3); }
+    .payment-dialog-mask.hidden { display: none; }
+    .payment-dialog { width: min(960px, calc(100vw - 32px)); min-height: 560px; max-height: calc(100vh - 32px); overflow: hidden; background: #fff; box-shadow: 0 6px 24px rgba(0,0,0,.12); }
+    .payment-dialog-header { height: 64px; padding: 0 36px; display: flex; align-items: center; justify-content: space-between; border-top: 2px solid #9da2ac; border-bottom: 1px solid #f0f1f3; }
+    .payment-dialog-title { color: #3a3f4a; font-size: 18px; font-weight: 500; }
+    .payment-close { width: 28px; height: 28px; padding: 0; border: 0; display: inline-flex; align-items: center; justify-content: center; color: #3a3f4a; background: transparent; cursor: pointer; }
+    .payment-close:hover { color: #0066ff; background: #f3f4f6; }
+    .payment-close svg { width: 18px; height: 18px; }
+    .payment-dialog-body { padding: 28px 46px 32px; overflow-y: auto; text-align: center; }
+    .payment-notice { min-height: 32px; padding: 6px 10px; display: flex; align-items: center; gap: 8px; color: #0066ff; background: #f3f7ff; text-align: left; font-size: 14px; }
+    .payment-notice svg { width: 14px; height: 14px; flex: 0 0 14px; }
+    .payment-notice strong { color: #ff4d4f; font-weight: 500; }
+    .payment-amount-label { margin-top: 48px; color: #9da2ac; font-size: 16px; font-weight: 600; }
+    .payment-amount { margin-top: 4px; color: #315bff; font: 500 34px/1 JetBrains Mono, monospace; }
+    .payment-qr { width: 194px; height: 194px; margin: 20px auto 0; padding: 8px; display: grid; grid-template-columns: repeat(29, 1fr); grid-template-rows: repeat(29, 1fr); background: #fff; }
+    .payment-qr span { display: block; }
+    .payment-qr span.is-dark { background: #111; }
+    .payment-qr span.is-light { background: #fff; }
+    .payment-hint { margin-top: 18px; color: #6e7685; font-size: 16px; }
+    .issue-dialog-mask { position: fixed; inset: 0; z-index: 60; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(0,0,0,.3); }
+    .issue-dialog-mask.hidden { display: none; }
+    .issue-dialog { width: min(360px, calc(100vw - 32px)); padding: 36px 24px 20px; background: #fff; box-shadow: 0 6px 24px rgba(0,0,0,.12); text-align: center; }
+    .issue-title { color: #3a3f4a; font-size: 16px; font-weight: 500; }
+    .issue-copy { margin-top: 22px; color: #6e7685; font-size: 14px; }
+    .issue-copy a { color: #0066ff; font-weight: 600; text-decoration: none; }
+    .issue-qr { width: 132px; height: 132px; margin: 10px auto 0; padding: 6px; display: grid; grid-template-columns: repeat(29, 1fr); grid-template-rows: repeat(29, 1fr); background: #fff; }
+    .issue-qr span { display: block; }
+    .issue-qr span.is-dark { background: #111; }
+    .issue-qr span.is-light { background: #fff; }
+    .issue-qr-label { margin-top: 6px; color: #6e7685; font-size: 12px; }
+    .issue-exit { width: 100%; height: 40px; margin-top: 18px; border: 0; border-radius: 4px; color: #fff; background: #315bff; cursor: pointer; font-size: 15px; font-weight: 600; }
+    .issue-exit:hover { background: #0052cc; }
+    .issue-reminder { margin-top: 16px; display: inline-flex; align-items: center; gap: 8px; color: #8a8f98; font-size: 14px; }
+    .issue-reminder input { width: 14px; height: 14px; accent-color: #315bff; }
+    @media (max-width: 767px) {
+      .payment-dialog-header { padding: 0 20px; }
+      .payment-dialog-body { padding: 20px; }
+      .payment-amount-label { margin-top: 28px; }
+      .payment-qr { width: 176px; height: 176px; }
+    }
     @media (max-width: 1100px) {
       .package-layout { grid-template-columns: minmax(640px, 1fr) 300px; }
       .compare-card { width: 220px; }
@@ -185,7 +231,7 @@
       .summary-panel { order: -1; }
     }
     @media (max-width: 600px) {
-      .main-panel { padding: 18px 14px 28px; }
+      .main-panel { min-height: auto; padding: 18px 14px 28px; }
       .field-row { grid-template-columns: 1fr; gap: 6px; margin-bottom: 18px; }
       .field-label { line-height: 24px; }
       .compare-row { align-items: stretch; flex-direction: column; }
@@ -193,7 +239,7 @@
       .arrow-between { display: none; }
     }
   </style>
-  <script src="公共导航.js?v=20260824a"></script>
+  <script src="公共导航.js?v=20260825a"></script>
 </head>
   <body>
   <main class="package-page">
@@ -222,9 +268,8 @@
                 <input id="envRange" class="range-input" type="range" min="0" max="100" step="1" value="0" aria-label="新增环境数">
               </div>
               <div class="range-labels" aria-hidden="true">
-                <span class="range-label" style="--tick-position: 0%;">0</span>
-                <span class="range-label" style="--tick-position: 7%;">10</span>
-                <span class="range-label" style="--tick-position: 16%;">20</span>
+                <span class="range-label" style="--tick-position: 0%;">10</span>
+                <span class="range-label" style="--tick-position: 7%;">20</span>
                 <span class="range-label" style="--tick-position: 27%;">50</span>
                 <span class="range-label" style="--tick-position: 40%;">100</span>
                 <span class="range-label" style="--tick-position: 100%;">10k+</span>
@@ -233,7 +278,7 @@
             <div class="stepper-line">
               <span class="stepper" aria-label="浏览器环境数量">
                 <button type="button" data-step="envs" data-delta="-1" aria-label="减少环境数">−</button>
-                <input id="envCount" inputmode="numeric" value="0" aria-label="环境数">
+                <input id="envCount" inputmode="numeric" min="10" value="10" aria-label="环境数">
                 <button type="button" data-step="envs" data-delta="1" aria-label="增加环境数">＋</button>
               </span>
               <span class="inline-note">¥0.90 / 浏览器环境</span>
@@ -279,7 +324,7 @@
               <article class="compare-card">
                 <div class="compare-line"><span>新套餐</span><strong class="compare-value highlight"><span id="planExpiry">2025-12-26 到期</span><span class="green-arrow"><i data-lucide="arrow-up"></i></span></strong></div>
                 <div class="compare-line"><span>浏览器环境数</span><strong class="compare-value highlight"><span id="planEnvsValue">110</span><span class="green-arrow"><i data-lucide="arrow-up"></i></span></strong></div>
-                <div class="compare-line"><span>成员数</span><strong class="compare-value">3</strong></div>
+                <div class="compare-line"><span>成员数</span><strong class="compare-value highlight" id="planMembersValue">3</strong></div>
               </article>
             </div>
           </div>
@@ -288,23 +333,26 @@
         <div class="field-row">
           <label class="field-label">优惠券：</label>
           <div class="control-column">
-            <select class="select-control" aria-label="优惠券"><option>满100减50</option><option>不使用优惠券</option></select>
+            <select id="planCoupon" class="select-control" aria-label="优惠券">
+              <option value="" selected>请选择优惠券</option>
+              <option value="50">满100减50</option>
+            </select>
           </div>
         </div>
 
         <div class="field-row">
           <label class="field-label">自动续费：</label>
           <div class="control-column">
-            <label class="check-line"><input type="checkbox"> 到期自动续费（请确认扣款账户余额充足）</label>
+            <label class="check-line"><input id="planRenew" type="checkbox" checked> 到期自动续费（请确认扣款账户余额充足）</label>
           </div>
         </div>
 
         <div class="field-row">
           <label class="field-label">支付方式：</label>
           <div class="control-column payment-options">
-            <label class="payment-option active"><input type="radio" name="payment" value="alipay" checked> <span>支付宝支付</span></label>
-            <label class="payment-option"><input type="radio" name="payment" value="wechat"> <span>微信支付</span></label>
-            <label class="payment-option coin-option"><input type="radio" name="payment" value="coin"> <span>账户云币支付</span><span class="text-gray-400">（我的云币：300）</span><button type="button" class="recharge-button" id="rechargeButton">充值</button></label>
+            <label class="payment-option active"><input type="radio" name="planPayment" value="alipay" checked> <img class="payment-method-icon" src="../src/assets/images/支付宝支付.png" alt=""> <span>支付宝支付</span></label>
+            <label class="payment-option"><input type="radio" name="planPayment" value="wechat"> <img class="payment-method-icon" src="../src/assets/images/微信支付.png" alt=""> <span>微信支付</span></label>
+            <label class="payment-option coin-option"><input type="radio" name="planPayment" value="coin"> <span>账户云币支付</span><span id="planCoinBalance" class="text-gray-400">（我的云币：300）</span><button type="button" class="payment-balance-refresh" id="planRefreshBalance" aria-label="刷新云币余额"><i data-lucide="refresh-cw"></i></button><button type="button" class="recharge-button" id="rechargeButton">充值</button></label>
           </div>
         </div>
       </section>
@@ -315,30 +363,30 @@
           <div class="summary-heading">新套餐信息</div>
           <div class="summary-line">
             <button type="button" class="collapse-button" data-collapse="envs"><span>总浏览器环境数</span><i data-lucide="chevron-up"></i></button>
-            <span class="summary-value highlight">110<span class="green-arrow"><i data-lucide="arrow-up"></i></span></span>
+            <span class="summary-value highlight"><span id="summaryEnvsValue">110</span><span class="green-arrow"><i data-lucide="arrow-up"></i></span></span>
           </div>
           <div id="envDetails">
-            <div class="summary-line indent"><span>付费环境数</span><span class="summary-value">100</span></div>
+            <div class="summary-line indent"><span>付费环境数</span><span id="summaryPaidEnvs" class="summary-value">0</span></div>
             <div class="summary-line indent"><span>赠送环境数</span><span class="summary-value">10</span></div>
           </div>
           <div class="summary-line">
             <button type="button" class="collapse-button" data-collapse="members"><span>总成员数</span><i data-lucide="chevron-up"></i></button>
-            <span class="summary-value">3</span>
+            <span class="summary-value"><span id="summaryMembersValue">3</span></span>
           </div>
           <div id="memberDetails">
-            <div class="summary-line indent"><span>付费成员数</span><span class="summary-value">2</span></div>
+            <div class="summary-line indent"><span>付费成员数</span><span id="summaryPaidMembers" class="summary-value">0</span></div>
             <div class="summary-line indent"><span>赠送成员数</span><span class="summary-value">1</span></div>
           </div>
           <div class="summary-line"><span>到期时间</span><span class="summary-value highlight"><span id="summaryExpiry">2025-12-26（剩余30天）</span><span class="green-arrow"><i data-lucide="arrow-up"></i></span></span></div>
         </section>
         <section class="summary-section">
-          <div class="summary-line"><span>套餐费用</span><span class="summary-value">¥188.00<span class="green-arrow"><i data-lucide="arrow-up"></i></span></span></div>
-          <div class="summary-line"><span>现套餐抵扣金额</span><span class="summary-value">-¥88.00</span></div>
+          <div class="summary-line"><span>套餐费用</span><span id="summaryGross" class="summary-value">¥188.00<span class="green-arrow"><i data-lucide="arrow-up"></i></span></span></div>
+          <div class="summary-line"><span>现套餐抵扣金额</span><span id="summaryCredit" class="summary-value">-¥88.00</span></div>
           <div class="text-xs text-gray-400">（套餐总价/总天数*剩余天数）</div>
-          <div class="summary-line mt-2"><span>优惠券抵扣金额</span><span class="summary-value">-¥0.00</span></div>
+          <div class="summary-line mt-2"><span>优惠券抵扣金额</span><span id="summaryCoupon" class="summary-value">-¥0.00</span></div>
         </section>
         <section class="panel total-card">
-          <div class="total-line"><span>总价</span><strong class="total-price">¥100.00</strong></div>
+          <div class="total-line"><span>总价</span><strong id="summaryTotal" class="total-price">¥100.00</strong></div>
           <button type="button" class="submit-button" id="submitButton">提交支付</button>
           <div class="fine-print">减配套餐系统不会退费请慎重操作</div>
         </section>
@@ -397,11 +445,39 @@
       </footer>
     </section>
   </div>
+  <div id="paymentDialog" class="payment-dialog-mask hidden" role="dialog" aria-modal="true" aria-labelledby="paymentDialogTitle">
+    <section class="payment-dialog" tabindex="-1">
+      <header class="payment-dialog-header">
+        <h2 id="paymentDialogTitle" class="payment-dialog-title">支付宝支付</h2>
+        <button id="closePaymentDialog" class="payment-close" type="button" aria-label="关闭支付宝支付弹窗"><i data-lucide="x"></i></button>
+      </header>
+      <div class="payment-dialog-body">
+        <div class="payment-notice" role="status">
+          <i data-lucide="info"></i>
+          <span>订单 <strong>29:57</strong> 后订单将自动取消，请在订单取消前完成支付！若订单中使用了优惠券，订单取消后会原路退回您的账户中。</span>
+        </div>
+        <div class="payment-amount-label">需要支付金额</div>
+        <div class="payment-amount">¥112.48</div>
+        <div id="paymentQr" class="payment-qr" role="img" aria-label="支付宝支付二维码"></div>
+        <div class="payment-hint">请打开支付宝扫一扫</div>
+      </div>
+    </section>
+  </div>
+  <div id="issueDialog" class="issue-dialog-mask hidden" role="dialog" aria-modal="true" aria-labelledby="issueDialogTitle">
+    <section class="issue-dialog" tabindex="-1">
+      <h2 id="issueDialogTitle" class="issue-title">是否在购买过程中遇到了问题？</h2>
+      <p class="issue-copy">请联系 <a href="#" id="issueServiceLink">在线客服</a></p>
+      <div id="issueQr" class="issue-qr" role="img" aria-label="专属客服二维码"></div>
+      <div class="issue-qr-label">专属客服二维码</div>
+      <button id="issueExit" class="issue-exit" type="button">继续退出</button>
+      <label class="issue-reminder"><input id="issueNoReminder" type="checkbox"> 下次不再提醒</label>
+    </section>
+  </div>
   <div id="toast" class="toast" role="status"></div>
   <script>
     (() => {
-      const stops = [[0, 0], [7, 10], [16, 20], [27, 50], [40, 100], [100, 10000]];
-      const state = { envs: 0, members: 0, duration: 0, rechargeAmount: 50, rechargePayment: 'alipay', lastFocus: null };
+      const stops = [[0, 10], [7, 20], [27, 50], [40, 100], [100, 10000]];
+      const state = { mode: 'upgrade', envs: 10, members: 0, duration: 0, coupon: 0, renew: true, payment: 'alipay', cloudBalance: 300, rechargeAmount: 50, rechargePayment: 'alipay', lastFocus: null };
       const durationExpiry = {
         0: '2025-12-06 到期',
         30: '2025-12-26 到期',
@@ -409,6 +485,8 @@
         180: '2026-05-25 到期',
         360: '2026-11-21 到期'
       };
+      const giftBrowserEnvCount = 10;
+      const giftMemberCount = 1;
       const $ = (selector) => document.querySelector(selector);
       const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
       const sliderPosition = (value) => {
@@ -427,7 +505,61 @@
         window.clearTimeout(showToast.timer);
         showToast.timer = window.setTimeout(() => toast.classList.remove('show'), 1800);
       };
+      const buildQr = (selector, seed) => {
+        const size = 29;
+        const cells = Array.from({ length: size * size }, () => false);
+        const reserved = new Set();
+        const indexOf = (x, y) => y * size + x;
+        const mark = (x, y, value) => {
+          if (x < 0 || y < 0 || x >= size || y >= size) return;
+          cells[indexOf(x, y)] = value;
+          reserved.add(indexOf(x, y));
+        };
+        const finder = (originX, originY) => {
+          for (let y = -1; y < 8; y += 1) {
+            for (let x = -1; x < 8; x += 1) {
+              const edge = x === 0 || x === 6 || y === 0 || y === 6;
+              const core = x >= 2 && x <= 4 && y >= 2 && y <= 4;
+              mark(originX + x, originY + y, x >= 0 && x <= 6 && y >= 0 && y <= 6 && (edge || core));
+            }
+          }
+        };
+        finder(0, 0);
+        finder(size - 7, 0);
+        finder(0, size - 7);
+        let value = seed;
+        for (let y = 0; y < size; y += 1) {
+          for (let x = 0; x < size; x += 1) {
+            const index = indexOf(x, y);
+            if (reserved.has(index)) continue;
+            value = (value * 1664525 + 1013904223) >>> 0;
+            cells[index] = ((value >>> 28) & 1) === 1;
+          }
+        }
+        $(selector).innerHTML = cells.map((dark) => `<span class="${dark ? 'is-dark' : 'is-light'}"></span>`).join('');
+      };
+      const openPaymentDialog = () => {
+        buildQr('#paymentQr', 11248);
+        $('#paymentDialog').classList.remove('hidden');
+        lucide.createIcons();
+        $('#closePaymentDialog').focus({ preventScroll: true });
+      };
+      const openIssueDialog = () => {
+        buildQr('#issueQr', 2957);
+        $('#issueDialog').classList.remove('hidden');
+        lucide.createIcons();
+        $('#issueExit').focus({ preventScroll: true });
+      };
+      const closePaymentDialog = () => {
+        $('#paymentDialog').classList.add('hidden');
+        openIssueDialog();
+      };
+      const closeIssueDialog = () => {
+        $('#issueDialog').classList.add('hidden');
+      };
       const money = (value) => `¥${Number(value || 0).toFixed(2)}`;
+      const durationRate = { 0: 1, 30: .85, 90: .8, 180: .75, 360: .5 };
+      const paymentIconData = { alipay: '../src/assets/images/支付宝支付.png', wechat: '../src/assets/images/微信支付.png' };
       const updateRechargePayable = () => {
         $('#rechargePayable').textContent = money(state.rechargeAmount);
       };
@@ -458,13 +590,45 @@
         $('#rangeTrack').style.setProperty('--fill', `${position}%`);
         $('#envRange').value = position;
         $('#envCount').value = state.envs;
+        $('#envCount').min = '10';
+        const envMinus = document.querySelector('[data-step="envs"][data-delta="-1"]');
+        if (envMinus) envMinus.disabled = state.envs <= 10;
         $('#memberCount').value = state.members;
         const activeDuration = document.querySelector(`[data-duration="${state.duration}"]`);
         $('#durationExpiry').textContent = durationExpiry[state.duration];
         $('#durationExpiry').style.left = `${activeDuration?.offsetLeft || 0}px`;
         $('#planExpiry').textContent = durationExpiry[state.duration];
         $('#summaryExpiry').textContent = `${durationExpiry[state.duration].replace(' 到期', '')}（剩余30天）`;
-        $('#planEnvsValue').textContent = String(110 + state.envs);
+        const paidEnvs = Math.max(0, state.envs - 10);
+        const totalEnvs = giftBrowserEnvCount + paidEnvs;
+        const totalMembers = giftMemberCount + state.members;
+        const gross = (188 + state.envs * 0.9 + state.members * 10) * durationRate[state.duration];
+        const credit = state.mode === 'upgrade' ? 88 : 0;
+        const coupon = state.coupon === 50 ? 50 : 0;
+        const total = Math.max(0, gross - credit - coupon);
+        $('#planEnvsValue').textContent = String(totalEnvs);
+        $('#planMembersValue').textContent = String(totalMembers);
+        $('#summaryEnvsValue').textContent = String(totalEnvs);
+        $('#summaryMembersValue').textContent = String(totalMembers);
+        $('#summaryPaidEnvs').textContent = String(paidEnvs);
+        $('#summaryPaidMembers').textContent = String(state.members);
+        $('#summaryGross').childNodes[0].textContent = money(gross);
+        $('#summaryCredit').textContent = `-${money(credit)}`;
+        $('#summaryCoupon').textContent = `-${money(coupon)}`;
+        $('#summaryTotal').textContent = money(total);
+        $('#planCoupon').value = state.coupon ? String(state.coupon) : '';
+        $('#planRenew').checked = state.renew;
+        $('#planCoinBalance').textContent = `（我的云币：${state.cloudBalance}）`;
+        document.querySelectorAll('input[name="planPayment"]').forEach((radio) => {
+          const image = radio.nextElementSibling;
+          if (image?.classList.contains('payment-method-icon') && paymentIconData[radio.value]) image.src = paymentIconData[radio.value];
+        });
+        document.querySelectorAll('.coin-option > svg').forEach((icon) => icon.remove());
+        document.querySelectorAll('[data-mode]').forEach((item) => item.classList.toggle('active', item.dataset.mode === state.mode));
+        document.querySelectorAll('.payment-option').forEach((item) => {
+          const radio = item.querySelector('input[name="planPayment"]');
+          item.classList.toggle('active', Boolean(radio && radio.checked));
+        });
         lucide.createIcons();
       };
       function navigateToStoreTab(tab) {
@@ -478,7 +642,8 @@
         location.replace(`../index.html?page=store&module=${encodeURIComponent(file)}&moduleSearch=${encodeURIComponent(search.slice(1))}`);
       }
       document.querySelectorAll('[data-mode]').forEach((button) => button.addEventListener('click', () => {
-        document.querySelectorAll('[data-mode]').forEach((item) => item.classList.toggle('active', item === button));
+        state.mode = button.dataset.mode;
+        render();
       }));
       document.querySelectorAll('[data-duration]').forEach((button) => button.addEventListener('click', () => {
         state.duration = Number(button.dataset.duration);
@@ -491,11 +656,18 @@
       });
       document.querySelectorAll('[data-step]').forEach((button) => button.addEventListener('click', () => {
         const key = button.dataset.step;
-        state[key] = clamp(state[key] + Number(button.dataset.delta), 0, key === 'envs' ? 10000 : 100);
+        const min = key === 'envs' ? 10 : 0;
+        state[key] = clamp(state[key] + Number(button.dataset.delta), min, key === 'envs' ? 10000 : 100);
         render();
       }));
-      $('#envCount').addEventListener('change', (event) => { state.envs = clamp(Number.parseInt(event.target.value, 10) || 0, 0, 10000); render(); });
+      $('#envCount').addEventListener('change', (event) => { state.envs = clamp(Number.parseInt(event.target.value, 10) || 10, 10, 10000); render(); });
       $('#memberCount').addEventListener('change', (event) => { state.members = clamp(Number.parseInt(event.target.value, 10) || 0, 0, 100); render(); });
+      $('#planCoupon').addEventListener('change', (event) => { state.coupon = Number(event.target.value) || 0; render(); });
+      $('#planRenew').addEventListener('change', (event) => { state.renew = event.target.checked; render(); });
+      document.querySelectorAll('input[name="planPayment"]').forEach((radio) => radio.addEventListener('change', (event) => {
+        state.payment = event.target.value;
+        render();
+      }));
       document.querySelectorAll('[data-collapse]').forEach((button) => button.addEventListener('click', () => {
         const target = button.dataset.collapse === 'envs' ? $('#envDetails') : $('#memberDetails');
         const icon = button.querySelector('svg');
@@ -509,6 +681,10 @@
         if (tab !== 'plan') navigateToStoreTab(tab);
       }));
       $('#rechargeButton').addEventListener('click', openRechargeDialog);
+      $('#planRefreshBalance').addEventListener('click', () => {
+        state.cloudBalance += 18;
+        render();
+      });
       $('#closeRechargeDialog').addEventListener('click', () => closeRechargeDialog());
       $('#rechargeDialog').addEventListener('click', (event) => {
         if (event.target === $('#rechargeDialog')) closeRechargeDialog();
@@ -547,10 +723,24 @@
         closeRechargeDialog(false);
         showToast(`已提交云币充值：${money(state.rechargeAmount)}`);
       });
+      $('#submitButton').addEventListener('click', openPaymentDialog);
+      $('#closePaymentDialog').addEventListener('click', closePaymentDialog);
+      $('#paymentDialog').addEventListener('click', (event) => {
+        if (event.target === $('#paymentDialog')) closePaymentDialog();
+      });
+      $('#issueExit').addEventListener('click', closeIssueDialog);
+      $('#issueDialog').addEventListener('click', (event) => {
+        if (event.target === $('#issueDialog')) closeIssueDialog();
+      });
+      $('#issueServiceLink').addEventListener('click', (event) => {
+        event.preventDefault();
+        showToast('在线客服入口为原型演示');
+      });
       document.addEventListener('keydown', (event) => {
         if (event.key === 'Escape' && !$('#rechargeDialog').classList.contains('hidden')) closeRechargeDialog();
+        else if (event.key === 'Escape' && !$('#paymentDialog').classList.contains('hidden')) closePaymentDialog();
+        else if (event.key === 'Escape' && !$('#issueDialog').classList.contains('hidden')) closeIssueDialog();
       });
-      $('#submitButton').addEventListener('click', () => showToast('请先选择支付方式'));
       render();
     })();
   </script>

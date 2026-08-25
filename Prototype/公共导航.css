@@ -696,42 +696,44 @@ body[data-yundeng-shell] .yundeng-account-traffic-item-head span {
   line-height: 16px;
   white-space: nowrap;
 }
-body[data-yundeng-shell] .yundeng-account-traffic-item-head b {
-  color: #0066FF;
-  font-size: 12px;
-  font-weight: 600;
-}
 body[data-yundeng-shell] .yundeng-account-traffic-track {
   width: 100%;
-  height: 6px;
+  height: 8px;
   margin-top: 10px;
   border-radius: 999px;
-  display: block;
   overflow: hidden;
+  display: flex;
   background: #DFE1E5;
 }
 body[data-yundeng-shell] .yundeng-account-traffic-fill {
   height: 100%;
-  border-radius: inherit;
   display: block;
-  background: #0066FF;
   transition: width .22s ease;
 }
+body[data-yundeng-shell] .yundeng-account-traffic-fill-used {
+  background: #0066FF;
+}
+body[data-yundeng-shell] .yundeng-account-traffic-fill-remaining {
+  background: #0FC060;
+}
+body[data-yundeng-shell] .yundeng-account-traffic-fill:first-child {
+  border-radius: 999px 0 0 999px;
+}
+body[data-yundeng-shell] .yundeng-account-traffic-fill:last-child {
+  border-radius: 0 999px 999px 0;
+}
 body[data-yundeng-shell] .yundeng-account-traffic-metrics {
-  margin-top: 10px;
+  margin-top: 12px;
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0;
 }
 body[data-yundeng-shell] .yundeng-account-traffic-metrics > span {
   min-width: 0;
   display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-body[data-yundeng-shell] .yundeng-account-traffic-metrics > span + span {
-  padding-left: 8px;
-  border-left: 1px solid #E8EAED;
+  align-items: baseline;
+  gap: 4px;
+  white-space: nowrap;
 }
 body[data-yundeng-shell] .yundeng-account-traffic-metrics em {
   color: #9DA2AC;
@@ -740,11 +742,19 @@ body[data-yundeng-shell] .yundeng-account-traffic-metrics em {
   line-height: 16px;
 }
 body[data-yundeng-shell] .yundeng-account-traffic-metrics b {
-  color: #3A3F4A;
-  font-size: 11px;
-  font-weight: 500;
-  line-height: 16px;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 18px;
   white-space: nowrap;
+}
+body[data-yundeng-shell] .yundeng-account-traffic-metric-used b {
+  color: #0066FF;
+}
+body[data-yundeng-shell] .yundeng-account-traffic-metric-remaining {
+  justify-content: flex-end;
+}
+body[data-yundeng-shell] .yundeng-account-traffic-metric-remaining b {
+  color: #0FC060;
 }
 body[data-yundeng-shell] .yundeng-account-traffic-note {
   min-width: 0;

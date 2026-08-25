@@ -290,37 +290,15 @@ annotations_removed = { 1:{...}, 2:{...}, 3:{...}, 4:{...} }
 <claude-mem-context>
 # Memory Context
 
-# [云登pc端] recent context, 2026-08-24 7:39pm GMT+8
+# [云登pc端] recent context, 2026-08-25 9:58am GMT+8
 
 Legend: 🎯session 🔴bugfix 🟣feature 🔄refactor ✅change 🔵discovery ⚖️decision
 Format: ID TIME TYPE TITLE
 Fetch details: get_observations([IDs]) | Search: mem-search skill
 
-Stats: 50 obs (25,725t read) | 0t work
+Stats: 50 obs (20,992t read) | 0t work
 
 ### Aug 22, 2026
-2213 5:16p ✅ 费用管理.html 申请发票弹窗需求重述
-2214 5:19p 🔵 费用管理.html 申请开票弹窗现状代码审计
-2215 5:20p 🔴 设计系统.html bundler template still contains unescaped control characters causing JSON.parse failure on page load
-2217 " 🔵 Primary session loaded gstack investigate skill for systematic debugging of 设计系统.html bundle JSON.parse failure
-2218 " ✅ 费用管理.html 申请发票弹窗需求第三轮重申
-2219 5:22p 🔵 设计系统.html bundle unpack root cause: JSON.parse at line 85 fails on inline template script with unescaped control chars at byte 27948
-2220 5:23p 🔵 费用管理.html invoiceType 引用清单审计
-2221 5:24p 🔵 设计系统.html JSON.parse control char pinpointed: literal LF (0x0A) before &lt;/html&gt; in template body at byte 27948
-2222 5:25p 🟣 费用管理.html 申请开票弹窗 radio 样式类已注入
-2226 5:28p ✅ 费用管理.html 申请发票弹窗需求第四轮重申
-2224 " 🔴 设计系统.html Bundle unpack fails with JSON.parse control character error
-2225 5:30p 🔴 设计系统.html bundle template restored from git HEAD to fix JSON.parse control character error
-2228 5:31p ✅ 设计系统.html bundler contract verified after template-suffix restoration
-2229 5:33p 🔵 设计系统.html now bundles cleanly but dc-runtime sc-for treats binding as string and React #31 fires on object fields
-2234 " 🔵 设计系统.html reloaded confirms zero bundle errors; bundler source extracted to temp dir for diff investigation
-2235 5:35p 🔵 Cold-start comparison proves React #31 + unbound-mustache warnings exist on HEAD baseline too — not a regression
-2239 5:36p 🔵 Design-system bundler is a 3-script wrapper that embeds the inner HTML as a JSON string; remaining React #31 errors are intrinsic to that design, not regressions of the fix
-2240 5:45p ⚖️ User requested cloud server deployment with architecture alignment
-2242 " 🔵 云登pc端 prototype uses iframe-based shell router with postMessage protocol across module files
-2243 5:47p 🔴 编辑浏览器.html has SyntaxError at script-5 — blocking cloud deployment
-2244 " 🔵 云登pc端 prototype uses SystemFrame + iframe + postMessage shell, with relative-path URL state and cache-busted assets
-2245 " 🔵 Prototype file inventory and size distribution for deployment sizing
 2252 5:48p 🔵 公共导航.js init() boots SystemFrame in 9-stage pipeline with 8-second module-load timeout
 2253 " ⚖️ Primary session reconnaissance confirms static-only cloud deployment path
 2254 5:53p 🔵 index.html is the public entry point with prototypeRouteByFile mapping and 23 module cards
@@ -351,4 +329,26 @@ Stats: 50 obs (25,725t read) | 0t work
 2633 4:38p 🔵 云登PC端【商城】模块长期会话第二次 codex_delegation 初始化重投
 2636 4:41p 🔵 云登PC端【商城】模块拆分重构正在进行中：商城.html 已删除，商城-代理.html 作为新主页
 2718 6:37p ✅ 购买须知页面布局与样式规范化请求
+2725 8:42p ✅ 商城模块专属会话初始化与10条操作约束确立
+2726 " 🔵 商城模块只读审计确认购物车独立模块路由机制
+2727 " 🔵 商城模块状态结构与试算逻辑映射
+2728 " 🔵 全局跨模块商城引用审计
+2730 8:45p 🔵 代理管理续费弹窗与详情抽屉 DOM 结构审计完成
+2731 " 🔵 全局账户流量面板与商城流量包购买路由机制确认
+2732 " ✅ 代理管理续费预览表新增套餐流量与超出流量资费列
+2733 " ✅ 海外动态代理 seed 数据扩展套餐流量字段
+2737 8:47p 🟣 代理详情抽屉新增流量使用区段展示套餐流量信息
+2738 " ✅ 代理管理套餐流量改动通过语法与空白验证
+2739 9:47p 🟣 代理类型新增"动态代理（住宅）"选项
+2741 9:48p 🟣 商城代理页新增"动态代理（住宅）"流量包模式
+2742 " 🔵 商城代理页现有代理类型与资源映射
+2743 9:50p 🔴 Playwright 模块导入失败阻断浏览器验证
+2744 " 🔵 Prototype/商城-代理.html 当前实现细节全景
+2747 " 🔵 项目内无 node_modules，.codex 目录已存在
+2749 " 🔵 动态代理功能涉及 6 个文件改动
+2752 9:51p ⚖️ 修正 syncProxyMode 隐藏逻辑，保留代理类型 tabs 可见
+2754 " 🔵 向 /root 发送加密消息通道可用
+2757 9:52p 🔵 动态代理任务由 /root 编排三个并行子 agent 协同完成
+2761 " 🔵 系统存在可用 playwright 安装，可注入到 node_repl 解决导入失败
+2763 9:53p ✅ playwright node_modules 路径已成功注册到 node_repl
 </claude-mem-context>

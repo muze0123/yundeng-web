@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  const ASSET_VERSION = '20260824a';
+  const ASSET_VERSION = '20260825a';
   const DEFAULT_ROUTE_KEY = 'home';
   const ONBOARDING_ICON_HTML = '<i data-lucide="compass" class="yundeng-onboarding-icon" aria-hidden="true"></i>';
   const ACCOUNT_TRAFFIC_USAGE = Object.freeze([
@@ -680,20 +680,20 @@
     const language = make('languages', '界面语言', '<div class="px-3 py-3"><div class="text-[12px] text-ink-sub mb-2">当前界面语言</div><button type="button" data-lang="简体中文" aria-current="true" class="w-full text-left px-3 py-2 rounded bg-primary-bg text-primary">简体中文</button></div>');
     const trafficUsageHtml = ACCOUNT_TRAFFIC_USAGE.map(item => {
       const usedPercent = Math.min(100, Math.max(0, item.used / item.total * 100));
-      const formatAmount = value => `${Number.isInteger(value) ? value : value.toFixed(1)} GB`;
+      const formatAmount = value => `${Number.isInteger(value) ? value : value.toFixed(1)}GB`;
+      const remainingPercent = Math.max(0, 100 - usedPercent);
       return `
         <article class="yundeng-account-traffic-item" data-traffic-kind="${item.key}">
           <div class="yundeng-account-traffic-item-head">
             <strong>${item.label}</strong>
-            <span><b class="mono">${formatAmount(item.remaining)}</b> 剩余</span>
           </div>
-          <div class="yundeng-account-traffic-track" role="progressbar" aria-label="${item.label}已使用 ${formatAmount(item.used)}，总量 ${formatAmount(item.total)}" aria-valuemin="0" aria-valuemax="${item.total}" aria-valuenow="${item.used}">
-            <span class="yundeng-account-traffic-fill" style="width:${usedPercent}%"></span>
+          <div class="yundeng-account-traffic-track" role="progressbar" aria-label="${item.label}已使用 ${formatAmount(item.used)}，剩余 ${formatAmount(item.remaining)} / ${formatAmount(item.total)}" aria-valuemin="0" aria-valuemax="${item.total}" aria-valuenow="${item.used}" aria-valuetext="已用 ${formatAmount(item.used)}，剩余 ${formatAmount(item.remaining)} / ${formatAmount(item.total)}">
+            <span class="yundeng-account-traffic-fill yundeng-account-traffic-fill-used" style="width:${usedPercent}%"></span>
+            <span class="yundeng-account-traffic-fill yundeng-account-traffic-fill-remaining" style="width:${remainingPercent}%"></span>
           </div>
           <div class="yundeng-account-traffic-metrics">
-            <span><em>已使用</em><b class="mono">${formatAmount(item.used)}</b></span>
-            <span><em>剩余</em><b class="mono">${formatAmount(item.remaining)}</b></span>
-            <span><em>总流量</em><b class="mono">${formatAmount(item.total)}</b></span>
+            <span class="yundeng-account-traffic-metric-used"><em>已用：</em><b class="mono">${formatAmount(item.used)}</b></span>
+            <span class="yundeng-account-traffic-metric-remaining"><em>剩余：</em><b class="mono">${formatAmount(item.remaining)}/${formatAmount(item.total)}</b></span>
           </div>
           <div class="yundeng-account-traffic-note"><i data-lucide="${item.noteIcon}" aria-hidden="true"></i><span>${item.note}</span></div>
         </article>`;
