@@ -39,15 +39,16 @@
     .mono { font-family: 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums; }
     .store-page { min-width: 0; min-height: 100%; padding-bottom: 24px; overflow: auto; background: var(--page); }
     .surface { min-width: 0; padding: 20px; border-radius: 8px; background: var(--card); }
-    .cart-layout > .surface { padding: 0; }
+    .cart-list-wrapper { padding: 0; }
     .store-tabs { min-width: 0; height: 44px; display: flex; align-items: stretch; gap: 8px; overflow-x: auto; scrollbar-width: none; }
     .store-tabs::-webkit-scrollbar { display: none; }
     .store-tab { min-width: 104px; height: 44px; padding: 0 16px; border: 0; border-bottom: 2px solid transparent; display: inline-flex; align-items: center; justify-content: center; gap: 8px; flex: none; color: var(--ink-sub); background: transparent; cursor: pointer; font-size: 14px; line-height: 1; }
     .store-tab:hover { color: var(--primary); background: var(--hover); }
     .store-tab[aria-selected="true"] { color: var(--primary); border-bottom-color: var(--primary); font-weight: 600; background: var(--card); }
     .store-tab svg { width: 16px; height: 16px; }
-    .cart-layout { display: grid; grid-template-columns: minmax(0, 1fr) 350px; gap: 16px; align-items: start; }
-    .order-summary { width: 350px; min-width: 0; position: sticky; top: 0; }
+    .cart-layout { display: flex; flex-wrap: nowrap; gap: 16px; align-items: flex-start; }
+    .cart-list-wrapper { flex: 1 1 auto; min-width: 0; overflow-x: auto; overflow-y: clip; }
+    .order-summary { flex: 0 0 350px; width: 350px; min-width: 0; position: sticky; top: 0; }
     .cart-toolbar { padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; gap: 16px; border-bottom: 1px solid var(--line-lighter); background: var(--card); }
     .cart-toolbar-left, .cart-toolbar-actions { min-width: 0; display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
     .checkbox-line { display: inline-flex; align-items: flex-start; gap: 7px; cursor: pointer; }
@@ -68,16 +69,16 @@
     .cart-group-toggle { width: 24px; height: 24px; padding: 0; border: 0; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; color: var(--ink-sub); background: transparent; cursor: pointer; }
     .cart-group-toggle:hover { color: var(--primary); background: var(--primary-bg); }
     .cart-group-toggle svg { width: 16px; height: 16px; }
-    .cart-group-body { border-top: 1px solid var(--line-light); overflow-x: auto; }
+    .cart-group-body { border-top: 1px solid var(--line-light); overflow: visible; }
     .cart-group.collapsed .cart-group-body { display: none; }
-    .cart-row { min-width: 1240px; padding: 18px 0 16px 48px; display: grid; grid-template-columns: minmax(280px, 1fr) 280px 96px 280px minmax(140px, .8fr) 44px; gap: 20px; align-items: center; border-top: 1px solid var(--line-lighter); }
-    .cart-row.is-dynamic { min-width: 1240px; grid-template-columns: minmax(260px, 1fr) 120px 140px 280px minmax(140px, .8fr) 44px; }
+    .cart-row { width: 100%; min-width: 1408px; padding: 18px 20px 16px 48px; display: grid; grid-template-columns: 300px 200px 96px 200px 200px minmax(44px, 1fr); column-gap: 60px; align-items: center; border-top: 1px solid var(--line-lighter); }
+    .cart-row.is-dynamic { min-width: 1408px; grid-template-columns: 300px 200px 96px 200px 200px minmax(44px, 1fr); }
     .cart-row:first-child { border-top: 0; }
     .cart-row:hover { background: var(--hover); }
     .cart-row-main { min-width: 0; display: flex; gap: 12px; align-items: flex-start; }
     .cart-row-main .checkbox-line { margin-top: 3px; flex: none; }
     .cart-row-title { min-width: 0; display: grid; gap: 2px; }
-    .cart-row-title strong { color: var(--ink-title); font-size: 14px; font-weight: 600; line-height: 1.35; }
+    .cart-row-title strong { overflow: hidden; color: var(--ink-title); font-size: 14px; font-weight: 600; line-height: 1.35; text-overflow: ellipsis; white-space: nowrap; }
     .cart-row-sub { color: var(--ink-sub); font-size: 12px; line-height: 1.4; }
     .cart-traffic-copy { margin-top: 6px; display: grid; gap: 2px; color: var(--ink-sub); font-size: 12px; line-height: 1.4; }
     .cart-traffic-copy span { white-space: nowrap; }
@@ -85,7 +86,7 @@
     .cart-dynamic-field { min-width: 0; display: inline-flex; align-items: center; color: var(--ink-body); white-space: nowrap; }
     .cart-dynamic-field.mono { font-family: 'JetBrains Mono', monospace; }
     .cart-dynamic-validity { min-width: 0; display: inline-flex; align-items: center; color: var(--ink-sub); white-space: nowrap; }
-    .cart-mini-select { width: 200px; min-width: 200px; height: 32px; padding: 0 30px 0 10px; border: 1px solid var(--line); border-radius: 4px; color: var(--ink-body); background: var(--card); outline: none; }
+    .cart-mini-select { width: 200px; min-width: 200px; max-width: 200px; height: 32px; padding: 0 30px 0 10px; border: 1px solid var(--line); border-radius: 4px; color: var(--ink-body); background: var(--card); outline: none; }
     .cart-mini-select:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(0,102,255,.12); }
     .cart-quantity { display: inline-grid; grid-template-columns: 28px 44px 28px; height: 32px; border: 1px solid var(--line); border-radius: 4px; overflow: hidden; background: var(--card); }
     .cart-quantity button { border: 0; color: var(--ink-sub); background: var(--card); cursor: pointer; }
@@ -104,7 +105,8 @@
     .cart-price-tip .accent { color: var(--price); }
     .cart-price-tip .free { color: var(--success); }
     .cart-price-tip .amount { color: var(--ink-title); }
-    .cart-row-actions { display: flex; align-items: center; justify-content: flex-end; padding: 2px 20px 0 0; }
+    .cart-row-actions { display: flex; align-items: center; justify-content: flex-end; height: 100%; }
+    .cart-row-actions .delete-icon-button { margin-left: auto; align-self: center; }
     .delete-icon-button { width: 24px; height: 24px; padding: 0; border: 0; display: inline-flex; align-items: center; justify-content: center; color: var(--ink-muted); background: transparent; cursor: pointer; }
     .delete-icon-button:hover { color: var(--danger); }
     .delete-icon-button svg { width: 17px; height: 17px; }
@@ -155,8 +157,29 @@
     .btn-primary { color: var(--card); background: var(--primary); }
     .detail-row { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 12px; padding: 6px 0; }
     .info-callout { margin-top: 16px; padding: 12px; border-radius: 4px; color: var(--info); background: var(--info-bg); }
-    @media (max-width: 1279px) { .cart-layout { grid-template-columns: 1fr; } .order-summary { width: 100%; position: static; } }
-    @media (max-width: 767px) { .cart-toolbar { align-items: flex-start; flex-direction: column; } .cart-layout { gap: 12px; } }
+    @media (max-width: 1800px) {
+      .cart-list-wrapper { overflow: visible; }
+      .cart-row, .cart-row.is-dynamic { min-width: 0; grid-template-columns: minmax(220px, 1.25fr) minmax(150px, 1fr) 96px minmax(150px, 1fr) minmax(145px, 1fr) 24px; column-gap: 20px; }
+      .cart-mini-select { width: 100%; min-width: 0; max-width: none; }
+      .cart-row-actions { min-width: 24px; }
+    }
+    /* 1800px 级桌面保留右侧订单区块；更窄时上下排列，避免左右栏失去可读宽度。 */
+    @media (max-width: 1400px) {
+      .cart-layout { flex-wrap: wrap; }
+      .cart-list-wrapper { flex: 1 1 100%; width: 100%; overflow: visible; }
+      .order-summary { flex: 0 0 100%; width: 100%; position: static; top: auto; order: 1; }
+      .cart-group-body { overflow: visible; }
+      .cart-row, .cart-row.is-dynamic { grid-template-columns: minmax(150px, 1.3fr) minmax(110px, 1fr) 80px minmax(110px, 1fr) minmax(120px, 1fr) 24px; column-gap: 8px; }
+      .cart-mini-select { width: 100%; min-width: 0; max-width: none; }
+      .cart-quantity { width: 100%; grid-template-columns: 24px minmax(0, 1fr) 24px; }
+      .cart-quantity input { width: 100%; }
+    }
+    @media (max-width: 767px) {
+      .cart-toolbar { align-items: flex-start; flex-direction: column; }
+      .cart-layout { gap: 12px; }
+      .cart-row, .cart-row.is-dynamic { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 12px; row-gap: 12px; padding: 16px; }
+      .cart-row-actions { min-width: 0; }
+    }
     :where(button, input, select):focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
   </style>
   <link rel="stylesheet" href="公共导航.css?v=20260825a">
@@ -174,7 +197,7 @@
       </div>
     </nav>
     <section id="cartPanel" class="cart-layout" aria-labelledby="cartTitle">
-      <section class="surface" aria-labelledby="cartTitle">
+      <div class="cart-list-wrapper surface" aria-labelledby="cartTitle">
         <div class="cart-toolbar">
           <div class="cart-toolbar-left">
             <label class="checkbox-line"><input id="checkAll" type="checkbox" aria-label="全选可结算商品"><span class="cart-toolbar-title">购物车 <span id="cartCountText" class="mono">已选择 0（共0条）</span></span></label>
@@ -184,7 +207,7 @@
         </div>
         <div id="cartEmpty" class="cart-empty hidden"><span class="empty-icon"><i data-lucide="shopping-cart"></i></span><h3>购物车暂无商品</h3><p>可从商城代理或套餐页面添加商品</p></div>
         <div id="cartGroupWrap" class="cart-group-list"></div>
-      </section>
+      </div>
       <aside id="cartSummary" class="order-summary" aria-labelledby="cartSummaryTitle"></aside>
     </section>
   </main>
