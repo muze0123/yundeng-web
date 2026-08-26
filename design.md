@@ -256,7 +256,7 @@
 
 **筛选项 `.filter-item`**：`flex:0 0 400px; width:400px; display:flex; flex-direction:column; gap:6px;`。
 
-**标签 `.filter-label`**：标签位于控件上方，左对齐，`font-size:13px; line-height:18px; color:#3A3F4A;`，不追加中文冒号。
+**标签 `.filter-label`**：标签位于控件上方，左对齐，`font-size:14px; line-height:18px; color:#3A3F4A;`，不追加中文冒号。
 
 **控件 `.control`**：`width:400px; max-width:100%;`
 
