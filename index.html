@@ -63,7 +63,7 @@
       </a>
       <div class="flex items-center gap-2">
         <span id="pageCounter" class="hidden sm:inline-flex h-7 px-2.5 rounded bg-success-bg text-success items-center gap-1.5">
-          <span class="w-1.5 h-1.5 rounded-full bg-success"></span><span class="mono">22 / 22</span> 页面可访问
+          <span class="w-1.5 h-1.5 rounded-full bg-success"></span><span class="mono">25 / 25</span> 页面可访问
         </span>
         <a href="Prototype/设计系统.html" class="h-8 px-3 rounded border border-line bg-card hover:bg-hover text-ink-body flex items-center gap-1.5">
           <i data-lucide="swatch-book" class="w-4 h-4 text-primary"></i><span class="hidden sm:inline">查看设计规范</span>
@@ -81,7 +81,7 @@
           <p class="mt-3 text-[14px] leading-7 text-ink-sub max-w-[620px]">这里汇总云登 PC 端当前可交付原型。先核对设计与框架规范，再进入具体业务页面，可减少跨文件查找和版本识别成本。</p>
         </div>
         <div class="relative mt-6 flex flex-wrap gap-x-6 gap-y-2 text-[12px] text-ink-sub">
-          <span class="flex items-center gap-1.5"><i data-lucide="file-code-2" class="w-4 h-4 text-primary"></i><strong class="mono text-ink-title">22</strong> 个原型页面</span>
+          <span class="flex items-center gap-1.5"><i data-lucide="file-code-2" class="w-4 h-4 text-primary"></i><strong class="mono text-ink-title">25</strong> 个原型页面</span>
           <span class="flex items-center gap-1.5"><i data-lucide="folder-tree" class="w-4 h-4 text-primary"></i><strong class="mono text-ink-title">2</strong> 个内容分组</span>
           <span class="flex items-center gap-1.5"><i data-lucide="calendar-check-2" class="w-4 h-4 text-success"></i>同步于 <strong class="mono text-ink-title">2026-08-07</strong></span>
         </div>
@@ -145,7 +145,10 @@
       { id:'transfer', group:'后台系统', title:'分享转移', description:'管理环境分享、资源转移、缓存快照和跨团队交接记录。', file:'分享转移.html', icon:'arrow-right-left', status:'业务原型', statusTone:'success', updated:'08-13', size:'单文件', tags:['环境分享','资源转移','缓存','跨团队'] },
       { id:'logs', group:'后台系统', title:'日志管理', description:'查询团队成员对环境、代理、账号、团队和费用执行的审计记录。', file:'日志管理.html', icon:'scroll-text', status:'业务原型', statusTone:'success', updated:'08-13', size:'单文件', tags:['操作日志','审计','筛选','导出'] },
       { id:'account-settings', group:'后台系统', title:'账号设置', description:'维护团队、个人资料、手机邮箱、密码、第三方绑定和登录设备。', file:'账号设置.html', icon:'key-round', status:'业务原型', statusTone:'success', updated:'08-13', size:'单文件', tags:['个人资料','安全设置','设备','团队切换'] },
-      { id:'billing', group:'后台系统', title:'费用管理', description:'管理云币流水、订单与优惠券，并从订单进入开票管理，完成资格筛选、申请、抬头维护和进度追踪。', file:'费用管理.html', icon:'wallet-cards', status:'业务原型', statusTone:'success', updated:'08-19', size:'单文件', tags:['云币','订单','开票','抬头'] },
+      { id:'billing-coin', group:'后台系统', title:'云币充值', description:'查看云币余额与充值流水，支持支付方式、交易状态和创建时间范围筛选。', file:'费用管理-云币充值.html', icon:'wallet-cards', status:'业务原型', statusTone:'success', updated:'08-26', size:'单文件', tags:['云币','充值','流水','筛选'] },
+      { id:'billing-orders', group:'后台系统', title:'订单管理', description:'统一查看代理、套餐、充值及云浏览器订单，支持订单类型、状态、创建时间和创建人筛选。', file:'费用管理-订单管理.html', icon:'receipt-text', status:'业务原型', statusTone:'success', updated:'08-26', size:'单文件', tags:['订单','状态','创建时间','分页'] },
+      { id:'billing-invoice', group:'后台系统', title:'开票管理', description:'管理可开票订单、开票记录和常用抬头，支持申请、详情查看、下载与抬头维护。', file:'费用管理-开票管理.html', icon:'file-text', status:'业务原型', statusTone:'success', updated:'08-26', size:'单文件', tags:['开票订单','开票记录','常用抬头','申请'] },
+      { id:'billing-coupons', group:'后台系统', title:'优惠券', description:'查看团队优惠券使用范围、有效期和状态，支持关键词搜索、筛选及新增优惠券。', file:'费用管理-优惠券.html', icon:'ticket-percent', status:'业务原型', statusTone:'success', updated:'08-26', size:'单文件', tags:['优惠券','有效期','状态','筛选'] },
       { id:'store', group:'后台系统', title:'商城代理', description:'选择代理地区、资源、数量、时长与支付方式，支持实时试算和支付前订单确认。', file:'商城-代理.html', icon:'shopping-bag', status:'业务原型', statusTone:'success', updated:'08-24', size:'单文件', tags:['代理购买','地区选择','实时试算','订单确认'] },
       { id:'proxy-management', group:'后台系统', title:'代理管理', description:'统一管理平台代理、自有代理和代理 API，支持检测、授权、环境分配、续费与安全删除。', file:'代理管理.html', icon:'network', status:'业务原型', statusTone:'success', updated:'08-12', size:'单文件', tags:['平台代理','自有代理','代理API','批量操作'] },
       { id:'browser-create', group:'后台系统', title:'新建浏览器', description:'支持单个、批量、文件导入与一键迁移四种环境创建模式，复用完整指纹配置能力。', file:'新建浏览器.html', icon:'circle-plus', status:'业务原型', statusTone:'success', updated:'08-12', size:'单文件', tags:['单个创建','批量创建','导入','迁移'] },
@@ -177,7 +180,10 @@
       '分享转移.html':'transfer',
       '日志管理.html':'logs',
       '账号设置.html':'account-settings',
-      '费用管理.html':'billing',
+      '费用管理-云币充值.html':'billing-coin',
+      '费用管理-订单管理.html':'billing-orders',
+      '费用管理-开票管理.html':'billing-invoice',
+      '费用管理-优惠券.html':'billing-coupons',
       '商城-代理.html':'store',
       '商城-套餐.html':'store',
       '商城-购物车.html':'store',
@@ -195,8 +201,13 @@
       '环境管理':'environment',
       '代理管理':'proxy',
       '商城':'store',
-      '费用管理':'billing',
-      '费管理':'billing',
+      'billing':'billing-coin',
+      '费用管理':'billing-coin',
+      '费管理':'billing-coin',
+      '云币充值':'billing-coin',
+      '订单管理':'billing-orders',
+      '开票管理':'billing-invoice',
+      '优惠券':'billing-coupons',
       '团队管理':'team-management',
       '成员管理':'members',
       '账号管理':'account-management',

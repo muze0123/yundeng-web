@@ -290,65 +290,63 @@ annotations_removed = { 1:{...}, 2:{...}, 3:{...}, 4:{...} }
 <claude-mem-context>
 # Memory Context
 
-# [云登pc端] recent context, 2026-08-25 2:34pm GMT+8
+# [云登pc端] recent context, 2026-08-27 11:52am GMT+8
 
 Legend: 🎯session 🔴bugfix 🟣feature 🔄refactor ✅change 🔵discovery ⚖️decision
 Format: ID TIME TYPE TITLE
 Fetch details: get_observations([IDs]) | Search: mem-search skill
 
-Stats: 50 obs (20,992t read) | 0t work
+Stats: 50 obs (10,045t read) | 0t work
 
-### Aug 22, 2026
-2252 5:48p 🔵 公共导航.js init() boots SystemFrame in 9-stage pipeline with 8-second module-load timeout
-2253 " ⚖️ Primary session reconnaissance confirms static-only cloud deployment path
-2254 5:53p 🔵 index.html is the public entry point with prototypeRouteByFile mapping and 23 module cards
-2255 " 🔴 Prototype/标注交互.js deleted in working tree (per git status)
-### Aug 23, 2026
-2279 9:16a 🟣 费用管理.html 申请开票弹窗 重新发起 抬头类型单选 + 发票类型改造 需求
-2281 " 🔵 费用管理.html 申请开票弹窗 当前形态盘点 — 发票类型 仍为 select 未改造
-2287 9:19a 🔵 费用管理.html invoiceStep3 动态注入 — 核对提交 步进条第 3 步运行时创建
-### Aug 24, 2026
-2383 11:12a 🟣 商城.html Figma 重建任务启动
-2384 11:29a ⚖️ 商城.html Figma 对齐重构采用 0820 修改版为最终准则
-2385 11:30a 🔵 商城.html Figma 对齐重构加载 impeccable v4.1.1 + control-chrome 技能进行侦察
-2388 11:31a 🔵 商城.html 当前仅 91 行（原型骨架），impeccable 上下文标记 SCOPED_EXISTING_ALLOWED
-2389 11:32a 🔵 商城模块长期专属会话初始化
-2390 " ✅ 商城.html Figma 对齐重构指令再次确认（重复信号）
-2391 " 🔵 商城模块会话摸底完成:91行原型 + 大规模标注清理未提交
-2392 " 🔵 商城模块只读初始化完成:确认规范缺口
-2393 11:35a 🔵 Primary session 进入 Figma 0820 vs 0819 设计对比侦察阶段
-2394 11:37a 🔵 Primary session 发现 0820 修改版含 3 个子状态：明细弹窗、"4"、"3"
-2396 11:59a 🟣 商城.html Figma 对齐重构任务启动
-2476 3:02p ⚖️ 商城.html 1:1 还原到上一个已改好的版本
-2580 4:08p 🔵 商城模块专属会话通过 codex_delegation 初始化,确立 10 条运行规则
-2588 4:10p 🔵 商城模块会话只读审计 Prototype/商城.html,完整映射页面结构与样式类
-2589 " 🔵 审计输出 5 项视觉规范缺口:蓝色高亮/字段冒号/地域对齐/卡片基线/底部固定
-2590 4:13p 🔵 源 codex 会话已归档,审计回报无法通过 codex_app__send_message_to_thread 投递
-2627 4:34p 🔵 云登PC端【商城】模块专属会话初始化与只读边界确认
-2631 4:35p 🔵 云登PC端商城模块当前结构与跨模块引用全量映射
-2633 4:38p 🔵 云登PC端【商城】模块长期会话第二次 codex_delegation 初始化重投
-2636 4:41p 🔵 云登PC端【商城】模块拆分重构正在进行中：商城.html 已删除，商城-代理.html 作为新主页
-2718 6:37p ✅ 购买须知页面布局与样式规范化请求
-2725 8:42p ✅ 商城模块专属会话初始化与10条操作约束确立
-2726 " 🔵 商城模块只读审计确认购物车独立模块路由机制
-2727 " 🔵 商城模块状态结构与试算逻辑映射
-2728 " 🔵 全局跨模块商城引用审计
-2730 8:45p 🔵 代理管理续费弹窗与详情抽屉 DOM 结构审计完成
-2731 " 🔵 全局账户流量面板与商城流量包购买路由机制确认
-2732 " ✅ 代理管理续费预览表新增套餐流量与超出流量资费列
-2733 " ✅ 海外动态代理 seed 数据扩展套餐流量字段
-2737 8:47p 🟣 代理详情抽屉新增流量使用区段展示套餐流量信息
-2738 " ✅ 代理管理套餐流量改动通过语法与空白验证
-2739 9:47p 🟣 代理类型新增"动态代理（住宅）"选项
-2741 9:48p 🟣 商城代理页新增"动态代理（住宅）"流量包模式
-2742 " 🔵 商城代理页现有代理类型与资源映射
-2743 9:50p 🔴 Playwright 模块导入失败阻断浏览器验证
-2744 " 🔵 Prototype/商城-代理.html 当前实现细节全景
-2747 " 🔵 项目内无 node_modules，.codex 目录已存在
-2749 " 🔵 动态代理功能涉及 6 个文件改动
-2752 9:51p ⚖️ 修正 syncProxyMode 隐藏逻辑，保留代理类型 tabs 可见
-2754 " 🔵 向 /root 发送加密消息通道可用
-2757 9:52p 🔵 动态代理任务由 /root 编排三个并行子 agent 协同完成
-2761 " 🔵 系统存在可用 playwright 安装，可注入到 node_repl 解决导入失败
-2763 9:53p ✅ playwright node_modules 路径已成功注册到 node_repl
+### Aug 26, 2026
+2955 3:26p 🟣 费用管理订单管理Tab筛选参数升级：9类订单类型+9种状态+创建时间范围
+2958 3:29p 🔵 PRD已固化9类订单类型+9种状态+创建时间双月范围规范]<]minimax[>[
+2959 " 🔄 费用管理PRD重构：开票管理升级为同级第四页签+四文件路由拆分
+2970 3:32p 🔄 费用管理PRD架构升级：开票管理晋升同级第四页签并落地四HTML文件路由]<]minimax[>[
+2972 3:45p ✅ PRD/开票管理/01-开票申请产品需求分析.md 新增原型文件路由基线章节
+2973 " 🔵 apply_patch 工具对跨文件批量同步返回空结果
+2974 " 🔵 PRD/开票管理/02-YunLogin开票申请产品设计方案.md 旧架构引用仍未替换
+2977 " ✅ PRD/开票管理/02-YunLogin开票申请产品设计方案.md 18 处同步成功
+2978 " 🔵 PRD/开票管理/02 文件仍残留 Drawer 引用5 处
+2983 3:48p ✅ PRD/开票管理/03-YunLogin开票管理PRD.md 18 处同步成功
+2984 " 🔵 PRD/开票管理/03 文件 §3.3 章节标题与正文仍含1200px Drawer 描述
+2985 " ✅ PRD/开票管理/02-YunLogin开票申请产品设计方案.md 4 处二次同步
+2990 3:50p 🔵 PRD/开票管理/02 文件第 458 行残留旧 prototype 文件引用
+2991 " ✅ 跨 PRD 文件 rd 扫描确认旧架构引用仅剩 04 与 02 各1 处
+2992 " ✅ Prototype路由注册四文件已对齐，无 Prototype/费用管理.html 引用
+2993 " 🔵 PRD/开票管理/开票业务流程.drawio 旧术语统计为零
+2994 " ✅ tools.apply_patch 持续返回空 `{}` 触发原型/费用管理.html 删除尝试
+2999 3:54p ✅ Prototype/费用管理.html 物理删除完成，git 标记 D状态
+3000 " 🔵 Prototype/公共导航.js 新手引导系统结构详细定位
+3001 " 🔵 Playwright iframe 测试遭遇 frame定位失败与 frame ready 等待超时
+3004 3:58p 🔵 Playwright iframe 帧 lookup 失败模式与 encodeURIComponent 陷阱
+3005 " ✅ Playwright 测试基础设施成熟：可路由到任何开票管理子 Tab 并截图
+3006 4:00p 🔵 费用管理-云币充值 iframe 模块缺失 - billing-coin 页面无对应框架
+3007 " 🔵 常用抬头 Tab 搜索过滤功能验证通过
+3008 " 🔵 apply_patch 工具对多行 JS 表达式 patch 返回空结果
+3013 4:18p ⚖️ 用户确立后续任务执行约束（停掉回归验证、PRD同步、专注页面输出）
+3014 " ✅ 开票管理顶部 tab 与订单管理样式对齐改造立项
+3015 " ✅ 常用抬头列表与弹窗去除"联系电话"字段
+3019 4:21p ✅ 开票管理顶部Tab视觉对齐订单管理 page-tabs 规范
+3020 " ✅ 常用抬头列表与表单移除联系电话字段
+3021 " ✅ 常用抬头区块页内化时连带移除"标题+条数"统计节点
+3023 4:23p ✅ 常用抬头抽屉去 aria-modal 并保留历史 contactPhone 字段向后兼容
+3024 " 🔵 联系电话字段仅在常用抬头作用域内被收敛，申请开票与发票更正流程保留
+3025 " 🔵 常用抬头改造后 HTML 三段内联脚本语法全部通过 vm.Script 校验
+3026 4:26p 🔵 开票管理页面脚本语法校验与设计检测交叉验证通过
+3030 " 🔵 开票管理常用抬头改造闭环交付完毕
+3032 4:27p 🔵 index.html 主入口路由 domcontentloaded 超时但页面仍成功加载
+3033 4:28p 🔵 index.html 主入口采用 indexRouteFrame iframe 路由宿主模式
+3035 " 🔵 原型页面依赖三层 CDN 资源与本地 src/styles/global.css
+3047 4:37p ✅ 常用抬头块容器 padding 收敛为零
+3048 " 🔵 开票管理顶部 tabs 视觉对齐订单管理实测通过
+3049 " 🔵 HTTP静态服务器 (PID 10585) 已 Ctrl-C 终止，本轮交付收口
+3050 4:47p ⚖️ [**title**: 费用管理模块架构升级请求：将开票管理提升为顶层Tab并拆分四个独立页面]
+3051 4:48p 🔵 [**title**: 费用管理-开票管理.html 文件尚未纳入 Git 版本控制]
+3052 5:25p ✅ [**title**: 常用抬头页面筛选模式重构：搜索框+筛选 (参考开票记录)]
+3053 " 🔴 [**title**: 开票管理页面顶部Tab缺失图标，与订单管理不一致]</
+3056 5:27p 🔵 [**title**: 费用管理-开票管理.html 通过 JS 注入完成 BillingTab 重构与抬头 Drawer→页内迁移]
+3058 5:29p 🟣 [**title**: 开票管理顶部Tab引入Lucide图标，与订单管理一致]
+3059 " 🟣 [**title**: 常用抬头筛选重构为搜索框+筛选按钮（对齐开票记录）]
+3060 " 🟣 [**title**: 常用抬头筛选事件处理重写：搜索+清空+抽屉开关+提交计数]
 </claude-mem-context>

@@ -14,7 +14,8 @@
     { key: 'environment', label: '环境管理', icon: 'monitor-cog', href: '环境管理.html' },
     { key: 'proxy', label: '代理管理', icon: 'network', href: '代理管理.html' },
     { key: 'store', label: '商城', icon: 'shopping-bag', href: '商城-代理.html' },
-    { key: 'billing', label: '费用管理', icon: 'wallet-cards', href: '费用管理.html' },
+    // 侧栏只保留一个费用管理入口，默认落到云币充值页；四个业务页通过内容区 Tab 切换。
+    { key: 'billing', label: '费用管理', icon: 'wallet-cards', href: '费用管理-云币充值.html' },
     { key: 'team', label: '团队', icon: 'users-round', group: true, children: [
       { key: 'team-management', label: '团队管理', icon: 'building-2', href: '团队管理.html' },
       { key: 'members', label: '成员管理', icon: 'user-round-cog', href: '成员管理.html' },
@@ -35,19 +36,39 @@
     { key: 'settings', label: '设置', icon: 'settings-2', href: '设置.html' },
     { key: 'help', label: '帮助', icon: 'circle-help', href: '帮助.html' }
   ];
-  const allItems = NAV.flatMap(item => item.children || [item]).concat(EXTRA);
+  // 变体路由不渲染到侧栏，但必须登记到统一解析表，供 index.html?page=<key> 和模块直开使用。
+  const BILLING_VARIANTS = [
+    { key: 'billing-coin', label: '云币充值', icon: 'wallet-cards', href: '费用管理-云币充值.html', routeOnly: true },
+    { key: 'billing-orders', label: '订单管理', icon: 'receipt-text', href: '费用管理-订单管理.html', routeOnly: true },
+    { key: 'billing-invoice', label: '开票管理', icon: 'file-text', href: '费用管理-开票管理.html', routeOnly: true },
+    { key: 'billing-coupons', label: '优惠券', icon: 'ticket-percent', href: '费用管理-优惠券.html', routeOnly: true }
+  ];
+  const allItems = NAV.flatMap(item => item.children || [item]).concat(EXTRA, BILLING_VARIANTS);
+  const BILLING_PAGE_KEYS = new Set(['billing', 'billing-coin', 'billing-orders', 'billing-invoice', 'billing-coupons']);
   const basename = decodeURIComponent(location.pathname.split('/').pop() || 'index.html');
   const searchParams = new URLSearchParams(location.search);
   const shellParamNames = new Set(['page', 'module', 'moduleHash', 'moduleSearch', 'embedded', 'guide', 'indexHost']);
   const isSystemFrame = basename === '系统框架.html';
   const isIndexHosted = isSystemFrame && searchParams.get('indexHost') === '1';
   const isEmbedded = window.top !== window.self && !isIndexHosted;
-  const pageAliases = { '系统框架.html':DEFAULT_ROUTE_KEY, '首页.html':DEFAULT_ROUTE_KEY, '编辑浏览器.html':'environment' };
+  const pageAliases = {
+    '系统框架.html': DEFAULT_ROUTE_KEY,
+    '首页.html': DEFAULT_ROUTE_KEY,
+    '编辑浏览器.html': 'environment',
+    '费用管理-云币充值.html': 'billing-coin',
+    '费用管理-订单管理.html': 'billing-orders',
+    '费用管理-开票管理.html': 'billing-invoice',
+    '费用管理-优惠券.html': 'billing-coupons'
+  };
   const moduleAliases = {
     '代理购买须知.html': 'store',
     '商城-代理.html': 'store',
     '商城-套餐.html': 'store',
-    '商城-购物车.html': 'store'
+    '商城-购物车.html': 'store',
+    '费用管理-云币充值.html': 'billing-coin',
+    '费用管理-订单管理.html': 'billing-orders',
+    '费用管理-开票管理.html': 'billing-invoice',
+    '费用管理-优惠券.html': 'billing-coupons'
   };
   const requestedPageAliases = Object.freeze({
     '首页':'home',
@@ -55,8 +76,13 @@
     '代理管理':'proxy',
     '商城':'store',
     '商城代理':'store',
-    '费用管理':'billing',
-    '费管理':'billing',
+    'billing':'billing-coin',
+    '费用管理':'billing-coin',
+    '费管理':'billing-coin',
+    '云币充值':'billing-coin',
+    '订单管理':'billing-orders',
+    '开票管理':'billing-invoice',
+    '优惠券':'billing-coupons',
     '团队管理':'team-management',
     '成员管理':'members',
     '账号管理':'account-management',
@@ -630,7 +656,8 @@
   }
 
   function itemLink(item, child) {
-    const active = pageKey === item.key;
+    // 变体页面仍保持侧栏“费用管理”选中，避免隐藏路由项污染导航层级。
+    const active = item.key === 'billing' ? BILLING_PAGE_KEYS.has(pageKey) : pageKey === item.key;
     const icon = child ? '' : `<i data-lucide="${item.icon}" class="menu-icon"></i>`;
     return `<a href="${shellRouteHref(item.key)}" class="yundeng-menu-link ${child ? 'yundeng-secondary-link' : ''}" data-active="${active}" data-page-key="${item.key}" title="${item.label}">${icon}<span class="menu-label nav-label truncate">${item.label}</span></a>`;
   }
@@ -857,7 +884,7 @@
       event.stopPropagation();
       close(false);
       if (action === 'recharge') {
-        window.yundengNavigateShell ? window.yundengNavigateShell(shellRouteHref('billing')) : location.assign(shellRouteHref('billing'));
+        window.yundengNavigateShell ? window.yundengNavigateShell(shellRouteHref('billing-coin')) : location.assign(shellRouteHref('billing-coin'));
       } else if (action === 'purchase') {
         const href = shellRouteHref('store', { moduleSearch: 'tab=proxy' });
         window.yundengNavigateShell ? window.yundengNavigateShell(href) : location.assign(href);
