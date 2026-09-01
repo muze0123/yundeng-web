@@ -1,0 +1,1475 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>云登 · 云币充值</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://unpkg.com/lucide@1.34.0/dist/umd/lucide.min.js"></script>
+  <link rel="stylesheet" href="../src/styles/global.css?v=20260821a">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="公共导航.css?v=20260825a">
+  <link rel="stylesheet" href="分页器.css?v=20260814">
+  <script>
+    if (window.tailwind) tailwind.config = { theme: { extend: { colors: {
+      primary:'#0066FF','primary-hover':'#0052CC','primary-active':'#0047B3','primary-bg':'#E6F0FF',
+      'ink-title':'#1A1D24','ink-body':'#3A3F4A','ink-sub':'#6E7685','ink-muted':'#9DA2AC',
+      line:'#DFE1E5','line-light':'#E8EAED','line-lighter':'#F0F1F3',page:'#F7F8FA',card:'#FFFFFF',hover:'#F3F4F6',
+      success:'#0FC060','success-bg':'#E7F9F0',warning:'#E7772D','warning-bg':'#FDF2E9',danger:'#D9001B','danger-bg':'#FFE8EB',info:'#0091D5','info-bg':'#E4F4FB'
+    } } } };
+  </script>
+  <style>
+    *{box-sizing:border-box}
+    body{font:14px/1.5 -apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif;background:#F7F8FA}
+    .mono{font-family:'JetBrains Mono',monospace}
+    .page-content{padding:0}
+    .btn{height:32px;padding:0 12px;border-radius:4px;display:inline-flex;align-items:center;justify-content:center;gap:6px;font-weight:500;cursor:pointer}
+    .btn-primary{background:#0066FF;color:#fff}.btn-primary:hover{background:#0052CC}
+    .btn-default{border:1px solid #DFE1E5;background:#fff;color:#3A3F4A}.btn-default:hover{background:#F3F4F6}
+    .field{height:32px;border:1px solid #DFE1E5;border-radius:4px;background:#fff;padding:0 10px;outline:none;color:#3A3F4A}
+    .field:focus{border-color:#0066FF;box-shadow:0 0 0 2px #E6F0FF}
+    .field.invalid,.field[aria-invalid="true"]{border-color:#D9001B}
+    .card{background:#fff;border:0;border-radius:8px}
+    .tab{height:48px;padding:0 22px;border-bottom:2px solid transparent;color:#6E7685;white-space:nowrap;cursor:pointer}
+    .tab.active{color:#0066FF;border-color:#0066FF;font-weight:600}
+    .subtab{height:34px;padding:0 14px;border-radius:4px;color:#6E7685;cursor:pointer}
+    .subtab.active{color:#0066FF;background:#E6F0FF}
+    .modal-bg{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center;padding:16px}
+    .toast{position:fixed;left:50%;top:24px;z-index:9996;display:flex;align-items:center;gap:10px;min-width:320px;max-width:min(480px,calc(100vw - 32px));min-height:44px;padding:10px 14px;border-radius:8px;background:#fff;color:#3A3F4A;box-shadow:0 6px 24px rgba(0,0,0,.12);transform:translateX(-50%)}
+    .toast-icon{width:18px;height:18px;flex:0 0 18px}.toast[data-tone="success"] .toast-icon{color:#0FC060}.toast[data-tone="info"] .toast-icon{color:#0091D5}.toast[data-tone="warning"] .toast-icon{color:#E7772D}.toast[data-tone="danger"] .toast-icon{color:#D9001B}
+    .anno-badge{position:fixed;width:20px;height:20px;padding:0;border:0;border-radius:50%;background:#0066FF;color:#fff;font:700 11px/20px sans-serif;text-align:center;pointer-events:auto;box-shadow:0 2px 6px rgba(0,0,0,.15);cursor:pointer}
+    .hidden{display:none!important}th{white-space:nowrap;font-weight:500}td{white-space:nowrap}
+    .coin-filter-flow{display:flex;flex-wrap:wrap;align-items:flex-start;row-gap:16px;column-gap:24px;min-width:0}
+    .coin-filter-item{display:flex;flex:0 0 374px;width:374px;max-width:100%;min-width:0;align-items:flex-start;column-gap:0;position:relative}
+    .coin-filter-label{width:74px;flex:0 0 74px;color:#3A3F4A;font-size:14px;line-height:32px;text-align:right;white-space:nowrap}
+    .coin-filter-control{width:300px;max-width:100%;flex:0 1 300px}.coin-filter-actions{display:flex;align-items:center;gap:12px;min-height:32px;flex:0 0 auto}
+    .data-list-title{display:flex;align-items:center;gap:12px}.data-list-count{color:#6E7685;font-size:13px}
+    .data-table-row{border-bottom:1px solid #E8EAED}.data-table-row:hover{background:#F3F4F6}
+    @media(max-width:720px){.page-tabs{overflow-x:auto}.coin-summary{grid-template-columns:1fr!important}.responsive-field{width:100%!important}.modal-card{width:min(520px,100%)!important}.toast{min-width:0;width:calc(100vw - 32px)}.coin-filter-item{flex-basis:100%;width:100%}.coin-filter-control{width:calc(100% - 74px)}.coin-filter-actions{width:100%;justify-content:flex-start}}
+  </style>
+  <style>
+    /* 余额视觉特例：参考需求图的超大金额层级，颜色仍使用 design.md 既有 token。 */
+    .coin-balance-card{position:relative;width:300px;max-width:100%;height:150px;min-height:150px;overflow:hidden;padding:24px;border-radius:8px;background:linear-gradient(135deg,#F7F8FA 0%,#E4F4FB 48%,#E6F0FF 100%)}
+    .coin-balance-card::before{content:'';position:absolute;inset:0;background:linear-gradient(110deg,rgba(255,255,255,.48) 0%,rgba(255,255,255,.14) 42%,rgba(255,255,255,0) 68%);pointer-events:none}
+    .coin-balance-card__inner{position:relative;z-index:1;display:flex;align-items:flex-start;justify-content:space-between;gap:24px;min-height:102px}
+    .coin-balance-card__meta{display:flex;flex-direction:column;justify-content:space-between;gap:18px;min-width:0}
+    .coin-balance-title{color:#6E7685;font-size:14px;font-weight:400;line-height:20px}
+    .coin-balance-value{margin-top:10px;font-family:'JetBrains Mono',monospace;font-size:30px;line-height:1;font-weight:600;color:#1A1D24;font-variant-numeric:tabular-nums}
+    .coin-balance-refresh{display:inline-flex;align-items:center;gap:8px;border:0;background:transparent;padding:0;color:#9DA2AC;font-size:14px;line-height:1;cursor:pointer}
+    .coin-balance-refresh:hover,.coin-balance-refresh:focus-visible{color:#6E7685}
+    .coin-balance-refresh svg{width:20px;height:20px}
+    .coin-balance-art{position:absolute;right:-20px;top:-2px;width:190px;height:auto;opacity:.46;pointer-events:none}
+    .coin-store-nav{margin-bottom:8px;background:#fff;border-radius:8px;overflow:hidden}
+    .coin-store-tabs{height:44px;display:flex;align-items:stretch;gap:8px;overflow-x:auto;scrollbar-width:none}
+    .coin-store-tabs::-webkit-scrollbar{display:none}
+    .coin-store-tab{min-width:104px;height:44px;padding:0 16px;border:0;border-bottom:2px solid transparent;display:inline-flex;align-items:center;justify-content:center;gap:8px;flex:none;color:#6E7685;background:transparent;cursor:pointer;font-size:14px;line-height:1;white-space:nowrap}
+    .coin-store-tab:hover{color:#0066FF;background:#F3F4F6}
+    .coin-store-tab.active{color:#0066FF;border-bottom-color:#0066FF;font-weight:600;background:#fff}
+    .coin-store-tab svg{width:16px;height:16px}
+    .coin-business-card{background:#fff;border-radius:8px;overflow:hidden}
+    .coin-tabs{padding:6px 20px 0;border-bottom:1px solid #E8EAED}
+    .coin-tabs .subtab{height:40px;padding:0 18px;border-radius:4px}
+    .coin-tabs .subtab.active{background:#E6F0FF;color:#0066FF}
+    .coin-transaction-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px 16px;flex-wrap:wrap;margin-bottom:16px}
+    .coin-search-filter-group{display:flex;align-items:center;justify-content:flex-end;gap:20px;min-width:0;flex:0 1 500px;margin-left:auto}
+    .coin-global-search{position:relative;width:400px;max-width:100%;flex:0 1 400px}
+    .coin-global-search .field{width:100%;padding-left:10px;padding-right:58px}
+    .coin-global-search input[type="search"]::-webkit-search-cancel-button{display:none}
+    .coin-search-submit,.coin-search-clear{position:absolute;top:4px;width:24px;height:24px;padding:0;border:0;border-radius:4px;display:inline-flex;align-items:center;justify-content:center;background:transparent;color:#9DA2AC;cursor:pointer;outline:none}
+    .coin-search-submit{right:4px}
+    .coin-search-clear{right:30px}
+    .coin-search-submit:hover,.coin-search-clear:hover,.coin-search-submit:focus-visible,.coin-search-clear:focus-visible{background:#F3F4F6;color:#3A3F4A}
+    .coin-filter-button{position:relative;min-width:74px;white-space:nowrap}
+    .coin-filter-button.has-active-filters{border-color:#0066FF;background:#fff;color:#0066FF}
+    .coin-filter-button.has-active-filters:hover{background:#F3F4F6;color:#0066FF}
+    .coin-filter-count{position:absolute;right:-8px;top:-8px;min-width:16px;height:16px;padding:0 4px;border:1px solid #fff;border-radius:8px;background:#D9001B;color:#fff;font:600 11px/14px 'JetBrains Mono',monospace;text-align:center;box-shadow:0 2px 6px rgba(0,0,0,.15)}
+    .coin-list-title{display:flex;align-items:baseline;gap:10px;min-width:0}
+    .coin-list-count{font-size:12px;color:#6E7685;white-space:nowrap}
+    .coin-cdkey-view{padding:24px}
+    .coin-filter-drawer-overlay{align-items:stretch;justify-content:flex-end;padding:0;background:rgba(0,0,0,.3)}
+    .coin-filter-drawer-panel{position:fixed;top:0;right:0;bottom:0;width:480px;max-width:100vw;display:flex;flex-direction:column;background:#fff;box-shadow:-4px 0 24px rgba(0,0,0,.12);animation:coin-drawer-in .22s ease;outline:none}
+    .coin-filter-drawer-header{height:56px;flex:0 0 56px;padding:0 20px;border-bottom:1px solid #E8EAED;display:flex;align-items:center;justify-content:space-between}
+    .coin-filter-drawer-body{flex:1;min-height:0;overflow-y:auto;padding:20px;background:#FFFFFF}
+    .coin-filter-drawer-footer{height:64px;flex:0 0 64px;padding:0 20px;border-top:1px solid #E8EAED;display:flex;align-items:center;justify-content:flex-end;gap:12px;background:#fff}
+    .coin-filter-flow{display:flex;flex-direction:column;flex-wrap:nowrap;gap:16px}
+    .coin-filter-item{display:flex;flex:0 0 auto;flex-direction:column;align-items:stretch;gap:6px}
+    .coin-filter-label{font-size:13px;line-height:18px;color:#3A3F4A;white-space:nowrap}
+    .coin-filter-control{width:100%;flex:0 0 auto}
+    .coin-date-row{display:flex;align-items:center;gap:4px}
+    .coin-date-sep{flex:0 0 auto;color:#9DA2AC;font-size:14px}
+    .coin-date-row .field{flex:1 1 0;min-width:0}
+    .coin-date-time-control-wrap{position:relative;width:100%}
+    .coin-date-time-trigger{position:relative;width:100%;height:32px;padding:0 36px 0 12px;border:1px solid #DFE1E5;border-radius:4px;display:flex;align-items:center;background:#fff;color:#9DA2AC;font:14px/1.5 inherit;text-align:left;cursor:pointer;outline:none}
+    .coin-date-time-trigger:hover{background:#F3F4F6}
+    .coin-date-time-trigger:focus-visible{border-color:#0066FF;box-shadow:0 0 0 2px #E6F0FF}
+    .coin-date-time-trigger[aria-invalid="true"]{border-color:#D9001B;box-shadow:0 0 0 2px #FFE8EB}
+    .coin-date-time-trigger-values{display:flex;align-items:center;min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+    .coin-date-time-trigger-value{min-width:0;overflow:hidden;text-overflow:ellipsis}
+    .coin-date-time-trigger-value.is-selected{color:#3A3F4A;font-family:'JetBrains Mono',monospace;font-variant-numeric:tabular-nums}
+    .coin-date-time-trigger-separator{flex:0 0 auto;margin:0 10px;color:#9DA2AC}
+    .coin-date-time-trigger svg{position:absolute;right:10px;width:16px;height:16px;color:#9DA2AC}
+    .coin-date-time-clear{position:absolute;right:30px;top:4px;z-index:1;width:24px;height:24px;padding:0;border:0;border-radius:4px;display:none;align-items:center;justify-content:center;background:transparent;color:#9DA2AC;cursor:pointer}
+    .coin-date-time-clear:not(.hidden){display:inline-flex}
+    .coin-date-time-clear:hover,.coin-date-time-clear:focus-visible{background:#F3F4F6;color:#3A3F4A;outline:none}
+    .coin-date-time-clear svg{width:16px;height:16px}
+    .coin-date-time-picker{position:fixed;z-index:10000;width:620px;max-width:calc(100vw - 32px);padding:16px;border:1px solid #DFE1E5;border-radius:8px;background:#fff;box-shadow:0 6px 24px rgba(0,0,0,.12)}
+    .coin-date-time-picker.hidden{display:none}
+    .coin-date-time-months{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+    .coin-date-time-month+.coin-date-time-month{padding-left:16px;border-left:1px solid #E8EAED}
+    .coin-date-time-month-head{display:grid;grid-template-columns:58px minmax(0,1fr) 58px;align-items:center;margin-bottom:8px}
+    .coin-date-time-nav-group{display:flex;align-items:center;gap:2px}
+    .coin-date-time-nav-spacer{width:58px;height:28px;display:block}
+    .coin-date-time-nav{width:28px;height:28px;padding:0;border:0;border-radius:4px;display:inline-flex;align-items:center;justify-content:center;background:transparent;color:#6E7685;cursor:pointer}
+    .coin-date-time-nav:hover,.coin-date-time-nav:focus-visible{background:#F3F4F6;color:#0066FF;outline:none}
+    .coin-date-time-nav svg{width:16px;height:16px}
+    .coin-date-time-month-title{margin:0;color:#3A3F4A;font-size:14px;font-weight:500;line-height:28px;text-align:center}
+    .coin-date-time-week,.coin-date-time-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:2px}
+    .coin-date-time-week{margin-bottom:4px;color:#9DA2AC;font-size:11px;text-align:center}
+    .coin-date-time-day{height:28px;padding:0;border:0;border-radius:4px;background:#fff;color:#3A3F4A;font:12px 'JetBrains Mono',monospace;cursor:pointer}
+    .coin-date-time-day:hover,.coin-date-time-day:focus-visible{background:#F3F4F6;color:#0066FF;outline:none}
+    .coin-date-time-day.is-other{color:#C7CAD1}
+    .coin-date-time-day.is-range{border-radius:0;background:#E6F0FF}
+    .coin-date-time-day.is-start,.coin-date-time-day.is-end{border-radius:4px;background:#0066FF;color:#fff;font-weight:600}
+    .coin-date-time-day.is-start:not(.is-end){border-radius:4px 0 0 4px}
+    .coin-date-time-day.is-end:not(.is-start){border-radius:0 4px 4px 0}
+    .coin-date-time-time-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px;padding-top:14px;border-top:1px solid #E8EAED}
+    .coin-date-time-time-field{display:flex;align-items:center;gap:8px;min-width:0;color:#3A3F4A;font-size:13px;white-space:nowrap}
+    .coin-date-time-time-field select{min-width:0;flex:1;height:32px;padding:0 28px 0 10px;border:1px solid #DFE1E5;border-radius:4px;background:#fff;color:#3A3F4A;font:14px 'JetBrains Mono',monospace;outline:none}
+    .coin-date-time-time-field select:focus{border-color:#0066FF;box-shadow:0 0 0 2px #E6F0FF}
+    .coin-date-time-picker-footer{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:14px;padding-top:12px;border-top:1px solid #E8EAED}
+    .coin-date-time-picker-value{min-width:0;overflow:hidden;color:#6E7685;font:12px/18px 'JetBrains Mono',monospace;text-overflow:ellipsis;white-space:nowrap}
+    .coin-date-time-picker-actions{display:flex;flex:0 0 auto;gap:8px}
+    .coin-date-error{margin:0;color:#D9001B;font-size:12px;line-height:18px}
+    .coin-filter-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .coin-filter-row .coin-filter-item{gap:6px}
+    .coin-filter-row .coin-filter-label{line-height:18px}
+    .coin-tab-panel{padding-top:0}
+    .coin-recharge-view{min-height:520px;display:flex;flex-direction:column;overflow:hidden}
+    .coin-recharge-body{flex:1;min-height:0;padding:28px 30px 24px;overflow:auto}
+    .coin-recharge-field + .coin-recharge-field{margin-top:24px}
+    .coin-recharge-field-label{display:block;margin-bottom:12px;color:#1A1D24;font-size:16px;font-weight:600;line-height:24px}
+    .coin-recharge-section-label{font-size:14px;line-height:20px}
+    .coin-recharge-amount-options{display:grid;grid-template-columns:repeat(5,100px) 130px;gap:20px}
+    .coin-recharge-amount-btn,.coin-recharge-custom-option{position:relative;height:50px;padding:0 12px;border:1px solid #F0F1F3;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;gap:4px;color:#0066FF;background:#F7F8FA;cursor:pointer}
+    .coin-recharge-amount-btn:hover,.coin-recharge-custom-option:hover,.coin-recharge-amount-btn:focus-visible,.coin-recharge-custom-option:focus-within{border-color:#0066FF;background:#E6F0FF;outline:none}
+    .coin-recharge-amount-btn.selected,.coin-recharge-custom-option.selected{border-color:#0066FF;background:#fff;box-shadow:inset 0 0 0 1px #0066FF}
+    .coin-recharge-amount-btn.selected::after{content:'';position:absolute;right:-1px;bottom:-1px;width:22px;height:22px;border-radius:6px 0 6px 0;background:#0066FF}
+    .coin-recharge-amount-btn.selected::before{content:'';position:absolute;right:5px;bottom:6px;z-index:1;width:8px;height:5px;border-left:2px solid #fff;border-bottom:2px solid #fff;transform:rotate(-45deg)}
+    .coin-recharge-amount-value{color:#0066FF;font:500 16px/1 'JetBrains Mono',monospace;white-space:nowrap}
+    .coin-recharge-custom-option .coin-recharge-custom-prefix{color:#0066FF;font:500 16px/1 'JetBrains Mono',monospace}
+    .coin-recharge-custom-option input{width:78px;height:32px;padding:0 8px;border:0;outline:none;color:#3A3F4A;background:transparent;font-size:16px}
+    .coin-recharge-custom-option input::placeholder{color:#9DA2AC}
+    .coin-recharge-campaign{margin-top:16px;padding:16px;border:1px solid #E8EAED;border-radius:8px;background:#E6F0FF}
+    .coin-recharge-campaign-header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
+    .coin-recharge-campaign-title{margin:0;color:#1A1D24;font-size:16px;font-weight:600;line-height:22px}
+    .coin-recharge-campaign-copy{margin:4px 0 0;color:#3A3F4A;font-size:12px;line-height:18px}
+    .coin-recharge-campaign-countdown{flex:0 0 auto;padding:4px 8px;border-radius:4px;background:#fff;color:#E7772D;font-size:12px;line-height:18px;white-space:nowrap}
+    .coin-recharge-campaign-countdown strong{font-family:'JetBrains Mono',monospace;font-weight:600}
+    .coin-recharge-campaign-levels{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:12px}
+    .coin-recharge-campaign-level{min-width:0;padding:8px 10px;border:1px solid #E6F0FF;border-radius:4px;background:#fff;color:#6E7685;font-size:12px;line-height:18px}
+    .coin-recharge-campaign-level strong{display:block;color:#0066FF;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;white-space:nowrap}
+    .coin-recharge-campaign-level.is-active{border-color:#0066FF;background:#fff;box-shadow:inset 0 0 0 1px #0066FF}
+    .coin-recharge-campaign-level.is-active span{color:#0066FF}
+    .coin-recharge-campaign-progress{display:flex;align-items:center;gap:10px;margin-top:12px;color:#3A3F4A;font-size:12px;line-height:18px}
+    .coin-recharge-campaign-progress-bar{height:6px;min-width:80px;flex:1;overflow:hidden;border-radius:4px;background:#fff}
+    .coin-recharge-campaign-progress-bar span{display:block;height:100%;border-radius:4px;background:#0066FF;transition:width .2s ease}
+    .coin-recharge-campaign-summary{flex:0 0 auto;color:#0066FF;font-family:'JetBrains Mono',monospace;white-space:nowrap}
+    .coin-recharge-campaign-note{margin:8px 0 0;color:#6E7685;font-size:11px;line-height:16px}
+    .coin-recharge-info-list{margin:0;padding:0;list-style:none;color:#3A3F4A;font-size:14px;line-height:1.7}
+    .coin-recharge-info-list li{position:relative;padding-left:14px}
+    .coin-recharge-info-list li::before{content:'';position:absolute;left:0;top:9px;width:5px;height:5px;border-radius:50%;background:#0066FF}
+    .coin-recharge-control-row{display:grid;grid-template-columns:84px minmax(220px,326px);align-items:center;gap:12px}
+    .coin-recharge-control-row .coin-recharge-field-label{margin:0;font-size:14px;font-weight:400;line-height:32px;text-align:right;white-space:nowrap}
+    .coin-recharge-select{width:326px;max-width:100%}
+    .coin-recharge-payment-options{display:flex;gap:10px}
+    .coin-recharge-payment-btn{position:relative;flex:0 0 158px;height:40px;padding:0 12px;border:1px solid #DFE1E5;border-radius:4px;display:flex;align-items:center;justify-content:flex-start;gap:8px;color:#3A3F4A;background:#fff;cursor:pointer;font-size:14px}
+    .coin-recharge-payment-btn:hover,.coin-recharge-payment-btn:focus-visible{border-color:#0066FF;outline:none}
+    .coin-recharge-payment-btn.active,.coin-recharge-payment-btn.selected{border-color:#0066FF;color:#0066FF;background:#E6F0FF}
+    .coin-recharge-payment-check{width:14px;height:14px;border:1px solid #DFE1E5;border-radius:2px;display:inline-flex;align-items:center;justify-content:center;color:transparent;background:#fff;flex:0 0 14px}
+    .coin-recharge-payment-btn.active .coin-recharge-payment-check,.coin-recharge-payment-btn.selected .coin-recharge-payment-check{border-color:#0066FF;color:#fff;background:#0066FF}
+    .coin-recharge-payment-check svg{width:11px;height:11px;stroke-width:3}
+    .coin-recharge-payment-icon{width:18px;height:18px;flex:0 0 18px;object-fit:contain}
+    .coin-recharge-more-row{display:grid;grid-template-columns:84px auto minmax(0,1fr);align-items:center;gap:12px}
+    .coin-recharge-more-label{color:#3A3F4A;font-size:14px;line-height:32px;text-align:right;white-space:nowrap}
+    .coin-recharge-more-methods{height:34px;padding:0 10px;border:1px solid #DFE1E5;border-radius:4px;display:inline-flex;align-items:center;gap:8px;color:#6E7685;background:#fff}
+    .coin-recharge-more-methods span{width:24px;height:20px;border-radius:3px;display:inline-flex;align-items:center;justify-content:center;color:#0066FF;background:#E6F0FF;font:600 9px/1 Arial,sans-serif}
+    .coin-recharge-more-link{color:#0066FF;font-size:14px;text-decoration:none}
+    .coin-recharge-more-link:hover{text-decoration:underline;text-underline-offset:3px}
+    .coin-recharge-footer{min-height:64px;padding:0 20px;border-top:1px solid #E8EAED;display:flex;align-items:center;justify-content:flex-start;gap:16px;background:#fff}
+    .coin-recharge-support{color:#6E7685;font-size:12px}
+    .coin-recharge-support a{color:#0066FF;text-decoration:none}
+    .coin-recharge-support a:hover{text-decoration:underline}
+    .coin-recharge-submit-group{display:flex;align-items:center;gap:20px}
+    .coin-recharge-payable{color:#3A3F4A;font-size:14px;white-space:nowrap}
+    .coin-recharge-payable strong{margin-left:12px;color:#1A1D24;font:600 16px/1 'JetBrains Mono',monospace}
+    .coin-recharge-submit{min-width:90px}
+    .coin-recharge-footer .coin-recharge-support{margin-left:auto}
+    .coin-cdkey-action-row{display:flex;align-items:center;flex-wrap:wrap;gap:12px}
+    .coin-payment-dialog-mask{position:fixed;inset:0;z-index:1200;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(0,0,0,.3)}
+    .coin-payment-dialog-mask.hidden{display:none}
+    .coin-payment-dialog{width:min(960px,calc(100vw - 32px));min-height:560px;max-height:calc(100vh - 32px);overflow:hidden;border-radius:8px;background:#fff;box-shadow:0 6px 24px rgba(0,0,0,.12)}
+    .coin-payment-dialog-header{height:64px;padding:0 36px;display:flex;align-items:center;justify-content:space-between;border-top:2px solid #9DA2AC;border-bottom:1px solid #F0F1F3}
+    .coin-payment-dialog-title{margin:0;color:#3A3F4A;font-size:18px;font-weight:500}
+    .coin-payment-close{width:28px;height:28px;padding:0;border:0;display:inline-flex;align-items:center;justify-content:center;color:#3A3F4A;background:transparent;cursor:pointer}
+    .coin-payment-close:hover{color:#0066FF;background:#F3F4F6}
+    .coin-payment-close svg{width:18px;height:18px}
+    .coin-payment-dialog-body{padding:28px 46px 32px;overflow-y:auto;text-align:center}
+    .coin-payment-notice{min-height:32px;padding:6px 10px;display:flex;align-items:center;gap:8px;color:#0066FF;background:#E6F0FF;text-align:left;font-size:14px}
+    .coin-payment-notice svg{width:14px;height:14px;flex:0 0 14px}
+    .coin-payment-notice strong{color:#D9001B;font-weight:500}
+    .coin-payment-amount-label{margin-top:48px;color:#9DA2AC;font-size:16px;font-weight:600}
+    .coin-payment-amount{margin-top:4px;color:#0066FF;font:500 34px/1 'JetBrains Mono',monospace}
+    .coin-payment-qr{width:194px;height:194px;margin:20px auto 0;padding:8px;display:grid;grid-template-columns:repeat(29,1fr);grid-template-rows:repeat(29,1fr);background:#fff}
+    .coin-payment-qr span{display:block}
+    .coin-payment-qr span.is-dark{background:#111}
+    .coin-payment-qr span.is-light{background:#fff}
+    .coin-payment-hint{margin-top:18px;color:#6E7685;font-size:16px}
+    .coin-payment-campaign{margin-top:10px;color:#0066FF;font-size:13px;line-height:20px}
+    .coin-filter-drawer-header h2{margin:0;color:#1A1D24;font-size:16px;font-weight:600;line-height:24px}
+    #txFilterClose{width:32px;height:32px;padding:0;border:0;border-radius:4px;display:inline-flex;align-items:center;justify-content:center;color:#9DA2AC;background:transparent;cursor:pointer}
+    #txFilterClose:hover,#txFilterClose:focus-visible{color:#3A3F4A;background:#F3F4F6;outline:none}
+    #txFilterClose svg{width:20px;height:20px}
+    .coin-filter-drawer-body .coin-filter-flow{display:flex;flex-direction:column;flex-wrap:nowrap;gap:16px}
+    .coin-filter-drawer-body .coin-filter-item{width:100%;max-width:none;flex:0 0 auto;flex-direction:column;align-items:stretch;gap:6px}
+    .coin-filter-drawer-body .coin-filter-label{width:auto;flex:0 0 auto;color:#3A3F4A;font-size:13px;line-height:18px;text-align:left;white-space:nowrap}
+    .coin-filter-drawer-body .coin-filter-control{width:100%;max-width:100%;flex:0 0 auto}
+    .coin-filter-drawer-body .coin-date-row{width:100%}
+    .coin-filter-drawer-body .coin-date-row .field{height:32px}
+    @keyframes coin-drawer-in{from{transform:translateX(100%)}to{transform:translateX(0)}}
+    @media(max-width:1024px) and (min-width:721px){
+      .coin-recharge-amount-options{grid-template-columns:repeat(3,minmax(0,1fr))}
+    }
+    @media(max-width:720px){
+      .coin-balance-card{height:150px;min-height:150px;padding:24px}
+      .coin-balance-card__inner{flex-direction:column;gap:16px;min-height:102px}
+      .coin-balance-art{right:-30px;top:0;width:170px;opacity:.38}
+      .coin-tabs{overflow-x:auto}
+      .coin-transaction-toolbar{align-items:stretch}
+      .coin-search-filter-group{width:100%;flex-basis:100%;margin-left:0;justify-content:space-between}
+      .coin-global-search{width:100%;flex-basis:100%}
+      .coin-filter-drawer-panel{width:100%}
+      .coin-filter-row{grid-template-columns:1fr}
+      .coin-recharge-body{padding:20px 16px 24px}
+      .coin-recharge-amount-options{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+      .coin-recharge-custom-option{width:100%}
+      .coin-recharge-campaign-header{flex-direction:column;gap:8px}
+      .coin-recharge-campaign-countdown{align-self:flex-start}
+      .coin-recharge-campaign-levels{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .coin-recharge-campaign-progress{align-items:flex-start;flex-wrap:wrap}
+      .coin-recharge-campaign-progress-bar{order:3;flex-basis:100%}
+      .coin-recharge-control-row{grid-template-columns:1fr;gap:6px}
+      .coin-recharge-control-row .coin-recharge-field-label{line-height:18px;text-align:left}
+      .coin-recharge-more-row{grid-template-columns:1fr;row-gap:6px}
+      .coin-recharge-more-label{text-align:left}
+      .coin-recharge-select{width:100%}
+      .coin-recharge-footer{padding:12px 16px;align-items:flex-start;flex-direction:column}
+      .coin-recharge-submit-group{width:100%;justify-content:flex-start}
+      .coin-recharge-footer .coin-recharge-support{margin-left:0}
+      .coin-payment-dialog-header{padding:0 20px}
+      .coin-payment-dialog-body{padding:20px}
+      .coin-payment-amount-label{margin-top:28px}
+      .coin-payment-qr{width:176px;height:176px}
+      .coin-date-time-picker{width:calc(100vw - 32px);padding:14px}
+      .coin-date-time-months{grid-template-columns:1fr;gap:14px}
+      .coin-date-time-month+.coin-date-time-month{padding:14px 0 0;border-top:1px solid #E8EAED;border-left:0}
+    }
+  </style>
+  <script src="公共导航.js?v=20260828e"></script>
+</head>
+<body class="bg-page text-ink-body">
+  <script>
+    // 业务文件直开时回到根索引；iframe 嵌入时由 SystemFrame 承载，不触发跳转。
+    (function(){
+      if(window===top){
+        try{location.replace(new URL('../index.html?page=store-coin',location.href).href)}catch(_){location.replace('../index.html?page=store-coin')}
+      }
+    })();
+  </script>
+  <main id="mainContent" class="min-h-screen">
+    <nav class="coin-store-nav" aria-label="商城业务范围">
+      <div id="storeTabs" class="coin-store-tabs" role="tablist" aria-label="商城业务范围">
+        <button class="coin-store-tab" type="button" role="tab" aria-selected="false" data-store-tab="proxy" tabindex="-1"><i data-lucide="server" aria-hidden="true"></i><span>代理</span></button>
+        <button class="coin-store-tab" type="button" role="tab" aria-selected="false" data-store-tab="plan" tabindex="-1"><i data-lucide="package" aria-hidden="true"></i><span>套餐</span></button>
+        <button class="coin-store-tab active" type="button" role="tab" aria-selected="true" data-store-tab="coin" tabindex="0"><i data-lucide="wallet-cards" aria-hidden="true"></i><span>云币充值</span></button>
+        <button class="coin-store-tab" type="button" role="tab" aria-selected="false" data-store-tab="cart" tabindex="-1"><i data-lucide="shopping-cart" aria-hidden="true"></i><span>购物车</span></button>
+      </div>
+    </nav>
+    <div class="page-content">
+      <section id="coinPanel" aria-labelledby="coinPageHeading">
+        <div class="space-y-4">
+          <div class="coin-balance-card card">
+            <div class="coin-balance-card__inner">
+              <div class="coin-balance-card__meta">
+                <div>
+                  <h1 id="coinPageHeading" class="coin-balance-title">云币余额(元)</h1>
+                  <div id="coinBalanceAmount" class="coin-balance-value">326.80</div>
+                </div>
+                <button data-anno="1" id="refreshBalance" type="button" class="coin-balance-refresh">
+                  <i data-lucide="refresh-cw" class="w-5 h-5" aria-hidden="true"></i>
+                  <span>刷新</span>
+                </button>
+              </div>
+              <svg class="coin-balance-art" viewBox="0 0 360 220" aria-hidden="true">
+                <defs>
+                  <linearGradient id="coinGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#FFFFFF" stop-opacity=".9" />
+                    <stop offset="55%" stop-color="#E6F0FF" stop-opacity=".55" />
+                    <stop offset="100%" stop-color="#0066FF" stop-opacity=".16" />
+                  </linearGradient>
+                  <linearGradient id="coinStroke" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#FFFFFF" stop-opacity=".95" />
+                    <stop offset="100%" stop-color="#E6F0FF" stop-opacity=".5" />
+                  </linearGradient>
+                  <filter id="coinBlur" x="-20%" y="-20%" width="140%" height="140%">
+                    <feGaussianBlur stdDeviation="6" />
+                  </filter>
+                </defs>
+                <g transform="translate(174 78)">
+                  <circle cx="0" cy="0" r="72" fill="none" stroke="rgba(255,255,255,.55)" stroke-width="3" filter="url(#coinBlur)"/>
+                  <circle cx="0" cy="0" r="60" fill="none" stroke="url(#coinStroke)" stroke-width="11" opacity=".9"/>
+                  <circle cx="0" cy="0" r="46" fill="rgba(255,255,255,.28)" stroke="rgba(255,255,255,.35)" stroke-width="2"/>
+                  <circle cx="0" cy="0" r="84" fill="none" stroke="rgba(255,255,255,.28)" stroke-width="2"/>
+                  <path d="M-54 12 C-18 -16 14 -30 60 -8" fill="none" stroke="rgba(255,255,255,.58)" stroke-width="12" stroke-linecap="round"/>
+                  <path d="M-35 -34 C-3 -54 34 -48 62 -26" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="8" stroke-linecap="round"/>
+                  <circle cx="-4" cy="-2" r="20" fill="url(#coinGlow)" opacity=".92"/>
+                  <circle cx="24" cy="-14" r="90" fill="rgba(255,255,255,.12)" filter="url(#coinBlur)"/>
+                </g>
+              </svg>
+            </div>
+          </div>
+
+          <div class="coin-business-card">
+          <div class="coin-tabs" role="tablist" aria-label="云币业务">
+            <div class="flex gap-2" role="presentation">
+              <button data-anno="2" class="subtab" type="button" data-coin-view="recharge" role="tab" aria-selected="false">在线充值</button>
+              <button class="subtab" type="button" data-coin-view="cdkey" role="tab" aria-selected="false">CDKEY 兑换</button>
+              <button class="subtab" type="button" data-coin-view="records" role="tab" aria-selected="true">交易流水</button>
+            </div>
+          </div>
+
+          <div id="recordsView" class="coin-tab-panel">
+            <div class="p-5 md:p-6">
+              <div class="coin-transaction-toolbar">
+                <div class="coin-list-title">
+                  <h2 data-anno="9" class="inline-block text-[16px] font-semibold text-ink-title">云币流水</h2>
+                  <span id="txCount" class="coin-list-count" role="status" aria-live="polite"></span>
+                </div>
+                <div class="coin-search-filter-group">
+                  <div class="coin-global-search" role="search">
+                    <label class="sr-only" for="txSearchInput">搜索云币流水</label>
+                    <input data-anno="7" id="txSearchInput" class="field" type="search" placeholder="请输入关键词，多个用中文逗号分隔" autocomplete="off">
+                    <button id="txSearchClear" type="button" class="coin-search-clear hidden" aria-label="清空搜索">
+                      <i data-lucide="x" class="w-4 h-4" aria-hidden="true"></i>
+                    </button>
+                    <button id="txSearchSubmit" type="button" class="coin-search-submit" aria-label="搜索">
+                      <i data-lucide="search" class="w-4 h-4" aria-hidden="true"></i>
+                    </button>
+                  </div>
+                  <button data-anno="8" id="txFilterBtn" type="button" class="btn btn-default coin-filter-button" aria-haspopup="dialog" aria-expanded="false" aria-controls="txFilterDrawer">
+                    <i data-lucide="list-filter" class="w-4 h-4" aria-hidden="true"></i>
+                    <span>筛选</span>
+                    <span id="txFilterCount" class="coin-filter-count hidden">0</span>
+                  </button>
+                </div>
+              </div>
+              <div class="overflow-x-auto">
+                <table class="w-full">
+                  <thead class="bg-line-lighter text-ink-sub">
+                    <tr>
+                      <th class="p-3 text-left">交易单号</th>
+                      <th class="p-3 text-left">订单号</th>
+                      <th class="p-3 text-left">交易类型</th>
+                      <th class="p-3 text-left">交易时间</th>
+                      <th class="p-3 text-left">项目</th>
+                      <th class="p-3 text-left">金额</th>
+                      <th class="p-3 text-left">账户金额</th>
+                      <th class="p-3 text-left">操作人</th>
+                    </tr>
+                  </thead>
+                  <tbody id="txBody"></tbody>
+                </table>
+              </div>
+              <div id="txPagination" class="pt-5" aria-label="云币流水分页"></div>
+            </div>
+          </div>
+
+          <div id="rechargeView" class="hidden coin-recharge-view">
+            <div class="coin-recharge-body">
+              <div class="coin-recharge-field">
+                <label class="coin-recharge-field-label coin-recharge-section-label" for="customAmount">充值金额</label>
+                <div data-anno="3" class="coin-recharge-amount-options" id="amountChoices">
+                  <button type="button" class="coin-recharge-amount-btn selected" data-amount="50"><span class="coin-recharge-amount-value">¥ 50</span></button>
+                  <button type="button" class="coin-recharge-amount-btn" data-amount="500"><span class="coin-recharge-amount-value">¥ 500</span></button>
+                  <button type="button" class="coin-recharge-amount-btn" data-amount="1000"><span class="coin-recharge-amount-value">¥ 1000</span></button>
+                  <button type="button" class="coin-recharge-amount-btn" data-amount="5000"><span class="coin-recharge-amount-value">¥ 5000</span></button>
+                  <button type="button" class="coin-recharge-amount-btn" data-amount="10000"><span class="coin-recharge-amount-value">¥ 10000</span></button>
+                  <label class="coin-recharge-custom-option" id="customAmountOption" data-amount="custom"><span class="coin-recharge-custom-prefix">¥</span><input id="customAmount" type="number" placeholder="自定义" min="1" max="100000" aria-label="自定义充值金额" inputmode="decimal"></label>
+                </div>
+                <section class="coin-recharge-campaign" aria-labelledby="coinCampaignTitle">
+                  <div class="coin-recharge-campaign-header">
+                    <div>
+                      <h3 id="coinCampaignTitle" data-anno="4" class="coin-recharge-campaign-title">限时充值加赠</h3>
+                      <p class="coin-recharge-campaign-copy">活动期间充值，满额即送云币，赠送与充值金额一并到账</p>
+                    </div>
+                    <div class="coin-recharge-campaign-countdown">距活动结束 <strong id="coinCampaignCountdown">--天 --:--:--</strong></div>
+                  </div>
+                  <div id="coinCampaignLevels" class="coin-recharge-campaign-levels" aria-label="充值赠送档位"></div>
+                  <div class="coin-recharge-campaign-progress">
+                    <span id="coinCampaignProgressText">当前已选 ¥50</span>
+                    <div class="coin-recharge-campaign-progress-bar" role="progressbar" aria-label="充值赠送进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="coinCampaignProgressBar"></span></div>
+                    <span id="coinCampaignSummary" class="coin-recharge-campaign-summary">再充值 ¥450，可多得 30 云币</span>
+                  </div>
+                  <p class="coin-recharge-campaign-note">每笔充值按最高档位计算，活动赠送不与其他充值赠送叠加。</p>
+                </section>
+              </div>
+              <div class="coin-recharge-field">
+                <h3 class="coin-recharge-field-label coin-recharge-section-label">关于云币</h3>
+                <ul class="coin-recharge-info-list">
+                  <li>云币是云登提供的一种内部结算形式，1元=1云币。</li>
+                  <li>云币可以用于购买代理与套餐，支付时选择云币支付，用多少扣多少。</li>
+                  <li>云币充值记录、消费记录、剩余余额，可在商城-云币充值页面查看。</li>
+                </ul>
+              </div>
+              <div class="coin-recharge-field coin-recharge-control-row">
+                <label class="coin-recharge-field-label" for="rechargeCoupon">选择优惠券：</label>
+                <select id="rechargeCoupon" class="field coin-recharge-select">
+                  <option value="0">选择优惠券</option>
+                  <option value="10">满 100 减 10</option>
+                  <option value="50">满 500 减 50</option>
+                </select>
+              </div>
+              <div class="coin-recharge-field coin-recharge-control-row">
+                <span class="coin-recharge-field-label">支付方式：</span>
+                <div class="coin-recharge-payment-options" id="payChoices">
+                  <button type="button" class="coin-recharge-payment-btn active selected" data-pay="支付宝">
+                    <span class="coin-recharge-payment-check" aria-hidden="true"><i data-lucide="check"></i></span>
+                    <img src="../src/assets/images/支付宝支付.png" class="coin-recharge-payment-icon" alt="">
+                    <span>支付宝支付</span>
+                  </button>
+                  <button type="button" class="coin-recharge-payment-btn" data-pay="微信">
+                    <span class="coin-recharge-payment-check" aria-hidden="true"><i data-lucide="check"></i></span>
+                    <img src="../src/assets/images/微信支付.png" class="coin-recharge-payment-icon" alt="">
+                    <span>微信支付</span>
+                  </button>
+                </div>
+              </div>
+              <div class="coin-recharge-field coin-recharge-more-row">
+                <span class="coin-recharge-more-label">更多支付：</span>
+                <span class="coin-recharge-more-methods" aria-label="更多支付方式"><span>银联</span><span>AMEX</span><span>Pay</span><span>VISA</span><span>MC</span></span>
+                <a class="coin-recharge-more-link" href="#" data-contact-service>（联系在线客服）</a>
+              </div>
+            </div>
+            <footer class="coin-recharge-footer">
+              <div class="coin-recharge-submit-group">
+                <button data-anno="5" id="submitRecharge" type="button" class="btn btn-primary coin-recharge-submit">立即支付</button>
+                <span class="coin-recharge-payable">应付金额 <strong id="payable" class="mono">¥50.00</strong></span>
+              </div>
+              <span class="coin-recharge-support">（如有疑问，请<a href="#" data-contact-service>联系客服</a>）</span>
+            </footer>
+          </div>
+
+          <div id="cdkeyView" class="hidden coin-cdkey-view">
+            <div class="p-3 rounded bg-info-bg text-info mb-6">卡号一经兑换，卡内金额将兑换成云币，该卡号随即失效且不可重复使用。</div>
+            <div class="max-w-[640px]">
+              <label class="block" for="cdkey">
+                <span class="block font-medium mb-2">CDKEY 卡号</span>
+                <input data-anno="6" id="cdkey" class="responsive-field field w-[500px] mono" placeholder="请输入你的CDKEY卡号" autocomplete="off">
+              </label>
+              <p id="cdkeyError" class="hidden text-danger text-[12px] mt-1">请输入正确格式的 CDKEY 卡号</p>
+              <div class="coin-cdkey-action-row mt-5">
+                <button id="redeem" type="button" class="btn btn-primary">确定兑换</button>
+                <span class="coin-recharge-support">（如有疑问，请<a href="#" data-contact-service>联系客服</a>）</span>
+              </div>
+            </div>
+          </div>
+          </div>
+        </div>
+
+        <div id="txFilterDrawer" class="modal-bg coin-filter-drawer-overlay hidden" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="txFilterHeading">
+          <aside id="txFilterPanel" class="coin-filter-drawer-panel" tabindex="-1" data-filter-focusable>
+            <header class="coin-filter-drawer-header">
+              <h2 id="txFilterHeading" class="text-[16px] font-semibold text-ink-title">筛选云币流水</h2>
+              <button data-filter-focusable id="txFilterClose" type="button" class="w-8 h-8 rounded text-ink-muted hover:bg-hover" aria-label="关闭筛选云币流水">
+                <i data-lucide="x" class="w-5" aria-hidden="true"></i>
+              </button>
+            </header>
+            <div class="coin-filter-drawer-body">
+              <div class="coin-filter-flow">
+                <label class="coin-filter-item">
+                  <span class="coin-filter-label">收支类型：</span>
+                  <select data-filter-focusable id="txFilterType" class="field coin-filter-control">
+                    <option value="全部">全部</option>
+                    <option value="充值">充值</option>
+                    <option value="支出">支出</option>
+                    <option value="兑换">兑换</option>
+                  </select>
+                </label>
+                <label class="coin-filter-item">
+                  <span class="coin-filter-label">交易单号：</span>
+                  <input data-filter-focusable id="txFilterNo" class="field coin-filter-control mono" placeholder="请输入交易单号">
+                </label>
+                <label class="coin-filter-item">
+                  <span class="coin-filter-label">订单号：</span>
+                  <input data-filter-focusable id="txFilterOrder" class="field coin-filter-control mono" placeholder="请输入订单号">
+                </label>
+                <div class="coin-filter-item">
+                  <span class="coin-filter-label">交易日期：</span>
+                  <div id="txDateTimeControlWrap" class="coin-date-time-control-wrap">
+                    <input id="txFilterStartDate" type="hidden">
+                    <input id="txFilterEndDate" type="hidden">
+                    <input id="txFilterStartTime" type="hidden">
+                    <input id="txFilterEndTime" type="hidden">
+                    <button data-filter-focusable id="txDateTimeTrigger" type="button" class="coin-date-time-trigger" aria-haspopup="dialog" aria-expanded="false" aria-controls="txDateTimePicker">
+                      <span class="coin-date-time-trigger-values"><span id="txDateTimeStartDisplay" class="coin-date-time-trigger-value">开始时间</span><span class="coin-date-time-trigger-separator" aria-hidden="true">~</span><span id="txDateTimeEndDisplay" class="coin-date-time-trigger-value">结束时间</span></span>
+                      <i data-lucide="calendar-days" aria-hidden="true"></i>
+                    </button>
+                    <button data-filter-focusable id="txDateTimeClear" type="button" class="coin-date-time-clear hidden" aria-label="清空交易日期范围"><i data-lucide="x" aria-hidden="true"></i></button>
+                    <div id="txDateTimePicker" class="coin-date-time-picker hidden" role="dialog" aria-label="交易日期时间范围选择">
+                      <div class="coin-date-time-months">
+                        <section class="coin-date-time-month">
+                          <div class="coin-date-time-month-head"><div class="coin-date-time-nav-group"><button data-filter-focusable type="button" class="coin-date-time-nav" data-tx-date-nav="prev-year" aria-label="上一年"><i data-lucide="chevrons-left" aria-hidden="true"></i></button><button data-filter-focusable type="button" class="coin-date-time-nav" data-tx-date-nav="prev-month" aria-label="上个月"><i data-lucide="chevron-left" aria-hidden="true"></i></button></div><h3 id="txDateTimeMonth1" class="coin-date-time-month-title"></h3><span class="coin-date-time-nav-spacer" aria-hidden="true"></span></div>
+                          <div id="txDateTimeWeeks1" class="coin-date-time-week"></div><div id="txDateTimeGrid1" class="coin-date-time-grid"></div>
+                        </section>
+                        <section class="coin-date-time-month">
+                          <div class="coin-date-time-month-head"><span class="coin-date-time-nav-spacer" aria-hidden="true"></span><h3 id="txDateTimeMonth2" class="coin-date-time-month-title"></h3><div class="coin-date-time-nav-group"><button data-filter-focusable type="button" class="coin-date-time-nav" data-tx-date-nav="next-month" aria-label="下个月"><i data-lucide="chevron-right" aria-hidden="true"></i></button><button data-filter-focusable type="button" class="coin-date-time-nav" data-tx-date-nav="next-year" aria-label="下一年"><i data-lucide="chevrons-right" aria-hidden="true"></i></button></div></div>
+                          <div id="txDateTimeWeeks2" class="coin-date-time-week"></div><div id="txDateTimeGrid2" class="coin-date-time-grid"></div>
+                        </section>
+                      </div>
+                      <div class="coin-date-time-time-row">
+                        <label class="coin-date-time-time-field">开始时间<select data-filter-focusable id="txDateTimeStartTime" aria-label="开始时间"></select></label>
+                        <label class="coin-date-time-time-field">结束时间<select data-filter-focusable id="txDateTimeEndTime" aria-label="结束时间"></select></label>
+                      </div>
+                      <div class="coin-date-time-picker-footer"><span id="txDateTimePickerValue" class="coin-date-time-picker-value">未选择</span><div class="coin-date-time-picker-actions"><button data-filter-focusable id="txDateTimePickerClear" type="button" class="btn btn-default">清空</button><button data-filter-focusable id="txDateTimePickerCancel" type="button" class="btn btn-default">取消</button><button data-filter-focusable id="txDateTimePickerConfirm" type="button" class="btn btn-primary">确定</button></div></div>
+                    </div>
+                  </div>
+                  <p id="txFilterDateError" class="coin-date-error hidden" role="alert">开始时间不能晚于结束时间</p>
+                </div>
+              </div>
+            </div>
+            <footer class="coin-filter-drawer-footer">
+              <button data-filter-focusable id="txFilterCancel" type="button" class="btn btn-default">取消</button>
+              <button data-filter-focusable data-anno="10" id="txFilterSubmit" type="button" class="btn btn-primary">确认提交</button>
+            </footer>
+          </aside>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <div id="modal" class="modal-bg hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div id="modalCard" class="modal-card bg-white w-[520px] max-h-[90vh] overflow-y-auto rounded-lg shadow-[0_6px_24px_rgba(0,0,0,.12)]" tabindex="-1"><div class="px-5 py-4 border-b border-line flex justify-between"><h3 id="modalTitle" class="text-[16px] font-semibold text-ink-title">确认</h3><button type="button" data-close aria-label="关闭"><i data-lucide="x" class="w-4" aria-hidden="true"></i></button></div><div id="modalBody" class="p-5"></div><div class="px-5 py-4 border-t border-line flex justify-end gap-2"><button type="button" data-close class="btn btn-default">取消</button><button id="modalConfirm" type="button" class="btn btn-primary">确定</button></div></div></div>
+  <div id="coinPaymentDialog" class="coin-payment-dialog-mask hidden" role="dialog" aria-modal="true" aria-labelledby="coinPaymentDialogTitle" aria-hidden="true">
+    <section id="coinPaymentDialogPanel" class="coin-payment-dialog" tabindex="-1">
+      <header class="coin-payment-dialog-header">
+        <h2 id="coinPaymentDialogTitle" class="coin-payment-dialog-title">支付宝支付</h2>
+        <button id="closeCoinPaymentDialog" class="coin-payment-close" type="button" aria-label="关闭支付宝支付弹窗"><i data-lucide="x" aria-hidden="true"></i></button>
+      </header>
+      <div class="coin-payment-dialog-body">
+        <div class="coin-payment-notice" role="status">
+          <i data-lucide="info" aria-hidden="true"></i>
+          <span>订单 <strong>29:57</strong> 后订单将自动取消，请在订单取消完成前完成支付！若订单中使用了优惠券，订单取消后会原路返回您的账户中。</span>
+        </div>
+        <div class="coin-payment-amount-label">需要支付金额</div>
+        <div id="coinPaymentAmount" class="coin-payment-amount">¥50.00</div>
+        <div id="coinPaymentCampaign" class="coin-payment-campaign hidden"></div>
+        <div id="coinPaymentQr" class="coin-payment-qr" role="img" aria-label="支付宝支付二维码"></div>
+        <div id="coinPaymentHint" class="coin-payment-hint">请打开支付宝扫一扫</div>
+      </div>
+    </section>
+  </div>
+  <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+  <button id="annoToggle" type="button" class="btn btn-default fixed right-2 top-[120px] z-[9997]" aria-pressed="false"><i data-lucide="tags" class="w-4" aria-hidden="true"></i><span>显示标注</span></button>
+  <div id="annoLayer" class="fixed inset-0 pointer-events-none z-[9998]"></div>
+  <div id="annoPopup" class="modal-bg hidden" role="dialog" aria-modal="true" aria-labelledby="annoTitle"><div class="bg-white rounded-lg shadow-[0_6px_24px_rgba(0,0,0,.12)] w-[520px] max-w-[92vw]" tabindex="-1"><div class="px-5 py-4 border-b border-line flex items-center justify-between"><h2 id="annoTitle" class="text-[16px] font-semibold text-ink-title"></h2><button id="annoClose" type="button" class="w-8 h-8 rounded text-ink-muted hover:bg-hover" aria-label="关闭标注说明"><i data-lucide="x" class="w-4" aria-hidden="true"></i></button></div><div id="annoBody" class="p-5 text-[14px] leading-7"></div></div></div>
+
+  <script src="分页器.js?v=20260814"></script>
+  <script>
+    (() => {
+      'use strict';
+      const $ = selector => document.querySelector(selector);
+      const $$ = selector => [...document.querySelectorAll(selector)];
+      const money = value => '¥' + Number(value || 0).toFixed(2);
+      const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+      const tokenize = value => String(value || '').trim().toLowerCase().split(/[，,\s]+/).filter(Boolean);
+      const sessionKey = 'yundeng.billing.coin.v2';
+      const readState = () => { try { const value = JSON.parse(sessionStorage.getItem(sessionKey) || '{}'); return value && typeof value === 'object' ? value : {}; } catch (_) { return {}; } };
+      let state = readState();
+      const saveState = patch => { state = Object.assign({}, state, patch || {}); try { sessionStorage.setItem(sessionKey, JSON.stringify(state)); } catch (_) {} };
+      function setShellControlsVisible(visible) {
+        if (window.parent !== window) window.parent.postMessage({type:'yundeng:chat-visibility', visible}, '*');
+      }
+      const storeRouteFiles = Object.freeze({
+        proxy:'商城-代理.html',
+        plan:'商城-套餐.html',
+        coin:'商城-云币充值.html',
+        cart:'商城-购物车.html'
+      });
+      function navigateToStoreTab(tab) {
+        const file = storeRouteFiles[tab];
+        if (!file) return;
+        const search = `?tab=${tab}`;
+        if (window.parent !== window) {
+          window.parent.postMessage({type:'yundeng:route',file,search,hash:''}, '*');
+          return;
+        }
+        location.assign(new URL('../index.html?page=store&module=' + encodeURIComponent(file) + '&moduleSearch=' + encodeURIComponent(search.slice(1)), location.href).href);
+      }
+      document.querySelectorAll('[data-store-tab]').forEach(button => button.addEventListener('click', () => navigateToStoreTab(button.dataset.storeTab)));
+      document.querySelector('#storeTabs')?.addEventListener('keydown', event => {
+        if (!['ArrowLeft','ArrowRight'].includes(event.key)) return;
+        event.preventDefault();
+        const tabs = [...document.querySelectorAll('[data-store-tab]')];
+        const index = tabs.indexOf(event.target.closest('[data-store-tab]'));
+        const next = (index + (event.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length;
+        navigateToStoreTab(tabs[next].dataset.storeTab);
+      });
+      const transactions = [
+        {type:'充值',time:'2026-08-10 14:20:18',no:'TX20260810A102',order:'YL2026081014201801',project:'云币在线充值',amount:500,balance:826.8,user:'张**'},
+        {type:'支出',time:'2026-08-09 09:12:43',no:'TX20260809P283',order:'YL2026080909124302',project:'静态住宅代理',amount:-58.8,balance:326.8,user:'张**'},
+        {type:'兑换',time:'2026-08-07 16:31:05',no:'TX20260807C918',order:'YL2026080716310504',project:'CDKEY 兑换',amount:100,balance:385.6,user:'李**'},
+        {type:'支出',time:'2026-08-06 11:03:29',no:'TX20260806S662',order:'YL2026080611032905',project:'环境套餐升级',amount:-127,balance:285.6,user:'张**'},
+        {type:'充值',time:'2026-08-02 18:40:11',no:'TX20260802A321',order:'YL2026080218401109',project:'云币在线充值',amount:50,balance:412.6,user:'王**'},
+        {type:'支出',time:'2026-08-01 10:08:36',no:'TX20260801P154',order:'YL2026080110083610',project:'代理自动续费',amount:-39.9,balance:362.6,user:'系统'},
+        {type:'支出',time:'2026-07-30 16:42:10',no:'TX20260730P165',order:'YL2026073016421001',project:'动态住宅代理',amount:-86,balance:322.6,user:'张**'},
+        {type:'充值',time:'2026-07-28 09:35:22',no:'TX20260728A211',order:'YL2026072809352202',project:'云币在线充值',amount:300,balance:408.6,user:'王**'}
+      ];
+      const transactionSeed = transactions.slice();
+      for (let index = 0; index < 16; index++) {
+        const item = transactionSeed[index % transactionSeed.length];
+        const suffix = String(index + 1).padStart(2, '0');
+        const day = String(27 - index).padStart(2, '0');
+        transactions.push({...item,time:`2026-07-${day} ${item.time.slice(11)}`,no:`${item.no}-${suffix}`,order:`${item.order}-${suffix}`});
+      }
+
+      const txSearchInput = $('#txSearchInput');
+      const txSearchClear = $('#txSearchClear');
+      const txSearchSubmit = $('#txSearchSubmit');
+      const txFilterBtn = $('#txFilterBtn');
+      const txFilterDrawer = $('#txFilterDrawer');
+      const txFilterPanel = $('#txFilterPanel');
+      const txFilterType = $('#txFilterType');
+      const txFilterNo = $('#txFilterNo');
+      const txFilterOrder = $('#txFilterOrder');
+      const txFilterStartDate = $('#txFilterStartDate');
+      const txFilterEndDate = $('#txFilterEndDate');
+      const txFilterStartTime = $('#txFilterStartTime');
+      const txFilterEndTime = $('#txFilterEndTime');
+      const txFilterDateError = $('#txFilterDateError');
+      const txFilterCount = $('#txFilterCount');
+      const txDateTimeControlWrap = $('#txDateTimeControlWrap');
+      const txDateTimeTrigger = $('#txDateTimeTrigger');
+      const txDateTimeClear = $('#txDateTimeClear');
+      const txDateTimePicker = $('#txDateTimePicker');
+      const txDateTimeStartDisplay = $('#txDateTimeStartDisplay');
+      const txDateTimeEndDisplay = $('#txDateTimeEndDisplay');
+      const txDateTimeStartTime = $('#txDateTimeStartTime');
+      const txDateTimeEndTime = $('#txDateTimeEndTime');
+      const txPagerNode = '#txPagination';
+      const balanceAmountNode = $('#coinBalanceAmount');
+
+      let filteredTransactions = [];
+      let txPager = null;
+      let modalFocus = null;
+      let paymentDialogFocus = null;
+      let drawerFocus = null;
+      let previousBodyOverflow = null;
+      let annoVisible = false;
+      let currentView = state.coinView || 'records';
+      let amount = Number.isFinite(Number(state.amount)) ? Number(state.amount) : 50;
+      let amountMode = state.amountMode || (amount === 50 ? '50' : 'custom');
+      let txSearch = state.txSearch || '';
+      let appliedTxFilters = {
+        type: state.txType || '全部',
+        no: state.txNo || '',
+        order: state.txOrder || '',
+        startDate: state.txStartDate || '',
+        endDate: state.txEndDate || '',
+        startTime: state.txStartTime || '00:00',
+        endTime: state.txEndTime || '23:59'
+      };
+      const txDateTimePickerState = {view:new Date(2026, 7, 1), active:'start', draftStart:'', draftEnd:'', draftStartTime:'00:00', draftEndTime:'23:59', invalid:false};
+      const coinRechargeCampaign = Object.freeze({
+        deadline: new Date('2026-08-31T23:59:59+08:00'),
+        tiers: Object.freeze([
+          Object.freeze({threshold:500, bonus:30}),
+          Object.freeze({threshold:1000, bonus:100}),
+          Object.freeze({threshold:5000, bonus:600}),
+          Object.freeze({threshold:10000, bonus:1500})
+        ])
+      });
+      let campaignBonus = 0;
+      let campaignCountdownTimer = null;
+      let balanceAmount = Number.isFinite(Number(state.balanceAmount)) ? Number(state.balanceAmount) : Number(balanceAmountNode?.textContent || 326.8);
+      if (balanceAmountNode) balanceAmountNode.textContent = balanceAmount.toFixed(2);
+
+      function toast(message, tone) {
+        const node = $('#toast');
+        if (!node) return;
+        const inferred = tone || (/失败|错误|异常|无效/.test(message) ? 'danger' : /请|不能|不可|暂无/.test(message) ? 'warning' : /成功|已提交/.test(message) ? 'success' : 'info');
+        const icons = {success:'circle-check',info:'info',warning:'triangle-alert',danger:'circle-x'};
+        node.dataset.tone = inferred;
+        node.innerHTML = `<i data-lucide="${icons[inferred]}" class="toast-icon" aria-hidden="true"></i><span></span>`;
+        node.querySelector('span').textContent = message;
+        node.classList.remove('hidden');
+        lucide.createIcons();
+        clearTimeout(node.timer);
+        node.timer = setTimeout(() => node.classList.add('hidden'), 3000);
+      }
+
+      function drawTxPage(pagerState) {
+        const start = (pagerState.current_page - 1) * pagerState.page_size;
+        const rows = filteredTransactions.slice(start, start + pagerState.page_size);
+        $('#txBody').innerHTML = rows.map(item => `
+          <tr class="border-b border-line-lighter hover:bg-hover">
+            <td class="p-3 mono">${escapeHtml(item.no)}</td>
+            <td class="p-3 mono">${escapeHtml(item.order)}</td>
+            <td class="p-3">${escapeHtml(item.type)}</td>
+            <td class="p-3 mono">${escapeHtml(item.time)}</td>
+            <td class="p-3">${escapeHtml(item.project)}</td>
+            <td class="p-3 text-left mono ${item.amount > 0 ? 'text-success' : 'text-danger'}">${item.amount > 0 ? '+' : ''}${money(item.amount)}</td>
+            <td class="p-3 text-left mono">${money(item.balance)}</td>
+            <td class="p-3">${escapeHtml(item.user)}</td>
+          </tr>
+        `).join('') || '<tr><td colspan="8" class="py-16 text-center text-ink-sub">暂无符合条件的流水</td></tr>';
+      }
+
+      function matchesSearch(item, terms) {
+        if (!terms.length) return true;
+        const haystack = [item.type, item.time, item.no, item.order, item.project, item.user, String(item.amount), String(item.balance)].join(' ').toLowerCase();
+        return terms.every(term => haystack.includes(term));
+      }
+
+      function matchesFilters(item) {
+        const start = txDateTimeBound(appliedTxFilters.startDate, appliedTxFilters.startTime, '00:00');
+        const end = txDateTimeBound(appliedTxFilters.endDate, appliedTxFilters.endTime, '23:59');
+        return (appliedTxFilters.type === '全部' || item.type === appliedTxFilters.type) &&
+          (!appliedTxFilters.no || item.no.toLowerCase().includes(appliedTxFilters.no.toLowerCase())) &&
+          (!appliedTxFilters.order || item.order.toLowerCase().includes(appliedTxFilters.order.toLowerCase())) &&
+          (!start || item.time >= start) &&
+          (!end || item.time <= end);
+      }
+
+      function updateFilterButton() {
+        const count = Number(appliedTxFilters.type !== '全部') +
+          Number(Boolean(appliedTxFilters.no)) +
+          Number(Boolean(appliedTxFilters.order)) +
+          Number(Boolean(appliedTxFilters.startDate || appliedTxFilters.endDate));
+        txFilterCount.textContent = count;
+        txFilterCount.classList.toggle('hidden', !count);
+        txFilterBtn.classList.toggle('has-active-filters', count > 0);
+        txFilterBtn.setAttribute('aria-label', count ? `筛选，已提交 ${count} 个条件` : '筛选云币流水');
+      }
+
+      function renderTx(resetPage = false) {
+        const terms = tokenize(txSearch);
+        filteredTransactions = transactions.filter(item => matchesSearch(item, terms) && matchesFilters(item));
+        $('#txCount').textContent = `共 ${filteredTransactions.length} 条`;
+        const savedPage = Number(state.txPage) || 1;
+        const savedSize = Number(state.txPageSize) || 10;
+        const currentPage = resetPage ? 1 : Math.min(savedPage, Math.max(1, Math.ceil(filteredTransactions.length / savedSize)));
+        if (!txPager) {
+          txPager = new YDPager(txPagerNode, {
+            total_count: filteredTransactions.length,
+            current_page: currentPage,
+            page_size: savedSize,
+            page_size_options: [10, 20, 50],
+            onChange: pageState => {
+              saveState({txPage: pageState.current_page, txPageSize: pageState.page_size});
+              drawTxPage(pageState);
+            },
+            toast
+          });
+        } else {
+          txPager.setState({total_count: filteredTransactions.length, current_page: currentPage}, {silent: true});
+        }
+        const pagerState = txPager.getState();
+        saveState({
+          coinView: currentView,
+          amount,
+          amountMode,
+          coupon: $('#rechargeCoupon').value,
+          pay: state.pay || '支付宝',
+          balanceAmount,
+          txSearch,
+          txType: appliedTxFilters.type,
+          txNo: appliedTxFilters.no,
+          txOrder: appliedTxFilters.order,
+          txStartDate: appliedTxFilters.startDate,
+          txEndDate: appliedTxFilters.endDate,
+          txStartTime: appliedTxFilters.startTime,
+          txEndTime: appliedTxFilters.endTime,
+          txPage: pagerState.current_page,
+          txPageSize: pagerState.page_size
+        });
+        drawTxPage(pagerState);
+        updateFilterButton();
+        renderAnno();
+      }
+
+      function updateViewTabs() {
+        ['records', 'recharge', 'cdkey'].forEach(key => $('#' + key + 'View').classList.toggle('hidden', key !== currentView));
+        $$('[data-coin-view]').forEach(button => {
+          const active = button.dataset.coinView === currentView;
+          button.classList.toggle('active', active);
+          button.setAttribute('aria-selected', String(active));
+        });
+      }
+
+      function switchCoinView(view) {
+        currentView = view;
+        updateViewTabs();
+        saveState({coinView: view});
+        renderAnno();
+      }
+
+      function updateAmountButtons() {
+        $$('[data-amount]').forEach(button => {
+          const selected = button.dataset.amount === amountMode;
+          button.classList.toggle('active', selected);
+          button.classList.toggle('selected', selected);
+        });
+        $('#customAmount').value = amountMode === 'custom' && Number.isFinite(amount) && amount > 0 ? String(amount) : '';
+      }
+
+      function campaignMoney(value) {
+        return '¥' + Number(value || 0).toLocaleString('zh-CN', {maximumFractionDigits:0});
+      }
+
+      function renderCampaignLevels() {
+        const active = Date.now() < coinRechargeCampaign.deadline.getTime();
+        $('#coinCampaignLevels').innerHTML = coinRechargeCampaign.tiers.map(tier => {
+          const selected = active && amount >= tier.threshold;
+          return '<div class="coin-recharge-campaign-level' + (selected ? ' is-active' : '') + '"><strong>满 ' + campaignMoney(tier.threshold) + '</strong><span>送 ' + campaignMoney(tier.bonus).replace('¥', '') + ' 云币</span></div>';
+        }).join('');
+      }
+
+      function updateCampaignState() {
+        const active = Date.now() < coinRechargeCampaign.deadline.getTime();
+        const current = [...coinRechargeCampaign.tiers].reverse().find(tier => amount >= tier.threshold);
+        const next = coinRechargeCampaign.tiers.find(tier => amount < tier.threshold);
+        campaignBonus = active ? (current?.bonus || 0) : 0;
+        renderCampaignLevels();
+        $('#coinCampaignProgressText').textContent = active ? '当前已选 ' + campaignMoney(amount) : '活动已结束';
+        const progress = active ? (next ? Math.min(100, Math.round((amount / next.threshold) * 100)) : 100) : 0;
+        const progressBar = $('#coinCampaignProgressBar');
+        progressBar.style.width = progress + '%';
+        progressBar.parentElement.setAttribute('aria-valuenow', String(progress));
+        if (!active) {
+          $('#coinCampaignSummary').textContent = '活动已结束';
+        } else if (!current && next) {
+          $('#coinCampaignSummary').textContent = '再充值 ' + campaignMoney(next.threshold - amount) + '，可多得 ' + campaignMoney(next.bonus).replace('¥', '') + ' 云币';
+        } else if (next) {
+          $('#coinCampaignSummary').textContent = '已解锁 ' + campaignMoney(current.bonus).replace('¥', '') + ' 云币，再充值 ' + campaignMoney(next.threshold - amount) + '，可多得 ' + campaignMoney(next.bonus - current.bonus).replace('¥', '') + ' 云币';
+        } else {
+          $('#coinCampaignSummary').textContent = '已解锁最高奖励 ' + campaignMoney(current.bonus).replace('¥', '') + ' 云币';
+        }
+      }
+
+      function updateCampaignCountdown() {
+        const remaining = Math.max(0, coinRechargeCampaign.deadline.getTime() - Date.now());
+        const totalSeconds = Math.floor(remaining / 1000);
+        const days = Math.floor(totalSeconds / 86400);
+        const hours = Math.floor((totalSeconds % 86400) / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        const seconds = totalSeconds % 60;
+        $('#coinCampaignCountdown').textContent = remaining ? String(days).padStart(2, '0') + '天 ' + [hours, minutes, seconds].map(value => String(value).padStart(2, '0')).join(':') : '活动已结束';
+        if (!remaining) {
+          clearInterval(campaignCountdownTimer);
+          campaignCountdownTimer = null;
+          updateCampaignState();
+        }
+      }
+
+      function startCampaignCountdown() {
+        updateCampaignCountdown();
+        if (campaignCountdownTimer) clearInterval(campaignCountdownTimer);
+        if (Date.now() < coinRechargeCampaign.deadline.getTime()) campaignCountdownTimer = setInterval(updateCampaignCountdown, 1000);
+      }
+
+      function updatePayable() {
+        const discount = Number($('#rechargeCoupon').value || 0);
+        $('#payable').textContent = money(Math.max(0, amount - discount));
+        updateCampaignState();
+        saveState({amount, amountMode, coupon: $('#rechargeCoupon').value, pay: state.pay || '支付宝'});
+      }
+
+      function openModal(title, body, action = '确定') {
+        modalFocus = document.activeElement;
+        $('#modalTitle').textContent = title;
+        $('#modalBody').innerHTML = body;
+        $('#modalConfirm').textContent = action;
+        $('#modal').classList.remove('hidden');
+        requestAnimationFrame(() => $('#modalConfirm').focus());
+      }
+
+      function buildPaymentQr(selector, seed) {
+        const size = 29;
+        const cells = Array.from({length:size * size}, () => false);
+        const reserved = new Set();
+        const indexOf = (x, y) => y * size + x;
+        const mark = (x, y, value) => {
+          if (x < 0 || y < 0 || x >= size || y >= size) return;
+          cells[indexOf(x, y)] = value;
+          reserved.add(indexOf(x, y));
+        };
+        const finder = (originX, originY) => {
+          for (let y = -1; y < 8; y += 1) {
+            for (let x = -1; x < 8; x += 1) {
+              const edge = x === 0 || x === 6 || y === 0 || y === 6;
+              const core = x >= 2 && x <= 4 && y >= 2 && y <= 4;
+              mark(originX + x, originY + y, x >= 0 && x <= 6 && y >= 0 && y <= 6 && (edge || core));
+            }
+          }
+        };
+        finder(0, 0);
+        finder(size - 7, 0);
+        finder(0, size - 7);
+        let value = seed;
+        for (let y = 0; y < size; y += 1) {
+          for (let x = 0; x < size; x += 1) {
+            const index = indexOf(x, y);
+            if (reserved.has(index)) continue;
+            value = (value * 1664525 + 1013904223) >>> 0;
+            cells[index] = ((value >>> 28) & 1) === 1;
+          }
+        }
+        $(selector).innerHTML = cells.map(dark => '<span class="' + (dark ? 'is-dark' : 'is-light') + '"></span>').join('');
+      }
+
+      function openCoinPaymentDialog() {
+        const isWechat = state.pay === '微信';
+        const title = isWechat ? '微信支付' : '支付宝支付';
+        paymentDialogFocus = document.activeElement;
+        $('#coinPaymentDialogTitle').textContent = title;
+        $('#closeCoinPaymentDialog').setAttribute('aria-label', '关闭' + title + '弹窗');
+        $('#coinPaymentAmount').textContent = $('#payable').textContent;
+        const campaignLine = $('#coinPaymentCampaign');
+        campaignLine.textContent = campaignBonus ? '限时活动赠送 ' + campaignMoney(campaignBonus).replace('¥', '') + ' 云币，预计到账 ' + campaignMoney(amount + campaignBonus).replace('¥', '') + ' 云币' : '';
+        campaignLine.classList.toggle('hidden', !campaignBonus);
+        $('#coinPaymentQr').setAttribute('aria-label', title + '二维码');
+        $('#coinPaymentHint').textContent = '请打开' + (isWechat ? '微信' : '支付宝') + '扫一扫';
+        buildPaymentQr('#coinPaymentQr', Math.round(Number($('#payable').textContent.replace(/[^\d.]/g, '')) * 100) || 5000);
+        $('#coinPaymentDialog').classList.remove('hidden');
+        $('#coinPaymentDialog').setAttribute('aria-hidden', 'false');
+        setShellControlsVisible(false);
+        lucide.createIcons();
+        $('#closeCoinPaymentDialog').focus({preventScroll:true});
+      }
+
+      function closeCoinPaymentDialog() {
+        $('#coinPaymentDialog').classList.add('hidden');
+        $('#coinPaymentDialog').setAttribute('aria-hidden', 'true');
+        setShellControlsVisible(true);
+        paymentDialogFocus?.focus?.({preventScroll:true});
+        paymentDialogFocus = null;
+      }
+
+      function closeModal() {
+        $('#modal').classList.add('hidden');
+        modalFocus?.focus?.();
+        modalFocus = null;
+      }
+
+      function txDateKey(date) {
+        return date.getFullYear() + '-' + String(date.getMonth() + 1).padStart(2, '0') + '-' + String(date.getDate()).padStart(2, '0');
+      }
+
+      function txDateObject(value) {
+        if (!value) return null;
+        const parts = value.split('-').map(Number);
+        return parts.length === 3 ? new Date(parts[0], parts[1] - 1, parts[2]) : null;
+      }
+
+      function txDateTimeBound(date, time, fallback) {
+        if (!date) return '';
+        const value = time || fallback;
+        return date + ' ' + value + (value === '23:59' ? ':59' : ':00');
+      }
+
+      function txDateTimeRangeInvalid(start, startTime, end, endTime) {
+        return Boolean(start && end && txDateTimeBound(start, startTime, '00:00') > txDateTimeBound(end, endTime, '23:59'));
+      }
+
+      function txDateTimeDisplay(date, time, placeholder) {
+        return date ? date + ' ' + time : placeholder;
+      }
+
+      function populateTxDateTimeOptions() {
+        const options = [];
+        for (let hour = 0; hour < 24; hour++) {
+          [0, 30].forEach(minute => {
+            const value = String(hour).padStart(2, '0') + ':' + String(minute).padStart(2, '0');
+            options.push('<option value="' + value + '">' + value + '</option>');
+          });
+        }
+        options.push('<option value="23:59">23:59</option>');
+        const markup = options.join('');
+        txDateTimeStartTime.innerHTML = markup;
+        txDateTimeEndTime.innerHTML = markup;
+      }
+
+      function txDateTimeMonthHtml(year, month) {
+        const first = new Date(year, month, 1);
+        const offset = first.getDay();
+        const cells = [];
+        for (let index = 0; index < 42; index++) {
+          const date = new Date(year, month, index - offset + 1);
+          const key = txDateKey(date);
+          const current = date.getMonth() === month;
+          const start = txDateTimePickerState.draftStart;
+          const end = txDateTimePickerState.draftEnd;
+          const inRange = Boolean(start && end && key > start && key < end);
+          const classes = 'coin-date-time-day ' + (!current ? 'is-other ' : '') + (inRange ? 'is-range ' : '') + (key === start ? 'is-start ' : '') + (key === end ? 'is-end ' : '');
+          cells.push('<button data-filter-focusable type="button" class="' + classes + '" data-tx-date="' + key + '" aria-label="' + key + '">' + date.getDate() + '</button>');
+        }
+        return cells.join('');
+      }
+
+      function syncTxDateTimeTrigger() {
+        const start = txFilterStartDate.value;
+        const end = txFilterEndDate.value;
+        const startTime = txFilterStartTime.value || '00:00';
+        const endTime = txFilterEndTime.value || '23:59';
+        txDateTimeStartDisplay.textContent = txDateTimeDisplay(start, startTime, '开始时间');
+        txDateTimeEndDisplay.textContent = txDateTimeDisplay(end, endTime, '结束时间');
+        txDateTimeStartDisplay.classList.toggle('is-selected', Boolean(start));
+        txDateTimeEndDisplay.classList.toggle('is-selected', Boolean(end));
+        txDateTimeClear.classList.toggle('hidden', !start && !end);
+        txDateTimeTrigger.setAttribute('aria-label', start || end ? '交易日期时间范围：' + (txDateTimeDisplay(start, startTime, '未设置')) + ' 至 ' + (txDateTimeDisplay(end, endTime, '未设置')) : '选择交易日期时间范围');
+      }
+
+      function renderTxDateTimePicker() {
+        const state = txDateTimePickerState;
+        const left = new Date(state.view.getFullYear(), state.view.getMonth(), 1);
+        const right = new Date(left.getFullYear(), left.getMonth() + 1, 1);
+        const weeks = '<span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span>';
+        $('#txDateTimeMonth1').textContent = left.getFullYear() + ' 年 ' + (left.getMonth() + 1) + ' 月';
+        $('#txDateTimeMonth2').textContent = right.getFullYear() + ' 年 ' + (right.getMonth() + 1) + ' 月';
+        $('#txDateTimeWeeks1').innerHTML = weeks;
+        $('#txDateTimeWeeks2').innerHTML = weeks;
+        $('#txDateTimeGrid1').innerHTML = txDateTimeMonthHtml(left.getFullYear(), left.getMonth());
+        $('#txDateTimeGrid2').innerHTML = txDateTimeMonthHtml(right.getFullYear(), right.getMonth());
+        txDateTimeStartTime.value = state.draftStartTime;
+        txDateTimeEndTime.value = state.draftEndTime;
+        $('#txDateTimePickerValue').textContent = state.draftStart || state.draftEnd ? txDateTimeDisplay(state.draftStart, state.draftStartTime, '未设置') + ' 至 ' + txDateTimeDisplay(state.draftEnd, state.draftEndTime, '未设置') : '未选择';
+        txFilterDateError.classList.toggle('hidden', !state.invalid);
+        txDateTimeTrigger.toggleAttribute('aria-invalid', state.invalid);
+      }
+
+      function positionTxDateTimePicker() {
+        if (txDateTimePicker.classList.contains('hidden')) return;
+        const anchor = txDateTimeControlWrap.getBoundingClientRect();
+        const picker = txDateTimePicker.getBoundingClientRect();
+        const left = Math.max(16, Math.min(anchor.right - picker.width, innerWidth - picker.width - 16));
+        let top = anchor.bottom + 8;
+        if (top + picker.height > innerHeight - 16) top = Math.max(16, anchor.top - picker.height - 8);
+        txDateTimePicker.style.left = left + 'px';
+        txDateTimePicker.style.top = top + 'px';
+      }
+
+      function openTxDateTimePicker() {
+        const state = txDateTimePickerState;
+        const base = txDateObject(txFilterStartDate.value || txFilterEndDate.value) || new Date(2026, 7, 1);
+        state.view = new Date(base.getFullYear(), base.getMonth(), 1);
+        state.active = 'start';
+        state.draftStart = txFilterStartDate.value;
+        state.draftEnd = txFilterEndDate.value;
+        state.draftStartTime = txFilterStartTime.value || '00:00';
+        state.draftEndTime = txFilterEndTime.value || '23:59';
+        state.invalid = false;
+        txDateTimePicker.classList.remove('hidden');
+        txDateTimeTrigger.setAttribute('aria-expanded', 'true');
+        renderTxDateTimePicker();
+        requestAnimationFrame(positionTxDateTimePicker);
+      }
+
+      function closeTxDateTimePicker(commit) {
+        if (commit) {
+          const state = txDateTimePickerState;
+          state.invalid = txDateTimeRangeInvalid(state.draftStart, state.draftStartTime, state.draftEnd, state.draftEndTime);
+          if (state.invalid) {
+            renderTxDateTimePicker();
+            return false;
+          }
+          txFilterStartDate.value = state.draftStart;
+          txFilterEndDate.value = state.draftEnd;
+          txFilterStartTime.value = state.draftStartTime;
+          txFilterEndTime.value = state.draftEndTime;
+          syncTxDateTimeTrigger();
+        }
+        txDateTimePicker.classList.add('hidden');
+        txDateTimeTrigger.setAttribute('aria-expanded', 'false');
+        txFilterDateError.classList.add('hidden');
+        txDateTimeTrigger.removeAttribute('aria-invalid');
+        return true;
+      }
+
+      function clearTxDateTimeDraft() {
+        txDateTimePickerState.draftStart = '';
+        txDateTimePickerState.draftEnd = '';
+        txDateTimePickerState.draftStartTime = '00:00';
+        txDateTimePickerState.draftEndTime = '23:59';
+        txDateTimePickerState.active = 'start';
+        txDateTimePickerState.invalid = false;
+        renderTxDateTimePicker();
+      }
+
+      function openTxFilter() {
+        drawerFocus = document.activeElement;
+        previousBodyOverflow = document.body.style.overflow;
+        document.body.style.overflow = 'hidden';
+        $('#recordsView').inert = true;
+        txFilterType.value = appliedTxFilters.type;
+        txFilterNo.value = appliedTxFilters.no;
+        txFilterOrder.value = appliedTxFilters.order;
+        txFilterStartDate.value = appliedTxFilters.startDate;
+        txFilterEndDate.value = appliedTxFilters.endDate;
+        txFilterStartTime.value = appliedTxFilters.startTime || '00:00';
+        txFilterEndTime.value = appliedTxFilters.endTime || '23:59';
+        txFilterDateError.classList.add('hidden');
+        txFilterStartDate.removeAttribute('aria-invalid');
+        txFilterEndDate.removeAttribute('aria-invalid');
+        syncTxDateTimeTrigger();
+        txFilterDrawer.classList.remove('hidden');
+        txFilterDrawer.setAttribute('aria-hidden', 'false');
+        txFilterBtn.setAttribute('aria-expanded', 'true');
+        setShellControlsVisible(false);
+        requestAnimationFrame(() => { txFilterPanel.focus(); renderAnno(); });
+      }
+
+      function closeTxFilter(commit) {
+        if (!txDateTimePicker.classList.contains('hidden')) closeTxDateTimePicker(false);
+        if (!commit) txFilterDateError.classList.add('hidden');
+        txFilterDrawer.classList.add('hidden');
+        txFilterDrawer.setAttribute('aria-hidden', 'true');
+        txFilterBtn.setAttribute('aria-expanded', 'false');
+        $('#recordsView').inert = false;
+        setShellControlsVisible(true);
+        if (previousBodyOverflow !== null) {
+          document.body.style.overflow = previousBodyOverflow;
+          previousBodyOverflow = null;
+        }
+        drawerFocus?.focus?.();
+        drawerFocus = null;
+        renderAnno();
+      }
+
+      function submitTxFilter() {
+        const next = {
+          type: txFilterType.value,
+          no: txFilterNo.value.trim(),
+          order: txFilterOrder.value.trim(),
+          startDate: txFilterStartDate.value,
+          endDate: txFilterEndDate.value,
+          startTime: txFilterStartTime.value || '00:00',
+          endTime: txFilterEndTime.value || '23:59'
+        };
+        if (txDateTimeRangeInvalid(next.startDate, next.startTime, next.endDate, next.endTime)) {
+          txFilterDateError.classList.remove('hidden');
+          txFilterStartDate.setAttribute('aria-invalid', 'true');
+          txFilterEndDate.setAttribute('aria-invalid', 'true');
+          txDateTimeTrigger.setAttribute('aria-invalid', 'true');
+          toast('开始时间不能晚于结束时间', 'warning');
+          return;
+        }
+        txFilterDateError.classList.add('hidden');
+        txFilterStartDate.removeAttribute('aria-invalid');
+        txFilterEndDate.removeAttribute('aria-invalid');
+        txDateTimeTrigger.removeAttribute('aria-invalid');
+        appliedTxFilters = next;
+        saveState({
+          txType: next.type,
+          txNo: next.no,
+          txOrder: next.order,
+          txStartDate: next.startDate,
+          txEndDate: next.endDate,
+          txStartTime: next.startTime,
+          txEndTime: next.endTime,
+          txPage: 1
+        });
+        closeTxFilter(true);
+        renderTx(true);
+      }
+
+      function updateSearchClear() {
+        txSearchClear.classList.toggle('hidden', !txSearchInput.value);
+      }
+
+      function refreshBalanceView() {
+        toast('云币余额已刷新（演示）', 'info');
+      }
+
+      function updateRechargeState() {
+        $('#rechargeCoupon').value = state.coupon || '0';
+        if (state.pay) {
+          $$('[data-pay]').forEach(button => {
+            const selected = button.dataset.pay === state.pay;
+            button.classList.toggle('active', selected);
+            button.classList.toggle('selected', selected);
+          });
+        }
+        amountMode = state.amountMode || (amount === 50 ? '50' : 'custom');
+        updateAmountButtons();
+        updatePayable();
+      }
+
+      function submitRecharge() {
+        if (!Number.isFinite(amount) || amount <= 0 || amount > 100000 || Math.round(amount * 100) !== amount * 100) {
+          toast('请输入 0-100000 元且最多两位小数的有效金额', 'warning');
+          return;
+        }
+        openCoinPaymentDialog();
+      }
+
+      function redeemCdkey() {
+        const value = $('#cdkey').value.trim();
+        const valid = /^[A-Za-z0-9-]{8,32}$/.test(value);
+        $('#cdkey').classList.toggle('invalid', !valid);
+        $('#cdkeyError').classList.toggle('hidden', valid);
+        if (valid) openModal('确认兑换', '<p>兑换后卡号立即失效。原型不会调用真实兑换服务。</p>', '确认（演示）');
+      }
+
+      const annotations = {
+        1: {title:'云币余额刷新', desc:['触发：点击余额卡片下方刷新','响应：刷新余额展示并给出反馈','规则：仅为原型演示，不修改真实资产']},
+        2: {title:'云币业务页签', desc:['触发：点击交易流水、在线充值或 CDKEY 兑换','响应：切换当前云币业务内容','规则：当前页签状态保留在会话中']},
+        3: {title:'充值金额', desc:['触发：选择预设或自定义金额','响应：实时更新应付金额','规则：金额须大于 0、最多两位小数且不超过 100000 元']},
+        4: {title:'限时充值加赠', desc:['触发：进入在线充值或切换充值金额','响应：展示活动倒计时、赠送档位和下一档进度','规则：每笔充值按最高档位计算，赠送不与其他充值赠送叠加']},
+        5: {title:'立即支付', desc:['触发：点击立即支付','响应：打开支付前确认弹窗并展示本次活动赠送','规则：不创建真实订单或发起真实扣款']},
+        6: {title:'CDKEY 卡号', desc:['触发：输入卡号并点击确定兑换','响应：校验格式并打开确认弹窗','规则：仅接受 8-32 位字母、数字和短横线']},
+        7: {title:'流水搜索框', desc:['触发：输入交易单号、订单号、项目或操作人关键词','响应：实时刷新流水列表','规则：搜索范围作用于全部流水字段']},
+        8: {title:'流水筛选入口', desc:['触发：点击筛选','响应：打开右侧筛选抽屉','规则：取消不提交草稿，确认后才应用条件']},
+        9: {title:'云币流水列表', desc:['触发：搜索、筛选或翻页','响应：展示匹配流水及总数','规则：金额、单号和时间使用等宽字体']},
+        10: {title:'筛选云币流水', desc:['触发：点击确认提交','响应：应用收支类型、交易单号、订单号与日期时间范围条件','规则：开始日期时间不能晚于结束日期时间']},
+      };
+      let currentAnnotations = annotations;
+      const annoToggle = $('#annoToggle');
+      const annoLayer = $('#annoLayer');
+      const annoPopup = $('#annoPopup');
+
+      function renderAnno() {
+        annoLayer.innerHTML = '';
+        if (!annoVisible || !annoPopup.classList.contains('hidden')) return;
+        document.querySelectorAll('[data-anno]').forEach(el => {
+          if (el.offsetParent === null) return;
+          const rect = el.getBoundingClientRect();
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.className = 'anno-badge';
+          button.textContent = el.dataset.anno;
+          button.style.left = (rect.right - 10) + 'px';
+          button.style.top = (rect.top - 10) + 'px';
+          button.setAttribute('aria-label', '查看标注 ' + el.dataset.anno);
+          button.onclick = () => {
+            const item = currentAnnotations[el.dataset.anno];
+            if (!item) return;
+            $('#annoTitle').textContent = el.dataset.anno + '. ' + item.title;
+            $('#annoBody').innerHTML = '<ul class="list-disc pl-5 space-y-2">' + item.desc.map(text => '<li>' + text + '</li>').join('') + '</ul>';
+            annoPopup.classList.remove('hidden');
+            renderAnno();
+            $('#annoClose').focus();
+          };
+          annoLayer.appendChild(button);
+        });
+      }
+
+      function updateSearchFromInput(value) {
+        txSearch = value;
+        saveState({txSearch, txPage: 1});
+        updateSearchClear();
+        renderTx(true);
+      }
+
+      txSearchInput.value = txSearch;
+      updateSearchClear();
+      $('#rechargeCoupon').value = state.coupon || '0';
+      $('#customAmount').value = amountMode === 'custom' ? String(amount || '') : '';
+      populateTxDateTimeOptions();
+      txFilterStartDate.value = appliedTxFilters.startDate;
+      txFilterEndDate.value = appliedTxFilters.endDate;
+      txFilterStartTime.value = appliedTxFilters.startTime || '00:00';
+      txFilterEndTime.value = appliedTxFilters.endTime || '23:59';
+      syncTxDateTimeTrigger();
+      updateViewTabs();
+      updateRechargeState();
+      updateFilterButton();
+
+      $$('[data-coin-view]').forEach(button => button.addEventListener('click', () => switchCoinView(button.dataset.coinView)));
+      txSearchInput.addEventListener('input', event => updateSearchFromInput(event.target.value));
+      txSearchInput.addEventListener('keydown', event => {
+        if (event.key === 'Enter') {
+          event.preventDefault();
+          renderTx(true);
+        }
+      });
+      txSearchSubmit.addEventListener('click', () => renderTx(true));
+      txSearchClear.addEventListener('click', () => { txSearchInput.value = ''; updateSearchFromInput(''); txSearchInput.focus(); });
+      txFilterBtn.addEventListener('click', openTxFilter);
+      $('#txFilterClose').addEventListener('click', () => closeTxFilter(false));
+      $('#txFilterCancel').addEventListener('click', () => closeTxFilter(false));
+      $('#txFilterSubmit').addEventListener('click', submitTxFilter);
+      txFilterDrawer.addEventListener('click', event => { if (event.target === txFilterDrawer) closeTxFilter(false); });
+      txDateTimeTrigger.addEventListener('click', openTxDateTimePicker);
+      txDateTimeClear.addEventListener('click', () => {
+        txFilterStartDate.value = '';
+        txFilterEndDate.value = '';
+        txFilterStartTime.value = '00:00';
+        txFilterEndTime.value = '23:59';
+        syncTxDateTimeTrigger();
+      });
+      txDateTimePicker.addEventListener('click', event => {
+        event.stopPropagation();
+        const nav = event.target.closest('[data-tx-date-nav]');
+        const day = event.target.closest('[data-tx-date]');
+        if (nav) {
+          const direction = nav.dataset.txDateNav;
+          const view = txDateTimePickerState.view;
+          const yearDelta = direction === 'prev-year' ? -1 : direction === 'next-year' ? 1 : 0;
+          const monthDelta = direction === 'prev-month' ? -1 : direction === 'next-month' ? 1 : 0;
+          txDateTimePickerState.view = yearDelta ? new Date(view.getFullYear() + yearDelta, view.getMonth(), 1) : new Date(view.getFullYear(), view.getMonth() + monthDelta, 1);
+          renderTxDateTimePicker();
+          return;
+        }
+        if (day) {
+          const key = day.dataset.txDate;
+          const pickerState = txDateTimePickerState;
+          if (pickerState.active === 'start') {
+            pickerState.draftStart = key;
+            if (pickerState.draftEnd && txDateTimeBound(pickerState.draftEnd, pickerState.draftEndTime, '23:59') < txDateTimeBound(key, pickerState.draftStartTime, '00:00')) pickerState.draftEnd = '';
+            pickerState.active = 'end';
+          } else if (!pickerState.draftStart) {
+            pickerState.draftStart = key;
+            pickerState.active = 'end';
+          } else {
+            pickerState.draftEnd = key;
+          }
+          pickerState.invalid = txDateTimeRangeInvalid(pickerState.draftStart, pickerState.draftStartTime, pickerState.draftEnd, pickerState.draftEndTime);
+          renderTxDateTimePicker();
+        }
+      });
+      txDateTimeStartTime.addEventListener('change', event => {
+        txDateTimePickerState.draftStartTime = event.target.value;
+        txDateTimePickerState.invalid = txDateTimeRangeInvalid(txDateTimePickerState.draftStart, txDateTimePickerState.draftStartTime, txDateTimePickerState.draftEnd, txDateTimePickerState.draftEndTime);
+        renderTxDateTimePicker();
+      });
+      txDateTimeEndTime.addEventListener('change', event => {
+        txDateTimePickerState.draftEndTime = event.target.value;
+        txDateTimePickerState.invalid = txDateTimeRangeInvalid(txDateTimePickerState.draftStart, txDateTimePickerState.draftStartTime, txDateTimePickerState.draftEnd, txDateTimePickerState.draftEndTime);
+        renderTxDateTimePicker();
+      });
+      $('#txDateTimePickerClear').addEventListener('click', clearTxDateTimeDraft);
+      $('#txDateTimePickerCancel').addEventListener('click', () => closeTxDateTimePicker(false));
+      $('#txDateTimePickerConfirm').addEventListener('click', () => closeTxDateTimePicker(true));
+      document.addEventListener('click', event => {
+        if (!txDateTimePicker.classList.contains('hidden') && !txDateTimeControlWrap.contains(event.target) && !txDateTimePicker.contains(event.target)) closeTxDateTimePicker(false);
+      });
+      window.addEventListener('resize', positionTxDateTimePicker);
+      $('#refreshBalance').addEventListener('click', refreshBalanceView);
+      $('#rechargeCoupon').addEventListener('change', updatePayable);
+      $('#amountChoices').addEventListener('click', event => {
+        const button = event.target.closest('[data-amount]');
+        if (!button) return;
+        amountMode = button.dataset.amount;
+        amount = amountMode === 'custom' ? Number($('#customAmount').value) || 0 : Number(amountMode);
+        saveState({amount, amountMode});
+        updateAmountButtons();
+        updatePayable();
+      });
+      $('#customAmount').addEventListener('input', event => {
+        amountMode = 'custom';
+        amount = Number(event.target.value) || 0;
+        saveState({amount, amountMode});
+        updateAmountButtons();
+        updatePayable();
+      });
+      $('#payChoices').addEventListener('click', event => {
+        const button = event.target.closest('[data-pay]');
+        if (!button) return;
+        state.pay = button.dataset.pay;
+        $$('[data-pay]').forEach(item => {
+          const selected = item === button;
+          item.classList.toggle('active', selected);
+          item.classList.toggle('selected', selected);
+        });
+        saveState({pay: state.pay});
+      });
+      $('#submitRecharge').addEventListener('click', submitRecharge);
+      $('#closeCoinPaymentDialog').addEventListener('click', closeCoinPaymentDialog);
+      $('#coinPaymentDialog').addEventListener('click', event => {
+        if (event.target === $('#coinPaymentDialog')) closeCoinPaymentDialog();
+      });
+      $('#redeem').addEventListener('click', redeemCdkey);
+      $$('[data-contact-service]').forEach(link => link.addEventListener('click', event => {
+        event.preventDefault();
+        toast('在线客服入口为原型演示', 'info');
+      }));
+
+      let modalCloseButtons = $$('[data-close]');
+      modalCloseButtons.forEach(button => button.addEventListener('click', closeModal));
+      $('#modal').addEventListener('click', event => { if (event.target === $('#modal')) closeModal(); });
+      $('#modalConfirm').addEventListener('click', () => { closeModal(); toast('演示操作已完成，未影响真实数据', 'success'); });
+      document.addEventListener('keydown', event => {
+        if (event.key === 'Escape' && !$('#coinPaymentDialog').classList.contains('hidden')) {
+          closeCoinPaymentDialog();
+          return;
+        }
+        if (!txDateTimePicker.classList.contains('hidden') && event.key === 'Escape') {
+          event.preventDefault();
+          closeTxDateTimePicker(false);
+          txDateTimeTrigger.focus();
+          return;
+        }
+        if (!txFilterDrawer.classList.contains('hidden')) {
+          if (event.key === 'Escape') {
+            event.preventDefault();
+            closeTxFilter(false);
+            return;
+          }
+          if (event.key === 'Tab') {
+            const focusable = $$('[data-filter-focusable]').filter(element => !element.disabled && element.offsetParent !== null);
+            if (!focusable.length) {
+              event.preventDefault();
+              txFilterPanel.focus();
+              return;
+            }
+            const first = focusable[0];
+            const last = focusable[focusable.length - 1];
+            if (event.shiftKey && (document.activeElement === first || document.activeElement === txFilterPanel)) {
+              event.preventDefault();
+              last.focus();
+            } else if (!event.shiftKey && document.activeElement === last) {
+              event.preventDefault();
+              first.focus();
+            }
+          }
+          return;
+        }
+        if (event.key === 'Escape' && !$('#modal').classList.contains('hidden')) closeModal();
+      });
+
+      annoToggle.addEventListener('click', () => {
+        annoVisible = !annoVisible;
+        annoToggle.setAttribute('aria-pressed', String(annoVisible));
+        annoToggle.querySelector('span').textContent = annoVisible ? '隐藏标注' : '显示标注';
+        renderAnno();
+      });
+      $('#annoClose').addEventListener('click', () => { annoPopup.classList.add('hidden'); renderAnno(); });
+      annoPopup.addEventListener('click', event => { if (event.target === annoPopup) { annoPopup.classList.add('hidden'); renderAnno(); } });
+      window.addEventListener('resize', renderAnno);
+      $('#mainContent').addEventListener('scroll', renderAnno);
+
+      function finishInit() {
+        switchCoinView(currentView);
+        txSearchInput.value = txSearch;
+        updateSearchClear();
+        updateAmountButtons();
+        updatePayable();
+        startCampaignCountdown();
+        renderTx(false);
+        lucide.createIcons();
+        renderAnno();
+      }
+
+      finishInit();
+    })();
+  </script>
+</body>
+</html>

@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>云登 - 商城代理</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://unpkg.com/lucide@1.34.0/dist/umd/lucide.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <script>
-    tailwind.config = {
+    if (window.tailwind) tailwind.config = {
       theme: {
         extend: {
           colors: {
@@ -277,6 +277,24 @@
     .payment-side-amount { margin-top: 2px; color: var(--primary); font: 600 32px/1.2 'JetBrains Mono', monospace; }
     .payment-qr { width: 220px; height: 220px; max-width: 100%; margin-top: 16px; display: block; object-fit: contain; image-rendering: pixelated; }
     .payment-scan-tip { margin: 14px 0 0; color: var(--ink-sub); }
+    .recharge-payment-dialog-mask { position: fixed; inset: 0; z-index: 2100; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(0,0,0,.3); }
+    .recharge-payment-dialog-mask.hidden { display: none; }
+    .recharge-payment-dialog { width: min(960px, calc(100vw - 32px)); min-height: 560px; max-height: calc(100vh - 32px); overflow: hidden; border-radius: 8px; background: #fff; box-shadow: 0 6px 24px rgba(0,0,0,.12); }
+    .recharge-payment-dialog-header { height: 64px; padding: 0 36px; display: flex; align-items: center; justify-content: space-between; border-top: 2px solid var(--ink-muted); border-bottom: 1px solid var(--line-lighter); }
+    .recharge-payment-dialog-title { margin: 0; color: var(--ink-body); font-size: 18px; font-weight: 500; }
+    .recharge-payment-close { width: 28px; height: 28px; padding: 0; border: 0; display: inline-flex; align-items: center; justify-content: center; color: var(--ink-body); background: transparent; cursor: pointer; }
+    .recharge-payment-close:hover { color: var(--primary); background: var(--hover); }
+    .recharge-payment-close svg { width: 18px; height: 18px; }
+    .recharge-payment-dialog-body { padding: 28px 46px 32px; overflow-y: auto; text-align: center; }
+    .recharge-payment-notice { min-height: 32px; padding: 6px 10px; display: flex; align-items: center; gap: 8px; color: var(--primary); background: var(--primary-bg); text-align: left; font-size: 14px; }
+    .recharge-payment-notice svg { width: 14px; height: 14px; flex: 0 0 14px; }
+    .recharge-payment-notice strong { color: var(--danger); font-weight: 500; }
+    .recharge-payment-amount-label { margin-top: 48px; color: var(--ink-muted); font-size: 16px; font-weight: 600; }
+    .recharge-payment-amount { margin-top: 4px; color: var(--primary); font: 500 34px/1 'JetBrains Mono', monospace; }
+    .recharge-payment-qr { width: 194px; height: 194px; margin: 20px auto 0; display: block; object-fit: contain; image-rendering: pixelated; }
+    .recharge-payment-hint { margin-top: 18px; color: var(--ink-sub); font-size: 16px; }
+    .recharge-payment-campaign { margin-top: 10px; color: var(--primary); font-size: 13px; line-height: 20px; }
+    .recharge-payment-campaign { margin-top: 10px; color: var(--primary); font-size: 13px; line-height: 20px; }
 
     .toast { min-width: 320px; max-width: min(480px, calc(100vw - 32px)); min-height: 44px; padding: 10px 14px; position: fixed; top: 24px; left: 50%; z-index: 2100; border-radius: 8px; display: flex; align-items: center; gap: 10px; color: var(--ink-body); background: var(--card); box-shadow: 0 6px 24px rgba(0, 0, 0, .12); transform: translate(-50%, 0); animation: toast-in .15s ease-out; }
     .toast svg { width: 18px; height: 18px; flex: none; }
@@ -311,7 +329,8 @@
     .recharge-payment-btn { flex: 1; height: 44px; padding: 0 16px; border: 1px solid var(--line); border-radius: 6px; background: var(--card); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; color: var(--ink-body); font-size: 14px; transition: all .15s ease; position: relative; }
     .recharge-payment-btn:hover { border-color: var(--primary); }
     .recharge-payment-btn.selected { border-color: var(--primary); background: var(--primary-bg); color: var(--primary); }
-    .recharge-payment-btn svg { width: 18px; height: 18px; }
+    .recharge-payment-btn svg, .recharge-payment-btn .recharge-payment-icon { width: 18px; height: 18px; }
+    .recharge-payment-btn .recharge-payment-icon { object-fit: contain; }
     .recharge-payment-check { width: 16px !important; height: 16px !important; position: absolute; right: 10px; top: 50%; transform: translateY(-50%); opacity: 0; }
     .recharge-payment-btn.selected .recharge-payment-check { opacity: 1; color: var(--primary); }
     .recharge-dialog-panel { width: min(960px, calc(100vw - 32px)); max-width: 960px; max-height: min(580px, calc(100vh - 32px)); }
@@ -320,28 +339,31 @@
     .recharge-dialog-body { padding: 28px 30px 24px; overflow-y: auto; }
     .recharge-field + .recharge-field { margin-top: 24px; }
     .recharge-field-label { display: block; margin-bottom: 12px; color: var(--ink-title); font-size: 16px; font-weight: 600; }
-    .recharge-amount-options { display: grid; grid-template-columns: repeat(5, minmax(110px, 1fr)) 150px; gap: 20px; }
-    .recharge-amount-btn, .recharge-custom-option { height: 50px; padding: 0 12px; border: 1px solid var(--line-lighter); border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; gap: 4px; color: var(--primary); background: var(--page); cursor: pointer; }
+    .recharge-amount-options { display: grid; grid-template-columns: repeat(4, 180px); gap: 20px; }
+    .recharge-amount-btn, .recharge-custom-option { position: relative; width: 180px; height: 80px; padding: 12px 16px; border: 1px solid var(--line-lighter); border-radius: 6px; display: inline-flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 4px; color: var(--primary); background: var(--page); cursor: pointer; text-align: left; }
     .recharge-amount-btn:hover, .recharge-custom-option:hover { border-color: var(--primary); background: var(--primary-bg); }
     .recharge-amount-btn.selected, .recharge-custom-option.selected { border-color: var(--primary); background: var(--card); box-shadow: inset 0 0 0 1px var(--primary); }
-    .recharge-amount-btn.selected::after { content: ''; width: 22px; height: 22px; position: absolute; right: -1px; bottom: -1px; border-radius: 6px 0 6px 0; background: var(--primary); }
-    .recharge-amount-btn.selected::before { content: ''; width: 8px; height: 5px; position: absolute; right: 5px; bottom: 6px; z-index: 1; border-left: 2px solid var(--card); border-bottom: 2px solid var(--card); transform: rotate(-45deg); }
-    .recharge-amount-btn { position: relative; }
-    .recharge-amount-value { font-size: 16px; font-weight: 500; }
+    .recharge-amount-check { position: absolute; top: -1px; right: -1px; width: 22px; height: 22px; border-radius: 0 6px 0 6px; display: none; align-items: center; justify-content: center; color: #fff; background: var(--primary); }
+    .recharge-amount-btn.selected .recharge-amount-check, .recharge-custom-option.selected .recharge-amount-check { display: inline-flex; }
+    .recharge-amount-check svg { width: 12px; height: 12px; stroke-width: 3; }
+    .recharge-amount-value { color: var(--primary); font: 500 28px/34px 'JetBrains Mono', monospace; white-space: nowrap; }
     .recharge-custom-option { min-width: 0; }
-    .recharge-custom-option .recharge-custom-prefix { font: 500 16px/1 'JetBrains Mono', monospace; }
-    .recharge-custom-option input { width: 78px; height: 32px; padding: 0 8px; border: 0; color: var(--ink-body); background: transparent; outline: none; font-size: 16px; }
+    .recharge-custom-option .recharge-custom-prefix { color: var(--primary); font: 500 28px/34px 'JetBrains Mono', monospace; }
+    .recharge-custom-option input { width: 122px; height: 34px; padding: 0 4px; border: 0; color: var(--ink-body); background: transparent; outline: none; font: 500 28px/34px 'JetBrains Mono', monospace; }
     .recharge-custom-option input::placeholder { color: var(--ink-muted); }
+    .recharge-amount-gift, .recharge-amount-total, .recharge-custom-benefit { font-size: 11px; line-height: 15px; white-space: nowrap; }
+    .recharge-amount-gift { color: var(--primary); }
+    .recharge-amount-total, .recharge-custom-benefit { color: var(--ink-sub); }
     .recharge-info-list { margin: 0; padding: 0; list-style: none; color: var(--ink-sub); font-size: 14px; line-height: 1.7; }
     .recharge-info-list li { position: relative; padding-left: 14px; }
     .recharge-info-list li::before { content: ''; width: 5px; height: 5px; position: absolute; left: 0; top: 9px; border-radius: 50%; background: var(--primary); }
-    .recharge-control-row { display: grid; grid-template-columns: 72px minmax(220px, 326px); align-items: center; gap: 12px; }
-    .recharge-control-row .recharge-field-label { margin: 0; font-size: 14px; font-weight: 400; }
+    .recharge-control-row { display: grid; grid-template-columns: 84px minmax(220px, 326px); align-items: center; gap: 12px; }
+    .recharge-control-row .recharge-field-label { margin: 0; font-size: 14px; font-weight: 400; text-align: right; white-space: nowrap; }
     .recharge-select { width: 326px; max-width: 100%; }
     .recharge-payment-options { display: flex; gap: 10px; }
     .recharge-payment-btn { flex: 0 0 158px; height: 40px; justify-content: flex-start; padding: 0 12px; border-radius: 4px; }
     .recharge-more-row { display: flex; align-items: center; gap: 12px; }
-    .recharge-more-label { width: 72px; color: var(--ink-sub); font-size: 14px; }
+    .recharge-more-label { width: 84px; color: var(--ink-sub); font-size: 14px; text-align: right; white-space: nowrap; }
     .recharge-more-methods { height: 34px; padding: 0 10px; border: 1px solid var(--line); border-radius: 4px; display: inline-flex; align-items: center; gap: 8px; color: var(--ink-sub); background: var(--card); }
     .recharge-more-methods span { width: 24px; height: 20px; border-radius: 3px; display: inline-flex; align-items: center; justify-content: center; color: var(--primary); background: var(--primary-bg); font: 600 9px/1 Arial, sans-serif; }
     .recharge-more-link { color: var(--primary); font-size: 14px; text-decoration: none; }
@@ -356,12 +378,14 @@
     .recharge-submit { min-width: 90px; }
     @media (max-width: 767px) {
       .recharge-dialog-body { padding: 20px 16px; }
-      .recharge-amount-options { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
-      .recharge-custom-option { width: 100%; }
+      .recharge-amount-options { grid-template-columns: repeat(2, minmax(180px, 1fr)); gap: 10px; }
       .recharge-control-row { grid-template-columns: 1fr; gap: 6px; }
       .recharge-select { width: 100%; }
       .recharge-dialog-footer { padding: 12px 16px; align-items: flex-start; flex-direction: column; }
       .recharge-submit-group { width: 100%; justify-content: flex-end; }
+    }
+    @media (max-width: 420px) {
+      .recharge-amount-options { grid-template-columns: 180px; }
     }
 
     :where(button, input, select):focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
@@ -404,6 +428,10 @@
       .payment-order-list { overflow-x: auto; }
       .payment-group-toggle { min-width: 620px; }
       .payment-side { padding-top: 20px; border-top: 1px solid var(--line-lighter); }
+      .recharge-payment-dialog-header { padding: 0 20px; }
+      .recharge-payment-dialog-body { padding: 20px; }
+      .recharge-payment-amount-label { margin-top: 28px; }
+      .recharge-payment-qr { width: 176px; height: 176px; }
     }
     @media (min-width: 901px) and (max-width: 1100px) {
       .payment-content { grid-template-columns: minmax(0, 1fr) 220px; gap: 12px; }
@@ -417,7 +445,7 @@
     }
   </style>
   <link rel="stylesheet" href="公共导航.css?v=20260825a">
-  <script src="公共导航.js?v=20260825a"></script>
+  <script src="公共导航.js?v=20260828e"></script>
 </head>
 <body class="overflow-hidden">
   <main id="mainContent" class="store-page" tabindex="-1">
@@ -427,6 +455,7 @@
       <div id="storeTabs" class="store-tabs" role="tablist" aria-label="商城业务范围">
         <button class="store-tab" type="button" role="tab" aria-selected="true" data-tab="proxy" tabindex="0"><i data-lucide="server"></i><span>代理</span></button>
         <button class="store-tab" type="button" role="tab" aria-selected="false" data-tab="plan" tabindex="-1"><i data-lucide="package"></i><span>套餐</span></button>
+        <button class="store-tab" type="button" role="tab" aria-selected="false" data-tab="coin" tabindex="-1"><i data-lucide="wallet-cards"></i><span>云币充值</span></button>
         <button class="store-tab" type="button" role="tab" aria-selected="false" data-tab="cart" tabindex="-1"><i data-lucide="shopping-cart"></i><span>购物车</span></button>
       </div>
     </nav>
@@ -512,20 +541,19 @@
         <div class="recharge-field">
           <label class="recharge-field-label">充值金额</label>
           <div class="recharge-amount-options" id="rechargeAmountOptions">
-            <button type="button" class="recharge-amount-btn selected" data-amount="50" data-coins="50"><span class="recharge-amount-value mono">¥ 50</span></button>
-            <button type="button" class="recharge-amount-btn" data-amount="500" data-coins="500"><span class="recharge-amount-value mono">¥ 500</span></button>
-            <button type="button" class="recharge-amount-btn" data-amount="1000" data-coins="1000"><span class="recharge-amount-value mono">¥ 1000</span></button>
-            <button type="button" class="recharge-amount-btn" data-amount="5000" data-coins="5000"><span class="recharge-amount-value mono">¥ 5000</span></button>
-            <button type="button" class="recharge-amount-btn" data-amount="10000" data-coins="10000"><span class="recharge-amount-value mono">¥ 10000</span></button>
-            <label class="recharge-custom-option" id="rechargeCustomOption"><span class="recharge-custom-prefix">¥</span><input id="customRechargeAmount" type="number" placeholder="自定义" min="1" max="10000" aria-label="自定义充值金额"></label>
+            <button type="button" class="recharge-amount-btn selected" data-amount="500" data-coins="500"><span class="recharge-amount-check" aria-hidden="true"><i data-lucide="check"></i></span><span class="recharge-amount-value mono">¥ 500</span><span class="recharge-amount-gift">赠送 25 云币</span><span class="recharge-amount-total">到账 525 云币</span></button>
+            <button type="button" class="recharge-amount-btn" data-amount="1000" data-coins="1000"><span class="recharge-amount-check" aria-hidden="true"><i data-lucide="check"></i></span><span class="recharge-amount-value mono">¥ 1000</span><span class="recharge-amount-gift">赠送 100 云币</span><span class="recharge-amount-total">到账 1,100 云币</span></button>
+            <button type="button" class="recharge-amount-btn" data-amount="2000" data-coins="2000"><span class="recharge-amount-check" aria-hidden="true"><i data-lucide="check"></i></span><span class="recharge-amount-value mono">¥ 2000</span><span class="recharge-amount-gift">赠送 300 云币</span><span class="recharge-amount-total">到账 2,300 云币</span></button>
+            <button type="button" class="recharge-amount-btn" data-amount="5000" data-coins="5000"><span class="recharge-amount-check" aria-hidden="true"><i data-lucide="check"></i></span><span class="recharge-amount-value mono">¥ 5000</span><span class="recharge-amount-gift">赠送 1,000 云币</span><span class="recharge-amount-total">到账 6,000 云币</span></button>
+            <label class="recharge-custom-option" id="rechargeCustomOption" data-amount="custom"><span class="recharge-amount-check" aria-hidden="true"><i data-lucide="check"></i></span><span class="recharge-custom-input"><span class="recharge-custom-prefix">¥</span><input id="customRechargeAmount" type="number" placeholder="自定义" min="1" max="100000" aria-label="自定义充值金额"></span><span id="rechargeCustomBenefit" class="recharge-custom-benefit">赠送 0 云币<br>到账 0 云币</span></label>
           </div>
         </div>
         <div class="recharge-field">
           <h3 class="recharge-field-label">关于云币</h3>
           <ul class="recharge-info-list">
             <li>云币是云登提供的一种内部结算形式，1元=1云币。</li>
-            <li>云币可以用于购买代理资源，支付时选择云币支付，用多少扣多少。</li>
-            <li>云币充值记录、消费记录、剩余余额，可在费用管理-云币充值页面查看。</li>
+            <li>云币可以用于购买代理与套餐，支付时选择云币支付，用多少扣多少。</li>
+            <li>云币充值记录、消费记录、剩余余额，可在商城-云币充值页面查看。</li>
           </ul>
         </div>
         <div class="recharge-field recharge-control-row">
@@ -535,8 +563,8 @@
         <div class="recharge-field recharge-control-row">
           <span class="recharge-field-label">支付方式</span>
           <div class="recharge-payment-options" id="rechargePaymentOptions">
-            <button type="button" class="recharge-payment-btn selected" data-payment="alipay"><i data-lucide="badge-dollar-sign"></i><span>支付宝支付</span><i data-lucide="check-circle" class="recharge-payment-check"></i></button>
-            <button type="button" class="recharge-payment-btn" data-payment="wechat"><i data-lucide="message-circle"></i><span>微信支付</span><i data-lucide="check-circle" class="recharge-payment-check"></i></button>
+            <button type="button" class="recharge-payment-btn selected" data-payment="alipay"><img src="../src/assets/images/支付宝支付.png" class="recharge-payment-icon" alt=""><span>支付宝支付</span><i data-lucide="check-circle" class="recharge-payment-check"></i></button>
+            <button type="button" class="recharge-payment-btn" data-payment="wechat"><img src="../src/assets/images/微信支付.png" class="recharge-payment-icon" alt=""><span>微信支付</span><i data-lucide="check-circle" class="recharge-payment-check"></i></button>
           </div>
         </div>
         <div class="recharge-field recharge-more-row">
@@ -548,10 +576,29 @@
       <footer class="recharge-dialog-footer">
         <span class="recharge-support">（如有疑问，请联系客服 <a href="javascript:void(0)" data-contact-service>客服</a>）</span>
         <div class="recharge-submit-group">
-          <span class="recharge-payable">应付金额 <strong id="rechargePayable" class="mono">¥50.00</strong></span>
-          <button id="confirmRecharge" class="btn btn-primary recharge-submit" type="button">提交支付</button>
+          <span class="recharge-payable">应付金额 <strong id="rechargePayable" class="mono">¥500.00</strong></span>
+          <button id="confirmRecharge" class="btn btn-primary recharge-submit" type="button">立即支付</button>
         </div>
       </footer>
+    </section>
+  </div>
+  <div id="rechargePaymentDialog" class="recharge-payment-dialog-mask hidden" role="dialog" aria-modal="true" aria-labelledby="rechargePaymentDialogTitle" aria-hidden="true">
+    <section id="rechargePaymentDialogPanel" class="recharge-payment-dialog" tabindex="-1">
+      <header class="recharge-payment-dialog-header">
+        <h2 id="rechargePaymentDialogTitle" class="recharge-payment-dialog-title">支付宝支付</h2>
+        <button id="closeRechargePaymentDialog" class="recharge-payment-close" type="button" aria-label="关闭支付宝支付弹窗"><i data-lucide="x" aria-hidden="true"></i></button>
+      </header>
+      <div class="recharge-payment-dialog-body">
+        <div class="recharge-payment-notice" role="status">
+          <i data-lucide="info" aria-hidden="true"></i>
+          <span>订单 <strong>29:57</strong> 后订单将自动取消，请在订单取消完成前完成支付！若订单中使用了优惠券，订单取消后会原路返回您的账户中。</span>
+        </div>
+        <div class="recharge-payment-amount-label">需要支付金额</div>
+        <div id="rechargePaymentAmount" class="recharge-payment-amount">¥50.00</div>
+        <img id="rechargePaymentQr" class="recharge-payment-qr" alt="支付宝支付二维码">
+        <div id="rechargePaymentHint" class="recharge-payment-hint">请打开支付宝扫一扫</div>
+        <div id="rechargePaymentCampaign" class="recharge-payment-campaign hidden"></div>
+      </div>
     </section>
   </div>
 
@@ -605,7 +652,7 @@
     const state = {
       lastFocus: null, pendingOrder: null, regionExpanded: false,
       proxy: { continent: '北美洲', country: '美国', city: '洛杉矶', type: 'static', productId: 's28', duration: 1, qty: 3, coupon: 0, renew: true, renewCycle: 1, payment: 'alipay', notice: false, trafficPackId: 'traffic-10g-90', purchaseKind: 'proxy_order' },
-      recharge: { amount: 50, coins: 50, payment: 'alipay', balance: 300 }
+      recharge: { amount: 500, coins: 525, payment: 'alipay', balance: 300 }
     };
     const paymentIconData = {
       alipay: '../src/assets/images/支付宝支付.png',
@@ -620,6 +667,18 @@
     const $$ = selector => [...document.querySelectorAll(selector)];
     const money = value => `¥${Number(value || 0).toFixed(2)}`;
     const clamp = (value, min, max) => Math.min(max, Math.max(min, Number(value) || 0));
+    function rechargeBonusFor(value, custom) {
+      const amount = Number(value);
+      if (!Number.isFinite(amount) || amount < 500) return 0;
+      if (custom) {
+        const rate = amount >= 5000 ? 0.2 : amount >= 2000 ? 0.15 : amount >= 1000 ? 0.1 : 0.05;
+        return Math.round(amount * rate * 100) / 100;
+      }
+      return ({500:25, 1000:100, 2000:300, 5000:1000})[amount] || 0;
+    }
+    function rechargeCoinText(value) {
+      return Number(value || 0).toLocaleString('zh-CN', {maximumFractionDigits: 2});
+    }
     let toastTimer = null;
     let paymentCountdownTimer = null;
     function markDirty() { $('#dirtyBadge').classList.remove('hidden'); }
@@ -958,11 +1017,40 @@
       if (state.lastFocus) state.lastFocus.focus({ preventScroll: true });
       state.lastFocus = null;
     }
+    function openRechargePaymentDialog() {
+      const isWechat = state.recharge.payment === 'wechat';
+      const title = isWechat ? '微信支付' : '支付宝支付';
+      $('#rechargePaymentDialogTitle').textContent = title;
+      $('#closeRechargePaymentDialog').setAttribute('aria-label', '关闭' + title + '弹窗');
+      $('#rechargePaymentAmount').textContent = money(state.recharge.amount);
+      $('#rechargePaymentQr').src = mockPaymentQr;
+      $('#rechargePaymentQr').alt = title + '二维码';
+      $('#rechargePaymentHint').textContent = '请打开' + (isWechat ? '微信' : '支付宝') + '扫一扫';
+      const isCustom = $('#rechargeCustomOption').classList.contains('selected');
+      const bonus = rechargeBonusFor(state.recharge.amount, isCustom);
+      const campaign = $('#rechargePaymentCampaign');
+      campaign.textContent = bonus ? '充值赠送 ' + rechargeCoinText(bonus) + ' 云币，预计到账 ' + rechargeCoinText(state.recharge.amount + bonus) + ' 云币' : '';
+      campaign.classList.toggle('hidden', !bonus);
+      $('#rechargeDialog').classList.add('hidden');
+      $('#rechargeDialog').setAttribute('aria-hidden', 'true');
+      $('#rechargePaymentDialog').classList.remove('hidden');
+      $('#rechargePaymentDialog').setAttribute('aria-hidden', 'false');
+      lucide.createIcons();
+      $('#closeRechargePaymentDialog').focus({ preventScroll: true });
+    }
+    function closeRechargePaymentDialog() {
+      $('#rechargePaymentDialog').classList.add('hidden');
+      $('#rechargePaymentDialog').setAttribute('aria-hidden', 'true');
+      $('#rechargeDialog').classList.remove('hidden');
+      $('#rechargeDialog').setAttribute('aria-hidden', 'false');
+      $('#confirmRecharge').focus({ preventScroll: true });
+    }
     function updateRechargeBonus() {
       const amount = state.recharge.amount;
-      const bonus = Math.floor(amount / 10); // 10% bonus
-      const bonusEl = $('.recharge-bonus span strong');
-      if (bonusEl) bonusEl.textContent = bonus;
+      const isCustom = $('#rechargeCustomOption').classList.contains('selected');
+      const bonus = rechargeBonusFor(amount, isCustom);
+      state.recharge.coins = amount + bonus;
+      $('#rechargeCustomBenefit').innerHTML = '赠送 ' + rechargeCoinText(bonus) + ' 云币<br>到账 ' + rechargeCoinText(amount + bonus) + ' 云币';
     }
     function updateRechargePayable() {
       const payable = $('#rechargePayable');
@@ -980,7 +1068,7 @@
       updateRechargePayable();
     }
     function handleCustomAmount(value) {
-      const amount = Math.max(0, Number(value) || 0);
+      const amount = clamp(value, 0, 100000);
       state.recharge.amount = amount;
       state.recharge.coins = amount;
       $$('#rechargeAmountOptions .recharge-amount-btn').forEach(btn => btn.classList.remove('selected'));
@@ -1019,13 +1107,11 @@
       toast('在线客服入口为原型演示', 'info');
     }));
     $('#confirmRecharge').addEventListener('click', () => {
-      if (state.recharge.amount <= 0) { toast('请输入充值金额', 'warning'); return; }
-      // Simulate recharge
-      state.recharge.balance += state.recharge.coins;
-      closeRechargeDialog();
-      toast(`充值成功！获得 ${state.recharge.coins} 云币，当前余额 ${state.recharge.balance} 云币`, 'success');
-      updateProxyQuote();
+      if (!Number.isFinite(state.recharge.amount) || state.recharge.amount <= 0 || state.recharge.amount > 100000 || Math.round(state.recharge.amount * 100) !== state.recharge.amount * 100) { toast('请输入 0-100000 元且最多两位小数的有效金额', 'warning'); return; }
+      openRechargePaymentDialog();
     });
+    $('#closeRechargePaymentDialog').addEventListener('click', closeRechargePaymentDialog);
+    $('#rechargePaymentDialog').addEventListener('click', event => { if (event.target === $('#rechargePaymentDialog')) closeRechargePaymentDialog(); });
 
     // ---------- 交互绑定 ----------
     $('#toggleCompliance').addEventListener('click', () => {
@@ -1036,7 +1122,7 @@
     });
     function navigateToStoreTab(tab) {
       const search = `?tab=${tab}`;
-      const file = tab === 'plan' ? '商城-套餐.html' : tab === 'cart' ? '商城-购物车.html' : '商城-代理.html';
+      const file = tab === 'plan' ? '商城-套餐.html' : tab === 'coin' ? '商城-云币充值.html' : tab === 'cart' ? '商城-购物车.html' : '商城-代理.html';
       if (window.parent !== window) {
         window.parent.postMessage({ type: 'yundeng:route', file, search, hash: '' }, '*');
         return;
@@ -1111,9 +1197,17 @@
     document.addEventListener('click', event => { if (!event.target.closest('.checkout-price') && !$('#priceDetailPopover').classList.contains('hidden')) { $('#priceDetailPopover').classList.add('hidden'); $('#togglePriceDetail').setAttribute('aria-expanded', 'false'); } });
     document.addEventListener('keydown', event => {
       if (event.key === 'Escape') {
+        if (!$('#rechargePaymentDialog').classList.contains('hidden')) { closeRechargePaymentDialog(); return; }
         if (!$('#rechargeDialog').classList.contains('hidden')) { closeRechargeDialog(); return; }
         if (!$('#orderDialog').classList.contains('hidden')) { closeOrderDialog(); return; }
         if (!$('#priceDetailPopover').classList.contains('hidden')) { $('#priceDetailPopover').classList.add('hidden'); $('#togglePriceDetail').setAttribute('aria-expanded', 'false'); $('#togglePriceDetail').focus(); }
+      }
+      if (event.key === 'Tab' && !$('#rechargePaymentDialog').classList.contains('hidden')) {
+        const focusable = $$('#rechargePaymentDialog button:not(:disabled)').filter(node => node.getClientRects().length);
+        if (!focusable.length) return;
+        const first = focusable[0], last = focusable.at(-1);
+        if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+        else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
       }
       if (event.key === 'Tab' && !$('#orderDialog').classList.contains('hidden')) { const focusable = $$('#orderDialog button:not(:disabled), #orderDialog img, #orderDialog [tabindex]:not([tabindex="-1"])').filter(node => node.getClientRects().length); if (!focusable.length) return; const first = focusable[0], last = focusable.at(-1); if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); } else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); } }
     });

@@ -5,11 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" href="data:,">
   <title>云登 · PC端产品原型导航</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://unpkg.com/lucide@1.34.0/dist/umd/lucide.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <script>
-    tailwind.config = { theme: { extend: {
+    window.lucide = window.lucide || { createIcons() {} };
+    if (window.tailwind) tailwind.config = { theme: { extend: {
       colors: {
         primary:{DEFAULT:'#0066FF',hover:'#0052CC',active:'#0047B3',bg:'#E6F0FF'},
         ink:{title:'#1A1D24',body:'#3A3F4A',sub:'#6E7685',muted:'#9DA2AC'},
@@ -140,12 +141,14 @@
       { id:'rpa', group:'后台系统', title:'RPA', description:'管理本地自动化任务流程、模板市场、计划空态和运行日志，支持流程编辑与环境分配演示。', file:'RPA.html', icon:'bot', status:'业务原型', statusTone:'success', updated:'08-13', size:'单文件', tags:['任务流程','模板市场','计划管理','运行日志'] },
       { id:'plugins', group:'后台系统', title:'插件管理', description:'管理插件市场、我的插件、团队插件、上传插件、授权协议、分组与环境分配。', file:'插件管理.html', icon:'blocks', status:'业务原型', statusTone:'success', updated:'08-13', size:'单文件', tags:['插件市场','上传插件','团队插件','环境分配'] },
       { id:'team-management', group:'后台系统', title:'团队管理', description:'统一管理成员、部门、角色权限、入团申请、登录授权与团队认证。', file:'团队管理.html', icon:'users', status:'业务原型', statusTone:'success', updated:'08-12', size:'单文件', tags:['成员','部门','角色权限','审批'] },
-      { id:'member-management', group:'后台系统', title:'成员管理', description:'维护团队成员、部门归属、角色、状态、在线情况和环境授权范围。', file:'成员管理.html', icon:'user-round-cog', status:'业务原型', statusTone:'success', updated:'08-13', size:'单文件', tags:['成员列表','部门','角色','环境授权'] },
       { id:'account-management', group:'后台系统', title:'账号管理', description:'管理业务账号、平台、凭证锁定、环境绑定和账号分组。', file:'账号管理.html', icon:'contact', status:'业务原型', statusTone:'success', updated:'08-13', size:'单文件', tags:['业务账号','平台','凭证','环境绑定'] },
       { id:'transfer', group:'后台系统', title:'分享转移', description:'管理环境分享、资源转移、缓存快照和跨团队交接记录。', file:'分享转移.html', icon:'arrow-right-left', status:'业务原型', statusTone:'success', updated:'08-13', size:'单文件', tags:['环境分享','资源转移','缓存','跨团队'] },
       { id:'logs', group:'后台系统', title:'日志管理', description:'查询团队成员对环境、代理、账号、团队和费用执行的审计记录。', file:'日志管理.html', icon:'scroll-text', status:'业务原型', statusTone:'success', updated:'08-13', size:'单文件', tags:['操作日志','审计','筛选','导出'] },
       { id:'account-settings', group:'后台系统', title:'账号设置', description:'维护团队、个人资料、手机邮箱、密码、第三方绑定和登录设备。', file:'账号设置.html', icon:'key-round', status:'业务原型', statusTone:'success', updated:'08-13', size:'单文件', tags:['个人资料','安全设置','设备','团队切换'] },
-      { id:'billing-coin', group:'后台系统', title:'云币充值', description:'查看云币余额与充值流水，支持支付方式、交易状态和创建时间范围筛选。', file:'费用管理-云币充值.html', icon:'wallet-cards', status:'业务原型', statusTone:'success', updated:'08-26', size:'单文件', tags:['云币','充值','流水','筛选'] },
+      { id:'promotion-reward', group:'后台系统', title:'推广奖励', description:'查看推广返佣、邀请链接和提现记录。', file:'推广奖励.html', icon:'badge-percent', status:'业务原型', statusTone:'success', updated:'08-28', size:'单文件', tags:['推广返佣','邀请码','提现','邀请记录'] },
+      { id:'access-policy', group:'后台系统', title:'访问策略', description:'管理成员在指定账号环境中的网页访问范围，支持黑名单、白名单、网页规则与策略生效。', file:'访问策略.html', icon:'shield-check', status:'业务原型', statusTone:'success', updated:'08-27', size:'单文件', tags:['安全策略','黑名单','白名单','网页规则'] },
+      { id:'access-logs', group:'后台系统', title:'访问日志', description:'查询成员访问网页时的结果与判定原因，支持按网址、成员、账号和结果筛选。', file:'访问日志.html', icon:'scroll-text', status:'业务原型', statusTone:'success', updated:'08-27', size:'单文件', tags:['安全策略','访问日志','筛选','审计'] },
+      { id:'store-coin', group:'后台系统', title:'云币充值', description:'在商城中查看云币余额、交易流水并完成在线充值与 CDKEY 兑换。', file:'商城-云币充值.html', icon:'wallet-cards', status:'业务原型', statusTone:'success', updated:'08-28', size:'单文件', tags:['商城','云币','充值','流水'] },
       { id:'billing-orders', group:'后台系统', title:'订单管理', description:'统一查看代理、套餐、充值及云浏览器订单，支持订单类型、状态、创建时间和创建人筛选。', file:'费用管理-订单管理.html', icon:'receipt-text', status:'业务原型', statusTone:'success', updated:'08-26', size:'单文件', tags:['订单','状态','创建时间','分页'] },
       { id:'billing-invoice', group:'后台系统', title:'开票管理', description:'管理可开票订单、开票记录和常用抬头，支持申请、详情查看、下载与抬头维护。', file:'费用管理-开票管理.html', icon:'file-text', status:'业务原型', statusTone:'success', updated:'08-26', size:'单文件', tags:['开票订单','开票记录','常用抬头','申请'] },
       { id:'billing-coupons', group:'后台系统', title:'优惠券', description:'查看团队优惠券使用范围、有效期和状态，支持关键词搜索、筛选及新增优惠券。', file:'费用管理-优惠券.html', icon:'ticket-percent', status:'业务原型', statusTone:'success', updated:'08-26', size:'单文件', tags:['优惠券','有效期','状态','筛选'] },
@@ -175,12 +178,14 @@
       'RPA.html':'rpa',
       '插件管理.html':'plugins',
       '团队管理.html':'team-management',
-      '成员管理.html':'members',
       '账号管理.html':'account-management',
       '分享转移.html':'transfer',
       '日志管理.html':'logs',
       '账号设置.html':'account-settings',
-      '费用管理-云币充值.html':'billing-coin',
+      '推广奖励.html':'promotion-reward',
+      '访问策略.html':'access-policy',
+      '访问日志.html':'access-logs',
+      '商城-云币充值.html':'store-coin',
       '费用管理-订单管理.html':'billing-orders',
       '费用管理-开票管理.html':'billing-invoice',
       '费用管理-优惠券.html':'billing-coupons',
@@ -201,19 +206,24 @@
       '环境管理':'environment',
       '代理管理':'proxy',
       '商城':'store',
-      'billing':'billing-coin',
-      '费用管理':'billing-coin',
-      '费管理':'billing-coin',
-      '云币充值':'billing-coin',
+      'billing':'billing-orders',
+      '费用管理':'billing-orders',
+      '费管理':'billing-orders',
+      '云币充值':'store-coin',
+      'billing-coin':'store-coin',
       '订单管理':'billing-orders',
       '开票管理':'billing-invoice',
       '优惠券':'billing-coupons',
       '团队管理':'team-management',
-      '成员管理':'members',
       '账号管理':'account-management',
       '分享转移':'transfer',
       '日志管理':'logs',
       '账号设置':'account-settings',
+      '推广奖励':'promotion-reward',
+      '安全策略':'access-policy',
+      '访问策略':'access-policy',
+      '访问策略管理':'access-policy',
+      '访问日志':'access-logs',
       '插件管理':'plugins',
       'API':'api',
       'RPA':'rpa',

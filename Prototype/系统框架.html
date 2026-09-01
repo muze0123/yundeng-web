@@ -5,12 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" href="data:,">
   <title>云登 · 系统框架</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://unpkg.com/lucide@1.34.0/dist/umd/lucide.min.js"></script>
   <link rel="stylesheet" href="公共导航.css?v=20260825a">
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
   <script>
-    tailwind.config = { theme: { extend: { colors: {
+    window.lucide = window.lucide || { createIcons() {} };
+    if (window.tailwind) tailwind.config = { theme: { extend: { colors: {
       primary:{DEFAULT:'#0066FF',hover:'#0052CC',active:'#0047B3',bg:'#E6F0FF'},
       ink:{title:'#1A1D24',body:'#3A3F4A',sub:'#6E7685',muted:'#9DA2AC'},
       line:{DEFAULT:'#DFE1E5',light:'#E8EAED',lighter:'#F0F1F3'},
@@ -75,7 +76,7 @@
     .status-dot { width:8px; height:8px; border-radius:50%; display:inline-block; }
     @media (max-width: 767px) { .sidebar { position:fixed; z-index:50; height:100vh; box-shadow:0 6px 24px rgba(0,0,0,.12); } .sidebar.compact { width:0; overflow:hidden; } .module-global-drawer-panel { width:100%; } .module-global-drawer-info { grid-template-columns:1fr; } }
   </style>
-  <script src="公共导航.js?v=20260825a"></script>
+  <script src="公共导航.js?v=20260828i"></script>
 </head>
 <body class="bg-page text-[13px]">
   <div id="yundeng-app-frame">
@@ -185,10 +186,13 @@
       { id:'environment', label:'环境管理', icon:'monitor-cog', description:'管理浏览器环境、标签与运行状态', state:'ready', href:'环境管理.html' },
       { id:'proxy', label:'代理管理', icon:'network', description:'管理代理资源与绑定关系', state:'ready', href:'代理管理.html' },
       { id:'store', label:'商城', icon:'shopping-bag', description:'购买云登代理资源', state:'loading', href:'商城-代理.html' },
-      { id:'billing', label:'费用管理', icon:'receipt-text', description:'查看套餐、账单与费用明细', state:'ready', href:'费用管理-云币充值.html' },
+      { id:'billing', label:'费用管理', icon:'wallet-cards', description:'查看套餐、账单与费用明细', state:'ready', expanded:true, group:true, children:[
+        { id:'billing-orders', label:'订单管理', icon:'receipt-text', description:'查看订单与订单状态', state:'ready', href:'系统框架.html?page=billing-orders' },
+        { id:'billing-invoice', label:'开票管理', icon:'file-text', description:'管理开票订单、记录与常用抬头', state:'ready', href:'系统框架.html?page=billing-invoice' },
+        { id:'billing-coupons', label:'优惠券', icon:'ticket-percent', description:'查看优惠券使用范围与状态', state:'ready', href:'系统框架.html?page=billing-coupons' }
+      ]},
       { id:'team', label:'团队', icon:'users-round', group:true, expanded:true, children:[
         { id:'team-management', label:'团队管理', icon:'building-2', description:'管理团队基本信息与权限边界', state:'ready', href:'团队管理.html' },
-        { id:'members', label:'成员管理', icon:'user-round-cog', description:'邀请成员、分配角色与查看成员状态', state:'ready', href:'成员管理.html' },
         { id:'account-management', label:'账号管理', icon:'contact', description:'管理业务账号与环境绑定关系', state:'ready', href:'账号管理.html' },
         { id:'transfer', label:'分享转移', icon:'arrow-right-left', description:'管理环境分享与资源转移记录', state:'empty', href:'分享转移.html' },
         { id:'logs', label:'日志管理', icon:'scroll-text', description:'查看团队操作与安全审计日志', state:'ready', href:'日志管理.html' },
@@ -206,7 +210,7 @@
       { id:'N-20260806-03', title:'浏览器环境已同步', desc:'环境 ENV-20260806-092 已完成云端同步。', time:'昨天 18:20', unread:true },
       { id:'N-20260806-01', title:'套餐到期提醒', desc:'专业版套餐将在 14 天后到期。', time:'昨天 10:15', unread:false }
     ];
-    const requestedRoute = decodeURIComponent(location.hash.slice(1));
+    const requestedRoute = new URLSearchParams(location.search).get('page') || decodeURIComponent(location.hash.slice(1));
     const requestedLeaf = navItems.flatMap(item=>item.children||[item]).find(item=>item.id===requestedRoute||item.label===requestedRoute);
     let currentRoute = requestedLeaf?.id || 'environment', sidebarCompact = false, createReturnFocus = null, assistantReturnFocus = null;
 

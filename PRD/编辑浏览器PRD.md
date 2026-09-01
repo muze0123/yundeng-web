@@ -18,7 +18,7 @@
 2. 项目内 `design.md` 视觉规范；
 3. 项目内 `claude.md` 原型工程规范；
 4. 项目内《系统框架PRD.md》；
-5. 《Vibe Coding产品PRD模版》以及《角色管理PRD》《成员管理PRD》的页面布局与模块布局写法。
+5. 《Vibe Coding产品PRD模版》以及《角色管理PRD》的页面布局与模块布局写法。
 
 出现冲突时，优先级为：实测业务行为 > 本 PRD 的明确验收规则 > `design.md` > `claude.md` > 推测性建议。
 

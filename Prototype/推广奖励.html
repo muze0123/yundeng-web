@@ -1,0 +1,386 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>推广奖励 - 云登</title>
+  <script>
+    if (window.top === window.self) {
+      location.replace('../index.html?page=promotion-reward');
+    }
+  </script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = { theme: { extend: {
+      colors: { primary:{DEFAULT:'#0066FF',hover:'#0052CC',active:'#0047B3',bg:'#E6F0FF'}, ink:{title:'#1A1D24',body:'#3A3F4A',sub:'#6E7685',muted:'#9DA2AC'}, line:{DEFAULT:'#DFE1E5',light:'#E8EAED',lighter:'#F0F1F3'}, page:'#F7F8FA',card:'#FFFFFF',hover:'#F3F4F6',price:'#FE5416',success:{DEFAULT:'#0FC060',bg:'#E7F9F0'},warning:{DEFAULT:'#E7772D',bg:'#FDF2E9'},danger:{DEFAULT:'#D9001B',bg:'#FFE8EB'},info:{DEFAULT:'#0091D5',bg:'#E4F4FB'} },
+      borderRadius:{DEFAULT:'4px',md:'6px',lg:'8px'}, fontFamily:{sans:['-apple-system','BlinkMacSystemFont','PingFang SC','Microsoft YaHei','Helvetica Neue','Arial','sans-serif'],mono:['JetBrains Mono','monospace']}
+    } } };
+  </script>
+  <link rel="stylesheet" href="../src/styles/global.css?v=20260821a">
+  <link rel="stylesheet" href="公共导航.css?v=20260825a">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="公共导航.js?v=20260828i"></script>
+  <style>
+    :root{--primary:#0066FF;--primary-hover:#0052CC;--primary-bg:#E6F0FF;--title:#1A1D24;--body:#3A3F4A;--sub:#6E7685;--muted:#9DA2AC;--line:#DFE1E5;--line-light:#E8EAED;--line-lighter:#F0F1F3;--page:#F7F8FA;--card:#fff;--hover:#F3F4F6;--price:#FE5416;--success:#0FC060;--success-bg:#E7F9F0;--warning:#E7772D;--warning-bg:#FDF2E9;--danger:#D9001B;--danger-bg:#FFE8EB;--info:#0091D5;--info-bg:#E4F4FB}
+    *{box-sizing:border-box} html,body{margin:0;min-height:100%;background:var(--page);color:var(--body);font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei','Helvetica Neue',Arial,sans-serif;-webkit-font-smoothing:antialiased} button,input{font:inherit} button{cursor:pointer}.mono{font-family:'JetBrains Mono',monospace}
+    .page{max-width:1544px;margin:0 auto;padding:8px;min-height:100vh}.stats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px}.stat-card{height:160px;border-radius:8px;color:#fff;position:relative;overflow:hidden;padding:20px;display:flex;flex-direction:column;justify-content:space-between}.stat-card:after{content:'';position:absolute;right:14px;bottom:-18px;width:150px;height:150px;border:12px solid rgba(0,46,180,.12);border-radius:50%;opacity:.75}.stat-card:nth-child(1){background:linear-gradient(112deg,#2e5bff,#4b70ea)}.stat-card:nth-child(2){background:linear-gradient(112deg,#7040fa,#8a65f0)}.stat-card:nth-child(3){background:linear-gradient(112deg,#35cfae,#42edc4)}.stat-card:nth-child(4),.stat-card:nth-child(5){background:linear-gradient(112deg,#4c82ed,#6b9eec)}.stat-card:first-child,.stat-card-frozen{overflow:visible;z-index:4}.stat-label{font-size:16px;font-weight:600;position:relative;z-index:1}.stat-label-with-help{display:flex;align-items:center;gap:6px}.stat-help{position:relative;width:18px;height:18px;padding:0;border:0;background:transparent;color:inherit;display:inline-flex;align-items:center;justify-content:center}.stat-help i,.stat-help svg{width:16px;height:16px}.stat-tooltip{position:absolute;left:0;top:calc(100% + 8px);z-index:10;width:300px;padding:10px 12px;border-radius:4px;background:var(--title);color:#fff;font-size:12px;line-height:1.7;font-weight:400;text-align:left;box-shadow:0 2px 8px rgba(0,0,0,.12);opacity:0;visibility:hidden;transform:translateY(-4px);transition:opacity .15s ease,transform .15s ease,visibility .15s ease;pointer-events:none}.stat-help:hover .stat-tooltip,.stat-help:focus-visible .stat-tooltip{opacity:1;visibility:visible;transform:translateY(0)}.stat-help:focus-visible{outline:2px solid #fff;outline-offset:2px;border-radius:50%}.stat-bottom{display:flex;align-items:end;justify-content:space-between;position:relative;z-index:1}.stat-number{font-family:'JetBrains Mono',monospace;font-size:48px;line-height:1;font-weight:400;letter-spacing:-.03em}.stat-unit{font-size:16px;font-weight:600;margin-left:5px;margin-bottom:6px}.stat-btn{height:38px;padding:0 18px;color:inherit;background:rgba(255,255,255,.94);border:1px solid rgba(255,255,255,.9);border-radius:8px;font-size:14px;font-weight:600;transition:.2s}.stat-card:first-child .stat-btn{color:var(--primary)}.stat-card:not(:first-child) .stat-btn{background:transparent}.stat-btn:hover{transform:translateY(-1px);background:#fff;color:var(--primary);box-shadow:0 2px 8px rgba(0,0,0,.12)}
+    .main-panel{margin-top:18px;background:var(--card);border-radius:8px;padding:24px 30px 34px}.hero{display:grid;grid-template-columns:minmax(390px,.9fr) minmax(300px,.58fr) minmax(440px,.85fr);gap:22px;align-items:center;min-height:200px}.hero-copy{position:relative;padding:6px 0 2px}.hero-copy:before{content:'';position:absolute;inset:-24px auto -28px -30px;width:78%;background:radial-gradient(ellipse at left center,rgba(230,240,255,.9),transparent 70%);z-index:0}.hero-copy>*{position:relative;z-index:1}.hero-title{margin:0;color:var(--price);font-size:31px;line-height:1.35;font-weight:700}.hero-subtitle{margin:10px 0 18px;color:var(--title);font-size:28px;font-weight:600}.hero-desc{margin:0;color:var(--sub);font-size:14px}.hero-art{height:180px;position:relative;overflow:hidden;background:linear-gradient(145deg,#fff 10%,#edf7ff 95%);clip-path:polygon(0 100%,30% 22%,100% 0,100% 100%)}.art-wallet{position:absolute;left:45%;bottom:26px;width:90px;height:56px;background:#e95c2d;border-radius:4px 4px 12px 12px;box-shadow:0 12px 0 #bc492f}.art-wallet:after{content:'¥';position:absolute;right:15px;top:13px;width:21px;height:21px;border:2px solid #fff;border-radius:50%;color:#fff;text-align:center;font-weight:700}.person{position:absolute;width:25px;height:64px;background:#2454ac;border-radius:14px 14px 6px 6px;bottom:34px}.person:before{content:'';position:absolute;left:3px;top:-18px;width:20px;height:20px;border-radius:50%;background:#f5b27c}.person.a{left:31%;transform:rotate(15deg);background:#f08c3c}.person.b{left:68%;transform:rotate(-8deg);background:#4e83d8}.coin{position:absolute;width:24px;height:24px;border-radius:50%;background:#f5a72f;color:#c47918;font-weight:700;text-align:center;line-height:24px;box-shadow:0 2px 4px rgba(0,0,0,.12)}.c1{left:43%;top:20px}.c2{left:58%;top:48px}.c3{left:76%;top:14px}.form-area{padding:0 2px}.field{display:grid;grid-template-columns:112px minmax(0,1fr) 92px;gap:10px;align-items:center;margin:0 0 18px}.field label{font-size:16px;color:var(--body)}.field input{width:100%;height:40px;border:1px solid var(--primary);border-radius:8px;padding:0 12px;color:var(--body);outline:none;box-shadow:0 0 0 1px rgba(0,102,255,.04)}.field input:focus{box-shadow:0 0 0 3px rgba(0,102,255,.14)}.copy-btn{height:40px;background:var(--primary);border:0;border-radius:8px;color:#fff;font-size:14px;font-weight:600;white-space:nowrap}.copy-btn:hover{background:var(--primary-hover)}
+    .detail-grid{display:grid;grid-template-columns:1.1fr 1fr;gap:54px;margin-top:14px}.section-title{display:flex;align-items:center;gap:8px;margin:0 0 10px;color:var(--title);font-size:20px;font-weight:600}.section-title i{color:var(--primary);width:20px}.section-desc{font-size:14px;line-height:1.8;margin:0 0 18px}.industry-area{position:relative;min-height:295px;padding:8px 0}.industry-list{position:relative;display:grid;grid-template-columns:repeat(3,1fr);gap:48px 42px;max-width:680px;margin:0 auto;padding-top:12px}.industry-list:before,.industry-list:after{content:'';position:absolute;inset:24px 150px 20px;border:1px solid #d9e7ff;border-radius:50%;transform:rotate(45deg);pointer-events:none}.industry-list:after{inset:45px 172px 40px;transform:rotate(-45deg)}.industry-pill{position:relative;z-index:1;height:62px;background:#fff;border-radius:32px;display:flex;align-items:center;justify-content:center;gap:13px;box-shadow:0 3px 14px rgba(40,94,190,.12);font-size:17px;color:var(--body);white-space:nowrap}.industry-pill i{width:25px;color:var(--primary)}.industry-pill:nth-child(2) i,.industry-pill:nth-child(5) i{color:#54ca7b}.industry-pill:nth-child(3) i,.industry-pill:nth-child(6) i{color:#ff922f}.industry-center{position:absolute;z-index:2;left:50%;top:50%;transform:translate(-50%,-50%);width:78px;height:78px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#fff 0 19%,#b9d8fb 20% 35%,#7ca8e8 36% 52%,#b9d8fb 53% 70%,#d9ecff 71%);box-shadow:0 0 0 10px rgba(230,240,255,.72)}
+    .commission-status-section{margin-top:20px;padding:20px 0;border-top:1px solid var(--line-lighter);border-bottom:1px solid var(--line-lighter)}.commission-status-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:16px}.commission-status-heading .section-title{margin-bottom:4px}.commission-status-desc{margin:0;color:var(--sub);font-size:13px;line-height:1.6}.status-rule-button{height:32px;padding:0 12px;border:1px solid var(--line);border-radius:4px;background:#fff;color:var(--body);display:inline-flex;align-items:center;gap:6px;white-space:nowrap}.status-rule-button i{width:16px;color:var(--primary)}.status-rule-button:hover{background:var(--hover);border-color:var(--primary);color:var(--primary)}.commission-status-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.commission-status-card{min-height:176px;padding:16px;border:1px solid var(--line-lighter);border-radius:8px;background:var(--page);display:flex;flex-direction:column}.commission-status-card-head{display:flex;align-items:center;justify-content:space-between;gap:10px}.commission-status-name{display:flex;align-items:center;gap:8px;color:var(--title);font-size:14px;font-weight:600}.commission-status-name i{width:18px;height:18px}.is-frozen .commission-status-name i{color:var(--info)}.is-available .commission-status-name i{color:var(--success)}.is-settled .commission-status-name i{color:var(--sub)}.status-badge{height:24px;padding:0 8px;border:1px solid;border-radius:4px;display:inline-flex;align-items:center;font-size:11px;font-weight:500;white-space:nowrap}.status-badge-info{color:var(--info);border-color:var(--info);background:var(--info-bg)}.status-badge-success{color:var(--success);border-color:var(--success);background:var(--success-bg)}.status-badge-muted{color:var(--sub);border-color:var(--line);background:#fff}.commission-status-value{display:flex;align-items:baseline;gap:5px;margin-top:16px;color:var(--title)}.commission-status-value strong{font-size:28px;line-height:1;font-weight:600}.commission-status-value span{font-size:13px}.commission-status-card>p{margin:12px 0 0;color:var(--sub);font-size:12px;line-height:1.7}.commission-status-meta{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:auto;padding-top:12px;color:var(--sub);font-size:11px}.commission-status-meta b{color:var(--body);font-weight:500}.commission-status-actions{display:flex;gap:8px;margin-top:auto;padding-top:12px}.status-action{height:32px;padding:0 10px;border:1px solid var(--line);border-radius:4px;background:#fff;color:var(--body);font-size:12px;white-space:nowrap}.status-action:hover{background:var(--hover)}.status-action-primary{border-color:var(--primary);background:var(--primary);color:#fff}.status-action-primary:hover{background:var(--primary-hover)}.commission-rule-strip{display:flex;align-items:center;gap:20px;flex-wrap:wrap;margin-top:12px;padding:12px 16px;border-radius:8px;background:var(--primary-bg);color:var(--body);font-size:12px}.commission-rule-strip span{display:flex;align-items:center;gap:6px}.commission-rule-strip i{width:15px;height:15px;color:var(--primary)}.commission-rule-strip b{font-weight:600;color:var(--primary)}.commission-rule-strip .status-rule-button{margin-left:auto}
+    .commission-status-section{margin-top:20px;padding:20px 0;border-top:1px solid var(--line-lighter);border-bottom:1px solid var(--line-lighter)}.commission-status-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:16px}.commission-status-heading .section-title{margin-bottom:4px}.commission-status-desc{margin:0;color:var(--sub);font-size:13px;line-height:1.6}.status-rule-button{height:32px;padding:0 12px;border:1px solid var(--line);border-radius:4px;background:#fff;color:var(--body);display:inline-flex;align-items:center;gap:6px;white-space:nowrap}.status-rule-button i{width:16px;color:var(--primary)}.status-rule-button:hover{background:var(--hover);border-color:var(--primary);color:var(--primary)}.commission-status-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.commission-status-card{min-height:176px;padding:16px;border:1px solid var(--line-lighter);border-radius:8px;background:var(--page);display:flex;flex-direction:column}.commission-status-card-head{display:flex;align-items:center;justify-content:space-between;gap:10px}.commission-status-name{display:flex;align-items:center;gap:8px;color:var(--title);font-size:14px;font-weight:600}.commission-status-name i{width:18px;height:18px}.is-frozen .commission-status-name i{color:var(--info)}.is-available .commission-status-name i{color:var(--success)}.is-settled .commission-status-name i{color:var(--sub)}.status-badge{height:24px;padding:0 8px;border:1px solid;border-radius:4px;display:inline-flex;align-items:center;font-size:11px;font-weight:500;white-space:nowrap}.status-badge-info{color:var(--info);border-color:var(--info);background:var(--info-bg)}.status-badge-success{color:var(--success);border-color:var(--success);background:var(--success-bg)}.status-badge-muted{color:var(--sub);border-color:var(--line);background:#fff}.commission-status-value{display:flex;align-items:baseline;gap:5px;margin-top:16px;color:var(--title)}.commission-status-value strong{font-size:28px;line-height:1;font-weight:600}.commission-status-value span{font-size:13px}.commission-status-card>p{margin:12px 0 0;color:var(--sub);font-size:12px;line-height:1.7}.commission-status-meta{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:auto;padding-top:12px;color:var(--sub);font-size:11px}.commission-status-meta b{color:var(--body);font-weight:500}.commission-status-actions{display:flex;gap:8px;margin-top:auto;padding-top:12px}.status-action{height:32px;padding:0 10px;border:1px solid var(--line);border-radius:4px;background:#fff;color:var(--body);font-size:12px;white-space:nowrap}.status-action:hover{background:var(--hover)}.status-action-primary{border-color:var(--primary);background:var(--primary);color:#fff}.status-action-primary:hover{background:var(--primary-hover)}.commission-rule-strip{display:flex;align-items:center;gap:20px;flex-wrap:wrap;margin-top:12px;padding:12px 16px;border-radius:8px;background:var(--primary-bg);color:var(--body);font-size:12px}.commission-rule-strip span{display:flex;align-items:center;gap:6px}.commission-rule-strip i{width:15px;height:15px;color:var(--primary)}.commission-rule-strip b{font-weight:600;color:var(--primary)}
+    .faq-list{display:grid;gap:8px}.faq-item{border-bottom:1px solid var(--line);padding:4px 0 10px}.faq-q{display:flex;gap:8px;align-items:center;color:var(--body);font-size:15px;line-height:1.6;cursor:pointer}.faq-q i{width:16px;color:var(--sub);transition:.2s}.faq-item.open .faq-q i{transform:rotate(90deg);color:var(--primary)}.faq-a{display:none;color:var(--sub);font-size:14px;line-height:1.8;padding:6px 0 0 24px}.faq-item.open .faq-a{display:block}
+    .toast{position:fixed;top:24px;left:50%;transform:translateX(-50%) translateY(-12px);background:var(--title);color:#fff;padding:10px 16px;border-radius:4px;font-size:13px;opacity:0;pointer-events:none;transition:.2s;z-index:30}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}.modal{position:fixed;inset:0;background:rgba(0,0,0,.3);display:none;align-items:center;justify-content:center;z-index:1200;padding:16px}.modal.show{display:flex}.modal-card{width:min(760px,92vw);max-height:calc(100vh - 32px);background:#fff;border-radius:8px;box-shadow:0 6px 24px rgba(0,0,0,.12);display:flex;flex-direction:column;position:relative;overflow:hidden;animation:ds-modal-in .15s ease}.modal-head{height:56px;flex:0 0 56px;display:flex;justify-content:space-between;align-items:center;padding:0 24px;margin:0;border-bottom:1px solid var(--line-light)}.modal-head h2{margin:0;font-size:16px;line-height:24px;font-weight:600;color:var(--title)}.icon-btn{width:32px;height:32px;border:0;background:transparent;color:var(--muted);border-radius:4px;display:flex;align-items:center;justify-content:center}.icon-btn i,.icon-btn svg{width:20px;height:20px}.icon-btn:hover{background:var(--hover);color:var(--body)}.icon-btn:focus-visible,.btn-primary:focus-visible,.btn-secondary:focus-visible,.method-option:has(input:focus-visible){outline:2px solid var(--primary);outline-offset:2px}.modal-text{color:var(--sub);font-size:14px;line-height:1.8}.modal-actions{display:flex;justify-content:flex-end;gap:12px;margin-top:20px}.btn-secondary,.btn-primary{height:32px;padding:0 16px;border-radius:4px;font-size:13px}.btn-secondary{background:#fff;border:1px solid var(--line);color:var(--body)}.btn-secondary:hover{background:var(--hover)}.btn-primary{background:var(--primary);border:1px solid var(--primary);color:#fff}.btn-primary:hover{background:var(--primary-hover)}@keyframes ds-modal-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+    .withdraw-modal-card{width:min(512px,100%);padding:0}.withdraw-modal-card .modal-head{padding:0 24px;margin:0}.withdraw-form{display:grid;gap:16px;padding:32px 24px 0}.withdraw-row{display:grid;grid-template-columns:84px minmax(0,1fr);gap:10px;align-items:center}.withdraw-label{color:var(--body);font-size:14px;white-space:nowrap}.withdraw-control{min-width:0;display:flex;align-items:center;gap:8px}.withdraw-input,.withdraw-select{width:100%;height:32px;border:1px solid var(--line);border-radius:4px;background:#fff;color:var(--body);padding:0 10px;outline:none}.withdraw-input::placeholder{color:var(--muted)}.withdraw-input:focus,.withdraw-select:focus{border-color:var(--primary);box-shadow:0 0 0 2px var(--primary-bg)}.withdraw-input.invalid,.withdraw-select.invalid{border-color:var(--danger);box-shadow:0 0 0 2px var(--danger-bg)}.withdraw-hint{font-size:13px;color:var(--muted);white-space:nowrap}.method-options{display:flex;gap:12px;flex-wrap:wrap}.method-option{height:48px;min-width:118px;padding:0 10px;display:flex;align-items:center;gap:7px;border:1px solid var(--line-lighter);border-radius:8px;background:var(--page);color:var(--body);cursor:pointer;position:relative}.method-option:hover{border-color:var(--primary)}.method-option.selected{border-color:var(--primary);background:#fff}.method-input{position:absolute;opacity:0;pointer-events:none}.method-check{width:16px;height:16px;border:1px solid var(--line);border-radius:2px;background:#fff;color:#fff;display:flex;align-items:center;justify-content:center;flex:none}.method-check svg{width:12px;height:12px;stroke-width:3}.method-option.selected .method-check{border-color:var(--primary);background:var(--primary)}.method-brand{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;line-height:1}.method-brand.alipay{background:var(--primary);color:#fff}.method-brand.coin{background:var(--warning);color:#fff;border-radius:50%;font-size:14px}.method-copy{display:flex;flex-direction:column;line-height:1.1;white-space:nowrap}.method-copy strong{font-size:14px;font-weight:600}.method-copy small{font-size:10px;color:var(--sub);margin-top:3px}.withdraw-modal-card .modal-actions{padding:16px 0;margin:8px -24px 0;border-top:1px solid var(--line-light)}.withdraw-modal-card .modal-actions button:first-child{margin-left:auto}.withdraw-modal-card .btn-secondary,.withdraw-modal-card .btn-primary{height:32px;min-width:80px;font-size:14px}.cert-prompt-card{width:min(512px,100%);min-height:344px;padding:0;display:flex;flex-direction:column}.cert-prompt-body{display:flex;flex:1;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:32px 24px 24px}.cert-icon{width:72px;height:72px;border-radius:8px;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center}.cert-icon i{width:44px;height:44px}.cert-prompt-title{margin:20px 0 10px;color:var(--title);font-size:22px;font-weight:500}.cert-prompt-copy{margin:0;color:var(--body);font-size:14px}.cert-prompt-body .btn-primary{height:48px;min-width:140px;margin-top:38px;font-size:15px}.real-name-modal-card{width:min(666px,100%);min-height:450px;padding:0}.real-name-modal-card .modal-head{margin:0}.real-name-modal-body{padding:32px 24px 24px;overflow:auto}.real-name-tabs{width:248px;height:34px;margin:0 auto 30px;display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);border-radius:10px;overflow:hidden}.real-name-tab{border:0;background:#fff;color:var(--sub);font-size:14px}.real-name-tab.active{background:var(--primary);color:#fff;font-weight:600;box-shadow:0 2px 8px rgba(0,0,0,.06)}.real-name-steps{display:grid;grid-template-columns:1fr 1fr 1fr;margin:0 38px 38px;position:relative}.real-name-steps:before{content:'';position:absolute;left:14%;right:14%;top:14px;height:1px;background:var(--line)}.real-name-step{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:14px;color:var(--sub);font-size:14px}.real-name-step b{width:28px;height:28px;border-radius:50%;background:var(--page);display:flex;align-items:center;justify-content:center;font-weight:500}.real-name-step.active{color:var(--primary)}.real-name-step.active b{background:var(--primary);color:#fff}.real-name-form{display:grid;gap:16px;max-width:460px;margin:0 auto}.real-name-row{display:grid;grid-template-columns:86px minmax(0,1fr);gap:10px;align-items:center}.required-label:before{content:'*';color:var(--danger);margin-right:4px}.real-name-modal-card .modal-actions{margin:48px -24px -24px;padding:16px 24px 0;border-top:1px solid var(--line-light)}.real-name-modal-card .btn-secondary,.real-name-modal-card .btn-primary{height:32px;min-width:90px}
+    .record-modal-card{width:min(960px,100%);height:min(560px,calc(100vh - 32px));padding:0}.record-modal-card .modal-head{padding:0 24px;margin:0}.record-filters{display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:24px 16px 0}.record-filter{display:flex;align-items:center;gap:8px;min-width:0}.record-filter label{font-size:13px;white-space:nowrap;color:var(--body)}.record-filter input,.record-filter select{height:32px;border:1px solid var(--line);border-radius:4px;background:#fff;color:var(--body);padding:0 10px;outline:none}.record-filter input:focus,.record-filter select:focus{border-color:var(--primary);box-shadow:0 0 0 2px var(--primary-bg)}.record-filter .search-input{width:104px}.record-filter select{min-width:98px}.date-range{display:flex;align-items:center;gap:6px}.date-range input{width:126px}.date-range i{width:14px;color:var(--muted)}.record-filter-actions{display:flex;gap:8px;margin-left:auto}.record-filter-actions .btn-primary,.record-filter-actions .btn-secondary{height:32px;min-width:104px}.record-table-wrap{margin:14px 16px 0;flex:1;min-height:0;overflow:auto}.record-table{width:100%;min-width:860px;border-collapse:collapse;font-size:13px}.record-table th{height:40px;padding:0 12px;background:var(--line-lighter);color:var(--sub);font-size:12px;font-weight:600;text-align:left;white-space:nowrap;border-bottom:1px solid var(--line)}.record-table td{height:44px;padding:9px 12px;color:var(--body);border-bottom:1px solid var(--line-lighter);white-space:nowrap}.record-empty{height:260px!important;text-align:center!important;color:var(--muted)!important;border-bottom:0!important}.record-footer{min-height:64px;margin:0 16px;padding-top:14px;border-top:1px solid var(--line-light);display:flex;align-items:center;justify-content:flex-end;gap:14px;color:var(--sub);font-size:12px}.record-footer select,.record-page-input{height:32px;border:1px solid var(--line);border-radius:4px;background:#fff;padding:0 8px;color:var(--body)}.record-pagination{display:flex;align-items:center;gap:8px}.record-page-button{width:28px;height:28px;border:0;background:transparent;border-radius:4px;color:var(--muted)}.record-page-button:disabled{cursor:not-allowed;opacity:.5}.record-page-current{font-family:'JetBrains Mono',monospace;color:var(--body)}.record-page-input{width:52px;text-align:center}.status-success{color:var(--success)}.status-warning{color:var(--warning)}.status-danger{color:var(--danger)}.info-modal-card{width:min(600px,92vw);height:min(250px,calc(100vh - 32px));padding:0}.info-modal-card .modal-text{padding:32px 24px 0}.info-modal-card .modal-actions{margin:24px 24px 0;padding-top:16px;border-top:1px solid var(--line-light)}
+    .record-modal-card{width:min(960px,100%);height:min(560px,calc(100vh - 32px));padding:0}.record-modal-card .modal-head{padding:0 24px;margin:0}.record-filters{display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:24px 16px 0}.record-filter{display:flex;align-items:center;gap:8px;min-width:0}.record-filter label{font-size:13px;white-space:nowrap;color:var(--body)}.record-filter input,.record-filter select{height:32px;border:1px solid var(--line);border-radius:4px;background:#fff;color:var(--body);padding:0 10px;outline:none}.record-filter input:focus,.record-filter select:focus{border-color:var(--primary);box-shadow:0 0 0 2px var(--primary-bg)}.record-filter .search-input{width:92px}.record-filter select{min-width:98px}.date-range{display:flex;align-items:center;gap:6px}.date-range input{width:104px}.date-range i{width:14px;color:var(--muted)}.record-filter-actions{display:flex;gap:8px;margin-left:auto}.record-filter-actions .btn-primary,.record-filter-actions .btn-secondary{height:32px;min-width:96px;display:inline-flex;align-items:center;justify-content:center;gap:6px}.record-filter-actions .btn-primary i,.record-filter-actions .btn-primary svg{width:16px;height:16px}.record-table-wrap{margin:14px 16px 0;flex:1;min-height:0;overflow:auto}.record-table{width:100%;min-width:860px;border-collapse:collapse;font-size:13px}.record-table th{height:40px;padding:0 12px;background:var(--line-lighter);color:var(--sub);font-size:12px;font-weight:600;text-align:left;white-space:nowrap;border-bottom:1px solid var(--line)}.record-table td{height:44px;padding:9px 12px;color:var(--body);border-bottom:1px solid var(--line-lighter);white-space:nowrap}.record-empty{height:260px!important;text-align:center!important;color:var(--muted)!important;border-bottom:0!important}.record-footer{min-height:64px;margin:0 16px;padding-top:14px;border-top:1px solid var(--line-light);display:flex;align-items:center;justify-content:flex-end;gap:14px;color:var(--sub);font-size:12px}.record-footer select,.record-page-input{height:32px;border:1px solid var(--line);border-radius:4px;background:#fff;padding:0 8px;color:var(--body)}.record-pagination{display:flex;align-items:center;gap:8px}.record-page-button{width:28px;height:28px;border:0;background:transparent;border-radius:4px;color:var(--muted)}.record-page-button:disabled{cursor:not-allowed;opacity:.5}.record-page-current{font-family:'JetBrains Mono',monospace;color:var(--body)}.record-page-input{width:52px;text-align:center}.status-success{color:var(--success)}.status-warning{color:var(--warning)}.status-danger{color:var(--danger)}.info-modal-card{width:min(600px,92vw);height:min(250px,calc(100vh - 32px));padding:0}.info-modal-card .modal-text{padding:32px 24px 0}.info-modal-card .modal-actions{margin:24px 24px 0;padding-top:16px;border-top:1px solid var(--line-light)}.rules-modal-card{height:min(430px,calc(100vh - 32px))}.rules-modal-body{padding:24px;overflow:auto;display:grid;gap:16px}.rules-modal-body section{padding-bottom:16px;border-bottom:1px solid var(--line-lighter)}.rules-modal-body section:last-child{padding-bottom:0;border-bottom:0}.rules-modal-body h3{margin:0 0 6px;color:var(--title);font-size:14px;font-weight:600}.rules-modal-body p{margin:0;color:var(--sub);font-size:13px;line-height:1.8}.rules-modal-body strong{color:var(--primary);font-weight:600}.rules-modal-actions{margin:0;padding:16px 24px;border-top:1px solid var(--line-light)}
+    @media(max-width:1180px){.hero{grid-template-columns:1fr 1fr}.form-area{grid-column:1 / -1}.field{grid-template-columns:112px minmax(0,1fr) 92px}}
+    @media(max-width:1180px){.stats{grid-template-columns:repeat(5,minmax(0,1fr))}.stat-card{padding:14px}.stat-label{font-size:14px}.stat-number{font-size:36px}.stat-unit{font-size:13px;margin-left:4px}.stat-btn{height:34px;padding:0 12px;font-size:13px}}
+    @media(max-width:980px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.hero,.detail-grid{grid-template-columns:1fr;gap:20px}.commission-status-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.form-area{grid-column:auto}.hero-art{height:150px}.detail-grid{gap:28px}.main-panel{padding:20px}.hero-copy:before{left:-20px}}
+    @media(max-width:760px){.withdraw-row,.real-name-row{grid-template-columns:1fr;gap:6px}.withdraw-hint{white-space:normal}.commission-status-heading{flex-direction:column}.commission-status-grid{grid-template-columns:1fr}.commission-rule-strip{display:grid;gap:10px}.commission-rule-strip .status-rule-button{margin-left:0;justify-self:start}.real-name-modal-card{min-height:0;max-height:calc(100vh - 32px)}.real-name-steps{margin-left:0;margin-right:0}.record-modal-card{height:calc(100vh - 32px)}.record-filters{align-items:stretch}.record-filter{width:100%;display:grid;grid-template-columns:82px minmax(0,1fr)}.record-filter:has(.date-range:only-child){grid-template-columns:1fr}.record-filter .search-input,.record-filter select{width:100%}.date-range{min-width:0}.date-range input{width:100%;min-width:0}.record-filter-actions{width:100%;margin-left:0;justify-content:flex-end}.record-filter-actions .btn-primary,.record-filter-actions .btn-secondary{min-width:80px}}
+    @media(max-width:560px){.page{padding:6px}.stats{gap:8px}.stat-card{height:128px;padding:12px}.stat-label{font-size:13px}.stat-number{font-size:34px}.stat-unit{font-size:12px;margin-bottom:3px}.stat-btn{height:30px;padding:0 9px;font-size:12px;border-radius:4px}.main-panel{margin-top:10px;padding:16px 14px 24px}.hero-title{font-size:25px}.hero-subtitle{font-size:23px;margin:8px 0 14px}.hero-art{height:128px}.field{grid-template-columns:1fr;gap:6px;margin-bottom:14px}.field label{font-size:14px}.copy-btn{width:100%}.industry-list{gap:18px 10px}.industry-pill{height:48px;font-size:13px;gap:5px}.industry-pill i{width:18px}.industry-list:before,.industry-list:after{inset:25px 50px 12px}.industry-list:after{inset:40px 70px 28px}.industry-center{width:54px;height:54px;box-shadow:0 0 0 6px rgba(230,240,255,.72)}.section-title{font-size:18px}.section-desc,.faq-a{font-size:13px}.method-options{display:grid;grid-template-columns:1fr 1fr}.method-option{min-width:0}.real-name-modal-card{padding:0}.real-name-tabs{width:100%}.cert-prompt-copy{line-height:1.7}.record-footer{justify-content:flex-start;flex-wrap:wrap}.record-pagination{margin-left:auto}}
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="stats" aria-label="推广奖励概览">
+      <article class="stat-card"><div class="stat-label stat-label-with-help"><span>可提现金额</span><button type="button" class="stat-help" aria-label="可提现金额说明"><i data-lucide="circle-help"></i><span class="stat-tooltip" role="tooltip">订单满14天且无退款后，冻结佣金自动转为可提现余额；单次提现金额需满100元。每月5日、20日统一结算，结算后预计7个工作日内到账。</span></button></div><div class="stat-bottom"><div><span id="availableAmount" class="stat-number">0</span><span class="stat-unit">元</span></div><button class="stat-btn" data-modal="withdraw">提现</button></div></article>
+      <article class="stat-card"><div class="stat-label">邀请用户数</div><div class="stat-bottom"><div><span id="invitedUserCount" class="stat-number">0</span><span class="stat-unit">位</span></div><button class="stat-btn" data-modal="invite">查看详情</button></div></article>
+      <article class="stat-card"><div class="stat-label">累计佣金</div><div class="stat-bottom"><div><span id="totalCommissionAmount" class="stat-number">0</span><span class="stat-unit">元</span></div><button class="stat-btn" data-modal="commission">查看记录</button></div></article>
+      <article class="stat-card stat-card-frozen"><div class="stat-label stat-label-with-help"><span>冻结佣金</span><button type="button" class="stat-help" aria-label="冻结佣金说明"><i data-lucide="circle-help"></i><span class="stat-tooltip" role="tooltip">订单付款成功后，佣金先进入冻结期；满14天且无退款后转为可提现余额。</span></button></div><div class="stat-bottom"><div><span id="frozenCommissionAmount" class="stat-number">0</span><span class="stat-unit">元</span></div><button class="stat-btn" data-modal="frozen">查看详情</button></div></article>
+      <article class="stat-card"><div class="stat-label">累计提现</div><div class="stat-bottom"><div><span id="withdrawnAmount" class="stat-number">0</span><span class="stat-unit">元</span></div><button class="stat-btn" data-modal="withdrawn">查看记录</button></div></article>
+    </section>
+    <section class="commission-rule-strip" aria-label="返佣规则摘要"><span><i data-lucide="shield-check"></i>单个被推荐人佣金上限 <b class="mono">2,500 元</b></span><span><i data-lucide="refresh-cw"></i>退款按比例核减，额度可恢复</span><span><i data-lucide="calculator"></i>佣金计算统一四舍五入</span><button type="button" class="status-rule-button" data-modal="commission-rules"><i data-lucide="circle-help"></i>查看返佣规则</button></section>
+    <section class="main-panel">
+      <div class="hero">
+        <div class="hero-copy"><h1 class="hero-title">15%佣金返现!</h1><h2 class="hero-subtitle">邀请好友，持续获得收益</h2><p class="hero-desc">分享专属推广链接或邀请码，好友完成首单后，订单满14天且无退款，返佣自动到账。</p></div>
+        <div class="hero-art" aria-hidden="true"><span class="coin c1">¥</span><span class="coin c2">¥</span><span class="coin c3">¥</span><span class="person a"></span><span class="person b"></span><span class="art-wallet"></span></div>
+        <div class="form-area">
+          <div class="field"><label for="promotion-link">您的推广链接</label><input id="promotion-link" value="https://www.yunlogin.com/?c=7niu" readonly><button class="copy-btn" data-copy="promotion-link">复制链接</button></div>
+          <div class="field"><label for="invite-code">您的邀请码</label><input id="invite-code" value="7niu" readonly><button class="copy-btn" data-copy="invite-code">复制邀请码</button></div>
+        </div>
+      </div>
+      <div class="detail-grid">
+        <section><h2 class="section-title"><i data-lucide="users-round"></i>各行各业均可成为推广者</h2><p class="section-desc">无论您是个人推广者，或您的公司正从事代理IP、电商培训、运营媒体论坛、软件工具、知识产权税务相关服务、跨境物流、跨境支付等业务，我们诚邀您成为推广合作者，创造丰厚持久的推广奖励</p><div class="industry-area"><div class="industry-list"><div class="industry-pill"><i data-lucide="truck"></i>跨境物流</div><div class="industry-pill"><i data-lucide="book-open"></i>知识产权</div><div class="industry-pill"><i data-lucide="ellipsis"></i>其他行业</div><div class="industry-pill"><i data-lucide="globe-2"></i>跨境电商</div><div class="industry-pill"><i data-lucide="graduation-cap"></i>教育培训</div><div class="industry-pill"><i data-lucide="credit-card"></i>跨境支付</div><div class="industry-pill"><i data-lucide="grid-2x2"></i>软件工具</div><div class="industry-pill"><i data-lucide="messages-square"></i>媒体论坛</div></div><div class="industry-center"></div></div></section>
+        <section><h2 class="section-title"><i data-lucide="circle-help"></i>常见问题</h2><div class="faq-list"><div class="faq-item open"><div class="faq-q"><i data-lucide="chevron-right"></i><span>1. 奖励规则</span></div><div class="faq-a">好友通过专属链接完成首单付费后，您可获得订单实际支付金额15%的返佣；同一被推荐人累计贡献佣金上限为2,500元，达到上限后后续订单不再产生佣金。</div></div><div class="faq-item"><div class="faq-q"><i data-lucide="chevron-right"></i><span>2. 推广数量有限吗？</span></div><div class="faq-a">推荐数量没有上限，您可以随时分享邀请码和推广链接，不限人数与次数。</div></div><div class="faq-item"><div class="faq-q"><i data-lucide="chevron-right"></i><span>3. 佣金如何提现</span></div><div class="faq-a">佣金在订单付款成功后冻结14天；进入可提现余额后，可申请提现或充值到账户余额，单次提现金额需满100元。</div></div><div class="faq-item"><div class="faq-q"><i data-lucide="chevron-right"></i><span>4. 佣金需要多久到账？</span></div><div class="faq-a">订单满14天且无退款后佣金解冻；每月5日、20日统一结算，结算完成后预计7个工作日内到账。发生退款时，佣金会按退款比例核减。</div></div></div></section>
+      </div>
+    </section>
+  </main>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <div id="modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title"><div id="modalCard" class="modal-card"></div></div>
+  <script>
+    // 页面状态：提现与认证数据仅用于原型交互，不连接真实账户。
+    const toast = document.getElementById('toast');
+    const modal = document.getElementById('modal');
+    const modalCard = document.getElementById('modalCard');
+    let toastTimer;
+    let realNameVerified = false;
+    const withdrawalState = { amount:'', method:'alipay', alipayAccount:'', alipayName:'', team:'' };
+    const certificationState = { type:'personal', realName:'', idNumber:'', companyName:'', creditCode:'' };
+    const recordState = {
+      invite:{ inviter:'', status:'', from:'', to:'', page:1, pageSize:10 },
+      commission:{ inviter:'', type:'', from:'', to:'', page:1, pageSize:10 },
+      frozen:{ inviter:'', type:'', from:'', to:'', page:1, pageSize:10 },
+      withdrawn:{ method:'', status:'', from:'', to:'', page:1, pageSize:10 }
+    };
+    const REBATE_RATE = 0.15;
+    const COMMISSION_CAP = 2500;
+    const FREEZE_DAYS = 14;
+    const MOCK_NOW = new Date('2026-08-29T12:00:00+08:00');
+    const userProfiles = [
+      { id:'U-01', name:'林**', registeredAt:'2026-07-20' }, { id:'U-02', name:'周**', registeredAt:'2026-07-28' },
+      { id:'U-03', name:'陈**', registeredAt:'2026-08-02' }, { id:'U-04', name:'赵**', registeredAt:'2026-08-05' },
+      { id:'U-05', name:'杨**', registeredAt:'2026-08-08' }, { id:'U-06', name:'黄**', registeredAt:'2026-08-10' },
+      { id:'U-07', name:'徐**', registeredAt:'2026-08-12' }, { id:'U-08', name:'吴**', registeredAt:'2026-08-16' }
+    ];
+    const commissionOrders = [
+      { id:'CM-20260825-01', userId:'U-01', type:'购买代理', orderAmount:960, rebateRate:REBATE_RATE, accumulatedValidCommission:0, refundAmount:0, paidAt:'2026-08-25T10:20:00+08:00' },
+      { id:'CM-20260625-02', userId:'U-01', type:'购买套餐', orderAmount:2400, rebateRate:REBATE_RATE, accumulatedValidCommission:144, refundAmount:0, paidAt:'2026-06-25T14:10:00+08:00', statusOverride:'settled' },
+      { id:'CM-20260710-03', userId:'U-02', type:'余额充值', orderAmount:4800, rebateRate:REBATE_RATE, accumulatedValidCommission:0, refundAmount:0, paidAt:'2026-07-10T09:30:00+08:00', statusOverride:'settled' },
+      { id:'CM-20260827-04', userId:'U-03', type:'购买代理', orderAmount:680, rebateRate:REBATE_RATE, accumulatedValidCommission:0, refundAmount:0, paidAt:'2026-08-27T16:40:00+08:00' },
+      { id:'CM-20260826-05', userId:'U-04', type:'购买套餐', orderAmount:1000, rebateRate:REBATE_RATE, accumulatedValidCommission:2499.5, refundAmount:0, paidAt:'2026-08-26T11:15:00+08:00' },
+      { id:'CM-20260801-06', userId:'U-05', type:'购买代理', orderAmount:800, rebateRate:REBATE_RATE, accumulatedValidCommission:0, refundAmount:200, paidAt:'2026-08-01T13:00:00+08:00' },
+      { id:'CM-20260718-07', userId:'U-06', type:'余额充值', orderAmount:300, rebateRate:REBATE_RATE, accumulatedValidCommission:0, refundAmount:0, paidAt:'2026-07-18T08:45:00+08:00', statusOverride:'settled' },
+      { id:'CM-20260801-08', userId:'U-07', type:'购买套餐', orderAmount:600, rebateRate:REBATE_RATE, accumulatedValidCommission:0, refundAmount:0, paidAt:'2026-08-01T17:25:00+08:00' }
+    ];
+    const withdrawalRecords = [
+      { id:'WD-20260812-01', amount:500, method:'alipay', status:'success', account:'13****8021', balance:625.5, time:'2026-08-12', completedTime:'2026-08-14' },
+      { id:'WD-20260805-02', amount:300, method:'balance', status:'success', account:'云登团队', balance:1125.5, time:'2026-08-05', completedTime:'2026-08-05' },
+      { id:'WD-20260710-03', amount:180, method:'crypto', status:'success', account:'0x****7a21', balance:1425.5, time:'2026-07-10', completedTime:'2026-07-12' },
+      { id:'WD-20260620-04', amount:145, method:'bank', status:'success', account:'6222 **** 1842', balance:1605.5, time:'2026-06-20', completedTime:'2026-06-23' },
+      { id:'WD-20260827-05', amount:200, method:'wechat', status:'reviewing', account:'wx_****19', balance:1805.5, time:'2026-08-27', completedTime:'—' },
+      { id:'WD-20260801-06', amount:100, method:'alipay', status:'failed', account:'13****8021', balance:1805.5, time:'2026-08-01', completedTime:'—' },
+      { id:'WD-20260610-07', amount:120, method:'bank', status:'failed', account:'6222 **** 1842', balance:1805.5, time:'2026-06-10', completedTime:'—' },
+      { id:'WD-20260820-08', amount:400, method:'balance', status:'reviewing', account:'云登团队', balance:1805.5, time:'2026-08-20', completedTime:'—' }
+    ];
+    const methodLabels = { alipay:'支付宝', wechat:'微信', balance:'余额', crypto:'数字货币', bank:'银行卡' };
+    const withdrawalStatusLabels = { success:'成功', reviewing:'审核中', failed:'失败' };
+    const commissionStatusLabels = { frozen:'返佣中', available:'可提现', settled:'已到账', cancelled:'已取消' };
+    withdrawalRecords.forEach((item, index) => Object.assign(item, { index:index + 1, amountText:formatMoney(item.amount), methodLabel:methodLabels[item.method], statusLabel:withdrawalStatusLabels[item.status], balanceText:formatMoney(item.balance) }));
+    function roundMoney(value) { return Math.round((Number(value) + Number.EPSILON) * 100) / 100; }
+    function formatMoney(value) { return roundMoney(value).toFixed(2); }
+    function formatDate(value) { const date = value instanceof Date ? value : new Date(value); return Number.isNaN(date.getTime()) ? '—' : date.toISOString().slice(0,10); }
+    function addDays(value, days) { return new Date(new Date(value).getTime() + days * 24 * 60 * 60 * 1000); }
+    // 返佣计算统一四舍五入，并将退款扣回后的金额作为本单有效佣金。
+    function calculateCommission({ orderAmount, rebateRate = REBATE_RATE, accumulatedValidCommission = 0, refundAmount = 0 }) {
+      const expectedCommission = roundMoney(orderAmount * rebateRate);
+      const remainingCap = roundMoney(Math.max(0, COMMISSION_CAP - accumulatedValidCommission));
+      const cappedCommission = roundMoney(Math.min(expectedCommission, remainingCap));
+      const refundRatio = orderAmount > 0 ? Math.min(1, Math.max(0, refundAmount / orderAmount)) : 0;
+      const refundDeduction = roundMoney(cappedCommission * refundRatio);
+      return { expectedCommission, remainingCap, cappedCommission, refundDeduction, actualCommission:roundMoney(cappedCommission - refundDeduction), refundRestoredCap:refundDeduction };
+    }
+    function getCommissionStatus(order, unfreezeAt, calculation) {
+      if (order.statusOverride) return order.statusOverride;
+      if (calculation.actualCommission <= 0 && order.refundAmount >= order.orderAmount) return 'cancelled';
+      return unfreezeAt > MOCK_NOW ? 'frozen' : 'available';
+    }
+    const commissionRecords = commissionOrders.map((order, index) => {
+      const calculation = calculateCommission(order);
+      const unfreezeAt = addDays(order.paidAt, FREEZE_DAYS);
+      const statusCode = getCommissionStatus(order, unfreezeAt, calculation);
+      const user = userProfiles.find(item => item.id === order.userId) || { name:'—' };
+      return { ...order, ...calculation, index:index + 1, inviter:user.name, type:order.type, consumption:formatMoney(order.orderAmount), rate:`${order.rebateRate * 100}%`, rebate:formatMoney(calculation.actualCommission), status:commissionStatusLabels[statusCode], statusCode, time:formatDate(order.paidAt), freezeTime:formatDate(order.paidAt), unfreezeTime:formatDate(unfreezeAt), unfreezeAt:formatDate(unfreezeAt) };
+    });
+    const invitationRecords = userProfiles.map((user, index) => {
+      const userOrders = commissionRecords.filter(item => item.userId === user.id);
+      return { index:index + 1, inviter:user.name, status:userOrders.length ? '已购买' : '已注册', statusCode:userOrders.length ? 'purchased' : 'registered', consumption:formatMoney(userOrders.reduce((sum, item) => sum + item.orderAmount, 0)), cashback:formatMoney(userOrders.reduce((sum, item) => sum + item.actualCommission, 0)), time:user.registeredAt, action:userOrders.length ? '查看记录' : '—' };
+    });
+    const summary = commissionRecords.reduce((result, item) => {
+      if (item.statusCode === 'frozen') { result.frozen += item.actualCommission; result.frozenCount += 1; result.unfreezeDates.push(item.unfreezeAt); }
+      else if (item.statusCode === 'available') result.available += item.actualCommission;
+      else if (item.statusCode === 'settled') result.settled += item.actualCommission;
+      result.total += item.actualCommission;
+      return result;
+    }, { frozen:0, frozenCount:0, available:0, settled:0, total:0, unfreezeDates:[] });
+    const withdrawnTotal = withdrawalRecords.filter(item => item.status === 'success').reduce((sum, item) => sum + item.amount, 0);
+    function nextSettlementDate(value = MOCK_NOW) {
+      const date = new Date(value);
+      if (date.getDate() < 5) date.setDate(5);
+      else if (date.getDate() < 20) date.setDate(20);
+      else { date.setMonth(date.getMonth() + 1, 5); }
+      return date;
+    }
+    function renderSummary() {
+      document.getElementById('availableAmount').textContent = formatMoney(summary.available);
+      document.getElementById('invitedUserCount').textContent = String(invitationRecords.length);
+      document.getElementById('totalCommissionAmount').textContent = formatMoney(summary.total);
+      document.getElementById('withdrawnAmount').textContent = formatMoney(withdrawnTotal);
+      document.getElementById('frozenCommissionAmount').textContent = formatMoney(summary.frozen);
+    }
+    renderSummary();
+    const recordConfigs = {
+      invite:{
+        title:'邀请用户数详情', emptyColspan:7,
+        columns:[{label:'序号',key:'index'},{label:'邀请人',key:'inviter'},{label:'状态',key:'status'},{label:'累计消费金额',key:'consumption'},{label:'累计佣金返现',key:'cashback'},{label:'注册时间',key:'time'},{label:'操作',key:'action'}],
+        statusOptions:[['','全部'],['registered','已注册'],['purchased','已购买']]
+      },
+      commission:{
+        title:'累计佣金记录', emptyColspan:8,
+        columns:[{label:'序号',key:'index'},{label:'邀请人',key:'inviter'},{label:'返佣类型',key:'type'},{label:'消费金额',key:'consumption'},{label:'返佣比例',key:'rate'},{label:'返佣金额',key:'rebate'},{label:'返佣状态',key:'status'},{label:'返佣时间',key:'time'}],
+        typeOptions:[['','全部'],['购买代理','购买代理'],['购买套餐','购买套餐'],['余额充值','余额充值']]
+      },
+      frozen:{
+        title:'冻结佣金详情', emptyColspan:8, queryLabel:'查询',
+        columns:[{label:'序号',key:'index'},{label:'邀请人',key:'inviter'},{label:'返佣类型',key:'type'},{label:'消费金额',key:'consumption'},{label:'返佣比例',key:'rate'},{label:'返佣金额',key:'rebate'},{label:'冻结时间',key:'freezeTime'},{label:'预计解冻时间',key:'unfreezeTime'}],
+        typeOptions:[['','全部'],['购买代理','购买代理'],['购买套餐','购买套餐'],['余额充值','余额充值']]
+      },
+      withdrawn:{
+        title:'累计提现记录', emptyColspan:8,
+        columns:[{label:'序号',key:'index'},{label:'提现金额',key:'amountText'},{label:'提现方式',key:'methodLabel'},{label:'提现状态',key:'statusLabel'},{label:'提现账号',key:'account'},{label:'账户余额',key:'balanceText'},{label:'提现时间',key:'time'},{label:'完成时间',key:'completedTime'}],
+        methodOptions:[['','全部'],['alipay','支付宝'],['wechat','微信'],['balance','余额'],['crypto','数字货币'],['bank','银行卡']],
+        statusOptions:[['','全部'],['success','成功'],['reviewing','审核中'],['failed','失败']]
+      }
+    };
+
+    function showToast(text) {
+      toast.textContent = text;
+      toast.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove('show'), 2200);
+    }
+    function closeModal() {
+      modal.classList.remove('show');
+      modalCard.className = 'modal-card';
+      modalCard.replaceChildren();
+    }
+    function modalHeader(title) {
+      return `<div class="modal-head"><h2 id="modal-title">${title}</h2><button class="icon-btn" type="button" data-modal-action="close" aria-label="关闭"><i data-lucide="x"></i></button></div>`;
+    }
+    function showModal(content, className) {
+      modalCard.className = `modal-card ${className || ''}`;
+      modalCard.innerHTML = content;
+      modal.classList.add('show');
+      lucide.createIcons();
+      modalCard.querySelector('input, select, button')?.focus();
+    }
+    function optionMarkup(options, selected) {
+      return options.map(([value,label]) => `<option value="${value}" ${value===selected?'selected':''}>${label}</option>`).join('');
+    }
+    function methodMarkup(key, title, subtitle, brand, selected) {
+      return `<label class="method-option ${selected?'selected':''}" data-withdraw-method="${key}"><input class="method-input" type="radio" name="withdrawMethod" value="${key}" ${selected?'checked':''}><span class="method-check" aria-hidden="true">${selected?'<i data-lucide="check"></i>':''}</span><span class="method-brand ${brand}">${brand==='alipay'?'A':'¥'}</span><span class="method-copy"><strong>${title}</strong><small>${subtitle}</small></span></label>`;
+    }
+    function syncWithdrawalDraft() {
+      const get = id => document.getElementById(id)?.value ?? '';
+      if (!document.getElementById('withdrawAmount')) return;
+      withdrawalState.amount = get('withdrawAmount');
+      withdrawalState.alipayAccount = get('alipayAccount');
+      withdrawalState.alipayName = get('alipayName');
+      withdrawalState.team = get('withdrawTeam');
+    }
+    function withdrawalDetailsMarkup() {
+      if (withdrawalState.method === 'coin') {
+        return `<div class="withdraw-row"><label class="withdraw-label" for="withdrawTeam">团队名：</label><div class="withdraw-control"><select id="withdrawTeam" class="withdraw-select"><option value="">请选择</option><option value="云登团队" ${withdrawalState.team==='云登团队'?'selected':''}>云登团队</option><option value="跨境项目组" ${withdrawalState.team==='跨境项目组'?'selected':''}>跨境项目组</option></select></div></div>`;
+      }
+      return `<div class="withdraw-row"><label class="withdraw-label" for="alipayAccount">支付账号：</label><div class="withdraw-control"><input id="alipayAccount" class="withdraw-input" placeholder="请输入您的支付宝账号" value="${withdrawalState.alipayAccount}"></div></div><div class="withdraw-row"><label class="withdraw-label" for="alipayName">支付宝姓名：</label><div class="withdraw-control"><input id="alipayName" class="withdraw-input" placeholder="请输入您的支付宝姓名" value="${withdrawalState.alipayName}"></div></div>`;
+    }
+    function openWithdrawalModal() {
+      showModal(`${modalHeader('申请提现')}<form class="withdraw-form" id="withdrawForm"><div class="withdraw-row"><label class="withdraw-label" for="withdrawAmount">提现金额：</label><div class="withdraw-control"><input id="withdrawAmount" class="withdraw-input mono" type="number" min="100" step="0.01" placeholder="请输入提现金额" value="${withdrawalState.amount}"><span class="withdraw-hint">最低提现100元</span></div></div><div class="withdraw-row"><span class="withdraw-label">提现方式：</span><div class="method-options">${methodMarkup('alipay','支付宝','ALIPAY','alipay',withdrawalState.method==='alipay')}${methodMarkup('coin','云币','Recharge','coin',withdrawalState.method==='coin')}</div></div><div id="withdrawalDetails">${withdrawalDetailsMarkup()}</div><div class="modal-actions"><button class="btn-secondary" type="button" data-modal-action="close">取消</button><button class="btn-primary" type="submit">确定</button></div></form>`, 'withdraw-modal-card');
+    }
+    function openCertificationPrompt() {
+      showModal(`${modalHeader('认证提示')}<div class="cert-prompt-body"><span class="cert-icon"><i data-lucide="badge-alert"></i></span><h3 class="cert-prompt-title">待认证</h3><p class="cert-prompt-copy">根据有关部门要求，提现到支付宝需完成实名认证</p><button class="btn-primary" type="button" data-modal-action="go-certify">去认证</button></div>`, 'cert-prompt-card');
+    }
+    function certificationFormMarkup() {
+      const personal = certificationState.type === 'personal';
+      return `<div class="real-name-tabs" role="tablist"><button class="real-name-tab ${personal?'active':''}" type="button" data-cert-type="enterprise" role="tab" aria-selected="${!personal}">企业认证</button><button class="real-name-tab ${personal?'active':''}" type="button" data-cert-type="personal" role="tab" aria-selected="${personal}">个人认证</button></div><div class="real-name-steps"><div class="real-name-step active"><b>1</b><span>信息认证</span></div><div class="real-name-step"><b>2</b><span>刷脸认证</span></div><div class="real-name-step"><b>3</b><span>认证结果</span></div></div><form id="certificationForm" class="real-name-form">${personal?`<div class="real-name-row"><label class="withdraw-label required-label" for="realName">真实姓名：</label><input id="realName" class="withdraw-input" placeholder="请输入真实姓名" value="${certificationState.realName}"></div><div class="real-name-row"><label class="withdraw-label required-label" for="idNumber">身份证号：</label><input id="idNumber" class="withdraw-input" placeholder="请输入身份证号" value="${certificationState.idNumber}"></div>`:`<div class="real-name-row"><label class="withdraw-label required-label" for="companyName">企业名称：</label><input id="companyName" class="withdraw-input" placeholder="请输入企业名称" value="${certificationState.companyName}"></div><div class="real-name-row"><label class="withdraw-label required-label" for="creditCode">统一社会信用代码：</label><input id="creditCode" class="withdraw-input" placeholder="请输入统一社会信用代码" value="${certificationState.creditCode}"></div>`}<div class="modal-actions"><button class="btn-secondary" type="button" data-modal-action="close">取消</button><button class="btn-primary" type="submit">确定</button></div></form>`;
+    }
+    function openRealNameModal() {
+      showModal(`${modalHeader('实名认证')}<div class="real-name-modal-body">${certificationFormMarkup()}</div>`, 'real-name-modal-card');
+    }
+    function updateCertificationDraft() {
+      const get = id => document.getElementById(id)?.value ?? '';
+      certificationState.realName = get('realName');
+      certificationState.idNumber = get('idNumber');
+      certificationState.companyName = get('companyName');
+      certificationState.creditCode = get('creditCode');
+    }
+    function submitCertification() {
+      updateCertificationDraft();
+      const personal = certificationState.type === 'personal';
+      const valid = personal ? certificationState.realName.trim() && /^\d{17}[\dXx]$/.test(certificationState.idNumber.trim()) : certificationState.companyName.trim() && /^[0-9A-Z]{18}$/.test(certificationState.creditCode.trim());
+      if (!valid) {
+        showToast(personal ? '请填写真实姓名和正确的身份证号' : '请填写企业名称和正确的统一社会信用代码');
+        modalCard.querySelector('.withdraw-input')?.focus();
+        return;
+      }
+      realNameVerified = true;
+      openWithdrawalModal();
+      showToast('实名认证已完成，可以继续申请提现');
+    }
+    function openInfoModal(type) {
+      if (type === 'commission-rules') {
+        showModal(`${modalHeader('返佣规则')}<div class="rules-modal-body"><section><h3>佣金计算</h3><p>订单应返佣金 = 订单金额 × 返佣比例。本单实际返佣金取应返佣金与单个被推荐人剩余可返额度中的较小值。</p></section><section><h3>单人佣金上限</h3><p>每位被推荐人可为同一推荐人产生的累计佣金上限为 <strong>2,500 元</strong>。达到上限后，后续订单不再产生佣金；退款会按比例扣回，并恢复可返佣额度。</p></section><section><h3>冻结与结算</h3><p>购买成功后佣金冻结14天，订单无退款后自动解冻。每月5日、20日统一结算，结算后预计7个工作日内到账。</p></section></div><div class="modal-actions rules-modal-actions"><button class="btn-primary" type="button" data-modal-action="close">知道了</button></div>`, 'info-modal-card rules-modal-card');
+        return;
+      }
+      const copy = { invite:['邀请用户详情','当前展示已邀请用户的注册与购买状态。'] }[type];
+      if (!copy) return;
+      showModal(`${modalHeader(copy[0])}<p class="modal-text">${copy[1]}</p><div class="modal-actions"><button class="btn-primary" type="button" data-modal-action="close">知道了</button></div>`, 'info-modal-card');
+    }
+    function dateInRange(value, from, to) {
+      if (!value) return true;
+      return (!from || value >= from) && (!to || value <= to);
+    }
+    function filteredRecords(kind) {
+      const state = recordState[kind];
+      if (kind === 'invite') return invitationRecords.filter(item => (!state.inviter || item.inviter.includes(state.inviter)) && (!state.status || item.statusCode===state.status) && dateInRange(item.time,state.from,state.to));
+      if (kind === 'commission') return commissionRecords.filter(item => (!state.inviter || item.inviter.includes(state.inviter)) && (!state.type || item.type===state.type) && dateInRange(item.time,state.from,state.to));
+      if (kind === 'frozen') return commissionRecords.filter(item => item.statusCode === 'frozen' && (!state.inviter || item.inviter.includes(state.inviter)) && (!state.type || item.type===state.type) && dateInRange(item.unfreezeTime,state.from,state.to));
+      return withdrawalRecords.filter(item => (!state.method || item.method===state.method) && (!state.status || item.status===state.status) && dateInRange(item.time,state.from,state.to));
+    }
+    function recordTableMarkup(kind) {
+      const config = recordConfigs[kind];
+      const state = recordState[kind];
+      const rows = filteredRecords(kind);
+      const pageCount = Math.max(1, Math.ceil(rows.length / state.pageSize));
+      state.page = Math.min(state.page, pageCount);
+      const pageRows = rows.slice((state.page - 1) * state.pageSize, state.page * state.pageSize);
+      const body = pageRows.length ? pageRows.map((item,index) => `<tr>${config.columns.map(column => `<td>${column.key === 'index' ? (state.page - 1) * state.pageSize + index + 1 : item[column.key] ?? '—'}</td>`).join('')}</tr>`).join('') : `<tr><td class="record-empty" colspan="${config.emptyColspan}">暂无数据</td></tr>`;
+      return `<div class="record-table-wrap"><table class="record-table"><thead><tr>${config.columns.map(column => `<th>${column.label}</th>`).join('')}</tr></thead><tbody>${body}</tbody></table></div><footer class="record-footer"><span>共 ${rows.length} 条</span><select data-record-size data-record-kind="${kind}" aria-label="每页条数"><option value="10" ${state.pageSize===10?'selected':''}>10条/页</option><option value="20" ${state.pageSize===20?'selected':''}>20条/页</option><option value="50" ${state.pageSize===50?'selected':''}>50条/页</option></select><div class="record-pagination"><button class="record-page-button" type="button" data-record-page-action="prev" data-record-kind="${kind}" ${state.page<=1?'disabled':''} aria-label="上一页"><i data-lucide="chevron-left"></i></button><span class="record-page-current">${state.page}</span><button class="record-page-button" type="button" data-record-page-action="next" data-record-kind="${kind}" ${state.page>=pageCount?'disabled':''} aria-label="下一页"><i data-lucide="chevron-right"></i></button></div><span>前往</span><input class="record-page-input mono" data-record-page-input data-record-kind="${kind}" value="${state.page}" inputmode="numeric" aria-label="跳转页码"><span>页</span></footer>`;
+    }
+    function recordFiltersMarkup(kind) {
+      const state = recordState[kind];
+      if (kind === 'invite') return `<div class="record-filter"><label for="inviteInviter">邀请人：</label><input id="inviteInviter" class="search-input" placeholder="邀请人" value="${state.inviter}"></div><div class="record-filter"><label for="inviteStatus">邀请状态：</label><select id="inviteStatus">${optionMarkup(recordConfigs.invite.statusOptions,state.status)}</select></div><div class="record-filter"><label>注册时间：</label><div class="date-range"><input id="inviteFrom" type="date" value="${state.from}" aria-label="注册开始日期"><i data-lucide="arrow-right"></i><input id="inviteTo" type="date" value="${state.to}" aria-label="注册结束日期"></div></div>`;
+      if (kind === 'commission') return `<div class="record-filter"><label for="commissionInviter">邀请人：</label><input id="commissionInviter" class="search-input" placeholder="请输入" value="${state.inviter}"></div><div class="record-filter"><label for="commissionType">返佣类型：</label><select id="commissionType">${optionMarkup(recordConfigs.commission.typeOptions,state.type)}</select></div><div class="record-filter"><label>返佣时间：</label><div class="date-range"><input id="commissionFrom" type="date" value="${state.from}" aria-label="返佣开始日期"><i data-lucide="arrow-right"></i><input id="commissionTo" type="date" value="${state.to}" aria-label="返佣结束日期"></div></div>`;
+      if (kind === 'frozen') return `<div class="record-filter"><label for="frozenInviter">邀请人：</label><input id="frozenInviter" class="search-input" placeholder="请输入" value="${state.inviter}"></div><div class="record-filter"><label for="frozenType">返佣类型：</label><select id="frozenType">${optionMarkup(recordConfigs.frozen.typeOptions,state.type)}</select></div><div class="record-filter"><label>解冻时间：</label><div class="date-range"><input id="frozenFrom" type="date" value="${state.from}" aria-label="解冻开始日期"><i data-lucide="arrow-right"></i><input id="frozenTo" type="date" value="${state.to}" aria-label="解冻结束日期"></div></div>`;
+      return `<div class="record-filter"><label for="withdrawMethodFilter">提现方式：</label><select id="withdrawMethodFilter">${optionMarkup(recordConfigs.withdrawn.methodOptions,state.method)}</select></div><div class="record-filter"><label for="withdrawStatusFilter">提现状态：</label><select id="withdrawStatusFilter">${optionMarkup(recordConfigs.withdrawn.statusOptions,state.status)}</select></div><div class="record-filter"><label>提现时间：</label><div class="date-range"><input id="withdrawFrom" type="date" value="${state.from}" aria-label="提现开始日期"><i data-lucide="arrow-right"></i><input id="withdrawTo" type="date" value="${state.to}" aria-label="提现结束日期"></div></div>`;
+    }
+    function openRecordModal(kind) {
+      showModal(`${modalHeader(recordConfigs[kind].title)}<div class="record-filters">${recordFiltersMarkup(kind)}<div class="record-filter-actions"><button type="button" class="btn-primary" data-record-action="search" data-record-kind="${kind}"><i data-lucide="search"></i>${recordConfigs[kind].queryLabel || '搜索'}</button><button type="button" class="btn-secondary" data-record-action="reset" data-record-kind="${kind}">重置</button></div></div>${recordTableMarkup(kind)}`, 'record-modal-card');
+    }
+    function syncRecordFilters(kind) {
+      const state = recordState[kind];
+      if (kind === 'invite') { state.inviter = document.getElementById('inviteInviter')?.value.trim() || ''; state.status = document.getElementById('inviteStatus')?.value || ''; state.from = document.getElementById('inviteFrom')?.value || ''; state.to = document.getElementById('inviteTo')?.value || ''; }
+      else if (kind === 'commission') { state.inviter = document.getElementById('commissionInviter')?.value.trim() || ''; state.type = document.getElementById('commissionType')?.value || ''; state.from = document.getElementById('commissionFrom')?.value || ''; state.to = document.getElementById('commissionTo')?.value || ''; }
+      else if (kind === 'frozen') { state.inviter = document.getElementById('frozenInviter')?.value.trim() || ''; state.type = document.getElementById('frozenType')?.value || ''; state.from = document.getElementById('frozenFrom')?.value || ''; state.to = document.getElementById('frozenTo')?.value || ''; }
+      else { state.method = document.getElementById('withdrawMethodFilter')?.value || ''; state.status = document.getElementById('withdrawStatusFilter')?.value || ''; state.from = document.getElementById('withdrawFrom')?.value || ''; state.to = document.getElementById('withdrawTo')?.value || ''; }
+      state.page = 1;
+    }
+    function resetRecordFilters(kind) {
+      recordState[kind] = kind === 'withdrawn' ? { method:'', status:'', from:'', to:'', page:1, pageSize:10 } : { inviter:'', type:'', from:'', to:'', page:1, pageSize:10 };
+      openRecordModal(kind);
+    }
+    function submitWithdrawal() {
+      syncWithdrawalDraft();
+      const amount = Number(withdrawalState.amount);
+      if (!Number.isFinite(amount) || amount < 100) {
+        document.getElementById('withdrawAmount')?.classList.add('invalid');
+        showToast('提现金额需满100元');
+        document.getElementById('withdrawAmount')?.focus();
+        return;
+      }
+      if (amount > summary.available) {
+        document.getElementById('withdrawAmount')?.classList.add('invalid');
+        showToast(`提现金额不能超过可提现余额 ${formatMoney(summary.available)} 元`);
+        document.getElementById('withdrawAmount')?.focus();
+        return;
+      }
+      if (!realNameVerified) { openCertificationPrompt(); return; }
+      const missing = withdrawalState.method === 'coin' ? !withdrawalState.team : !withdrawalState.alipayAccount.trim() || !withdrawalState.alipayName.trim();
+      if (missing) { showToast(withdrawalState.method === 'coin' ? '请选择团队' : '请填写支付宝账号和姓名'); return; }
+      closeModal();
+      showToast('提现申请已提交');
+    }
+    document.addEventListener('click', event => {
+      const trigger = event.target.closest('[data-modal]');
+      if (trigger) {
+        if (trigger.dataset.modal === 'withdraw') openWithdrawalModal();
+        else if (trigger.dataset.modal === 'invite' || trigger.dataset.modal === 'commission' || trigger.dataset.modal === 'frozen' || trigger.dataset.modal === 'withdrawn') openRecordModal(trigger.dataset.modal);
+        else openInfoModal(trigger.dataset.modal);
+        return;
+      }
+      const method = event.target.closest('[data-withdraw-method]');
+      if (method) { syncWithdrawalDraft(); withdrawalState.method = method.dataset.withdrawMethod; openWithdrawalModal(); return; }
+      const recordAction = event.target.closest('[data-record-action]');
+      if (recordAction) { const kind = recordAction.dataset.recordKind; if (recordAction.dataset.recordAction === 'search') { syncRecordFilters(kind); openRecordModal(kind); } else resetRecordFilters(kind); return; }
+      const pageAction = event.target.closest('[data-record-page-action]');
+      if (pageAction) { const kind = pageAction.dataset.recordKind; recordState[kind].page += pageAction.dataset.recordPageAction === 'next' ? 1 : -1; openRecordModal(kind); return; }
+      const statusAction = event.target.closest('[data-status-action]');
+      if (statusAction?.dataset.statusAction === 'recharge') { showToast('可提现余额充值到账户余额，预计即时到账'); return; }
+      const action = event.target.closest('[data-modal-action]')?.dataset.modalAction;
+      if (action === 'close') closeModal();
+      else if (action === 'go-certify') openRealNameModal();
+    });
+    document.addEventListener('change', event => {
+      const pageSize = event.target.closest('[data-record-size]');
+      if (pageSize) { const kind = pageSize.dataset.recordKind; recordState[kind].pageSize = Number(pageSize.value) || 10; recordState[kind].page = 1; openRecordModal(kind); }
+    });
+    document.addEventListener('keydown', event => {
+      const pageInput = event.target.closest('[data-record-page-input]');
+      if (!pageInput || event.key !== 'Enter') return;
+      const kind = pageInput.dataset.recordKind;
+      const page = Number(pageInput.value);
+      if (Number.isInteger(page) && page > 0) { recordState[kind].page = page; openRecordModal(kind); }
+    });
+    modalCard.addEventListener('submit', event => { event.preventDefault(); if (event.target.id === 'withdrawForm') submitWithdrawal(); else if (event.target.id === 'certificationForm') submitCertification(); });
+    modalCard.addEventListener('click', event => {
+      const certType = event.target.closest('[data-cert-type]')?.dataset.certType;
+      if (certType) { updateCertificationDraft(); certificationState.type = certType; openRealNameModal(); }
+    });
+    modal.addEventListener('click', event => { if (event.target === modal) closeModal(); });
+    document.querySelectorAll('[data-copy]').forEach(btn => btn.addEventListener('click', async () => { const input = document.getElementById(btn.dataset.copy); try { await navigator.clipboard.writeText(input.value); } catch (error) { input.select(); document.execCommand('copy'); } showToast('已复制到剪贴板'); }));
+    document.querySelectorAll('.faq-q').forEach(question => question.addEventListener('click', () => question.parentElement.classList.toggle('open')));
+    document.addEventListener('keydown', event => { if (event.key === 'Escape' && modal.classList.contains('show')) closeModal(); });
+    lucide.createIcons();
+  </script>
+</body>
+</html>

@@ -134,77 +134,63 @@
 
 ### 5.0 页面标准布局
 
-> **核心原则**：所有后台列表/管理页面采用统一的两区块结构。**不设独立的页面主标题区块**（标题整合进数据区标题行）。
+> **核心原则**：后台列表/管理页面默认采用一个数据业务区块，并在区块顶部使用“左侧页面操作/业务指标 + 右侧搜索框/筛选按钮”工具栏。结构化条件收纳到右侧筛选抽屉，不设置独立条件卡片；页面标题整合进列表标题行。
 
 **标准结构**：
 
 ```
-┌─ 区块1：筛选区 ─────────────────────────────┐
-│  [状态Tab]（可选）                            │
-│  filter-flow（400px 筛选项，最多 4 项/行）       │
-│  …… [最后一个条件] [查询] [重置]               │
+┌─ 数据业务区块 ───────────────────────────────┐
+│ [页面操作 / 指标]                         [搜索框] [筛选] │
+│ 数据列表（h2） 共 N 条                        │
+│ ┌─────┐ ┌─────┐ ┌─────┐ ┌─────┐            │
+│ │ KPI │ │ KPI │ │ KPI │ │ KPI │ ← 有则显示  │
+│ └─────┘ └─────┘ └─────┘ └─────┘            │
+│ ┌─ 表格 ──────────────────────────┐         │
+│ │ ...data rows...                 │         │
+│ └─────────────────────────────────┘         │
+│ 分页器（表格右下方）                          │
 └────────────────────────────────────────────┘
-┌─ 区块2：数据区 ─────────────────────────────┐
-│  工单列表（h2, 左）       [操作按钮]（右）      │
-│  ┌─────┐ ┌─────┐ ┌─────┐ ┌─────┐            │
-│  │ KPI │ │ KPI │ │ KPI │ │ KPI │ ← 有则显示  │
-│  └─────┘ └─────┘ └─────┘ └─────┘            │
-│  ┌─ 表格 ──────────────────────────┐         │
-│  │ ...data rows...                 │         │
-│  └─────────────────────────────────┘         │
-│  分页器（表格右下方）                           │
-└────────────────────────────────────────────┘
+                         ┌─ 右侧筛选抽屉 ──────┐
+                         │ 筛选条件（单列）      │
+                         │       [取消] [确认]  │
+                         └─────────────────────┘
 ```
 
 **布局规则**：
 
 | 区域 | 规则 |
 |------|------|
-| 区块1 筛选区 | `bg-white rounded-lg p-5 md:p-6 mb-4`，App Shell 内不设外描边 |
-| 区块2 数据区 | `bg-white rounded-lg p-5 md:p-6`，App Shell 内不设外描边 |
-| 数据区标题 | `h2`，`text-[16px]`（有指标卡）或 `text-[18px]`（无指标卡），`font-semibold`，左对齐 |
-| 操作按钮 | 与标题同行，右对齐，`flex items-center justify-between flex-wrap gap-3` |
-| 数据指标卡 | 有则放在标题行下方、表格上方（`mb-4`），无则不显示 |
+| 数据业务区块 | `bg-white rounded-lg p-5 md:p-6`，App Shell 内不设外描边 |
+| 页面操作与指标 | 工具栏左侧放导出、刷新、新增等明确命令；业务摘要指标可与动作同组展示，组内间距 8px |
+| 搜索与筛选 | 工具栏右侧按“搜索框、筛选按钮”排列，搜索框在前、筛选按钮紧随其后，具体尺寸与交互见 §5.4 |
+| 列表标题 | `h2 text-[16px] font-semibold` 左对齐；总条数以 12px 辅助文字紧邻标题 |
+| 数据指标卡 | 有则放在列表标题行下方、表格上方（`mb-4`），无则不显示 |
 | 指标卡样式 | `grid grid-cols-2 lg:grid-cols-4 gap-3`，每卡 `p-3 rounded-md border border-line bg-page` |
-| 筛选字段 | 使用可换行的 `filter-flow` 布局；控件基准宽度 400px，单行最多 4 项（见 §5.4） |
-| 查询/重置 | 作为末尾操作组紧跟最后一个查询条件，不另起独立按钮行；容器不足时随筛选项整体换行 |
+| 表格与分页 | 表格外层横向滚动；分页器在同一区块内，并与表格保持 20px 间距 |
+| 筛选抽屉 | 固定在模块视口右侧，筛选草稿确认后才作用于列表，具体规则见 §5.4 |
+| 单区块页面 | `.page-content` 与唯一业务区块纵向拉伸；白色区块填满可用高度，页面根容器与视口四边保持 16px `bg-page` 留白 |
 
 **页面标题处理**：
 - ❌ **禁止**设置独立的页面标题卡片（如单独的 `<h1>订单管理</h1>` 卡片区块）
 - ✅ 页面标题语义整合到数据区的 `h2` 标题中（如"工单列表"、"订单列表"）
-- ✅ 必要的页面级操作按钮（如"标记异常"、"新增"）放在数据区标题行右侧
+- ✅ 必要的页面级操作按钮（如“导出”“新增”）放在顶部工具栏左侧
 
-**区块1 筛选区 HTML 结构参考**：
-
-```html
-<div class="bg-white rounded-lg p-5 md:p-6 mb-4">
-  <!-- 状态 Tab（按需） -->
-  <div class="flex items-center gap-2 mb-4 flex-wrap">
-    <span class="text-[13px] text-ink-sub mr-1">状态：</span>
-    <div class="flex items-center gap-1 flex-wrap" id="statusTabs">
-      <span class="filter-tab active">全部</span>...
-    </div>
-  </div>
-  <!-- filter-flow：筛选项与操作组共用同一换行流 -->
-  <div class="filter-flow">
-    <div class="filter-item">...</div>
-    ...
-    <div class="filter-actions">
-      <button class="btn btn-primary btn-sm">查询</button>
-      <button class="btn btn-default btn-sm">重置</button>
-    </div>
-  </div>
-</div>
-```
-
-**区块2 数据区 HTML 结构参考**：
+**标准数据区 HTML 结构参考**：
 
 ```html
 <div class="bg-white rounded-lg p-5 md:p-6">
-  <!-- 标题行 -->
-  <div class="flex items-center justify-between flex-wrap gap-3 mb-4">
-    <h2 class="text-[18px] font-semibold text-ink-title inline-block">数据列表</h2>
-    <button class="btn btn-primary"><i ...></i> 操作</button>
+  <!-- 搜索、筛选与页面操作 -->
+  <div class="order-management-toolbar">
+    <div class="order-toolbar-actions"><button class="btn btn-default">导出</button></div>
+    <div class="order-search-filter-group">
+      <div class="order-global-search">...</div>
+      <button class="btn btn-default order-filter-button"><i data-lucide="list-filter"></i>筛选</button>
+    </div>
+  </div>
+  <!-- 列表标题与条数 -->
+  <div class="flex items-center gap-2 pb-4">
+    <h2 class="text-[16px] font-semibold text-ink-title">数据列表</h2>
+    <span class="text-[12px] text-ink-sub">共 N 条</span>
   </div>
   <!-- 数据指标卡（有则放，无则跳过） -->
   <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-4">...</div>
@@ -258,62 +244,54 @@
 - 进行中 success / 临期超时 warning / 异常 danger / 终态 ink-muted 灰。
 - **数据表格状态文本特例**：订单、开票记录及同类高密度业务列表的“状态”列采用语义色纯文本，移除背景、描边、圆角和额外内边距；字号沿用表格正文 13px、字重 500、左对齐。独立详情页、汇总卡片等需要强化识别的低密度场景仍使用上述 Badge。
 
-### 5.4 筛选区
+### 5.4 搜索与筛选
 
-> 筛选区统一采用“定宽筛选项 + 流式换行”的响应式布局。查询控件基准宽度固定为 400px，单行最多展示 4 个查询条件；可用宽度不足时按 4→3→2→1 项自然换行，不产生页面级横向滚动。
+> 后台列表页默认采用“左侧页面操作/指标 + 右侧搜索框/筛选按钮 + 右侧筛选抽屉”模式。搜索框承载高频、模糊或跨字段关键词查询；其他结构化条件全部收纳到筛选抽屉。页面内容区不得再同时展示独立结构化条件卡片，避免重复入口和首屏空间浪费。
 
-**容器 `.filter-flow`**：`display:flex; flex-wrap:wrap; align-items:flex-end; gap:16px 24px;`。横向间距 24px 用于区分不同查询维度，纵向间距 16px 用于保持换行后的扫描节奏。
+#### 5.4.1 标准工具栏
 
-**筛选项 `.filter-item`**：`flex:0 0 400px; width:400px; display:flex; flex-direction:column; gap:6px;`。
+- 搜索、筛选、列表标题、数据表格和分页器共用同一 `bg-card` 白色业务区块，不额外创建独立筛选卡片或操作卡片。区块使用 8px 圆角和 `p-5 md:p-6` 内边距。
+- 顶部工具栏使用 `display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px 16px;margin-bottom:16px`。左侧为页面操作或业务指标组，右侧为搜索与筛选组。
+- 左侧 `.order-toolbar-actions` 使用 `display:flex;align-items:center;justify-content:flex-start;gap:8px;flex-wrap:wrap;min-width:0`。仅放导出、刷新、新增等明确命令，或与当前列表直接相关的摘要指标；不放结构化筛选条件。
+- 右侧 `.order-search-filter-group` 使用 `display:flex;align-items:center;justify-content:flex-end;gap:20px;min-width:0;flex:0 1 500px;margin-left:auto`。搜索框必须在前，“筛选”按钮紧随其后；不得把筛选按钮放到列表标题行或左侧操作组。
+- 当页面没有左侧操作或指标时，搜索与筛选组仍保持右对齐；当摘要指标需要与搜索同一行展示时，指标归入左侧组并允许按内容自然换行。
+- 列表标题行紧跟工具栏，使用 `display:flex;align-items:center;justify-content:space-between;gap:12px;padding-bottom:16px`。标题为 16px/600；结果条数以 12px `ink-sub` 文本紧邻标题显示，不单独占据右侧。
 
-**标签 `.filter-label`**：标签位于控件上方，左对齐，`font-size:14px; line-height:18px; color:#3A3F4A;`，不追加中文冒号。
+#### 5.4.2 搜索框
 
-**控件 `.control`**：`width:400px; max-width:100%;`
+- 搜索框基准宽度 400px、最大宽度 100%、高度 32px；全站统一使用 placeholder “请输入关键词，多个用中文逗号分隔”，具体页面通过搜索实现覆盖自身可检索字段。
+- 输入框右侧预留 58px；Lucide `search` 搜索按钮位于右侧 4px，Lucide `x` 清空按钮位于右侧 30px，两个图标按钮均为 24×24px、4px 圆角。
+- 图标默认使用 `ink-muted`，hover/focus-visible 使用 `bg-hover` 和 `ink-body`。无关键词时隐藏清空按钮；点击清空后立即清除搜索条件、刷新结果并把焦点还给输入框。禁止同时显示浏览器原生清空按钮与自定义清空按钮，禁止用文本字符代替 Lucide 图标。
+- 输入关键词时实时刷新结果，点击搜索按钮时按当前关键词重新查询；两种方式均作用于完整结果集并回到第 1 页。搜索条件与已提交的抽屉筛选条件取交集，不得互相覆盖。
 
-- 内部 `input` / `select`：`width:100%; height:32px; font-size:14px; padding:0 8px; border-radius:4px; border:1px solid #DFE1E5; color:#3A3F4A; outline:none; font-family:inherit; background:#fff;`
-- placeholder 样式：`color:#9DA2AC; font-size:14px;`
-- focus 态：`border-color:#0066FF; box-shadow:0 0 0 2px rgba(0,102,255,.12);`
-- select 下拉箭头使用内联 SVG background-image 替代浏览器默认样式，`padding-right:24px;`
+#### 5.4.3 筛选按钮与条件角标
 
-**日期范围 `.date-range`**：`display:flex; align-items:center; gap:4px;`（通用默认，仅适用于模块 PRD 未指定自定义日期面板的场景）。
+- “筛选”按钮使用带 Lucide `list-filter` 图标的次按钮样式，固定高度 32px，并通过 `aria-haspopup="dialog"`、`aria-expanded` 和 `aria-controls` 关联筛选抽屉。
+- 没有已提交条件时使用普通次按钮样式且不显示角标。存在已提交条件时，仅将按钮边框、图标和文字切换为 `primary`，背景仍保持白色。
+- 条件角标固定在按钮右上角外侧 `right:-8px;top:-8px`，最小尺寸 16×16px，使用 danger 底色、白字、11px/600 JetBrains Mono；数字只统计偏离默认值的已提交条件，日期范围按一个条件计算。
+- 角标与按钮状态只反映已提交条件。用户在抽屉内编辑草稿时不得提前更新角标、列表或按钮高亮。
 
-- 分隔符 `.date-sep`：`font-size:14px; color:#9DA2AC; flex-shrink:0; margin:0 2px;`
-- 通用日期输入框使用 `type="text"` + `placeholder` 展示提示文字；需要调用原生日期选择器的模块，可在 focus 时切换 `type="date"`，blur 无值时恢复 `type="text"`。
-- 空状态文字色 `#9DA2AC`，有值后切换为 `#3A3F4A`。
+#### 5.4.4 右侧筛选抽屉
 
-**订单管理创建时间范围特例 `.order-date-control-wrap`**：当模块 PRD 要求双月范围下拉时，覆盖通用日期输入规则，不使用浏览器原生日期输入。
+- 遮罩使用 `position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.3)`；抽屉面板固定在模块视口右侧，使用 `position:fixed;top:0;right:0;bottom:0;width:480px;max-width:100vw;height:100dvh;background:bg-card`，并使用中层抽屉阴影与 220ms 入场动画。
+- 抽屉标题栏高 56px、左右内边距 20px、底部 `line-light` 分割线；标题使用 16px/600，右侧为 32×32px Lucide `x` 关闭按钮。
+- 内容区使用 `flex:1;min-height:0;overflow-y:auto;padding:20px;background:bg-page`。筛选字段单列纵向排列，字段间距 16px；标签位于控件上方，使用 13px/18px `ink-body`、`white-space:nowrap` 并统一追加中文全角冒号，标签与控件间距 6px；输入框、下拉框和日期控件高度统一为 32px。筛选条件字段文本不得换行。
+- 底部操作栏高 64px、左右内边距 20px、顶部 `line-light` 分割线，按钮右对齐且间距 12px，固定提供“取消”和“确认提交”。取消、遮罩点击、关闭按钮和 Escape 均关闭抽屉并丢弃本次草稿；只有“确认提交”通过校验后才写入已提交条件、更新角标、刷新列表并回到第 1 页。
+- 抽屉打开时先复制已提交条件形成独立草稿，并将焦点移入抽屉；关闭后把焦点恢复到“筛选”按钮。打开期间锁定背景滚动，键盘 Tab 不得离开抽屉。
+- 日期范围使用两个同高日期控件与“至”分隔，容器 `display:flex;align-items:center;gap:4px`；分隔符使用 14px `ink-muted`。开始时间晚于结束时间时在字段下方显示 danger 错误并阻止提交。
+- 下拉菜单、可检索单选和日期面板展开时必须位于抽屉内容层之上，不得被抽屉、后续字段或 iframe 视口异常裁切。
 
-- 触发器为一个连续的 `300px × 32px` 组合控件：外层 `background:#FFFFFF`、`border:1px solid #DFE1E5`、`border-radius:4px`、左右内边距 `12px/10px`；内部显示“开始时间 `~` 结束时间”，不得出现两个独立可见边框。空状态使用 `#9DA2AC`，已选日期使用 `#3A3F4A` 与 JetBrains Mono；右侧只放一个 `calendar-days` 线性图标，尺寸 `16×16px`。
-- hover 使用 `#F3F4F6`；focus-visible 使用 `border-color:#0066FF` 与 `#E6F0FF` 双像素聚焦环；逆序或无效范围使用 `#D9001B` 与 `#FFE8EB`。标签与触发器仍遵循订单页横向筛选特例，字段内部 `column-gap:0`。
-- 下拉面板宽 `620px`、最大宽度 `calc(100vw - 32px)`，白底、`1px #DFE1E5` 边框、`8px` 圆角、`0 6px 24px rgba(0,0,0,.12)` 阴影、内边距 `16px`。面板并列展示当前月和相邻月，月栏之间使用 `1px #E8EAED` 竖向分隔线与 `16px` 内侧间距。
-- 每个月标题与导航同一行，两个标题始终居中：左侧月份外侧依次放 `28×28px` 的 `chevrons-left`（上一年，`<<`）与 `chevron-left`（上个月，`<`）；右侧月份外侧依次放 `chevron-right`（下个月，`>`）与 `chevrons-right`（下一年，`>>`）。两个月内侧不显示可操作按钮，但保留等宽占位，避免标题跳动。星期行使用 `12px` `#9DA2AC`，日期格为 `30×30px`，日期数字使用 JetBrains Mono。
-- 非当前月日期使用 `#C7CAD1`；范围内日期使用 `#E6F0FF` 连续浅底；起止日期使用 `#0066FF` 白字，端点圆角保持连续范围视觉。参考图中的珊瑚色不直接复用商品价格色，业务页面统一遵循本系统 primary 语义色。
-- 交互保留“清空 / 取消 / 确定”操作：首次选择为开始日期，第二次为结束日期（含边界）；允许单侧日期；开始晚于结束时就地标红并阻止确定与查询；点击外部或 `Esc` 按取消处理。面板打开前保存已应用值，取消不得写回草稿。
-- 响应式：宽度不足时面板在触发器左侧对齐，`480px` 以下两个月纵向堆叠并移除月间竖线；触发器仍不超过筛选项可用宽度，页面不得出现横向滚动。
+#### 5.4.5 查询逻辑与响应式
 
-**横向标签筛选特例**：仅在模块 PRD 明确指定标签与控件同排时使用。横向筛选项采用 `display:flex; align-items:flex-start; column-gap:0px;`，字段名称后的中文全角冒号紧贴控件，不在标签列与控件之间追加留白；标签列固定右对齐，普通控件宽度保持模块 PRD 规定值。筛选项之间仍由外层筛选流的 `column-gap:24px` 分隔，字段换行的 `row-gap` 仍为 16px。`column-gap:0px` 只描述单个字段内部的“标签—控件”间距，不得误用于不同筛选项之间。
+- 搜索、筛选、排序和分页必须基于同一个完整数据集合按“搜索与筛选 → 排序 → 分页”顺序计算；搜索或确认筛选后回到第 1 页，改变页码不得清空搜索和筛选条件。
+- 搜索条件可即时生效；抽屉条件必须确认后生效。页面重新渲染或会话内返回时恢复已提交条件，不恢复未提交草稿。
+- 小于 720px 时工具栏左右两组纵向换行，搜索框占满可用宽度；筛选按钮保持 32px 高并紧随搜索框。抽屉宽度切换为 100%，表单仍保持单列，页面不得产生横向滚动。
 
-**查询/重置按钮**使用 `.filter-actions` 作为一个不可拆分的末尾操作组，紧跟最后一个查询条件右侧；按钮间距 12px，高度 32px。操作组不得通过绝对定位或空标签占位实现，容器不足时应整体换行。
+#### 5.4.6 页面内条件处理
 
-#### 5.4.1 订单管理页面特例
-
-订单管理采用“工具栏 + 数据列表”同一白色业务区块的结构，不再额外创建独立筛选卡片或操作卡片。订单工具栏位于数据区顶部，使用 `display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap`，组间垂直间距 12px、水平间距 16px，并与列表标题保持 16px 下间距。
-
-- 左侧搜索组由全局搜索框和“筛选”按钮组成，搜索框与筛选按钮的间距固定为 20px；右侧操作组仅放“导出”按钮，操作组使用 `display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap`。
-- 全局搜索框基准宽度 400px，最大宽度 100%，高度 32px；输入框右侧预留 58px，搜索图标位于右侧 4px、清空按钮位于右侧 30px，两个图标按钮均为 24×24px。无关键词时清空按钮隐藏；有关键词时显示并保持输入框焦点。
-- “筛选”按钮默认使用次按钮样式；已提交筛选条件时只将边框、图标和文字切换为 `primary`，背景仍保持白色。条件数量角标固定在按钮右上角外侧，最小尺寸 16×16px，使用 danger 底色、白字和 11px 等宽数字。
-- 数据区列表标题行紧跟工具栏，使用 `display:flex;align-items:center;justify-content:space-between;gap:12px;padding-bottom:16px`；左侧标题为 16px/600，结果总数紧邻标题显示，字号 12px、颜色 `ink-sub`，不单独占据右侧操作区域。
-- 订单筛选抽屉使用固定定位而非普通文档流：遮罩为 `position:fixed;inset:0;z-index:9999`，右侧面板 `position:fixed;top:0;right:0;bottom:0;width:480px;max-width:100vw;height:100dvh`，白底、抽屉阴影和 220ms 入场动画。遮罩背景使用 `rgba(0,0,0,.3)`，打开后锁定页面滚动。
-- 抽屉标题栏固定高 56px、左右内边距 20px；内容区 `flex:1;min-height:0;overflow-y:auto;padding:20px;background:bg-page`；底部操作栏固定高 64px、左右内边距 20px、按钮间距 12px，固定提供“取消”和“确认提交”。筛选字段在抽屉内单列纵向排列，字段间距 16px；字段标签字号 13px、行高 18px，控件高度 32px。
-- 订单筛选字段顺序固定为：订单号、订单类型、订单状态、支付方式、创建人、创建时间；字段标签统一追加中文全角冒号（`订单号：`）。创建人使用可检索单选下拉，创建时间使用总宽约 300px、高 32px 的 `.date-range` 组合，内部以两个日期控件和“至”分隔；日期控件展开或筛选时不得裁切后续字段。
-
-订单管理页面的搜索、筛选、导出、排序和分页均作用于完整结果集，交互后回到第 1 页；筛选抽屉取消、遮罩、关闭按钮和 `Escape` 只丢弃草稿，不改变已提交条件。
-
-**筛选字段顺序建议**：搜索框放第一位，日期范围合并为一个字段（`创建时间：[开始时间 - 结束时间]`），其余按业务优先级排列。单行最多 4 个查询条件，超过 4 个从下一行继续；查询/重置始终位于全部条件之后。
-
-**响应式降级**：当筛选区可用宽度小于 720px 时，`.filter-item` 与 `.control` 均切换为 `width:100%`，操作组保持左对齐并整组换行。桌面及大屏保持 400px 基准宽度，由 Flex 容器依据实际可用宽度决定每行展示数量。
-
-**搜索框清空按钮**：搜索输入框在有内容时显示 Lucide `x` 清空按钮，无内容时隐藏。通用无搜索图标输入框可使用 `16px × 16px` 按钮并右置 `8px`；带搜索提交图标的订单管理工具栏特例使用 `24px × 24px` 按钮，清空按钮右置 `30px`、搜索按钮右置 `4px`，输入框右侧预留 `58px`。两种按钮均使用 `ink-muted`，hover/focus-visible 切换为 `ink-body`，点击后清空并保持焦点；禁止使用文本字符代替图标。
+- 新页面的结构化条件统一进入右侧筛选抽屉，列表工具栏只保留关键词搜索与“筛选”入口。
+- 只有模块 PRD 明确要求常驻快捷条件时，才允许在页面内保留条件控件；该例外必须在对应 PRD 中写明业务原因、字段范围和响应式降级方式。
+- 页面内条件与标准“搜索框 + 筛选”入口不得重复承载同一查询条件。
 
 ### 5.5 分页
 
@@ -536,7 +514,7 @@
     └─ 主内容区 MainContent（flex-1，min-width:0，bg-page 背景，自适应宽度）
         └─ Router Outlet iframe（width/height:100%，display:block，border:0）
             ├─ 模块业务内容：bg-page 背景，四边 padding 固定 16px（p-4）；筛选区/数据区使用 bg-white rounded-lg p-5 md:p-6
-            ├─ 单区块：卡片最小高度 = iframe 可用高度 − 16px，内容超过时由模块文档滚动
+            ├─ 单区块：外层保留 16px 页面留白，唯一白色业务区块填满剩余可用高度，内容超过时由模块文档滚动
             ├─ 多区块（≥2）：卡片高度由内容决定，垂直堆叠，间距 16px（mb-4）
             └─ 无重复面包屑或模块级 App Shell；页面标题内嵌于首张业务卡片中
 ```

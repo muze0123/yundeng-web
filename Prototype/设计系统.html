@@ -343,25 +343,28 @@ document.addEventListener('DOMContentLoaded', async function() {
       <div><div class="yds-shell-state-rail is-compact"><div class="yds-state-item"><span class="yds-state-icon"></span></div><div class="yds-state-item"><span class="yds-state-icon"></span></div><div class="yds-state-item"><span class="yds-state-icon"></span></div><span class="yds-state-handle"><i data-lucide="triangle" class="yds-solid-arrow"></i></span></div><div style="margin-top:6px;color:#6E7685;font-size:12px">紧凑态 · 68px</div></div>
     </div>
   </section>
-  <section data-yundeng-spec="horizontal-filter-gap-20260821" class="yds-horizontal-filter-spec" aria-labelledby="yds-horizontal-filter-title">
+  <section data-yundeng-spec="list-toolbar-layout-20260827" class="yds-list-toolbar-spec" aria-labelledby="yds-list-toolbar-title">
     <style>
-      .yds-horizontal-filter-spec { width:calc(100% - 40px); max-width:1180px; margin:0 auto 64px; color:#3A3F4A; font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Helvetica Neue",Helvetica,Arial,sans-serif; letter-spacing:0; }
-      .yds-horizontal-filter-title { margin:0; color:#1A1D24; font-size:20px; font-weight:600; line-height:1.4; }
-      .yds-horizontal-filter-desc { max-width:900px; margin:8px 0 20px; color:#6E7685; font-size:14px; line-height:1.7; }
-      .yds-horizontal-filter-flow { display:flex; flex-wrap:wrap; align-items:flex-start; row-gap:16px; column-gap:24px; padding:20px; border:1px solid #DFE1E5; border-radius:8px; background:#FFFFFF; }
-      .yds-horizontal-filter-item { display:flex; flex:0 0 374px; width:374px; max-width:100%; align-items:flex-start; column-gap:0px; }
-      .yds-horizontal-filter-label { width:74px; flex:0 0 74px; color:#3A3F4A; font-size:14px; line-height:32px; text-align:right; white-space:nowrap; }
-      .yds-horizontal-filter-control { width:300px; max-width:100%; height:32px; padding:0 10px; border:1px solid #DFE1E5; border-radius:4px; background:#FFFFFF; color:#3A3F4A; font:14px inherit; }
-      .yds-horizontal-filter-note { margin-top:12px; color:#6E7685; font-size:12px; line-height:1.65; }
-      @media (max-width:760px) { .yds-horizontal-filter-spec { width:calc(100% - 24px); } .yds-horizontal-filter-item { flex-basis:100%; width:100%; } .yds-horizontal-filter-control { width:calc(100% - 74px); } }
+      .yds-list-toolbar-spec { width:calc(100% - 40px); max-width:1180px; margin:0 auto 64px; color:#3A3F4A; font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Helvetica Neue",Helvetica,Arial,sans-serif; letter-spacing:0; }
+      .yds-list-toolbar-title { margin:0; color:#1A1D24; font-size:20px; font-weight:600; line-height:1.4; }
+      .yds-list-toolbar-desc { max-width:900px; margin:8px 0 20px; color:#6E7685; font-size:14px; line-height:1.7; }
+      .yds-list-toolbar-demo { display:flex; align-items:center; justify-content:space-between; gap:12px 16px; flex-wrap:wrap; padding:16px; border:1px solid #DFE1E5; border-radius:8px; background:#FFFFFF; }
+      .yds-list-toolbar-actions,.yds-list-toolbar-search { display:flex; align-items:center; gap:8px; min-width:0; }
+      .yds-list-toolbar-actions { justify-content:flex-start; }
+      .yds-list-toolbar-search { margin-left:auto; justify-content:flex-end; gap:20px; flex:0 1 500px; }
+      .yds-list-toolbar-input { width:400px; max-width:100%; height:32px; padding:0 10px; border:1px solid #DFE1E5; border-radius:4px; background:#FFFFFF; color:#9DA2AC; font:14px inherit; }
+      .yds-list-toolbar-button { height:32px; padding:0 12px; border:1px solid #DFE1E5; border-radius:4px; background:#FFFFFF; color:#3A3F4A; font:500 14px/1 inherit; display:inline-flex; align-items:center; gap:6px; }
+      .yds-list-toolbar-button.is-primary { border-color:#0066FF; background:#0066FF; color:#FFFFFF; }
+      .yds-list-toolbar-note { margin-top:12px; color:#6E7685; font-size:12px; line-height:1.65; }
+      @media (max-width:760px) { .yds-list-toolbar-spec { width:calc(100% - 24px); } .yds-list-toolbar-actions,.yds-list-toolbar-search { width:100%; flex:0 0 100%; margin-left:0; justify-content:flex-start; } .yds-list-toolbar-input { flex:1 1 auto; width:auto; } }
     </style>
-    <h2 id="yds-horizontal-filter-title" class="yds-horizontal-filter-title">横向筛选字段间距</h2>
-    <p class="yds-horizontal-filter-desc">仅用于模块 PRD 明确采用“字段名称与控件同排”的筛选特例。单个字段内部标签与控件的 column-gap 为 0px；不同筛选项之间继续使用 24px 横向间距，并以 16px 纵向间距换行。</p>
-    <div class="yds-horizontal-filter-flow" aria-label="横向筛选字段间距示例">
-      <label class="yds-horizontal-filter-item"><span class="yds-horizontal-filter-label">订单号：</span><input class="yds-horizontal-filter-control" value="YL202608210001" readonly></label>
-      <label class="yds-horizontal-filter-item"><span class="yds-horizontal-filter-label">订单状态：</span><select class="yds-horizontal-filter-control"><option>全部</option></select></label>
+    <h2 id="yds-list-toolbar-title" class="yds-list-toolbar-title">列表工具栏布局</h2>
+    <p class="yds-list-toolbar-desc">列表工具栏统一分为左右两组：左侧放导出、刷新、新增等页面操作或业务摘要指标，右侧放搜索框与筛选入口。结构化条件通过右侧筛选抽屉维护。</p>
+    <div class="yds-list-toolbar-demo" aria-label="列表工具栏布局示例">
+      <div class="yds-list-toolbar-actions"><button class="yds-list-toolbar-button"><i data-lucide="download" width="14" height="14" aria-hidden="true"></i>导出</button><button class="yds-list-toolbar-button"><i data-lucide="refresh-cw" width="14" height="14" aria-hidden="true"></i>刷新</button></div>
+      <div class="yds-list-toolbar-search"><input class="yds-list-toolbar-input" placeholder="请输入关键词" readonly><button class="yds-list-toolbar-button is-primary"><i data-lucide="list-filter" width="14" height="14" aria-hidden="true"></i>筛选</button></div>
     </div>
-    <p class="yds-horizontal-filter-note">标签列 74px、控件 300px、字段内部 0px、筛选项之间 24px。费用管理的云币流水和订单管理共用此规则。</p>
+    <p class="yds-list-toolbar-note">桌面端保持左右对齐；窄屏按 DOM 顺序上下换行，搜索框占满可用宽度。</p>
   </section>
   <section data-yundeng-spec="table-sort-indicator-20260821" class="yds-table-sort-spec" aria-labelledby="yds-table-sort-title">
     <style>

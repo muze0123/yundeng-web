@@ -1,7 +1,10 @@
 (function () {
   'use strict';
 
-  const ASSET_VERSION = '20260825a';
+  // Keep module initialization alive when the CDN icon script is delayed or unavailable.
+  if (!window.lucide) window.lucide = { __yundengIconStub: true, createIcons() {} };
+
+  const ASSET_VERSION = '20260828i';
   const DEFAULT_ROUTE_KEY = 'home';
   const ONBOARDING_ICON_HTML = '<i data-lucide="compass" class="yundeng-onboarding-icon" aria-hidden="true"></i>';
   const ACCOUNT_TRAFFIC_USAGE = Object.freeze([
@@ -14,15 +17,21 @@
     { key: 'environment', label: '环境管理', icon: 'monitor-cog', href: '环境管理.html' },
     { key: 'proxy', label: '代理管理', icon: 'network', href: '代理管理.html' },
     { key: 'store', label: '商城', icon: 'shopping-bag', href: '商城-代理.html' },
-    // 侧栏只保留一个费用管理入口，默认落到云币充值页；四个业务页通过内容区 Tab 切换。
-    { key: 'billing', label: '费用管理', icon: 'wallet-cards', href: '费用管理-云币充值.html' },
+    { key: 'billing', label: '费用管理', icon: 'wallet-cards', group: true, children: [
+      { key: 'billing-orders', label: '订单管理', icon: 'receipt-text', href: '费用管理-订单管理.html' },
+      { key: 'billing-invoice', label: '开票管理', icon: 'file-text', href: '费用管理-开票管理.html' },
+      { key: 'billing-coupons', label: '优惠券', icon: 'ticket-percent', href: '费用管理-优惠券.html' }
+    ]},
     { key: 'team', label: '团队', icon: 'users-round', group: true, children: [
       { key: 'team-management', label: '团队管理', icon: 'building-2', href: '团队管理.html' },
-      { key: 'members', label: '成员管理', icon: 'user-round-cog', href: '成员管理.html' },
       { key: 'account-management', label: '账号管理', icon: 'contact', href: '账号管理.html' },
       { key: 'transfer', label: '分享转移', icon: 'arrow-right-left', href: '分享转移.html' },
       { key: 'logs', label: '日志管理', icon: 'scroll-text', href: '日志管理.html' },
       { key: 'account-settings', label: '账号设置', icon: 'key-round', href: '账号设置.html' }
+    ]},
+    { key: 'security', label: '安全策略', icon: 'shield-check', group: true, children: [
+      { key: 'access-policy', label: '访问策略', icon: 'shield-check', href: '访问策略.html' },
+      { key: 'access-logs', label: '访问日志', icon: 'scroll-text', href: '访问日志.html' }
     ]},
     { key: 'plugins', label: '插件管理', icon: 'blocks', href: '插件管理.html' },
     { key: 'automation', label: '自动化', icon: 'workflow', group: true, children: [
@@ -36,15 +45,15 @@
     { key: 'settings', label: '设置', icon: 'settings-2', href: '设置.html' },
     { key: 'help', label: '帮助', icon: 'circle-help', href: '帮助.html' }
   ];
-  // 变体路由不渲染到侧栏，但必须登记到统一解析表，供 index.html?page=<key> 和模块直开使用。
-  const BILLING_VARIANTS = [
-    { key: 'billing-coin', label: '云币充值', icon: 'wallet-cards', href: '费用管理-云币充值.html', routeOnly: true },
-    { key: 'billing-orders', label: '订单管理', icon: 'receipt-text', href: '费用管理-订单管理.html', routeOnly: true },
-    { key: 'billing-invoice', label: '开票管理', icon: 'file-text', href: '费用管理-开票管理.html', routeOnly: true },
-    { key: 'billing-coupons', label: '优惠券', icon: 'ticket-percent', href: '费用管理-优惠券.html', routeOnly: true }
+  const STORE_VARIANTS = [
+    { key: 'store-coin', label: '云币充值', icon: 'wallet-cards', href: '商城-云币充值.html', routeOnly: true }
   ];
-  const allItems = NAV.flatMap(item => item.children || [item]).concat(EXTRA, BILLING_VARIANTS);
-  const BILLING_PAGE_KEYS = new Set(['billing', 'billing-coin', 'billing-orders', 'billing-invoice', 'billing-coupons']);
+  const ROUTE_ONLY = [
+    { key: 'promotion-reward', label: '推广奖励', icon: 'badge-percent', href: '推广奖励.html', routeOnly: true }
+  ];
+  // 路由专用页面不渲染到侧栏，但必须登记到统一解析表，供 page key 和模块直开使用。
+  const allItems = NAV.flatMap(item => item.children || [item]).concat(EXTRA, STORE_VARIANTS, ROUTE_ONLY);
+  const STORE_PAGE_KEYS = new Set(['store', 'store-coin']);
   const basename = decodeURIComponent(location.pathname.split('/').pop() || 'index.html');
   const searchParams = new URLSearchParams(location.search);
   const shellParamNames = new Set(['page', 'module', 'moduleHash', 'moduleSearch', 'embedded', 'guide', 'indexHost']);
@@ -55,7 +64,7 @@
     '系统框架.html': DEFAULT_ROUTE_KEY,
     '首页.html': DEFAULT_ROUTE_KEY,
     '编辑浏览器.html': 'environment',
-    '费用管理-云币充值.html': 'billing-coin',
+    '商城-云币充值.html': 'store-coin',
     '费用管理-订单管理.html': 'billing-orders',
     '费用管理-开票管理.html': 'billing-invoice',
     '费用管理-优惠券.html': 'billing-coupons'
@@ -65,7 +74,7 @@
     '商城-代理.html': 'store',
     '商城-套餐.html': 'store',
     '商城-购物车.html': 'store',
-    '费用管理-云币充值.html': 'billing-coin',
+    '商城-云币充值.html': 'store',
     '费用管理-订单管理.html': 'billing-orders',
     '费用管理-开票管理.html': 'billing-invoice',
     '费用管理-优惠券.html': 'billing-coupons'
@@ -76,19 +85,24 @@
     '代理管理':'proxy',
     '商城':'store',
     '商城代理':'store',
-    'billing':'billing-coin',
-    '费用管理':'billing-coin',
-    '费管理':'billing-coin',
-    '云币充值':'billing-coin',
+    'billing':'billing-orders',
+    '费用管理':'billing-orders',
+    '费管理':'billing-orders',
+    '云币充值':'store-coin',
+    'billing-coin':'store-coin',
     '订单管理':'billing-orders',
     '开票管理':'billing-invoice',
     '优惠券':'billing-coupons',
     '团队管理':'team-management',
-    '成员管理':'members',
     '账号管理':'account-management',
+    '推广奖励':'promotion-reward',
     '分享转移':'transfer',
     '日志管理':'logs',
     '账号设置':'account-settings',
+    '安全策略':'access-policy',
+    '访问策略管理':'access-policy',
+    '访问策略':'access-policy',
+    '访问日志':'access-logs',
     '插件管理':'plugins',
     'API':'api',
     'RPA':'rpa',
@@ -109,7 +123,8 @@
     '代理购买须知.html',
     '商城-代理.html',
     '商城-套餐.html',
-    '商城-购物车.html'
+    '商城-购物车.html',
+    '商城-云币充值.html'
   ));
   // 业务模块直开统一回到 SystemFrame；仅允许显式嵌入态在当前文档承载业务内容。
   const STANDALONE_FILES = new Set();
@@ -278,10 +293,10 @@
   }
 
   function ensureIcons() {
-    if (window.lucide) { window.lucide.createIcons(); return; }
+    if (window.lucide && !window.lucide.__yundengIconStub) { window.lucide.createIcons(); return; }
     if (document.querySelector('script[data-yundeng-lucide]')) return;
     const script = document.createElement('script');
-    script.src = 'https://unpkg.com/lucide@latest';
+    script.src = 'https://unpkg.com/lucide@1.34.0/dist/umd/lucide.min.js';
     script.dataset.yundengLucide = 'true';
     script.onload = () => window.lucide?.createIcons?.();
     document.head.appendChild(script);
@@ -656,8 +671,8 @@
   }
 
   function itemLink(item, child) {
-    // 变体页面仍保持侧栏“费用管理”选中，避免隐藏路由项污染导航层级。
-    const active = item.key === 'billing' ? BILLING_PAGE_KEYS.has(pageKey) : pageKey === item.key;
+    // 费用管理二级页面与其他导航项使用同一选中态规则。
+    const active = item.key === 'store' ? STORE_PAGE_KEYS.has(pageKey) : pageKey === item.key;
     const icon = child ? '' : `<i data-lucide="${item.icon}" class="menu-icon"></i>`;
     return `<a href="${shellRouteHref(item.key)}" class="yundeng-menu-link ${child ? 'yundeng-secondary-link' : ''}" data-active="${active}" data-page-key="${item.key}" title="${item.label}">${icon}<span class="menu-label nav-label truncate">${item.label}</span></a>`;
   }
@@ -797,11 +812,6 @@
             <span class="menu-label">账号设置</span>
             <i data-lucide="chevron-right" class="yundeng-account-list-chevron" aria-hidden="true"></i>
           </a>
-          <a href="${shellRouteHref('members')}" class="yundeng-account-menu-item" data-account-action="invite">
-            <i data-lucide="users-round" class="yundeng-account-menu-icon" aria-hidden="true"></i>
-            <span class="menu-label">邀请成员</span>
-            <i data-lucide="chevron-right" class="yundeng-account-list-chevron" aria-hidden="true"></i>
-          </a>
           <a href="${shellRouteHref('plugins')}" class="yundeng-account-menu-item" data-account-action="plugins">
             <i data-lucide="blocks" class="yundeng-account-menu-icon" aria-hidden="true"></i>
             <span class="menu-label">我的插件</span>
@@ -891,8 +901,6 @@
       } else if (action === 'traffic-package') {
         const href = shellRouteHref('store', { moduleSearch: 'purchase=traffic_package&proxy_type=dynamic&focus=traffic-pack' });
         window.yundengNavigateShell ? window.yundengNavigateShell(href) : location.assign(href);
-      } else if (action === 'invite') {
-        window.yundengNavigateShell ? window.yundengNavigateShell(shellRouteHref('members')) : location.assign(shellRouteHref('members'));
       } else if (action === 'plugins') {
         window.yundengNavigateShell ? window.yundengNavigateShell(shellRouteHref('plugins')) : location.assign(shellRouteHref('plugins'));
       } else if (action === 'help') {
@@ -901,7 +909,8 @@
         const href = shellRouteHref('store', { moduleSearch: 'tab=proxy' });
         window.yundengNavigateShell ? window.yundengNavigateShell(href) : location.assign(href);
       } else if (action === 'reward') {
-        emitToast('推广奖励功能将在后续版本接入', 'info');
+        const href = shellRouteHref('promotion-reward');
+        window.yundengNavigateShell ? window.yundengNavigateShell(href) : location.assign(href);
       } else if (action === 'logout') {
         location.href = '登录.html';
       }
@@ -1063,7 +1072,7 @@
       }, 4000);
     });
 
-    frame.src = '新手引导.html?embedded=guide';
+    frame.src = `新手引导.html?embedded=guide&v=${ASSET_VERSION}`;
     window.openYundengOnboarding = () => requestOpen('topbar');
     const forceOpen = searchParams.get('guide') === '1';
     if (forceOpen) {
@@ -1296,10 +1305,6 @@
       }
     });
 
-    const dirtyBadge = document.getElementById('dirtyBadge');
-    if (dirtyBadge && typeof dirtyBadge.nodeType === 'number') {
-      try { new MutationObserver(reportDirty).observe(dirtyBadge, { attributes: true, attributeFilter: ['class', 'hidden'] }); } catch (_) {}
-    }
     requestAnimationFrame(() => {
       window.lucide?.createIcons?.();
       window.YDPager?.enhanceLegacy?.(document);

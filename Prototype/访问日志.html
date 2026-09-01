@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>云登 · 访问日志</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = { theme: { extend: { colors: {
+      primary:{DEFAULT:'#0066FF',hover:'#0052CC',active:'#0047B3',bg:'#E6F0FF'},
+      ink:{title:'#1A1D24',body:'#3A3F4A',sub:'#6E7685',muted:'#9DA2AC'},
+      line:{DEFAULT:'#DFE1E5',light:'#E8EAED',lighter:'#F0F1F3'},
+      page:'#F7F8FA',card:'#FFFFFF',hover:'#F3F4F6',
+      success:{DEFAULT:'#0FC060',bg:'#E7F9F0'},warning:{DEFAULT:'#E7772D',bg:'#FDF2E9'},
+      danger:{DEFAULT:'#D9001B',bg:'#FFE8EB'},info:{DEFAULT:'#0091D5',bg:'#E4F4FB'}
+    }, fontFamily:{ sans:["-apple-system","BlinkMacSystemFont","PingFang SC","Hiragino Sans GB","Microsoft YaHei","Helvetica Neue","Helvetica","Arial","sans-serif"], mono:["JetBrains Mono","monospace"] }, borderRadius:{ DEFAULT:'4px', lg:'8px' } } } };
+  </script>
+  <style>
+    *{box-sizing:border-box}
+    html{background:#FFFFFF}
+    body{margin:0;min-height:100%;background:#FFFFFF;color:#3A3F4A;font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Hiragino Sans GB','Microsoft YaHei','Helvetica Neue',Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+    button,input,select{font:inherit}
+    button{cursor:pointer}
+    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+    .mono{font-family:'JetBrains Mono',monospace;font-variant-numeric:tabular-nums}
+    .log-page{min-height:100vh;padding:14px 8px 24px;background:#FFFFFF}
+    .filter-bar{display:flex;align-items:center;gap:16px;flex-wrap:nowrap;min-height:32px;margin-bottom:20px}
+    .keyword-wrap{position:relative;flex:0 1 464px;min-width:320px}
+    .keyword-wrap input{display:block;width:100%;height:32px;padding:0 12px 0 32px;border:1px solid #DFE1E5;border-radius:4px;outline:0;background:#FFFFFF;color:#3A3F4A;font-size:13px}
+    .keyword-wrap input::placeholder{color:#9DA2AC}
+    .keyword-wrap input:focus,.select-wrap select:focus{border-color:#0066FF;box-shadow:0 0 0 2px rgba(0,102,255,.12)}
+    .keyword-wrap svg{position:absolute;left:10px;top:8px;width:16px;height:16px;color:#9DA2AC;pointer-events:none}
+    .select-wrap{position:relative;flex:0 0 185px;min-width:0}
+    .select-wrap.account{flex-basis:232px}
+    .select-wrap select{display:block;width:100%;height:32px;padding:0 32px 0 10px;appearance:none;border:1px solid #DFE1E5;border-radius:4px;outline:0;background:#FFFFFF;color:#3A3F4A;font-size:13px}
+    .select-wrap svg{position:absolute;right:9px;top:8px;width:16px;height:16px;color:#9DA2AC;pointer-events:none}
+    .table-wrap{width:100%;overflow-x:auto}
+    .log-table{width:100%;min-width:1020px;border-collapse:collapse;font-size:13px;table-layout:fixed}
+    .log-table col:nth-child(1){width:15%}.log-table col:nth-child(2){width:13%}.log-table col:nth-child(3){width:18%}.log-table col:nth-child(4){width:28%}.log-table col:nth-child(5){width:8%}.log-table col:nth-child(6){width:18%}
+    .log-table th{height:44px;padding:0 10px;background:#F7F8FA;border-bottom:1px solid #F0F1F3;color:#6E7685;font-size:12px;font-weight:600;line-height:20px;text-align:left;white-space:nowrap}
+    .log-table td{height:68px;padding:0 10px;border-bottom:1px solid #F0F1F3;color:#3A3F4A;line-height:20px;text-align:left;vertical-align:middle;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .log-table tbody tr:hover,.log-table tbody tr.preview-hover{background:#F7F8FA}
+    .log-table .url-cell{color:#3A3F4A;overflow:hidden;text-overflow:ellipsis}
+    .result-badge{display:inline-flex;align-items:center;justify-content:center;min-width:54px;height:30px;padding:0 10px;border-radius:4px;font-size:13px;font-weight:500}
+    .result-block{color:#D9001B;background:#FFE8EB}.result-allow{color:#0FC060;background:#E7F9F0}
+    .annotation-toggle{position:fixed;right:8px;top:120px;z-index:1100;height:32px;padding:0 12px;border:0;border-radius:16px;background:#0066FF;color:#FFFFFF;display:inline-flex;align-items:center;gap:6px;font-size:12px;box-shadow:0 2px 8px rgba(0,0,0,.06)}.annotation-toggle:hover{background:#0052CC}.annotation-toggle svg{width:15px;height:15px}
+    .annotation-popup{position:fixed;inset:0;z-index:1300;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(26,29,36,.25)}.annotation-popup[hidden]{display:none}.annotation-card{width:440px;max-width:100%;padding:20px;background:#FFFFFF;border-radius:8px;box-shadow:0 6px 24px rgba(0,0,0,.12)}.annotation-card h2{margin:0;color:#1A1D24;font-size:16px;font-weight:600}.annotation-card p{margin:8px 0 0;color:#6E7685;font-size:13px;line-height:22px}.annotation-card button{height:32px;margin-top:16px;padding:0 14px;border:0;border-radius:4px;background:#0066FF;color:#FFFFFF;font-size:13px}.annotation-card button:hover{background:#0052CC}
+    @media(max-width:1200px){.filter-bar{flex-wrap:wrap}.keyword-wrap{flex:1 1 360px}.select-wrap{flex:1 1 160px}.select-wrap.account{flex:1 1 190px}}
+    @media(max-width:640px){.log-page{padding:10px 6px 20px}.filter-bar{gap:10px;margin-bottom:16px}.keyword-wrap,.select-wrap,.select-wrap.account{flex:1 1 100%;min-width:0}.log-table{min-width:940px}.log-table th,.log-table td{padding:0 8px}}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{transition-duration:.01ms!important}}
+  </style>
+  <link rel="stylesheet" href="公共导航.css?v=20260825a">
+  <script src="公共导航.js?v=20260828a"></script>
+</head>
+<body>
+  <main id="mainContent" class="log-page" tabindex="-1">
+    <!-- 筛选区 -->
+    <form id="logFilterForm" class="filter-bar" aria-label="访问日志筛选">
+      <label class="keyword-wrap" data-anno="1" for="keywordFilter">
+        <span class="sr-only">搜索网址或判定原因</span>
+        <input id="keywordFilter" type="search" placeholder="搜索网址或判定原因" autocomplete="off">
+        <i data-lucide="search" aria-hidden="true"></i>
+      </label>
+      <label class="select-wrap" data-anno="2" for="memberFilter"><span class="sr-only">成员</span><select id="memberFilter"><option value="">全部成员</option></select><i data-lucide="chevron-down" aria-hidden="true"></i></label>
+      <label class="select-wrap account" data-anno="3" for="accountFilter"><span class="sr-only">账号</span><select id="accountFilter"><option value="">全部账号</option></select><i data-lucide="chevron-down" aria-hidden="true"></i></label>
+      <label class="select-wrap" data-anno="4" for="resultFilter"><span class="sr-only">结果</span><select id="resultFilter"><option value="">全部结果</option><option value="allow">允许</option><option value="block">禁止</option></select><i data-lucide="chevron-down" aria-hidden="true"></i></label>
+    </form>
+
+    <!-- 访问日志表格 -->
+    <section class="table-wrap" data-anno="5" aria-labelledby="logTableTitle">
+      <h1 id="logTableTitle" class="sr-only">访问日志</h1>
+      <table class="log-table" aria-label="访问日志列表">
+        <colgroup><col><col><col><col><col><col></colgroup>
+        <thead><tr><th>访问时间</th><th>成员</th><th>账号</th><th>网页地址</th><th>结果</th><th>判定原因</th></tr></thead>
+        <tbody id="logRows"></tbody>
+      </table>
+      <div id="emptyState" hidden class="py-16 text-center"><i data-lucide="file-search" class="mx-auto mb-3 h-8 w-8 text-ink-muted" aria-hidden="true"></i><p class="m-0 text-[14px] font-medium text-ink-title">暂无访问日志</p><p class="mt-2 text-[12px] text-ink-sub">请调整筛选条件后重试。</p></div>
+    </section>
+  </main>
+
+  <div id="annoLayer" aria-hidden="true" style="position:fixed;inset:0;pointer-events:none;z-index:1099"></div>
+  <button id="annoToggle" class="annotation-toggle" type="button" aria-label="查看页面说明"><i data-lucide="message-circle-more" aria-hidden="true"></i><span>页面说明</span></button>
+  <div id="annoPopup" class="annotation-popup" role="dialog" aria-modal="true" aria-labelledby="annoTitle" hidden><section class="annotation-card"><h2 id="annoTitle">访问日志</h2><p>记录成员访问网页时的匹配结果与判定原因，支持按网址、成员、账号和结果筛选。</p><button id="closeAnno" type="button">关闭</button></section></div>
+
+  <script>
+    'use strict';
+    const logs = [
+      {time:'2026-08-18 17:58',member:'张小北',account:'亚马逊美国旗舰店',url:'https://www.example.com',result:'block',reason:'命中黑名单禁止规则'},
+      {time:'2026-08-18 17:52',member:'李安然',account:'TikTok Shop 英国店',url:'https://seller.tiktok.com/home/orders',result:'allow',reason:'命中白名单允许规则'},
+      {time:'2026-08-18 17:44',member:'王强',account:'Amazon US',url:'https://sellercentral.amazon.com/orders',result:'allow',reason:'未命中禁止规则，默认允许',previewHover:true},
+      {time:'2026-08-18 17:36',member:'陈小雨',account:'Amazon DE',url:'https://sellercentral.amazon.de/settings',result:'block',reason:'未命中白名单允许规则'},
+      {time:'2026-08-18 17:31',member:'赵敏',account:'亚马逊美国旗舰店',url:'https://sellercentral.amazon.com/payments',result:'block',reason:'命中黑名单禁止规则'},
+      {time:'2026-08-18 17:26',member:'周宁',account:'TikTok Shop 英国店',url:'https://seller.tiktok.com/home/products',result:'allow',reason:'命中白名单允许规则'},
+      {time:'2026-08-18 17:18',member:'林晓',account:'Amazon US',url:'https://sellercentral.amazon.com/orders/123',result:'allow',reason:'未命中禁止规则，默认允许'},
+      {time:'2026-08-18 17:06',member:'张小北',account:'Amazon DE',url:'https://sellercentral.amazon.de/finance',result:'block',reason:'命中黑名单禁止规则'},
+      {time:'2026-08-18 16:52',member:'李安然',account:'亚马逊美国旗舰店',url:'https://sellercentral.amazon.com/settings',result:'allow',reason:'命中白名单允许规则'},
+      {time:'2026-08-18 16:45',member:'王强',account:'TikTok Shop 英国店',url:'https://seller.tiktok.com/home/orders',result:'allow',reason:'未命中禁止规则，默认允许'},
+      {time:'2026-08-18 16:32',member:'陈小雨',account:'Amazon US',url:'https://sellercentral.amazon.com/payments',result:'block',reason:'命中黑名单禁止规则'},
+      {time:'2026-08-18 16:18',member:'赵敏',account:'Amazon DE',url:'https://sellercentral.amazon.de/orders',result:'allow',reason:'命中白名单允许规则'}
+    ];
+    const state = {keyword:'',member:'',account:'',result:'',initialLimit:4};
+    const $ = id => document.getElementById(id);
+    const escapeHtml = value => String(value).replace(/[&<>\'"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'})[char]);
+    function populateFilters(){
+      const members=[...new Set(logs.map(item=>item.member))]; const accounts=[...new Set(logs.map(item=>item.account))];
+      $('memberFilter').innerHTML='<option value="">全部成员</option>'+members.map(value=>`<option value="${escapeHtml(value)}">${escapeHtml(value)}</option>`).join('');
+      $('accountFilter').innerHTML='<option value="">全部账号</option>'+accounts.map(value=>`<option value="${escapeHtml(value)}">${escapeHtml(value)}</option>`).join('');
+    }
+    function renderLogs(){
+      const keyword=state.keyword.toLowerCase();
+      const filtered=logs.filter(item=>{const text=[item.url,item.reason].join(' ').toLowerCase();return (!keyword||text.includes(keyword))&&(!state.member||item.member===state.member)&&(!state.account||item.account===state.account)&&(!state.result||item.result===state.result)});
+      const rows=filtered.slice(0,state.initialLimit);
+      $('logRows').innerHTML=rows.map(item=>`<tr class="${item.previewHover?'preview-hover':''}"><td class="mono text-[12px]">${escapeHtml(item.time)}</td><td>${escapeHtml(item.member)}</td><td>${escapeHtml(item.account)}</td><td class="url-cell mono text-[12px]" title="${escapeHtml(item.url)}">${escapeHtml(item.url)}</td><td><span class="result-badge ${item.result==='block'?'result-block':'result-allow'}">${item.result==='block'?'禁止':'允许'}</span></td><td>${escapeHtml(item.reason)}</td></tr>`).join('');
+      $('emptyState').hidden=rows.length>0;
+    }
+    function syncFilters(){state.keyword=$('keywordFilter').value.trim();state.member=$('memberFilter').value;state.account=$('accountFilter').value;state.result=$('resultFilter').value;renderLogs()}
+    function initAnnotations(){
+      $('annoToggle').addEventListener('click',()=>{$('annoPopup').hidden=false;$('closeAnno').focus()});
+      $('closeAnno').addEventListener('click',()=>{$('annoPopup').hidden=true;$('annoToggle').focus()});
+      $('annoPopup').addEventListener('click',event=>{if(event.target===$('annoPopup')){$('annoPopup').hidden=true;$('annoToggle').focus()}});
+      document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!$('annoPopup').hidden){$('annoPopup').hidden=true;$('annoToggle').focus()}});
+    }
+    const annotations_removed={1:{title:'网址或判定原因搜索',desc:['触发：输入关键词','响应：筛选网页地址和判定原因','规则：实时更新日志结果']},2:{title:'成员筛选',desc:['触发：选择成员','响应：仅展示该成员的访问日志','规则：默认展示全部成员']},3:{title:'账号筛选',desc:['触发：选择账号','响应：仅展示该账号的访问日志','规则：默认展示全部账号']},4:{title:'结果筛选',desc:['触发：选择允许或禁止','响应：按访问结果过滤日志','规则：默认展示全部结果']},5:{title:'访问日志表格',desc:['触发：页面加载或筛选条件变化','响应：展示访问时间、成员、账号、网页地址、结果和判定原因','规则：禁止和允许使用对应语义色']}};
+    function boot(){populateFilters();renderLogs();['keywordFilter','memberFilter','accountFilter','resultFilter'].forEach(id=>$(id).addEventListener(id==='keywordFilter'?'input':'change',syncFilters));initAnnotations()}
+    boot();
+  </script>
+</body>
+</html>

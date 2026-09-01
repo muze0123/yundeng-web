@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>云登 - 商城-购物车</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://unpkg.com/lucide@1.34.0/dist/umd/lucide.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <script>
-    tailwind.config = {
+    if (window.tailwind) tailwind.config = {
       theme: {
         extend: {
           colors: {
@@ -183,7 +183,7 @@
     :where(button, input, select):focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
   </style>
   <link rel="stylesheet" href="公共导航.css?v=20260825a">
-  <script src="公共导航.js?v=20260825a"></script>
+  <script src="公共导航.js?v=20260828e"></script>
 </head>
 <body class="overflow-hidden">
   <main id="mainContent" class="store-page" tabindex="-1">
@@ -193,6 +193,7 @@
       <div id="storeTabs" class="store-tabs" role="tablist" aria-label="商城业务范围">
         <button id="tabProxy" class="store-tab" type="button" role="tab" aria-selected="false" data-tab="proxy"><i data-lucide="server"></i><span>代理</span></button>
         <button id="tabPlan" class="store-tab" type="button" role="tab" aria-selected="false" data-tab="plan" tabindex="-1"><i data-lucide="package"></i><span>套餐</span></button>
+        <button id="tabCoin" class="store-tab" type="button" role="tab" aria-selected="false" data-tab="coin" tabindex="-1"><i data-lucide="wallet-cards"></i><span>云币充值</span></button>
         <button id="tabCart" class="store-tab" type="button" role="tab" aria-selected="true" data-tab="cart" tabindex="0"><i data-lucide="shopping-cart"></i><span>购物车</span></button>
       </div>
     </nav>
@@ -320,7 +321,7 @@
     const setCartGroupCollapsed = (type, collapsed) => localStorage.setItem(`yundeng-store-cart-group-${type}`, collapsed ? '1' : '0');
     function navigateToStoreTab(tab) {
       const search = `?tab=${tab}`;
-      const file = tab === 'plan' ? '商城-套餐.html' : tab === 'cart' ? '商城-购物车.html' : '商城-代理.html';
+      const file = tab === 'plan' ? '商城-套餐.html' : tab === 'coin' ? '商城-云币充值.html' : tab === 'cart' ? '商城-购物车.html' : '商城-代理.html';
       if (window.parent !== window) {
         window.parent.postMessage({ type: 'yundeng:route', file, search, hash: '' }, '*');
         return;
