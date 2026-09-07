@@ -19,6 +19,7 @@
     { key: 'store', label: '商城', icon: 'shopping-bag', href: '商城-代理.html' },
     { key: 'billing', label: '费用管理', icon: 'wallet-cards', group: true, children: [
       { key: 'billing-orders', label: '订单管理', icon: 'receipt-text', href: '费用管理-订单管理.html' },
+      { key: 'billing-coin-transactions', label: '云币交易流水', icon: 'list', href: '费用管理-云币交易流水.html' },
       { key: 'billing-invoice', label: '开票管理', icon: 'file-text', href: '费用管理-开票管理.html' },
       { key: 'billing-coupons', label: '优惠券', icon: 'ticket-percent', href: '费用管理-优惠券.html' }
     ]},
@@ -46,14 +47,15 @@
     { key: 'help', label: '帮助', icon: 'circle-help', href: '帮助.html' }
   ];
   const STORE_VARIANTS = [
-    { key: 'store-coin', label: '云币充值', icon: 'wallet-cards', href: '商城-云币充值.html', routeOnly: true }
+    { key: 'store-coin', label: '云币充值', icon: 'wallet-cards', href: '商城-云币充值.html', routeOnly: true },
+    { key: 'store-plan-calculator', label: '套餐计价模拟', icon: 'calculator', href: '商城-套餐计价模拟.html', routeOnly: true }
   ];
   const ROUTE_ONLY = [
     { key: 'promotion-reward', label: '推广奖励', icon: 'badge-percent', href: '推广奖励.html', routeOnly: true }
   ];
   // 路由专用页面不渲染到侧栏，但必须登记到统一解析表，供 page key 和模块直开使用。
   const allItems = NAV.flatMap(item => item.children || [item]).concat(EXTRA, STORE_VARIANTS, ROUTE_ONLY);
-  const STORE_PAGE_KEYS = new Set(['store', 'store-coin']);
+  const STORE_PAGE_KEYS = new Set(['store', 'store-coin', 'store-plan-calculator']);
   const basename = decodeURIComponent(location.pathname.split('/').pop() || 'index.html');
   const searchParams = new URLSearchParams(location.search);
   const shellParamNames = new Set(['page', 'module', 'moduleHash', 'moduleSearch', 'embedded', 'guide', 'indexHost']);
@@ -66,6 +68,7 @@
     '编辑浏览器.html': 'environment',
     '商城-云币充值.html': 'store-coin',
     '费用管理-订单管理.html': 'billing-orders',
+    '费用管理-云币交易流水.html': 'billing-coin-transactions',
     '费用管理-开票管理.html': 'billing-invoice',
     '费用管理-优惠券.html': 'billing-coupons'
   };
@@ -75,7 +78,9 @@
     '商城-套餐.html': 'store',
     '商城-购物车.html': 'store',
     '商城-云币充值.html': 'store',
+    '商城-套餐计价模拟.html': 'store-plan-calculator',
     '费用管理-订单管理.html': 'billing-orders',
+    '费用管理-云币交易流水.html': 'billing-coin-transactions',
     '费用管理-开票管理.html': 'billing-invoice',
     '费用管理-优惠券.html': 'billing-coupons'
   };
@@ -124,7 +129,8 @@
     '商城-代理.html',
     '商城-套餐.html',
     '商城-购物车.html',
-    '商城-云币充值.html'
+    '商城-云币充值.html',
+    '商城-套餐计价模拟.html'
   ));
   // 业务模块直开统一回到 SystemFrame；仅允许显式嵌入态在当前文档承载业务内容。
   const STANDALONE_FILES = new Set();

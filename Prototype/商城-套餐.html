@@ -11,8 +11,8 @@
       theme: {
         extend: {
           colors: {
-            primary: '#315BFF',
-            success: '#22B573',
+            primary: '#0066FF',
+            success: '#0FC060',
             ink: '#252525',
             muted: '#8A8F98',
             line: '#E8EAED',
@@ -29,14 +29,15 @@
   <link rel="stylesheet" href="公共导航.css?v=20260825a">
   <style>
     :root {
-      --primary: #315bff;
-      --success: #22b573;
+      --primary: #0066ff;
+      --success: #0fc060;
       --ink: #252525;
       --muted: #8a8f98;
       --line: #e8eaed;
       --surface: #f7f8fa;
     }
     * { box-sizing: border-box; }
+    [hidden] { display: none !important; }
     body { margin: 0; background: var(--surface); color: var(--ink); font-family: PingFang SC, Microsoft YaHei, sans-serif; }
     button, input, select { font: inherit; }
     .package-page { min-height: 100vh; padding: 8px; }
@@ -55,6 +56,11 @@
     .field-label { display: flex; align-items: center; justify-content: flex-end; text-align: right; white-space: nowrap; line-height: 32px; color: #464b52; font-size: 14px; }
     .control-column { min-width: 0; }
     .type-options, .duration-options, .payment-options { display: flex; gap: 8px; flex-wrap: wrap; }
+    .type-picker { display: grid; gap: 6px; }
+    .type-help-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; max-width: 420px; }
+    .type-help { margin: 0; color: #8a8f98; font-size: 12px; line-height: 18px; }
+    .type-help strong { color: #6e7685; font-weight: 500; }
+    .type-help.active strong { color: var(--primary); }
     .choice-button, .duration-button, .payment-option { border: 1px solid var(--line); background: #fafafa; color: #444; border-radius: 3px; height: 32px; font-size: 14px; }
     .choice-button { width: 126px; }
     .choice-button.active, .duration-button.active { color: #fff; background: var(--primary); border-color: var(--primary); }
@@ -82,11 +88,29 @@
     .stepper input { width: 54px; border: 0; outline: 0; text-align: center; color: #444; background: transparent; font-size: 14px; }
     .inline-note { color: #4b4f56; font-size: 14px; white-space: nowrap; }
     .help-icon { width: 18px; height: 18px; position: relative; display: inline-flex; flex: 0 0 18px; align-items: center; justify-content: center; color: #636a73; cursor: help; }
-    .help-icon[data-tooltip]::after { width: 238px; padding: 8px 10px; position: absolute; left: 50%; bottom: calc(100% + 9px); z-index: 30; border: 1px solid #e8eaed; border-radius: 4px; color: #4b5057; background: #fff; box-shadow: 0 4px 14px rgba(28,35,49,.12); content: attr(data-tooltip); font-size: 12px; line-height: 1.55; text-align: left; white-space: normal; opacity: 0; visibility: hidden; pointer-events: none; transform: translate(-50%, 4px); transition: opacity .15s ease, transform .15s ease; }
-    .help-icon[data-tooltip]::before { content: ""; width: 8px; height: 8px; position: absolute; left: 50%; bottom: calc(100% + 5px); z-index: 31; border-right: 1px solid #e8eaed; border-bottom: 1px solid #e8eaed; background: #fff; opacity: 0; visibility: hidden; pointer-events: none; transform: translateX(-50%) rotate(45deg); transition: opacity .15s ease; }
-    .help-icon[data-tooltip]:hover::after, .help-icon[data-tooltip]:focus-within::after,
-    .help-icon[data-tooltip]:hover::before, .help-icon[data-tooltip]:focus-within::before { opacity: 1; visibility: visible; }
-    .help-icon[data-tooltip]:hover::after, .help-icon[data-tooltip]:focus-within::after { transform: translate(-50%, 0); }
+    .price-tooltip { position: absolute; top: calc(100% + 14px); left: -92px; z-index: 80; width: min(720px, calc(100vw - 32px)); padding: 40px; border-radius: 8px; color: #3a3f4a; background: #fff; box-shadow: 0 6px 24px rgba(0,0,0,.12); opacity: 0; visibility: hidden; pointer-events: none; transform: translateY(6px); transition: opacity .15s ease, transform .15s ease; }
+    .price-tooltip.member-tooltip { top: calc(100% + 14px); left: -92px; }
+    .help-icon:hover .price-tooltip, .help-icon:focus .price-tooltip { opacity: 1; visibility: visible; transform: translateY(0); }
+    .price-tooltip > strong { display: block; margin: 0; color: #3a3f4a; font-size: 16px; line-height: 24px; font-weight: 600; }
+    .price-tooltip-intro { display: block; margin: 16px 0 18px; color: #3a3f4a; font-size: 13px; line-height: 20px; }
+    .price-tooltip-table { width: 100%; overflow: hidden; border: 1px solid #e8eaed; border-radius: 8px; border-collapse: separate; border-spacing: 0; font-size: 13px; }
+    .price-tooltip-table th, .price-tooltip-table td { height: 36px; padding: 0 18px; text-align: center; }
+    .price-tooltip-table th { color: #3a3f4a; background: #fff; font-size: 13px; font-weight: 500; }
+    .price-tooltip-table td { color: #3a3f4a; border-top: 0; }
+    .price-tooltip-table tbody tr:nth-child(odd) td { background: #f7f8fa; }
+    .price-tooltip-table tbody tr:nth-child(even) td { background: #fff; }
+    .price-tooltip-table td:last-child { color: #0066ff; font-family: JetBrains Mono, monospace; font-size: 13px; font-weight: 500; }
+    .price-tooltip-example { display: block; margin: 18px 0 0; color: #3a3f4a; font-size: 12px; line-height: 20px; }
+    .price-tooltip.member-tooltip .price-tooltip-intro { margin-bottom: 18px; }
+    @media (max-width: 760px) {
+      .price-tooltip { left: -120px; padding: 24px; }
+      .price-tooltip > strong { font-size: 16px; line-height: 24px; }
+      .price-tooltip-intro { margin: 16px 0 18px; font-size: 13px; line-height: 20px; }
+      .price-tooltip-table { font-size: 13px; }
+      .price-tooltip-table th, .price-tooltip-table td { height: 36px; padding: 0 8px; }
+      .price-tooltip-table th, .price-tooltip-table td:last-child { font-size: 13px; }
+      .price-tooltip-example { margin-top: 18px; font-size: 12px; line-height: 20px; }
+    }
     .expiry-note { position: absolute; top: 40px; left: 0; margin: 0; color: #9a9fa6; font-size: 13px; white-space: nowrap; }
     .compare-row { display: flex; align-items: center; gap: 18px; margin-top: 8px; }
     .compare-card { width: 248px; padding: 16px 18px; border: 1px solid #edf0f3; border-radius: 5px; box-shadow: 0 2px 7px rgba(28,35,49,.06); }
@@ -202,7 +226,7 @@
     .payment-notice svg { width: 14px; height: 14px; flex: 0 0 14px; }
     .payment-notice strong { color: #ff4d4f; font-weight: 500; }
     .payment-amount-label { margin-top: 48px; color: #9da2ac; font-size: 16px; font-weight: 600; }
-    .payment-amount { margin-top: 4px; color: #315bff; font: 500 34px/1 JetBrains Mono, monospace; }
+    .payment-amount { margin-top: 4px; color: var(--primary); font: 500 34px/1 JetBrains Mono, monospace; }
     .payment-qr { width: 194px; height: 194px; margin: 20px auto 0; padding: 8px; display: grid; grid-template-columns: repeat(29, 1fr); grid-template-rows: repeat(29, 1fr); background: #fff; }
     .payment-qr span { display: block; }
     .payment-qr span.is-dark { background: #111; }
@@ -220,10 +244,10 @@
     .issue-qr span.is-dark { background: #111; }
     .issue-qr span.is-light { background: #fff; }
     .issue-qr-label { margin-top: 6px; color: #6e7685; font-size: 12px; }
-    .issue-exit { width: 100%; height: 40px; margin-top: 18px; border: 0; border-radius: 4px; color: #fff; background: #315bff; cursor: pointer; font-size: 15px; font-weight: 600; }
+    .issue-exit { width: 100%; height: 40px; margin-top: 18px; border: 0; border-radius: 4px; color: #fff; background: var(--primary); cursor: pointer; font-size: 15px; font-weight: 600; }
     .issue-exit:hover { background: #0052cc; }
     .issue-reminder { margin-top: 16px; display: inline-flex; align-items: center; gap: 8px; color: #8a8f98; font-size: 14px; }
-    .issue-reminder input { width: 14px; height: 14px; accent-color: #315bff; }
+    .issue-reminder input { width: 14px; height: 14px; accent-color: var(--primary); }
     @media (max-width: 767px) {
       .payment-dialog-header { padding: 0 20px; }
       .payment-dialog-body { padding: 20px; }
@@ -246,10 +270,152 @@
       .compare-card { width: 100%; }
       .arrow-between { display: none; }
     }
+
+    /* 首次购买套餐：将数量配置、价格依据和订单试算组织为连续工作流。 */
+    .first-purchase-page .main-panel { padding: 28px 32px 32px; }
+    .first-purchase-page .field-row { grid-template-columns: 86px minmax(0, 1fr); gap: 14px; margin-bottom: 24px; }
+    .first-purchase-page .field-label { font-size: 13px; line-height: 32px; }
+    .purchase-control { min-width: 0; }
+    .quantity-line { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }
+    .quantity-line .stepper { width: 154px; }
+    .quantity-line .stepper input { width: 80px; }
+    .unit-price { color: #3a3f4a; font-size: 14px; white-space: nowrap; }
+    .unit-price strong { font-family: JetBrains Mono, monospace; font-weight: 500; }
+    .range-wrap { display: none; }
+    .tier-strip { display: flex; align-items: center; gap: 8px; max-width: 720px; margin-top: 10px; overflow: hidden; }
+    .tier-chip { flex: 0 0 auto; min-width: 72px; height: 32px; padding: 0 12px; border: 1px solid #d8e5ff; border-radius: 4px; color: var(--primary); background: #e6f0ff; cursor: pointer; font-size: 13px; }
+    .tier-chip:hover, .tier-chip.active, .tier-chip[data-selected="true"] { border-color: var(--primary); background: #d8e5ff; }
+    .tier-more { flex: 0 0 auto; height: 32px; padding: 0 12px; border: 0; color: var(--primary); background: transparent; cursor: pointer; font-size: 13px; }
+    .tier-strip.expanded { flex-wrap: wrap; max-height: none; overflow: visible; }
+    .tier-strip.expanded .tier-chip { display: inline-flex; align-items: center; justify-content: center; }
+    .price-help { margin-left: 0; }
+    .duration-options { gap: 10px; }
+    .duration-button { width: 154px; height: 44px; font-size: 15px; }
+    .duration-selector { padding-bottom: 24px; }
+    .expiry-note { top: 52px; font-size: 13px; }
+    .first-purchase-page .summary-panel { border-radius: 8px; }
+    .summary-topline { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .compare-link { padding: 0; border: 0; color: var(--primary); background: transparent; cursor: pointer; font-size: 13px; }
+    .compare-link:hover { color: #0052cc; text-decoration: underline; }
+    .compare-trigger { position: relative; display: inline-flex; }
+    .compare-tooltip { position: absolute; top: calc(100% + 10px); right: 0; z-index: 80; width: 260px; padding: 14px 16px; border: 1px solid var(--line); border-radius: 6px; color: #3a3f4a; background: #fff; box-shadow: 0 6px 24px rgba(0,0,0,.12); opacity: 0; visibility: hidden; pointer-events: auto; transform: translateY(4px); transition: opacity .15s ease, transform .15s ease; }
+    .compare-trigger:hover .compare-tooltip, .compare-trigger:focus-within .compare-tooltip { opacity: 1; visibility: visible; transform: translateY(0); }
+    .compare-tooltip-title { display: block; margin-bottom: 10px; color: #1a1d24; font-size: 14px; font-weight: 600; }
+    .compare-tooltip .summary-line { min-height: 28px; font-size: 14px; }
+    .compare-tooltip .summary-line.indent { padding-left: 14px; color: #92969d; }
+    .compare-tooltip .summary-value { color: #4b5057; font-size: 13px; }
+    .compare-tooltip-toggle { padding: 0; border: 0; display: inline-flex; align-items: center; gap: 3px; color: #60656c; background: transparent; cursor: pointer; font-size: 14px; text-align: left; }
+    .compare-tooltip-toggle:hover { color: #3a3f4a; }
+    .compare-tooltip-toggle svg { width: 14px; height: 14px; }
+    .compare-tooltip-toggle strong { color: #4b5057; font-family: JetBrains Mono, monospace; font-size: 13px; font-weight: 500; }
+    .compare-tooltip-details { padding: 0 0 4px; }
+    .compare-tooltip-details .summary-line { min-height: 26px; }
+    .summary-section.order-lines { padding-top: 8px; }
+    .summary-section.order-lines .summary-line { min-height: 36px; }
+    .summary-section.order-lines .summary-line.subtotal { min-height: 28px; color: #6e7685; }
+    .summary-section.order-lines .summary-line.subtotal strong { color: #3a3f4a; font-family: JetBrains Mono, monospace; font-weight: 500; }
+    .summary-section.order-lines .summary-line.discount-line strong { color: #6e7685; font-family: JetBrains Mono, monospace; font-weight: 500; }
+    .summary-section.order-lines .summary-line.payable-line { margin-top: 8px; }
+    .summary-section.order-lines .summary-line.payable-line strong { color: var(--primary); font: 600 22px/1 JetBrains Mono, monospace; }
+    .summary-resource-note { margin: 4px 0 8px; color: #9da2ac; font-size: 12px; line-height: 18px; }
+    .summary-gift-row { display: none; }
+    .summary-gift-row.visible { display: flex; }
+    .summary-line small { margin-left: 6px; padding: 2px 5px; border-radius: 4px; color: #3a3f4a; background: #d8e5ff; font-size: 12px; line-height: 18px; }
+    .compare-dialog-mask { position: fixed; inset: 0; z-index: 70; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(0,0,0,.3); }
+    .compare-dialog-mask.hidden { display: none; }
+    .compare-dialog { width: min(720px, calc(100vw - 32px)); max-height: calc(100vh - 32px); overflow: auto; border-radius: 8px; background: #fff; box-shadow: 0 6px 24px rgba(0,0,0,.12); }
+    .compare-dialog-header { min-height: 58px; padding: 0 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--line); }
+    .compare-dialog-header h2 { margin: 0; color: #1a1d24; font-size: 16px; font-weight: 600; }
+    .compare-dialog-body { padding: 20px; }
+    .compare-state-switch { display: inline-flex; gap: 4px; padding: 4px; border-radius: 4px; background: #f3f4f6; }
+    .compare-state-switch button { height: 28px; padding: 0 10px; border: 0; border-radius: 3px; color: #6e7685; background: transparent; cursor: pointer; font-size: 12px; }
+    .compare-state-switch button.active { color: var(--primary); background: #fff; box-shadow: 0 1px 3px rgba(28,35,49,.08); }
+    .current-plan-card { margin-top: 16px; padding: 18px; border: 1px solid var(--line); border-radius: 6px; }
+    .current-plan-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 20px; }
+    .current-plan-header strong { color: #3a3f4a; font-size: 16px; font-weight: 600; }
+    .free-badge { padding: 6px 10px; border-radius: 4px; color: var(--primary); background: #d8e5ff; font-size: 13px; }
+    .current-plan-line { display: flex; align-items: center; justify-content: space-between; min-height: 38px; color: #3a3f4a; font-size: 14px; }
+    .current-plan-line strong { color: #3a3f4a; font-family: JetBrains Mono, monospace; font-weight: 500; }
+    .current-plan-line .plan-detail { display: inline-flex; align-items: center; gap: 6px; }
+    .current-plan-line .plan-detail svg { width: 15px; height: 15px; color: #6e7685; }
+    .account-status { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 26px; padding-bottom: 16px; border-bottom: 1px solid #f0f1f3; }
+    .account-status-label { color: #3a3f4a; font-size: 14px; font-weight: 600; }
+    .account-status-options { display: inline-flex; gap: 8px; padding: 0; border-radius: 4px; background: transparent; }
+    .account-status-options button { height: 32px; padding: 0 14px; border: 1px solid var(--line); border-radius: 4px; color: #6e7685; background: #fff; cursor: pointer; font-size: 13px; }
+    .account-status-options button:hover { border-color: var(--primary); color: var(--primary); background: #f8fbff; }
+    .account-status-options button.active, .account-status-options button[data-selected="true"] { border-color: var(--primary); color: var(--primary); background: var(--primary-bg); box-shadow: 0 0 0 1px var(--primary); font-weight: 600; }
+    .account-status-options button[data-selected="false"] { border-color: var(--line); color: #6e7685; background: #fff; box-shadow: none; font-weight: 400; }
+    .purchase-type-row { margin-bottom: 24px; }
+    .purchase-type-options { display: grid; grid-template-columns: repeat(2, minmax(210px, 1fr)); gap: 10px; max-width: 670px; }
+    .purchase-type-options[data-active-mode="renew"] .purchase-type-card[data-purchase-mode="renew"], .purchase-type-options[data-active-mode="change"] .purchase-type-card[data-purchase-mode="change"] { border-color: var(--primary); background: #f8fbff; box-shadow: inset 0 0 0 1px var(--primary); }
+    .purchase-type-options[data-active-mode="renew"] .purchase-type-card[data-purchase-mode="renew"] strong, .purchase-type-options[data-active-mode="change"] .purchase-type-card[data-purchase-mode="change"] strong { color: var(--primary); }
+    .purchase-type-card { min-height: 74px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 4px; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; color: #3a3f4a; background: #fff; cursor: pointer; text-align: left; }
+    .purchase-type-card:hover { border-color: var(--primary); background: #f8fbff; }
+    .purchase-type-card.active, .purchase-type-card[data-selected="true"] { border-color: var(--primary); background: #f8fbff; box-shadow: inset 0 0 0 1px var(--primary); }
+    .purchase-type-card[data-selected="false"] { border-color: var(--line); background: #fff; box-shadow: none; }
+    .purchase-type-card strong { color: #3a3f4a; font-size: 15px; font-weight: 600; }
+    .purchase-type-card.active strong, .purchase-type-card[data-selected="true"] strong { color: var(--primary); }
+    .purchase-type-card[data-selected="false"] strong { color: #3a3f4a; }
+    body[data-account-status="first"] #purchaseTypeRow { display: none !important; }
+    body[data-account-status="subscribed"] #purchaseTypeRow { display: grid !important; }
+    body[data-account-status="subscribed"][data-purchase-mode="renew"] #firstDurationSelector { display: block !important; }
+    body[data-account-status="subscribed"][data-purchase-mode="renew"] #subscribedDurationSelector { display: none !important; }
+    body[data-account-status="subscribed"][data-purchase-mode="change"] #firstDurationSelector { display: none !important; }
+    body[data-account-status="subscribed"][data-purchase-mode="change"] #subscribedDurationSelector { display: block !important; }
+    .purchase-type-card span { margin-top: 4px; color: #9da2ac; font-size: 12px; line-height: 18px; }
+    .change-duration-options { display: grid; gap: 8px; max-width: 516px; }
+    .change-duration-card { min-height: 42px; padding: 0 14px; border: 1px solid var(--line); border-radius: 4px; display: flex; align-items: center; gap: 8px; color: #3a3f4a; background: #fff; cursor: pointer; font-size: 14px; }
+    .change-duration-card::before { width: 14px; height: 14px; border: 2px solid #9da2ac; border-radius: 50%; content: ""; }
+    .change-duration-card.active { border-color: var(--primary); color: var(--primary); }
+    .change-duration-card.active::before { border: 4px solid var(--primary); }
+    .change-renew-panel { display: none; width: 516px; max-width: 100%; margin-top: 8px; padding: 12px 14px; border: 1px solid var(--primary); border-radius: 4px; }
+    .change-renew-panel.visible { display: block; }
+    .change-renew-meta { display: flex; align-items: center; justify-content: space-between; gap: 12px; color: #6e7685; font-size: 12px; }
+    .change-renew-meta strong { color: var(--primary); font-family: JetBrains Mono, monospace; font-weight: 500; }
+    .change-renew-options { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+    .change-renew-options button { min-width: 84px; height: 32px; padding: 0 10px; border: 1px solid var(--line); border-radius: 4px; color: #3a3f4a; background: #fff; cursor: pointer; font-size: 13px; }
+    .change-renew-options button.active { border-color: var(--primary); color: var(--primary); background: #e6f0ff; }
+    .current-package-note { margin-top: 6px; color: #9da2ac; font-size: 12px; line-height: 18px; }
+    .subscribed-compare { display: none; align-items: center; gap: 14px; margin: 0 0 24px 100px; }
+    .subscribed-compare.visible { display: flex; }
+    .subscribed-compare-card { width: min(300px, 40%); padding: 14px 16px; border: 1px solid #edf0f3; border-radius: 6px; box-shadow: 0 2px 8px rgba(28,35,49,.06); }
+    .subscribed-compare-card h3 { margin: 0; color: #3a3f4a; font-size: 14px; font-weight: 600; }
+    .subscribed-compare-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+    .subscribed-compare-expiry { color: #3a3f4a; font-family: JetBrains Mono, monospace; font-size: 12px; font-weight: 500; white-space: nowrap; }
+    .subscribed-compare-line { display: flex; align-items: center; justify-content: space-between; min-height: 32px; color: #6e7685; font-size: 13px; }
+    .subscribed-compare-line strong { color: #3a3f4a; font-family: JetBrains Mono, monospace; font-weight: 500; }
+    .subscribed-compare-card.new-plan h3, .subscribed-compare-card.new-plan strong { color: var(--primary); }
+    .subscribed-compare-arrow { color: #6e7685; font-size: 22px; }
+    .compare-resource-toggle { padding: 0; border: 0; display: inline-flex; align-items: center; gap: 4px; color: inherit; background: transparent; cursor: pointer; font-size: 13px; }
+    .compare-resource-toggle:hover { color: var(--ink-body); }
+    .compare-resource-toggle svg { width: 14px; height: 14px; }
+    .compare-resource-details { padding: 2px 0 6px 18px; }
+    .compare-detail-line { min-height: 26px; display: flex; align-items: center; justify-content: space-between; gap: 8px; color: #9da2ac; font-size: 12px; }
+    .compare-detail-line strong { color: #6e7685; font-family: JetBrains Mono, monospace; font-weight: 500; }
+    .compare-detail-expiry { margin-left: 4px; padding: 2px 4px; border-radius: 4px; color: #3a3f4a; background: #d8e5ff; font-size: 11px; }
+    .summary-credit-row { display: none; }
+    .summary-credit-row.visible { display: flex; }
+    .summary-mode-note { margin: 0 0 8px; color: #6e7685; font-size: 12px; line-height: 18px; }
+    @media (max-width: 820px) {
+      .first-purchase-page .main-panel { padding: 22px 18px 28px; }
+      .first-purchase-page .field-row { grid-template-columns: 78px minmax(0, 1fr); }
+      .tier-strip { max-width: 100%; }
+      .account-status { align-items: flex-start; flex-direction: column; }
+      .subscribed-compare { margin-left: 0; }
+    }
+    @media (max-width: 600px) {
+      .first-purchase-page .field-row { grid-template-columns: 1fr; gap: 6px; }
+      .first-purchase-page .field-label { justify-content: flex-start; text-align: left; line-height: 24px; }
+      .duration-button { width: calc(50% - 5px); }
+      .subscribed-compare { align-items: stretch; flex-direction: column; }
+      .subscribed-compare-card { width: 100%; }
+      .subscribed-compare-arrow { display: none; }
+      .price-table th, .price-table td { padding: 0 8px; }
+    }
   </style>
   <script src="公共导航.js?v=20260828e"></script>
 </head>
-  <body>
+  <body class="first-purchase-page" data-account-status="first" data-purchase-mode="renew">
   <main class="package-page">
     <nav class="surface !p-0 mb-2" aria-label="商城业务范围">
       <div class="store-tabs" role="tablist" aria-label="商城业务范围">
@@ -261,80 +427,129 @@
     </nav>
     <div class="package-layout">
       <section class="panel main-panel" aria-label="套餐购买">
-        <div class="field-row">
+        <div class="account-status" aria-label="账户套餐状态">
+          <span class="account-status-label">账户状态</span>
+          <div class="account-status-options" role="group" aria-label="切换账户套餐状态">
+            <button type="button" class="active" data-account-status="first" data-selected="true" aria-pressed="true">新用户首次购买</button>
+            <button type="button" data-account-status="subscribed" data-selected="false" aria-pressed="false">已订阅套餐</button>
+          </div>
+        </div>
+
+        <div class="field-row purchase-type-row" id="purchaseTypeRow" hidden>
           <label class="field-label">购买类型：</label>
-          <div class="control-column type-options">
-            <button class="choice-button active" data-mode="upgrade">套餐升级</button>
-            <button class="choice-button" data-mode="renew">原套餐续费</button>
+          <div class="purchase-control purchase-type-options" id="purchaseTypeOptions" data-active-mode="renew" role="group" aria-label="购买类型">
+            <button type="button" class="purchase-type-card active" data-purchase-mode="renew" data-selected="true" aria-pressed="true"><strong>续期</strong><span>延长原套餐使用时间，环境数和成员数保持不变。</span></button>
+            <button type="button" class="purchase-type-card" data-purchase-mode="change" data-selected="false" aria-pressed="false"><strong>更改套餐</strong><span>调整环境数、成员数或时长，仅支持从当前套餐升级。</span></button>
           </div>
         </div>
 
-        <div class="field-row">
-          <label class="field-label">新增环境数：</label>
-          <div class="control-column">
-            <div class="range-wrap">
-              <div class="range-track" id="rangeTrack" style="--fill: 0%;">
-                <input id="envRange" class="range-input" type="range" min="0" max="100" step="1" value="0" aria-label="新增环境数">
-              </div>
-              <div class="range-labels" aria-hidden="true">
-                <span class="range-label" style="--tick-position: 0%;">10</span>
-                <span class="range-label" style="--tick-position: 7%;">20</span>
-                <span class="range-label" style="--tick-position: 27%;">50</span>
-                <span class="range-label" style="--tick-position: 40%;">100</span>
-                <span class="range-label" style="--tick-position: 100%;">10k+</span>
-              </div>
+        <section class="subscribed-compare" id="subscribedCompare" aria-label="套餐变更对比">
+          <article class="subscribed-compare-card">
+            <header class="subscribed-compare-header"><h3>原套餐</h3><strong class="subscribed-compare-expiry" id="compareOldExpiry">2026-09-01 到期</strong></header>
+            <div class="subscribed-compare-line"><button type="button" class="compare-resource-toggle" data-compare-resource="old-envs" aria-controls="compareOldEnvDetails" aria-expanded="false"><span>环境数</span><i data-lucide="chevron-down"></i></button><strong id="compareOldEnvs">20</strong></div>
+            <div class="compare-resource-details" id="compareOldEnvDetails" hidden>
+              <div class="compare-detail-line"><span>计费环境 × <span id="compareOldPaidEnvs">10</span></span><strong id="compareOldPaidEnvPrice">¥9.00</strong></div>
+              <div class="compare-detail-line"><span>免费环境 × <span id="compareOldFreeEnvs">10</span></span><strong>¥0.00</strong></div>
             </div>
-            <div class="stepper-line">
+            <div class="subscribed-compare-line"><button type="button" class="compare-resource-toggle" data-compare-resource="old-members" aria-controls="compareOldMemberDetails" aria-expanded="false"><span>成员数</span><i data-lucide="chevron-down"></i></button><strong id="compareOldMembers">6</strong></div>
+            <div class="compare-resource-details" id="compareOldMemberDetails" hidden>
+              <div class="compare-detail-line"><span>计费成员 × <span id="compareOldPaidMembers">5</span></span><strong id="compareOldPaidMemberPrice">¥95.00</strong></div>
+              <div class="compare-detail-line"><span>免费成员 × <span id="compareOldFreeMembers">1</span></span><strong>¥0.00</strong></div>
+            </div>
+          </article>
+          <span class="subscribed-compare-arrow" aria-hidden="true">→</span>
+          <article class="subscribed-compare-card new-plan">
+            <header class="subscribed-compare-header"><h3>新套餐</h3><strong class="subscribed-compare-expiry" id="compareNewExpiry">2026-09-01 到期</strong></header>
+            <div class="subscribed-compare-line"><button type="button" class="compare-resource-toggle" data-compare-resource="new-envs" aria-controls="compareNewEnvDetails" aria-expanded="false"><span>环境数</span><i data-lucide="chevron-down"></i></button><strong id="compareNewEnvs">30</strong></div>
+            <div class="compare-resource-details" id="compareNewEnvDetails" hidden>
+              <div class="compare-detail-line"><span>计费环境 × <span id="compareNewPaidEnvs">20</span></span><strong id="compareNewPaidEnvPrice">¥6.00</strong></div>
+              <div class="compare-detail-line"><span>免费环境 × <span id="compareNewFreeEnvs">10</span></span><strong>¥0.00</strong></div>
+              <div class="compare-detail-line" id="compareNewGiftEnvLine" hidden><span>赠送环境 × <span id="compareNewGiftEnvs">0</span><span class="compare-detail-expiry" id="compareNewGiftEnvExpiry"></span></span><strong>¥0.00</strong></div>
+            </div>
+            <div class="subscribed-compare-line"><button type="button" class="compare-resource-toggle" data-compare-resource="new-members" aria-controls="compareNewMemberDetails" aria-expanded="false"><span>成员数</span><i data-lucide="chevron-down"></i></button><strong id="compareNewMembers">11</strong></div>
+            <div class="compare-resource-details" id="compareNewMemberDetails" hidden>
+              <div class="compare-detail-line"><span>计费成员 × <span id="compareNewPaidMembers">10</span></span><strong id="compareNewPaidMemberPrice">¥190.00</strong></div>
+              <div class="compare-detail-line"><span>免费成员 × <span id="compareNewFreeMembers">1</span></span><strong>¥0.00</strong></div>
+              <div class="compare-detail-line" id="compareNewGiftMemberLine" hidden><span>赠送成员 × <span id="compareNewGiftMembers">0</span><span class="compare-detail-expiry" id="compareNewGiftMemberExpiry"></span></span><strong>¥0.00</strong></div>
+            </div>
+          </article>
+        </section>
+
+        <div class="field-row" id="envConfigRow">
+          <label class="field-label">环境数：</label>
+          <div class="purchase-control">
+            <div class="quantity-line">
               <span class="stepper" aria-label="浏览器环境数量">
-                <button type="button" data-step="envs" data-delta="-1" aria-label="减少环境数">−</button>
-                <input id="envCount" inputmode="numeric" min="10" value="10" aria-label="环境数">
-                <button type="button" data-step="envs" data-delta="1" aria-label="增加环境数">＋</button>
+                <button type="button" data-step="envs" data-delta="-10" aria-label="减少十个环境">−</button>
+                <input id="envCount" inputmode="numeric" min="10" step="10" value="10" aria-label="环境数">
+                <button type="button" data-step="envs" data-delta="10" aria-label="增加十个环境">＋</button>
               </span>
-              <span class="inline-note">¥0.90 / 浏览器环境</span>
-              <span class="help-icon" tabindex="0" data-tooltip="浏览器环境是可独立运行和管理的浏览器实例，按新增数量计费。" aria-label="浏览器环境说明"><i data-lucide="circle-help"></i></span>
+              <span class="unit-price"><strong id="envUnitPrice">3.00</strong>元/个</span>
+              <span class="help-icon price-help" tabindex="0" aria-label="环境价格说明" aria-describedby="envPriceTooltip">
+                <i data-lucide="circle-help"></i>
+                <span class="price-tooltip" id="envPriceTooltip" role="tooltip">
+                  <strong>环境价格</strong>
+                  <span class="price-tooltip-intro">每个阶梯使用一个单价，总价=环境数*阶梯单价</span>
+                  <table class="price-tooltip-table"><thead><tr><th>环境数</th><th>单价</th></tr></thead><tbody id="envPriceTooltipBody"></tbody></table>
+                  <span class="price-tooltip-example" id="envPriceTooltipExample">例如：如果您需要200个环境，那么200*0.25=¥50.00</span>
+                </span>
+              </span>
+            </div>
+            <div class="tier-strip" id="envTierStrip" aria-label="环境数量价格区间"></div>
+          </div>
+        </div>
+
+        <div class="field-row" id="memberConfigRow">
+          <label class="field-label">成员数：</label>
+          <div class="purchase-control">
+            <div class="quantity-line">
+              <span class="stepper" aria-label="成员数量">
+                <button type="button" data-step="members" data-delta="-1" aria-label="减少一位成员">−</button>
+                <input id="memberCount" inputmode="numeric" min="1" step="1" value="1" aria-label="成员数">
+                <button type="button" data-step="members" data-delta="1" aria-label="增加一位成员">＋</button>
+              </span>
+              <span class="unit-price"><strong id="memberUnitPrice">19.00</strong>元/位</span>
+              <span class="help-icon price-help" tabindex="0" aria-label="成员价格说明" aria-describedby="memberPriceTooltip">
+                <i data-lucide="circle-help"></i>
+                <span class="price-tooltip member-tooltip" id="memberPriceTooltip" role="tooltip">
+                  <strong>成员价格</strong>
+                  <span class="price-tooltip-intro">每个套餐中都包含一个免费的成员</span>
+                  <table class="price-tooltip-table"><thead><tr><th>成员数</th><th>单价</th></tr></thead><tbody><tr><td>1</td><td>¥19.00</td></tr></tbody></table>
+                  <span class="price-tooltip-example">例如：如果您需要10个环境，那么10*19=¥190.00</span>
+                </span>
+              </span>
             </div>
           </div>
         </div>
 
-        <div class="field-row">
-          <label class="field-label">新增成员数：</label>
-          <div class="control-column">
-            <div class="stepper-line">
-            <span class="stepper" aria-label="成员数量">
-              <button type="button" data-step="members" data-delta="-1" aria-label="减少成员数">−</button>
-              <input id="memberCount" inputmode="numeric" value="0" aria-label="成员数">
-              <button type="button" data-step="members" data-delta="1" aria-label="增加成员数">＋</button>
-            </span>
-            <span class="help-icon" tabindex="0" data-tooltip="成员数是可加入当前套餐并使用团队资源的账号数量。" aria-label="成员数说明"><i data-lucide="circle-help"></i></span>
-            </div>
-          </div>
-        </div>
-
-        <div class="field-row">
-          <label class="field-label">购买时长：</label>
-          <div class="control-column">
-            <div class="duration-selector">
-              <div class="duration-options">
-                <button class="duration-button active" data-duration="0">原套餐到期</button>
-                <button class="duration-button" data-duration="30">30天<span class="discount">8.5折</span></button>
+        <div class="field-row" id="durationConfigRow">
+          <label class="field-label">时长：</label>
+          <div class="purchase-control">
+            <div class="duration-selector" id="firstDurationSelector">
+              <div class="duration-options" id="firstDurationOptions">
+                <button class="duration-button active" data-duration="30">30天<span class="discount">8.5折</span></button>
                 <button class="duration-button" data-duration="90">90天<span class="discount">8折</span></button>
                 <button class="duration-button" data-duration="180">180天<span class="discount">7.5折</span></button>
                 <button class="duration-button" data-duration="360">360天<span class="discount">5折</span></button>
               </div>
-              <div class="expiry-note" id="durationExpiry">2025-12-06 到期</div>
+              <div class="expiry-note" id="durationExpiry">2026-09-01 到期</div>
             </div>
-            <div class="compare-row">
-              <article class="compare-card">
-                <div class="compare-line"><span>原套餐</span><strong class="compare-value">2025-12-06 到期</strong></div>
-                <div class="compare-line"><span>浏览器环境数</span><strong class="compare-value">10</strong></div>
-                <div class="compare-line"><span>成员数</span><strong class="compare-value">3</strong></div>
-              </article>
-              <span class="arrow-between" aria-hidden="true">→</span>
-              <article class="compare-card">
-                <div class="compare-line"><span>新套餐</span><strong class="compare-value highlight"><span id="planExpiry">2025-12-26 到期</span><span class="green-arrow"><i data-lucide="arrow-up"></i></span></strong></div>
-                <div class="compare-line"><span>浏览器环境数</span><strong class="compare-value highlight"><span id="planEnvsValue">110</span><span class="green-arrow"><i data-lucide="arrow-up"></i></span></strong></div>
-                <div class="compare-line"><span>成员数</span><strong class="compare-value highlight" id="planMembersValue">3</strong></div>
-              </article>
+            <div id="subscribedDurationSelector" hidden>
+              <div class="change-duration-options" id="changeDurationOptions">
+                <button type="button" class="change-duration-card active" data-change-duration="renew">续期</button>
+                <button type="button" class="change-duration-card" data-change-duration="change-only">仅更改套餐，保持剩余时间</button>
+                <button type="button" class="change-duration-card" data-change-duration="change-renew">更改套餐，同时续期</button>
+              </div>
+              <div class="change-renew-panel" id="changeRenewPanel">
+                <div class="change-renew-meta"><span id="changeRenewSummary">剩余 <strong id="remainingDaysValue">20</strong> 天 + 购买 <strong id="renewPurchaseDays">30</strong> 天 = 累计 <strong id="renewTotalDays">50</strong> 天，命中 <strong id="renewDiscountText">8.5折</strong></span><span>续期后到期 <strong id="changeRenewExpiry">2026-10-01</strong></span></div>
+                <div class="change-renew-options">
+                  <button type="button" class="active" data-renew-duration="30">+30天</button>
+                  <button type="button" data-renew-duration="90">+90天</button>
+                  <button type="button" data-renew-duration="180">+180天</button>
+                  <button type="button" data-renew-duration="360">+360天</button>
+                </div>
+              </div>
+              <div class="current-package-note" id="currentPackageNote">保持原套餐剩余 20 天不变</div>
             </div>
           </div>
         </div>
@@ -367,41 +582,36 @@
       </section>
 
       <aside class="summary-panel panel" aria-label="订单信息">
-        <div class="summary-title">订单信息</div>
+        <div class="summary-title summary-topline"><span id="summaryTitle">订单详情</span><span class="compare-trigger"><button type="button" class="compare-link" id="comparePlanButton" aria-describedby="comparePlanTooltip">对比当前套餐</button><span class="compare-tooltip" id="comparePlanTooltip" role="tooltip"><strong class="compare-tooltip-title">当前套餐</strong><div class="summary-line"><button type="button" class="compare-tooltip-toggle" data-compare-tooltip-expand="envs" aria-controls="compareTooltipEnvDetails" aria-expanded="false"><span>环境数 × <strong id="compareTooltipEnvs">20</strong></span><i data-lucide="chevron-right"></i></button></div><div class="compare-tooltip-details" id="compareTooltipEnvDetails" hidden><div class="summary-line indent"><span>计费环境</span><span id="compareTooltipPaidEnvs" class="summary-value">10</span></div><div class="summary-line indent"><span>免费环境</span><span id="compareTooltipFreeEnvs" class="summary-value">10</span></div></div><div class="summary-line"><button type="button" class="compare-tooltip-toggle" data-compare-tooltip-expand="members" aria-controls="compareTooltipMemberDetails" aria-expanded="false"><span>成员数 × <strong id="compareTooltipMembers">6</strong></span><i data-lucide="chevron-right"></i></button></div><div class="compare-tooltip-details" id="compareTooltipMemberDetails" hidden><div class="summary-line indent"><span>计费成员</span><span id="compareTooltipPaidMembers" class="summary-value">5</span></div><div class="summary-line indent"><span>免费成员</span><span id="compareTooltipFreeMembers" class="summary-value">1</span></div></div><div class="summary-line"><span>到期时间</span><span id="compareTooltipExpiry" class="summary-value">2026-09-01</span></div></span></span></div>
         <section class="summary-section">
-          <div class="summary-heading">新套餐信息</div>
-          <div class="summary-line">
-            <button type="button" class="collapse-button" data-collapse="envs"><span>总浏览器环境数</span><i data-lucide="chevron-up"></i></button>
-            <span class="summary-value highlight"><span id="summaryEnvsValue">110</span><span class="green-arrow"><i data-lucide="arrow-up"></i></span></span>
+          <div class="summary-line subtotal"><button type="button" class="collapse-button" data-collapse="envs" aria-expanded="false"><span id="summaryEnvLabel">环境数 × <span id="summaryEnvsValue">10</span></span><i data-lucide="chevron-right"></i></button><strong id="summaryEnvLinePrice">¥30.00</strong></div>
+          <div id="envDetails" hidden>
+            <div class="summary-line indent"><span>计费环境 × <span id="summaryPaidEnvs">10</span></span><span id="summaryPaidEnvPrice" class="summary-value">¥30.00</span></div>
+            <div class="summary-line indent"><span>免费环境 × <span id="summaryFreeEnvs">0</span></span><span class="summary-value">¥0.00</span></div>
+            <div class="summary-line indent summary-gift-row" id="summaryGiftEnvDetailRow"><span>赠送环境 × <span id="summaryGiftEnvsDetail">0</span><small id="summaryGiftEnvDetailExpiry"></small></span><span class="summary-value">¥0.00</span></div>
           </div>
-          <div id="envDetails">
-            <div class="summary-line indent"><span>付费环境数</span><span id="summaryPaidEnvs" class="summary-value">0</span></div>
-            <div class="summary-line indent"><span>赠送环境数</span><span class="summary-value">10</span></div>
+          <div class="summary-line subtotal"><button type="button" class="collapse-button" data-collapse="members" aria-expanded="false"><span id="summaryMemberLabel">成员数 × <span id="summaryMembersValue">1</span></span><i data-lucide="chevron-right"></i></button><strong id="summaryMemberLinePrice">¥19.00</strong></div>
+          <div id="memberDetails" hidden>
+            <div class="summary-line indent"><span>计费成员 × <span id="summaryPaidMembers">1</span></span><span id="summaryPaidMemberPrice" class="summary-value">¥19.00</span></div>
+            <div class="summary-line indent"><span>免费成员 × <span id="summaryFreeMembers">0</span></span><span class="summary-value">¥0.00</span></div>
+            <div class="summary-line indent summary-gift-row" id="summaryGiftMemberDetailRow"><span>赠送成员 × <span id="summaryGiftMembersDetail">0</span><small id="summaryGiftMemberDetailExpiry"></small></span><span class="summary-value">¥0.00</span></div>
           </div>
-          <div class="summary-line">
-            <button type="button" class="collapse-button" data-collapse="members"><span>总成员数</span><i data-lucide="chevron-up"></i></button>
-            <span class="summary-value"><span id="summaryMembersValue">3</span></span>
-          </div>
-          <div id="memberDetails">
-            <div class="summary-line indent"><span>付费成员数</span><span id="summaryPaidMembers" class="summary-value">0</span></div>
-            <div class="summary-line indent"><span>赠送成员数</span><span class="summary-value">1</span></div>
-          </div>
-          <div class="summary-line"><span>到期时间</span><span class="summary-value highlight"><span id="summaryExpiry">2025-12-26（剩余30天）</span><span class="green-arrow"><i data-lucide="arrow-up"></i></span></span></div>
+          <div class="summary-line subtotal"><span id="summaryExpiryLabel">到期时间</span><strong id="summaryExpiry">2026-09-01</strong></div>
         </section>
-        <section class="summary-section">
-          <div class="summary-line"><span>套餐费用</span><span id="summaryGross" class="summary-value">¥188.00<span class="green-arrow"><i data-lucide="arrow-up"></i></span></span></div>
-          <div class="summary-line"><span>现套餐抵扣金额</span><span id="summaryCredit" class="summary-value">-¥88.00</span></div>
-          <div class="text-xs text-gray-400">（套餐总价/总天数*剩余天数）</div>
-          <div class="summary-line mt-2"><span>优惠券抵扣金额</span><span id="summaryCoupon" class="summary-value">-¥0.00</span></div>
+        <section class="summary-section order-lines">
+          <div class="summary-line"><span>订单金额</span><span id="summaryGross" class="summary-value">¥125.00</span></div>
+          <div class="summary-line discount-line"><span>折扣优惠金额</span><strong id="summaryDurationDiscount">-¥7.35</strong></div>
+          <div class="summary-line discount-line summary-credit-row" id="summaryCreditRow"><span>原套餐抵扣金额</span><strong id="summaryCredit">-¥0.00</strong></div>
+          <div class="summary-line discount-line"><span>优惠券抵扣金额</span><strong id="summaryCoupon">-¥0.00</strong></div>
+          <div class="summary-line payable-line"><span>应付金额</span><strong id="summaryTotal">¥106.25</strong></div>
         </section>
         <section class="panel total-card">
-          <div class="total-line"><span>总价</span><strong id="summaryTotal" class="total-price">¥100.00</strong></div>
-          <button type="button" class="submit-button" id="submitButton">提交支付</button>
-          <div class="fine-print">减配套餐系统不会退费请慎重操作</div>
+          <button type="button" class="submit-button" id="submitButton">订阅套餐</button>
         </section>
       </aside>
     </div>
   </main>
+
   <div id="rechargeDialog" class="modal-mask hidden" role="dialog" aria-modal="true" aria-labelledby="rechargeDialogTitle" aria-hidden="true">
     <section id="rechargeDialogPanel" class="panel recharge-dialog-panel" tabindex="-1">
       <header class="modal-header">
@@ -484,7 +694,7 @@
           <span>订单 <strong>29:57</strong> 后订单将自动取消，请在订单取消前完成支付！若订单中使用了优惠券，订单取消后会原路退回您的账户中。</span>
         </div>
         <div class="payment-amount-label">需要支付金额</div>
-        <div class="payment-amount">¥112.48</div>
+        <div id="paymentAmount" class="payment-amount">¥106.25</div>
         <div id="paymentQr" class="payment-qr" role="img" aria-label="支付宝支付二维码"></div>
         <div class="payment-hint">请打开支付宝扫一扫</div>
       </div>
@@ -503,28 +713,34 @@
   <div id="toast" class="toast" role="status"></div>
   <script>
     (() => {
-      const stops = [[0, 10], [7, 20], [27, 50], [40, 100], [100, 10000]];
-      const state = { mode: 'upgrade', envs: 10, members: 0, duration: 0, coupon: 0, renew: true, payment: 'alipay', cloudBalance: 300, rechargeAmount: 500, rechargePayment: 'alipay', lastFocus: null };
+      const envPricing = [
+        { max: 10, label: '0 < 环境数 ≤ 10', price: 0.90 },
+        { max: 100, label: '10 < 环境数 ≤ 100', price: 0.30 },
+        { max: 400, label: '100 < 环境数 ≤ 400', price: 0.25 },
+        { max: 800, label: '400 < 环境数 ≤ 800', price: 0.15 },
+        { max: 1000, label: '800 < 环境数 ≤ 1000', price: 0.13 },
+        { max: 10000, label: '1000 < 环境数 ≤ 10000', price: 0.10 },
+        { max: 50000, label: '10000 < 环境数 ≤ 50000', price: 0.05 },
+        { max: 100000, label: '50000 < 环境数 ≤ 100000', price: 0.03 },
+        { max: Infinity, label: '环境数 > 100000', price: 0.01 }
+      ];
+      const envTierOptions = [10, 20, 50, 100, 400, 800, 1000, 10000, 50000, 100000];
+      const giftRules = { envMin: 30, envCount: 10, memberMin: 16, memberCount: 5 };
+      const state = { accountStatus: 'first', purchaseMode: 'renew', changeDuration: 'change-only', envs: 10, members: 1, duration: 30, renewDuration: 30, coupon: 0, renew: true, payment: 'alipay', cloudBalance: 0, rechargeAmount: 500, rechargePayment: 'alipay', lastFocus: null };
       const durationExpiry = {
-        0: '2025-12-06 到期',
-        30: '2025-12-26 到期',
-        90: '2026-02-24 到期',
-        180: '2026-05-25 到期',
-        360: '2026-11-21 到期'
+        30: '2026-09-01 到期',
+        90: '2026-11-30 到期',
+        180: '2027-02-28 到期',
+        360: '2027-08-30 到期'
       };
-      const giftBrowserEnvCount = 10;
-      const giftMemberCount = 1;
+      const currentPlan = { envs: 10, members: 5, envPrice: 3, memberPrice: 19, remainingDays: 20, totalDays: 30, discount: .85, expiry: '2026-09-01' };
+      const currentPlanExtended = { envs: 10, members: 5, envPrice: 3, memberPrice: 19, remainingDays: 170, totalDays: 180, discount: .7, expiry: '2026-09-01' };
       const $ = (selector) => document.querySelector(selector);
       const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
-      const sliderPosition = (value) => {
-        for (let index = 0; index < stops.length - 1; index += 1) {
-          const [leftPosition, leftValue] = stops[index];
-          const [rightPosition, rightValue] = stops[index + 1];
-          if (value <= rightValue) return leftPosition + ((value - leftValue) / (rightValue - leftValue)) * (rightPosition - leftPosition);
-        }
-        return 100;
-      };
-      const snapValue = (position) => stops.reduce((best, stop) => Math.abs(stop[0] - position) < Math.abs(best[0] - position) ? stop : best, stops[0])[1];
+      const money = (value) => `¥${Number(value || 0).toFixed(2)}`;
+      const ceilToTen = (value, min = 10) => clamp(Math.ceil((Number(value) || min) / 10) * 10, min, 100000);
+      const envPriceFor = (value) => envPricing.find((tier) => value <= tier.max)?.price || 3;
+      const roundMoney = (value) => Math.round((Number(value) + Number.EPSILON) * 100) / 100;
       const showToast = (message) => {
         const toast = $('#toast');
         toast.textContent = message;
@@ -567,6 +783,7 @@
       };
       const openPaymentDialog = () => {
         buildQr('#paymentQr', 11248);
+        $('#paymentAmount').textContent = money(state.total);
         $('#paymentDialog').classList.remove('hidden');
         lucide.createIcons();
         $('#closePaymentDialog').focus({ preventScroll: true });
@@ -612,7 +829,6 @@
       const closeIssueDialog = () => {
         $('#issueDialog').classList.add('hidden');
       };
-      const money = (value) => `¥${Number(value || 0).toFixed(2)}`;
       const rechargeBonusFor = (value, custom) => {
         const amount = Number(value);
         if (!Number.isFinite(amount) || amount < 500) return 0;
@@ -623,7 +839,9 @@
         return ({500:25, 1000:100, 2000:300, 5000:1000})[amount] || 0;
       };
       const rechargeCoinText = (value) => Number(value || 0).toLocaleString('zh-CN', {maximumFractionDigits: 2});
-      const durationRate = { 0: 1, 30: .85, 90: .8, 180: .75, 360: .5 };
+      const durationRate = { 30: .85, 90: .8, 180: .75, 360: .5 };
+      const discountForDays = (days) => days >= 360 ? .5 : days >= 180 ? .75 : days >= 90 ? .8 : .85;
+      const discountText = (rate) => `${(rate * 10).toFixed(1).replace('.0', '')}折`;
       const paymentIconData = { alipay: '../src/assets/images/支付宝支付.png', wechat: '../src/assets/images/微信支付.png' };
       const updateRechargeBenefit = () => {
         const amount = state.rechargeAmount;
@@ -657,37 +875,168 @@
         if (restore) state.lastFocus?.focus?.({ preventScroll: true });
         state.lastFocus = null;
       };
+      const renderEnvTiers = () => {
+        const strip = $('#envTierStrip');
+        if (!strip) return;
+        const visibleTiers = state.tiersExpanded ? envTierOptions : envTierOptions.slice(0, 6);
+        strip.innerHTML = visibleTiers.map((value) => `<button type="button" class="tier-chip${value === state.envs ? ' active' : ''}" data-selected="${value === state.envs}" aria-pressed="${value === state.envs}" data-tier-value="${value}">${value}个</button>`).join('') + `<button type="button" class="tier-more" id="envTierMore">${state.tiersExpanded ? '收起' : '更多 >'}</button>`;
+        strip.classList.toggle('expanded', state.tiersExpanded);
+        strip.querySelectorAll('[data-tier-value]').forEach((button) => button.addEventListener('click', (event) => {
+          event.stopPropagation();
+          const selectedValue = Number(button.dataset.tierValue);
+          state.envs = selectedValue;
+          $('#envCount').value = String(selectedValue);
+          render();
+        }));
+      };
+      const renderPriceTooltip = () => {
+        $('#envPriceTooltipBody').innerHTML = envPricing.map((tier) => `<tr><td>${tier.label}</td><td>${money(tier.price)}</td></tr>`).join('');
+        const exampleEnvCount = 200;
+        const exampleEnvPrice = envPriceFor(exampleEnvCount);
+        $('#envPriceTooltipExample').textContent = `例如：如果您需要${exampleEnvCount}个环境，那么${exampleEnvCount}*${exampleEnvPrice.toFixed(2)}=${money(exampleEnvCount * exampleEnvPrice)}`;
+      };
+      const dateAfter = (dateText, days) => {
+        const date = new Date(`${dateText}T00:00:00`);
+        date.setDate(date.getDate() + Number(days || 0));
+        return date.toISOString().slice(0, 10);
+      };
+      const activePlan = () => state.changeDuration === 'change-renew' ? currentPlanExtended : currentPlan;
+      const quoteFor = (envs, members, envPrice, memberPrice, days, discount) => {
+        const monthlyPrice = envs * envPrice + members * memberPrice;
+        const orderAmount = roundMoney(monthlyPrice / 30 * days);
+        const durationDiscount = roundMoney(orderAmount * (1 - discount));
+        return { orderAmount, durationDiscount, monthlyPrice };
+      };
       const render = () => {
-        const position = sliderPosition(state.envs);
-        $('#rangeTrack').style.setProperty('--fill', `${position}%`);
-        $('#envRange').value = position;
+        const modeFromView = $('#purchaseTypeOptions')?.dataset.activeMode;
+        if (modeFromView === 'renew' || modeFromView === 'change') state.purchaseMode = modeFromView;
+        const isFirstPurchase = state.accountStatus === 'first';
+        const isRenewal = state.accountStatus === 'subscribed' && state.purchaseMode === 'renew';
+        const isChange = state.accountStatus === 'subscribed' && state.purchaseMode === 'change';
+        document.body.dataset.accountStatus = state.accountStatus;
+        document.body.dataset.purchaseMode = state.purchaseMode;
+        const plan = activePlan();
+        const targetEnvs = isRenewal ? currentPlan.envs : state.envs;
+        const targetMembers = isRenewal ? currentPlan.members : state.members;
+        const envUnitPrice = isRenewal ? currentPlan.envPrice : envPriceFor(targetEnvs);
+        const memberUnitPrice = isRenewal ? currentPlan.memberPrice : 19;
+        const selectedRenewDuration = document.querySelector('#changeRenewPanel [data-renew-duration].active');
+        if (selectedRenewDuration) state.renewDuration = Number(selectedRenewDuration.dataset.renewDuration);
+        const renewalDays = isChange && state.changeDuration === 'change-renew' ? state.renewDuration : state.duration;
+        const billingDays = isFirstPurchase ? state.duration : isRenewal ? state.duration : isChange && state.changeDuration === 'change-renew' ? plan.remainingDays + renewalDays : plan.remainingDays;
+        const discountRate = isChange && state.changeDuration === 'change-renew' ? discountForDays(billingDays) : isFirstPurchase || isRenewal ? durationRate[state.duration] : plan.discount;
+        const quote = quoteFor(targetEnvs, targetMembers, envUnitPrice, memberUnitPrice, billingDays, discountRate);
+        const originalMonthlyPrice = currentPlan.envs * currentPlan.envPrice + currentPlan.members * currentPlan.memberPrice;
+        const originalCredit = isChange ? roundMoney(originalMonthlyPrice / 30 * plan.remainingDays * discountRate) : 0;
+        const coupon = state.coupon === 50 ? 50 : 0;
+        const total = Math.max(0, roundMoney(quote.orderAmount - quote.durationDiscount - originalCredit - coupon));
+        const expiry = isFirstPurchase ? dateAfter('2026-08-02', state.duration) : isRenewal ? dateAfter(currentPlan.expiry, state.duration) : dateAfter(currentPlan.expiry, state.changeDuration === 'change-renew' ? renewalDays : 0);
+        const giftEnvCount = targetEnvs >= giftRules.envMin ? giftRules.envCount : 0;
+        const giftMemberCount = targetMembers >= giftRules.memberMin ? giftRules.memberCount : 0;
+        const freeEnvCount = 10;
+        const freeMemberCount = 1;
+        const totalEnvs = targetEnvs + freeEnvCount + giftEnvCount;
+        const totalMembers = targetMembers + freeMemberCount + giftMemberCount;
+        const hasGifts = giftEnvCount > 0 || giftMemberCount > 0;
+        state.total = total;
+        $('#purchaseTypeRow').hidden = isFirstPurchase;
+        $('#envConfigRow').hidden = isRenewal;
+        $('#memberConfigRow').hidden = isRenewal;
+        $('#subscribedCompare').classList.toggle('visible', isChange);
+        $('#firstDurationSelector').hidden = isChange;
+        $('#firstDurationSelector').style.display = isChange ? 'none' : '';
+        $('#subscribedDurationSelector').hidden = !isChange;
+        $('#subscribedDurationSelector').style.display = isChange ? '' : 'none';
+        document.querySelectorAll('[data-change-duration]').forEach((button) => {
+          button.hidden = isChange && button.dataset.changeDuration === 'renew';
+          button.classList.toggle('active', button.dataset.changeDuration === state.changeDuration);
+        });
+        document.querySelectorAll('[data-renew-duration]').forEach((button) => button.classList.toggle('active', Number(button.dataset.renewDuration) === state.renewDuration));
+        $('#changeRenewPanel').classList.toggle('visible', isChange && state.changeDuration === 'change-renew');
+        $('#changeRenewPanel').hidden = !(isChange && state.changeDuration === 'change-renew');
+        $('#changeRenewExpiry').textContent = dateAfter(currentPlanExtended.expiry, renewalDays);
+        $('#remainingDaysValue').textContent = String(plan.remainingDays);
+        $('#renewPurchaseDays').textContent = String(renewalDays);
+        $('#renewTotalDays').textContent = String(billingDays);
+        $('#renewDiscountText').textContent = discountText(discountRate);
+        $('#currentPackageNote').textContent = isChange && state.changeDuration === 'change-renew' ? `当前剩余 ${plan.remainingDays} 天，叠加续期 ${renewalDays} 天` : isChange ? `保持原套餐剩余 ${plan.remainingDays} 天不变` : '';
+        $('#compareOldExpiry').textContent = `${currentPlan.expiry} 到期`;
+        $('#compareOldEnvs').textContent = String(currentPlan.envs + freeEnvCount);
+        $('#compareOldPaidEnvs').textContent = String(currentPlan.envs);
+        $('#compareOldPaidEnvPrice').textContent = money(currentPlan.envs * currentPlan.envPrice);
+        $('#compareOldFreeEnvs').textContent = String(freeEnvCount);
+        $('#compareOldMembers').textContent = String(currentPlan.members + freeMemberCount);
+        $('#compareOldPaidMembers').textContent = String(currentPlan.members);
+        $('#compareOldPaidMemberPrice').textContent = money(currentPlan.members * currentPlan.memberPrice);
+        $('#compareOldFreeMembers').textContent = String(freeMemberCount);
+        $('#compareNewEnvs').textContent = String(totalEnvs);
+        $('#compareNewPaidEnvs').textContent = String(targetEnvs);
+        $('#compareNewPaidEnvPrice').textContent = money(targetEnvs * envUnitPrice);
+        $('#compareNewFreeEnvs').textContent = String(freeEnvCount);
+        $('#compareNewGiftEnvs').textContent = String(giftEnvCount);
+        $('#compareNewGiftEnvExpiry').textContent = giftEnvCount > 0 ? `${expiry}到期` : '';
+        $('#compareNewGiftEnvLine').hidden = giftEnvCount === 0;
+        $('#compareNewMembers').textContent = String(totalMembers);
+        $('#compareNewPaidMembers').textContent = String(targetMembers);
+        $('#compareNewPaidMemberPrice').textContent = money(targetMembers * memberUnitPrice);
+        $('#compareNewFreeMembers').textContent = String(freeMemberCount);
+        $('#compareNewGiftMembers').textContent = String(giftMemberCount);
+        $('#compareNewGiftMemberExpiry').textContent = giftMemberCount > 0 ? `${expiry}到期` : '';
+        $('#compareNewGiftMemberLine').hidden = giftMemberCount === 0;
+        $('#compareNewExpiry').textContent = `${expiry} 到期`;
+        document.querySelectorAll('button[data-account-status]').forEach((button) => {
+          const active = button.dataset.accountStatus === state.accountStatus;
+          button.classList.toggle('active', active);
+          button.dataset.selected = String(active);
+          button.setAttribute('aria-pressed', String(active));
+        });
+        $('.account-status-options').setAttribute('data-active-status', state.accountStatus);
+        document.querySelectorAll('[data-purchase-mode]').forEach((button) => {
+          const active = button.dataset.purchaseMode === state.purchaseMode;
+          button.classList.toggle('active', active);
+          button.dataset.selected = String(active);
+          button.setAttribute('aria-pressed', String(active));
+        });
+        $('#purchaseTypeOptions').setAttribute('data-active-mode', state.purchaseMode);
+        const activeDuration = document.querySelector(`[data-duration="${state.duration}"]`);
+        $('#durationExpiry').textContent = `${expiry} 到期`;
+        $('#durationExpiry').style.left = `${activeDuration?.offsetLeft || 0}px`;
         $('#envCount').value = state.envs;
         $('#envCount').min = '10';
-        const envMinus = document.querySelector('[data-step="envs"][data-delta="-1"]');
-        if (envMinus) envMinus.disabled = state.envs <= 10;
         $('#memberCount').value = state.members;
-        const activeDuration = document.querySelector(`[data-duration="${state.duration}"]`);
-        $('#durationExpiry').textContent = durationExpiry[state.duration];
-        $('#durationExpiry').style.left = `${activeDuration?.offsetLeft || 0}px`;
-        $('#planExpiry').textContent = durationExpiry[state.duration];
-        $('#summaryExpiry').textContent = `${durationExpiry[state.duration].replace(' 到期', '')}（剩余30天）`;
-        const paidEnvs = Math.max(0, state.envs - 10);
-        const totalEnvs = giftBrowserEnvCount + paidEnvs;
-        const totalMembers = giftMemberCount + state.members;
-        const gross = (188 + state.envs * 0.9 + state.members * 10) * durationRate[state.duration];
-        const credit = state.mode === 'upgrade' ? 88 : 0;
-        const coupon = state.coupon === 50 ? 50 : 0;
-        const total = Math.max(0, gross - credit - coupon);
-        $('#planEnvsValue').textContent = String(totalEnvs);
-        $('#planMembersValue').textContent = String(totalMembers);
+        $('#envUnitPrice').textContent = envUnitPrice.toFixed(2);
+        $('#memberUnitPrice').textContent = memberUnitPrice.toFixed(2);
+        $('#summaryTitle').textContent = isFirstPurchase ? '订单详情' : '套餐详情';
+        $('#compareTooltipEnvs').textContent = String(currentPlan.envs + freeEnvCount);
+        $('#compareTooltipPaidEnvs').textContent = String(currentPlan.envs);
+        $('#compareTooltipFreeEnvs').textContent = String(freeEnvCount);
+        $('#compareTooltipMembers').textContent = String(currentPlan.members + freeMemberCount);
+        $('#compareTooltipPaidMembers').textContent = String(currentPlan.members);
+        $('#compareTooltipFreeMembers').textContent = String(freeMemberCount);
+        $('#compareTooltipExpiry').textContent = currentPlan.expiry;
         $('#summaryEnvsValue').textContent = String(totalEnvs);
         $('#summaryMembersValue').textContent = String(totalMembers);
-        $('#summaryPaidEnvs').textContent = String(paidEnvs);
-        $('#summaryPaidMembers').textContent = String(state.members);
-        $('#summaryGross').childNodes[0].textContent = money(gross);
-        $('#summaryCredit').textContent = `-${money(credit)}`;
+        $('#summaryEnvLinePrice').textContent = money(targetEnvs * envUnitPrice);
+        $('#summaryMemberLinePrice').textContent = money(targetMembers * memberUnitPrice);
+        $('#summaryExpiry').textContent = expiry;
+        $('#summaryGross').textContent = money(quote.orderAmount);
+        $('#summaryDurationDiscount').textContent = `-${money(quote.durationDiscount)}`;
+        $('#summaryCredit').textContent = `-${money(originalCredit)}`;
+        $('#summaryCreditRow').classList.toggle('visible', isChange);
         $('#summaryCoupon').textContent = `-${money(coupon)}`;
         $('#summaryTotal').textContent = money(total);
+        $('#summaryPaidEnvs').textContent = String(targetEnvs);
+        $('#summaryPaidEnvPrice').textContent = money(targetEnvs * envUnitPrice);
+        $('#summaryFreeEnvs').textContent = String(freeEnvCount);
+        $('#summaryGiftEnvsDetail').textContent = String(giftEnvCount);
+        $('#summaryGiftEnvDetailExpiry').textContent = giftEnvCount > 0 ? `${expiry}到期` : '';
+        $('#summaryGiftEnvDetailRow').classList.toggle('visible', giftEnvCount > 0);
+        $('#summaryPaidMembers').textContent = String(targetMembers);
+        $('#summaryPaidMemberPrice').textContent = money(targetMembers * memberUnitPrice);
+        $('#summaryFreeMembers').textContent = String(freeMemberCount);
+        $('#summaryGiftMembersDetail').textContent = String(giftMemberCount);
+        $('#summaryGiftMemberDetailExpiry').textContent = giftMemberCount > 0 ? `${expiry}到期` : '';
+        $('#summaryGiftMemberDetailRow').classList.toggle('visible', giftMemberCount > 0);
         $('#planCoupon').value = state.coupon ? String(state.coupon) : '';
         $('#planRenew').checked = state.renew;
         $('#planCoinBalance').textContent = `（我的云币：${state.cloudBalance}）`;
@@ -696,11 +1045,12 @@
           if (image?.classList.contains('payment-method-icon') && paymentIconData[radio.value]) image.src = paymentIconData[radio.value];
         });
         document.querySelectorAll('.coin-option > svg').forEach((icon) => icon.remove());
-        document.querySelectorAll('[data-mode]').forEach((item) => item.classList.toggle('active', item.dataset.mode === state.mode));
         document.querySelectorAll('.payment-option').forEach((item) => {
           const radio = item.querySelector('input[name="planPayment"]');
           item.classList.toggle('active', Boolean(radio && radio.checked));
         });
+        renderEnvTiers();
+        renderPriceTooltip();
         lucide.createIcons();
       };
       function navigateToStoreTab(tab) {
@@ -713,27 +1063,91 @@
         const file = tab === 'plan' ? '商城-套餐.html' : tab === 'coin' ? '商城-云币充值.html' : tab === 'cart' ? '商城-购物车.html' : '商城-代理.html';
         location.replace(`../index.html?page=store&module=${encodeURIComponent(file)}&moduleSearch=${encodeURIComponent(search.slice(1))}`);
       }
-      document.querySelectorAll('[data-mode]').forEach((button) => button.addEventListener('click', () => {
-        state.mode = button.dataset.mode;
+      $('#envTierStrip').addEventListener('click', (event) => {
+        const tierButton = event.target.closest('[data-tier-value]');
+        if (tierButton) {
+          const selectedValue = Number(tierButton.dataset.tierValue);
+          document.querySelectorAll('#envTierStrip [data-tier-value]').forEach((item) => {
+            const active = item === tierButton;
+            item.classList.toggle('active', active);
+            item.dataset.selected = String(active);
+            item.setAttribute('aria-pressed', String(active));
+          });
+          state.envs = selectedValue;
+          render();
+          return;
+        }
+        if (event.target.closest('#envTierMore')) {
+          state.tiersExpanded = !state.tiersExpanded;
+          renderEnvTiers();
+        }
+      });
+      document.querySelectorAll('button[data-account-status]').forEach((button) => button.addEventListener('click', () => {
+        state.accountStatus = button.dataset.accountStatus;
+        document.querySelectorAll('button[data-account-status]').forEach((item) => {
+          const active = item === button;
+          item.classList.toggle('active', active);
+          item.dataset.selected = String(active);
+          item.setAttribute('aria-pressed', String(active));
+        });
+        button.closest('.account-status-options')?.setAttribute('data-active-status', state.accountStatus);
+        if (state.accountStatus === 'first') {
+          state.envs = 10;
+          state.members = 1;
+          state.duration = 30;
+        } else {
+          state.envs = 20;
+          state.members = 10;
+          state.duration = 30;
+        }
         render();
       }));
+      $('#purchaseTypeOptions').addEventListener('click', (event) => {
+        const button = event.target.closest('[data-purchase-mode]');
+        if (!button) return;
+        state.purchaseMode = button.dataset.purchaseMode;
+        $('#purchaseTypeOptions').setAttribute('data-active-mode', state.purchaseMode);
+        document.querySelectorAll('[data-purchase-mode]').forEach((item) => {
+          const active = item === button;
+          item.classList.toggle('active', active);
+          item.dataset.selected = String(active);
+          item.setAttribute('aria-pressed', String(active));
+        });
+        if (state.purchaseMode === 'change') {
+          state.changeDuration = 'change-only';
+          state.envs = Math.max(currentPlan.envs, state.envs);
+          state.members = Math.max(currentPlan.members, state.members);
+        }
+        render();
+      });
+      document.querySelectorAll('[data-change-duration]').forEach((button) => button.addEventListener('click', () => {
+        state.changeDuration = button.dataset.changeDuration;
+        render();
+      }));
+      $('#changeRenewPanel').addEventListener('click', (event) => {
+        const button = event.target.closest('[data-renew-duration]');
+        if (!button) return;
+        state.renewDuration = Number(button.dataset.renewDuration);
+        document.querySelectorAll('#changeRenewPanel [data-renew-duration]').forEach((item) => {
+          const active = item === button;
+          item.classList.toggle('active', active);
+          item.setAttribute('aria-pressed', String(active));
+        });
+        render();
+      });
       document.querySelectorAll('[data-duration]').forEach((button) => button.addEventListener('click', () => {
         state.duration = Number(button.dataset.duration);
         document.querySelectorAll('[data-duration]').forEach((item) => item.classList.toggle('active', item === button));
         render();
       }));
-      $('#envRange').addEventListener('input', (event) => {
-        state.envs = snapValue(Number(event.target.value));
-        render();
-      });
       document.querySelectorAll('[data-step]').forEach((button) => button.addEventListener('click', () => {
         const key = button.dataset.step;
-        const min = key === 'envs' ? 10 : 0;
-        state[key] = clamp(state[key] + Number(button.dataset.delta), min, key === 'envs' ? 10000 : 100);
+        const min = key === 'envs' ? state.accountStatus === 'subscribed' && state.purchaseMode === 'change' ? currentPlan.envs : 10 : state.accountStatus === 'subscribed' && state.purchaseMode === 'change' ? currentPlan.members : 1;
+        state[key] = clamp(state[key] + Number(button.dataset.delta), min, key === 'envs' ? 100000 : 100);
         render();
       }));
-      $('#envCount').addEventListener('change', (event) => { state.envs = clamp(Number.parseInt(event.target.value, 10) || 10, 10, 10000); render(); });
-      $('#memberCount').addEventListener('change', (event) => { state.members = clamp(Number.parseInt(event.target.value, 10) || 0, 0, 100); render(); });
+      $('#envCount').addEventListener('change', (event) => { const min = state.accountStatus === 'subscribed' && state.purchaseMode === 'change' ? currentPlan.envs : 10; state.envs = ceilToTen(event.target.value, min); render(); });
+      $('#memberCount').addEventListener('change', (event) => { const min = state.accountStatus === 'subscribed' && state.purchaseMode === 'change' ? currentPlan.members : 1; state.members = clamp(Number.parseInt(event.target.value, 10) || min, min, 100); render(); });
       $('#planCoupon').addEventListener('change', (event) => { state.coupon = Number(event.target.value) || 0; render(); });
       $('#planRenew').addEventListener('change', (event) => { state.renew = event.target.checked; render(); });
       document.querySelectorAll('input[name="planPayment"]').forEach((radio) => radio.addEventListener('change', (event) => {
@@ -743,11 +1157,23 @@
       document.querySelectorAll('[data-collapse]').forEach((button) => button.addEventListener('click', () => {
         const target = button.dataset.collapse === 'envs' ? $('#envDetails') : $('#memberDetails');
         const icon = button.querySelector('svg');
-        const hidden = target.hidden;
-        target.hidden = !hidden;
-        icon.setAttribute('data-lucide', hidden ? 'chevron-up' : 'chevron-down');
+        const expanded = !target.hidden;
+        target.hidden = expanded;
+        button.setAttribute('aria-expanded', String(!expanded));
+        icon.setAttribute('data-lucide', expanded ? 'chevron-right' : 'chevron-down');
         lucide.createIcons();
       }));
+      const toggleDetailPanel = (button, selector) => {
+        const target = $(selector);
+        const expanded = !target.hidden;
+        target.hidden = expanded;
+        button.setAttribute('aria-expanded', String(!expanded));
+        const icon = button.querySelector('svg');
+        icon.setAttribute('data-lucide', expanded ? 'chevron-right' : 'chevron-down');
+        lucide.createIcons();
+      };
+      document.querySelectorAll('[data-compare-resource]').forEach((button) => button.addEventListener('click', () => toggleDetailPanel(button, '#' + button.getAttribute('aria-controls'))));
+      document.querySelectorAll('[data-compare-tooltip-expand]').forEach((button) => button.addEventListener('click', () => toggleDetailPanel(button, '#' + button.getAttribute('aria-controls'))));
       document.querySelectorAll('[data-tab]').forEach((button) => button.addEventListener('click', () => {
         const tab = button.dataset.tab;
         if (tab !== 'plan') navigateToStoreTab(tab);

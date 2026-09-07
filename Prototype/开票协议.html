@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>云登 · 开票协议</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config={theme:{extend:{colors:{primary:'#0066FF','primary-bg':'#E6F0FF','ink-title':'#1A1D24','ink-body':'#3A3F4A','ink-sub':'#6E7685','ink-muted':'#9DA2AC','line-light':'#E8EAED',page:'#F7F8FA',card:'#FFFFFF',warning:'#E7772D','warning-bg':'#FDF2E9'}}}};</script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    *{box-sizing:border-box}
+    body{margin:0;background:#F7F8FA;color:#3A3F4A;font:14px/1.7 -apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif;-webkit-font-smoothing:antialiased}
+    .agreement-shell{min-height:100vh;padding:16px}
+    .agreement-card{width:min(960px,100%);margin:0 auto;background:#fff;border-radius:8px;padding:32px 40px}
+    .agreement-heading{display:flex;align-items:center;gap:12px;padding-bottom:20px;border-bottom:1px solid #E8EAED}
+    .agreement-icon{width:36px;height:36px;border-radius:8px;background:#E6F0FF;color:#0066FF;display:flex;align-items:center;justify-content:center}
+    .agreement-content{margin-top:24px;color:#3A3F4A}
+    .agreement-content section+section{margin-top:24px}
+    .agreement-content h2{margin:0 0 8px;color:#1A1D24;font-size:16px;font-weight:600;line-height:24px}
+    .agreement-content p{margin:0;color:#6E7685}
+    .agreement-note{margin-top:28px;padding:12px 16px;border-radius:4px;background:#FDF2E9;color:#E7772D;font-size:12px;line-height:20px}
+    @media(max-width:640px){.agreement-shell{padding:12px}.agreement-card{padding:24px 20px}.agreement-heading{align-items:flex-start}.agreement-content section+section{margin-top:20px}}
+  </style>
+</head>
+<body>
+  <main class="agreement-shell">
+    <article class="agreement-card" aria-labelledby="agreementTitle">
+      <header class="agreement-heading">
+        <span class="agreement-icon" aria-hidden="true"><i data-lucide="file-check-2" class="w-5 h-5"></i></span>
+        <div>
+          <h1 id="agreementTitle" class="m-0 text-[20px] font-semibold text-ink-title">开票协议</h1>
+          <p class="m-0 mt-1 text-[12px] text-ink-sub">云登费用管理 · 协议占位页</p>
+        </div>
+      </header>
+      <div class="agreement-content">
+        <section>
+          <h2>一、服务说明</h2>
+          <p>本协议用于说明云登平台电子发票申请、开具、交付及相关服务边界。正式上线内容以云登及财务、法务审核通过的最新版本为准。</p>
+        </section>
+        <section>
+          <h2>二、申请条件</h2>
+          <p>用户可针对符合平台开票资格的法币支付订单申请电子发票。云币支付订单不支持平台内自助开票，超过平台自助申请金额上限的订单需联系商务经理处理。</p>
+        </section>
+        <section>
+          <h2>三、信息真实性</h2>
+          <p>用户应确保发票抬头、税号、发票内容及收票信息真实、准确、完整。因用户填写错误或信息变更导致的开票、更正或交付问题，按平台及相关法律法规处理。</p>
+        </section>
+        <section>
+          <h2>四、开票与交付</h2>
+          <p>平台在审核通过后按销售主体和税务配置开具电子发票，并通过页面及用户填写的邮箱提供交付。开票状态、票据文件和交付结果以平台记录为准。</p>
+        </section>
+        <section>
+          <h2>五、协议变更</h2>
+          <p>平台可根据业务、税务及法律法规变化更新本协议。协议更新后将展示最新版本和生效时间，用户继续使用相关服务即视为已阅读并同意更新内容。</p>
+        </section>
+        <div class="agreement-note"><strong>原型说明：</strong>本页面为产品原型占位内容，不构成正式法律协议。生产上线前须替换为经法务审核并可追溯版本的完整正文。</div>
+      </div>
+    </article>
+  </main>
+  <script>window.lucide?.createIcons?.();</script>
+</body>
+</html>

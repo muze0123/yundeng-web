@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>云登 · 云币充值</title>
+  <title>云登 · 云币交易流水</title>
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <script src="https://unpkg.com/lucide@1.34.0/dist/umd/lucide.min.js"></script>
   <link rel="stylesheet" href="../src/styles/global.css?v=20260821a">
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="公共导航.css?v=20260825a">
+  <link rel="stylesheet" href="公共导航.css?v=20260828e">
   <link rel="stylesheet" href="分页器.css?v=20260814">
   <script>
     if (window.tailwind) tailwind.config = { theme: { extend: { colors: {
@@ -149,32 +149,21 @@
     .coin-recharge-field + .coin-recharge-field{margin-top:24px}
     .coin-recharge-field-label{display:block;margin-bottom:12px;color:#1A1D24;font-size:16px;font-weight:600;line-height:24px}
     .coin-recharge-section-label{font-size:14px;line-height:20px}
-    .coin-recharge-amount-options{display:grid;grid-template-columns:repeat(5,100px) 130px;gap:20px}
-    .coin-recharge-amount-btn,.coin-recharge-custom-option{position:relative;height:50px;padding:0 12px;border:1px solid #F0F1F3;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;gap:4px;color:#0066FF;background:#F7F8FA;cursor:pointer}
+    .coin-recharge-amount-options{display:grid;grid-template-columns:repeat(5,180px);gap:20px}
+    .coin-recharge-amount-btn,.coin-recharge-custom-option{position:relative;width:180px;height:80px;padding:12px 16px;border:1px solid #F0F1F3;border-radius:6px;display:inline-flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:4px;color:#0066FF;background:#F7F8FA;cursor:pointer;text-align:left}
     .coin-recharge-amount-btn:hover,.coin-recharge-custom-option:hover,.coin-recharge-amount-btn:focus-visible,.coin-recharge-custom-option:focus-within{border-color:#0066FF;background:#E6F0FF;outline:none}
     .coin-recharge-amount-btn.selected,.coin-recharge-custom-option.selected{border-color:#0066FF;background:#fff;box-shadow:inset 0 0 0 1px #0066FF}
-    .coin-recharge-amount-btn.selected::after{content:'';position:absolute;right:-1px;bottom:-1px;width:22px;height:22px;border-radius:6px 0 6px 0;background:#0066FF}
-    .coin-recharge-amount-btn.selected::before{content:'';position:absolute;right:5px;bottom:6px;z-index:1;width:8px;height:5px;border-left:2px solid #fff;border-bottom:2px solid #fff;transform:rotate(-45deg)}
-    .coin-recharge-amount-value{color:#0066FF;font:500 16px/1 'JetBrains Mono',monospace;white-space:nowrap}
-    .coin-recharge-custom-option .coin-recharge-custom-prefix{color:#0066FF;font:500 16px/1 'JetBrains Mono',monospace}
-    .coin-recharge-custom-option input{width:78px;height:32px;padding:0 8px;border:0;outline:none;color:#3A3F4A;background:transparent;font-size:16px}
+    .coin-recharge-amount-check{position:absolute;top:-1px;right:-1px;width:22px;height:22px;border-radius:0 6px 0 6px;display:none;align-items:center;justify-content:center;color:#fff;background:#0066FF}
+    .coin-recharge-amount-btn.selected .coin-recharge-amount-check,.coin-recharge-custom-option.selected .coin-recharge-amount-check{display:inline-flex}
+    .coin-recharge-amount-check svg{width:12px;height:12px;stroke-width:3}
+    .coin-recharge-amount-value{color:#0066FF;font:500 28px/34px 'JetBrains Mono',monospace;white-space:nowrap}
+    .coin-recharge-custom-option .coin-recharge-custom-prefix{color:#0066FF;font:500 28px/34px 'JetBrains Mono',monospace}
+    .coin-recharge-custom-input{display:flex;align-items:center;gap:2px}
+    .coin-recharge-custom-option input{width:122px;height:34px;padding:0 4px;border:0;outline:none;color:#3A3F4A;background:transparent;font:500 28px/34px 'JetBrains Mono',monospace}
     .coin-recharge-custom-option input::placeholder{color:#9DA2AC}
-    .coin-recharge-campaign{margin-top:16px;padding:16px;border:1px solid #E8EAED;border-radius:8px;background:#E6F0FF}
-    .coin-recharge-campaign-header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
-    .coin-recharge-campaign-title{margin:0;color:#1A1D24;font-size:16px;font-weight:600;line-height:22px}
-    .coin-recharge-campaign-copy{margin:4px 0 0;color:#3A3F4A;font-size:12px;line-height:18px}
-    .coin-recharge-campaign-countdown{flex:0 0 auto;padding:4px 8px;border-radius:4px;background:#fff;color:#E7772D;font-size:12px;line-height:18px;white-space:nowrap}
-    .coin-recharge-campaign-countdown strong{font-family:'JetBrains Mono',monospace;font-weight:600}
-    .coin-recharge-campaign-levels{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:12px}
-    .coin-recharge-campaign-level{min-width:0;padding:8px 10px;border:1px solid #E6F0FF;border-radius:4px;background:#fff;color:#6E7685;font-size:12px;line-height:18px}
-    .coin-recharge-campaign-level strong{display:block;color:#0066FF;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;white-space:nowrap}
-    .coin-recharge-campaign-level.is-active{border-color:#0066FF;background:#fff;box-shadow:inset 0 0 0 1px #0066FF}
-    .coin-recharge-campaign-level.is-active span{color:#0066FF}
-    .coin-recharge-campaign-progress{display:flex;align-items:center;gap:10px;margin-top:12px;color:#3A3F4A;font-size:12px;line-height:18px}
-    .coin-recharge-campaign-progress-bar{height:6px;min-width:80px;flex:1;overflow:hidden;border-radius:4px;background:#fff}
-    .coin-recharge-campaign-progress-bar span{display:block;height:100%;border-radius:4px;background:#0066FF;transition:width .2s ease}
-    .coin-recharge-campaign-summary{flex:0 0 auto;color:#0066FF;font-family:'JetBrains Mono',monospace;white-space:nowrap}
-    .coin-recharge-campaign-note{margin:8px 0 0;color:#6E7685;font-size:11px;line-height:16px}
+    .coin-recharge-amount-gift,.coin-recharge-amount-total,.coin-recharge-custom-benefit{font-size:11px;line-height:15px;white-space:nowrap}
+    .coin-recharge-amount-gift{color:#0066FF}
+    .coin-recharge-amount-total,.coin-recharge-custom-benefit{color:#6E7685}
     .coin-recharge-info-list{margin:0;padding:0;list-style:none;color:#3A3F4A;font-size:14px;line-height:1.7}
     .coin-recharge-info-list li{position:relative;padding-left:14px}
     .coin-recharge-info-list li::before{content:'';position:absolute;left:0;top:9px;width:5px;height:5px;border-radius:50%;background:#0066FF}
@@ -237,7 +226,7 @@
     .coin-filter-drawer-body .coin-date-row .field{height:32px}
     @keyframes coin-drawer-in{from{transform:translateX(100%)}to{transform:translateX(0)}}
     @media(max-width:1024px) and (min-width:721px){
-      .coin-recharge-amount-options{grid-template-columns:repeat(3,minmax(0,1fr))}
+      .coin-recharge-amount-options{grid-template-columns:repeat(3,minmax(180px,1fr))}
     }
     @media(max-width:720px){
       .coin-balance-card{height:150px;min-height:150px;padding:24px}
@@ -250,13 +239,7 @@
       .coin-filter-drawer-panel{width:100%}
       .coin-filter-row{grid-template-columns:1fr}
       .coin-recharge-body{padding:20px 16px 24px}
-      .coin-recharge-amount-options{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-      .coin-recharge-custom-option{width:100%}
-      .coin-recharge-campaign-header{flex-direction:column;gap:8px}
-      .coin-recharge-campaign-countdown{align-self:flex-start}
-      .coin-recharge-campaign-levels{grid-template-columns:repeat(2,minmax(0,1fr))}
-      .coin-recharge-campaign-progress{align-items:flex-start;flex-wrap:wrap}
-      .coin-recharge-campaign-progress-bar{order:3;flex-basis:100%}
+      .coin-recharge-amount-options{grid-template-columns:repeat(2,minmax(180px,1fr));gap:10px}
       .coin-recharge-control-row{grid-template-columns:1fr;gap:6px}
       .coin-recharge-control-row .coin-recharge-field-label{line-height:18px;text-align:left}
       .coin-recharge-more-row{grid-template-columns:1fr;row-gap:6px}
@@ -273,6 +256,9 @@
       .coin-date-time-months{grid-template-columns:1fr;gap:14px}
       .coin-date-time-month+.coin-date-time-month{padding:14px 0 0;border-top:1px solid #E8EAED;border-left:0}
     }
+    @media(max-width:420px){
+      .coin-recharge-amount-options{grid-template-columns:180px}
+    }
   </style>
   <script src="公共导航.js?v=20260828e"></script>
 </head>
@@ -281,83 +267,21 @@
     // 业务文件直开时回到根索引；iframe 嵌入时由 SystemFrame 承载，不触发跳转。
     (function(){
       if(window===top){
-        try{location.replace(new URL('../index.html?page=store-coin',location.href).href)}catch(_){location.replace('../index.html?page=store-coin')}
+        try{location.replace(new URL('../index.html?page=billing-coin-transactions',location.href).href)}catch(_){location.replace('../index.html?page=billing-coin-transactions')}
       }
     })();
   </script>
-  <main id="mainContent" class="min-h-screen">
-    <nav class="coin-store-nav" aria-label="商城业务范围">
-      <div id="storeTabs" class="coin-store-tabs" role="tablist" aria-label="商城业务范围">
-        <button class="coin-store-tab" type="button" role="tab" aria-selected="false" data-store-tab="proxy" tabindex="-1"><i data-lucide="server" aria-hidden="true"></i><span>代理</span></button>
-        <button class="coin-store-tab" type="button" role="tab" aria-selected="false" data-store-tab="plan" tabindex="-1"><i data-lucide="package" aria-hidden="true"></i><span>套餐</span></button>
-        <button class="coin-store-tab active" type="button" role="tab" aria-selected="true" data-store-tab="coin" tabindex="0"><i data-lucide="wallet-cards" aria-hidden="true"></i><span>云币充值</span></button>
-        <button class="coin-store-tab" type="button" role="tab" aria-selected="false" data-store-tab="cart" tabindex="-1"><i data-lucide="shopping-cart" aria-hidden="true"></i><span>购物车</span></button>
-      </div>
-    </nav>
-    <div class="page-content">
-      <section id="coinPanel" aria-labelledby="coinPageHeading">
-        <div class="space-y-4">
-          <div class="coin-balance-card card">
-            <div class="coin-balance-card__inner">
-              <div class="coin-balance-card__meta">
-                <div>
-                  <h1 id="coinPageHeading" class="coin-balance-title">云币余额(元)</h1>
-                  <div id="coinBalanceAmount" class="coin-balance-value">326.80</div>
-                </div>
-                <button data-anno="1" id="refreshBalance" type="button" class="coin-balance-refresh">
-                  <i data-lucide="refresh-cw" class="w-5 h-5" aria-hidden="true"></i>
-                  <span>刷新</span>
-                </button>
-              </div>
-              <svg class="coin-balance-art" viewBox="0 0 360 220" aria-hidden="true">
-                <defs>
-                  <linearGradient id="coinGlow" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stop-color="#FFFFFF" stop-opacity=".9" />
-                    <stop offset="55%" stop-color="#E6F0FF" stop-opacity=".55" />
-                    <stop offset="100%" stop-color="#0066FF" stop-opacity=".16" />
-                  </linearGradient>
-                  <linearGradient id="coinStroke" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stop-color="#FFFFFF" stop-opacity=".95" />
-                    <stop offset="100%" stop-color="#E6F0FF" stop-opacity=".5" />
-                  </linearGradient>
-                  <filter id="coinBlur" x="-20%" y="-20%" width="140%" height="140%">
-                    <feGaussianBlur stdDeviation="6" />
-                  </filter>
-                </defs>
-                <g transform="translate(174 78)">
-                  <circle cx="0" cy="0" r="72" fill="none" stroke="rgba(255,255,255,.55)" stroke-width="3" filter="url(#coinBlur)"/>
-                  <circle cx="0" cy="0" r="60" fill="none" stroke="url(#coinStroke)" stroke-width="11" opacity=".9"/>
-                  <circle cx="0" cy="0" r="46" fill="rgba(255,255,255,.28)" stroke="rgba(255,255,255,.35)" stroke-width="2"/>
-                  <circle cx="0" cy="0" r="84" fill="none" stroke="rgba(255,255,255,.28)" stroke-width="2"/>
-                  <path d="M-54 12 C-18 -16 14 -30 60 -8" fill="none" stroke="rgba(255,255,255,.58)" stroke-width="12" stroke-linecap="round"/>
-                  <path d="M-35 -34 C-3 -54 34 -48 62 -26" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="8" stroke-linecap="round"/>
-                  <circle cx="-4" cy="-2" r="20" fill="url(#coinGlow)" opacity=".92"/>
-                  <circle cx="24" cy="-14" r="90" fill="rgba(255,255,255,.12)" filter="url(#coinBlur)"/>
-                </g>
-              </svg>
-            </div>
-          </div>
-
-          <div class="coin-business-card">
-          <div class="coin-tabs" role="tablist" aria-label="云币业务">
-            <div class="flex gap-2" role="presentation">
-              <button data-anno="2" class="subtab" type="button" data-coin-view="recharge" role="tab" aria-selected="false">在线充值</button>
-              <button class="subtab" type="button" data-coin-view="cdkey" role="tab" aria-selected="false">CDKEY 兑换</button>
-              <button class="subtab" type="button" data-coin-view="records" role="tab" aria-selected="true">交易流水</button>
-            </div>
-          </div>
-
+  <main id="mainContent" class="min-h-screen p-4 flex flex-col"><section class="coin-business-card flex-1" aria-label="云币交易流水">
+<!-- 操作工具栏与数据列表 -->
           <div id="recordsView" class="coin-tab-panel">
             <div class="p-5 md:p-6">
               <div class="coin-transaction-toolbar">
-                <div class="coin-list-title">
-                  <h2 data-anno="9" class="inline-block text-[16px] font-semibold text-ink-title">云币流水</h2>
-                  <span id="txCount" class="coin-list-count" role="status" aria-live="polite"></span>
-                </div>
+                <button id="exportTransactions" data-anno="1" type="button" class="btn btn-default"><i data-lucide="download" class="w-4 h-4" aria-hidden="true"></i>导出</button>
+                <span id="txCount" class="sr-only" role="status" aria-live="polite"></span>
                 <div class="coin-search-filter-group">
                   <div class="coin-global-search" role="search">
                     <label class="sr-only" for="txSearchInput">搜索云币流水</label>
-                    <input data-anno="7" id="txSearchInput" class="field" type="search" placeholder="请输入关键词，多个用中文逗号分隔" autocomplete="off">
+                    <input data-anno="2" id="txSearchInput" class="field" type="search" placeholder="请输入关键词，多个用中文逗号分隔" autocomplete="off">
                     <button id="txSearchClear" type="button" class="coin-search-clear hidden" aria-label="清空搜索">
                       <i data-lucide="x" class="w-4 h-4" aria-hidden="true"></i>
                     </button>
@@ -365,7 +289,7 @@
                       <i data-lucide="search" class="w-4 h-4" aria-hidden="true"></i>
                     </button>
                   </div>
-                  <button data-anno="8" id="txFilterBtn" type="button" class="btn btn-default coin-filter-button" aria-haspopup="dialog" aria-expanded="false" aria-controls="txFilterDrawer">
+                  <button data-anno="3" id="txFilterBtn" type="button" class="btn btn-default coin-filter-button" aria-haspopup="dialog" aria-expanded="false" aria-controls="txFilterDrawer">
                     <i data-lucide="list-filter" class="w-4 h-4" aria-hidden="true"></i>
                     <span>筛选</span>
                     <span id="txFilterCount" class="coin-filter-count hidden">0</span>
@@ -373,7 +297,7 @@
                 </div>
               </div>
               <div class="overflow-x-auto">
-                <table class="w-full">
+                <table class="w-full whitespace-nowrap" aria-label="云币交易流水" data-anno="4">
                   <thead class="bg-line-lighter text-ink-sub">
                     <tr>
                       <th class="p-3 text-left">交易单号</th>
@@ -393,98 +317,8 @@
             </div>
           </div>
 
-          <div id="rechargeView" class="hidden coin-recharge-view">
-            <div class="coin-recharge-body">
-              <div class="coin-recharge-field">
-                <label class="coin-recharge-field-label coin-recharge-section-label" for="customAmount">充值金额</label>
-                <div data-anno="3" class="coin-recharge-amount-options" id="amountChoices">
-                  <button type="button" class="coin-recharge-amount-btn selected" data-amount="50"><span class="coin-recharge-amount-value">¥ 50</span></button>
-                  <button type="button" class="coin-recharge-amount-btn" data-amount="500"><span class="coin-recharge-amount-value">¥ 500</span></button>
-                  <button type="button" class="coin-recharge-amount-btn" data-amount="1000"><span class="coin-recharge-amount-value">¥ 1000</span></button>
-                  <button type="button" class="coin-recharge-amount-btn" data-amount="5000"><span class="coin-recharge-amount-value">¥ 5000</span></button>
-                  <button type="button" class="coin-recharge-amount-btn" data-amount="10000"><span class="coin-recharge-amount-value">¥ 10000</span></button>
-                  <label class="coin-recharge-custom-option" id="customAmountOption" data-amount="custom"><span class="coin-recharge-custom-prefix">¥</span><input id="customAmount" type="number" placeholder="自定义" min="1" max="100000" aria-label="自定义充值金额" inputmode="decimal"></label>
-                </div>
-                <section class="coin-recharge-campaign" aria-labelledby="coinCampaignTitle">
-                  <div class="coin-recharge-campaign-header">
-                    <div>
-                      <h3 id="coinCampaignTitle" data-anno="4" class="coin-recharge-campaign-title">限时充值加赠</h3>
-                      <p class="coin-recharge-campaign-copy">活动期间充值，满额即送云币，赠送与充值金额一并到账</p>
-                    </div>
-                    <div class="coin-recharge-campaign-countdown">距活动结束 <strong id="coinCampaignCountdown">--天 --:--:--</strong></div>
-                  </div>
-                  <div id="coinCampaignLevels" class="coin-recharge-campaign-levels" aria-label="充值赠送档位"></div>
-                  <div class="coin-recharge-campaign-progress">
-                    <span id="coinCampaignProgressText">当前已选 ¥50</span>
-                    <div class="coin-recharge-campaign-progress-bar" role="progressbar" aria-label="充值赠送进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="coinCampaignProgressBar"></span></div>
-                    <span id="coinCampaignSummary" class="coin-recharge-campaign-summary">再充值 ¥450，可多得 30 云币</span>
-                  </div>
-                  <p class="coin-recharge-campaign-note">每笔充值按最高档位计算，活动赠送不与其他充值赠送叠加。</p>
-                </section>
-              </div>
-              <div class="coin-recharge-field">
-                <h3 class="coin-recharge-field-label coin-recharge-section-label">关于云币</h3>
-                <ul class="coin-recharge-info-list">
-                  <li>云币是云登提供的一种内部结算形式，1元=1云币。</li>
-                  <li>云币可以用于购买代理与套餐，支付时选择云币支付，用多少扣多少。</li>
-                  <li>云币充值记录、消费记录、剩余余额，可在商城-云币充值页面查看。</li>
-                </ul>
-              </div>
-              <div class="coin-recharge-field coin-recharge-control-row">
-                <label class="coin-recharge-field-label" for="rechargeCoupon">选择优惠券：</label>
-                <select id="rechargeCoupon" class="field coin-recharge-select">
-                  <option value="0">选择优惠券</option>
-                  <option value="10">满 100 减 10</option>
-                  <option value="50">满 500 减 50</option>
-                </select>
-              </div>
-              <div class="coin-recharge-field coin-recharge-control-row">
-                <span class="coin-recharge-field-label">支付方式：</span>
-                <div class="coin-recharge-payment-options" id="payChoices">
-                  <button type="button" class="coin-recharge-payment-btn active selected" data-pay="支付宝">
-                    <span class="coin-recharge-payment-check" aria-hidden="true"><i data-lucide="check"></i></span>
-                    <img src="../src/assets/images/支付宝支付.png" class="coin-recharge-payment-icon" alt="">
-                    <span>支付宝支付</span>
-                  </button>
-                  <button type="button" class="coin-recharge-payment-btn" data-pay="微信">
-                    <span class="coin-recharge-payment-check" aria-hidden="true"><i data-lucide="check"></i></span>
-                    <img src="../src/assets/images/微信支付.png" class="coin-recharge-payment-icon" alt="">
-                    <span>微信支付</span>
-                  </button>
-                </div>
-              </div>
-              <div class="coin-recharge-field coin-recharge-more-row">
-                <span class="coin-recharge-more-label">更多支付：</span>
-                <span class="coin-recharge-more-methods" aria-label="更多支付方式"><span>银联</span><span>AMEX</span><span>Pay</span><span>VISA</span><span>MC</span></span>
-                <a class="coin-recharge-more-link" href="#" data-contact-service>（联系在线客服）</a>
-              </div>
-            </div>
-            <footer class="coin-recharge-footer">
-              <div class="coin-recharge-submit-group">
-                <button data-anno="5" id="submitRecharge" type="button" class="btn btn-primary coin-recharge-submit">立即支付</button>
-                <span class="coin-recharge-payable">应付金额 <strong id="payable" class="mono">¥50.00</strong></span>
-              </div>
-              <span class="coin-recharge-support">（如有疑问，请<a href="#" data-contact-service>联系客服</a>）</span>
-            </footer>
-          </div>
-
-          <div id="cdkeyView" class="hidden coin-cdkey-view">
-            <div class="p-3 rounded bg-info-bg text-info mb-6">卡号一经兑换，卡内金额将兑换成云币，该卡号随即失效且不可重复使用。</div>
-            <div class="max-w-[640px]">
-              <label class="block" for="cdkey">
-                <span class="block font-medium mb-2">CDKEY 卡号</span>
-                <input data-anno="6" id="cdkey" class="responsive-field field w-[500px] mono" placeholder="请输入你的CDKEY卡号" autocomplete="off">
-              </label>
-              <p id="cdkeyError" class="hidden text-danger text-[12px] mt-1">请输入正确格式的 CDKEY 卡号</p>
-              <div class="coin-cdkey-action-row mt-5">
-                <button id="redeem" type="button" class="btn btn-primary">确定兑换</button>
-                <span class="coin-recharge-support">（如有疑问，请<a href="#" data-contact-service>联系客服</a>）</span>
-              </div>
-            </div>
-          </div>
-          </div>
-        </div>
-
+</section>
+<!-- 筛选条件抽屉 -->
         <div id="txFilterDrawer" class="modal-bg coin-filter-drawer-overlay hidden" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="txFilterHeading">
           <aside id="txFilterPanel" class="coin-filter-drawer-panel" tabindex="-1" data-filter-focusable>
             <header class="coin-filter-drawer-header">
@@ -548,34 +382,10 @@
             </div>
             <footer class="coin-filter-drawer-footer">
               <button data-filter-focusable id="txFilterCancel" type="button" class="btn btn-default">取消</button>
-              <button data-filter-focusable data-anno="10" id="txFilterSubmit" type="button" class="btn btn-primary">确认提交</button>
+              <button data-filter-focusable data-anno="5" id="txFilterSubmit" type="button" class="btn btn-primary">确认提交</button>
             </footer>
           </aside>
-        </div>
-      </section>
-    </div>
-  </main>
-
-  <div id="modal" class="modal-bg hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div id="modalCard" class="modal-card bg-white w-[520px] max-h-[90vh] overflow-y-auto rounded-lg shadow-[0_6px_24px_rgba(0,0,0,.12)]" tabindex="-1"><div class="px-5 py-4 border-b border-line flex justify-between"><h3 id="modalTitle" class="text-[16px] font-semibold text-ink-title">确认</h3><button type="button" data-close aria-label="关闭"><i data-lucide="x" class="w-4" aria-hidden="true"></i></button></div><div id="modalBody" class="p-5"></div><div class="px-5 py-4 border-t border-line flex justify-end gap-2"><button type="button" data-close class="btn btn-default">取消</button><button id="modalConfirm" type="button" class="btn btn-primary">确定</button></div></div></div>
-  <div id="coinPaymentDialog" class="coin-payment-dialog-mask hidden" role="dialog" aria-modal="true" aria-labelledby="coinPaymentDialogTitle" aria-hidden="true">
-    <section id="coinPaymentDialogPanel" class="coin-payment-dialog" tabindex="-1">
-      <header class="coin-payment-dialog-header">
-        <h2 id="coinPaymentDialogTitle" class="coin-payment-dialog-title">支付宝支付</h2>
-        <button id="closeCoinPaymentDialog" class="coin-payment-close" type="button" aria-label="关闭支付宝支付弹窗"><i data-lucide="x" aria-hidden="true"></i></button>
-      </header>
-      <div class="coin-payment-dialog-body">
-        <div class="coin-payment-notice" role="status">
-          <i data-lucide="info" aria-hidden="true"></i>
-          <span>订单 <strong>29:57</strong> 后订单将自动取消，请在订单取消完成前完成支付！若订单中使用了优惠券，订单取消后会原路返回您的账户中。</span>
-        </div>
-        <div class="coin-payment-amount-label">需要支付金额</div>
-        <div id="coinPaymentAmount" class="coin-payment-amount">¥50.00</div>
-        <div id="coinPaymentCampaign" class="coin-payment-campaign hidden"></div>
-        <div id="coinPaymentQr" class="coin-payment-qr" role="img" aria-label="支付宝支付二维码"></div>
-        <div id="coinPaymentHint" class="coin-payment-hint">请打开支付宝扫一扫</div>
-      </div>
-    </section>
-  </div>
+        </div></main>
   <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
   <button id="annoToggle" type="button" class="btn btn-default fixed right-2 top-[120px] z-[9997]" aria-pressed="false"><i data-lucide="tags" class="w-4" aria-hidden="true"></i><span>显示标注</span></button>
   <div id="annoLayer" class="fixed inset-0 pointer-events-none z-[9998]"></div>
@@ -590,38 +400,13 @@
       const money = value => '¥' + Number(value || 0).toFixed(2);
       const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
       const tokenize = value => String(value || '').trim().toLowerCase().split(/[，,\s]+/).filter(Boolean);
-      const sessionKey = 'yundeng.billing.coin.v2';
+      const sessionKey = 'yundeng.billing.coin.transactions.v1';
       const readState = () => { try { const value = JSON.parse(sessionStorage.getItem(sessionKey) || '{}'); return value && typeof value === 'object' ? value : {}; } catch (_) { return {}; } };
       let state = readState();
       const saveState = patch => { state = Object.assign({}, state, patch || {}); try { sessionStorage.setItem(sessionKey, JSON.stringify(state)); } catch (_) {} };
       function setShellControlsVisible(visible) {
         if (window.parent !== window) window.parent.postMessage({type:'yundeng:chat-visibility', visible}, '*');
       }
-      const storeRouteFiles = Object.freeze({
-        proxy:'商城-代理.html',
-        plan:'商城-套餐.html',
-        coin:'商城-云币充值.html',
-        cart:'商城-购物车.html'
-      });
-      function navigateToStoreTab(tab) {
-        const file = storeRouteFiles[tab];
-        if (!file) return;
-        const search = `?tab=${tab}`;
-        if (window.parent !== window) {
-          window.parent.postMessage({type:'yundeng:route',file,search,hash:''}, '*');
-          return;
-        }
-        location.assign(new URL('../index.html?page=store&module=' + encodeURIComponent(file) + '&moduleSearch=' + encodeURIComponent(search.slice(1)), location.href).href);
-      }
-      document.querySelectorAll('[data-store-tab]').forEach(button => button.addEventListener('click', () => navigateToStoreTab(button.dataset.storeTab)));
-      document.querySelector('#storeTabs')?.addEventListener('keydown', event => {
-        if (!['ArrowLeft','ArrowRight'].includes(event.key)) return;
-        event.preventDefault();
-        const tabs = [...document.querySelectorAll('[data-store-tab]')];
-        const index = tabs.indexOf(event.target.closest('[data-store-tab]'));
-        const next = (index + (event.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length;
-        navigateToStoreTab(tabs[next].dataset.storeTab);
-      });
       const transactions = [
         {type:'充值',time:'2026-08-10 14:20:18',no:'TX20260810A102',order:'YL2026081014201801',project:'云币在线充值',amount:500,balance:826.8,user:'张**'},
         {type:'支出',time:'2026-08-09 09:12:43',no:'TX20260809P283',order:'YL2026080909124302',project:'静态住宅代理',amount:-58.8,balance:326.8,user:'张**'},
@@ -664,18 +449,11 @@
       const txDateTimeStartTime = $('#txDateTimeStartTime');
       const txDateTimeEndTime = $('#txDateTimeEndTime');
       const txPagerNode = '#txPagination';
-      const balanceAmountNode = $('#coinBalanceAmount');
-
       let filteredTransactions = [];
       let txPager = null;
-      let modalFocus = null;
-      let paymentDialogFocus = null;
       let drawerFocus = null;
       let previousBodyOverflow = null;
       let annoVisible = false;
-      let currentView = state.coinView || 'records';
-      let amount = Number.isFinite(Number(state.amount)) ? Number(state.amount) : 50;
-      let amountMode = state.amountMode || (amount === 50 ? '50' : 'custom');
       let txSearch = state.txSearch || '';
       let appliedTxFilters = {
         type: state.txType || '全部',
@@ -687,20 +465,6 @@
         endTime: state.txEndTime || '23:59'
       };
       const txDateTimePickerState = {view:new Date(2026, 7, 1), active:'start', draftStart:'', draftEnd:'', draftStartTime:'00:00', draftEndTime:'23:59', invalid:false};
-      const coinRechargeCampaign = Object.freeze({
-        deadline: new Date('2026-08-31T23:59:59+08:00'),
-        tiers: Object.freeze([
-          Object.freeze({threshold:500, bonus:30}),
-          Object.freeze({threshold:1000, bonus:100}),
-          Object.freeze({threshold:5000, bonus:600}),
-          Object.freeze({threshold:10000, bonus:1500})
-        ])
-      });
-      let campaignBonus = 0;
-      let campaignCountdownTimer = null;
-      let balanceAmount = Number.isFinite(Number(state.balanceAmount)) ? Number(state.balanceAmount) : Number(balanceAmountNode?.textContent || 326.8);
-      if (balanceAmountNode) balanceAmountNode.textContent = balanceAmount.toFixed(2);
-
       function toast(message, tone) {
         const node = $('#toast');
         if (!node) return;
@@ -783,12 +547,6 @@
         }
         const pagerState = txPager.getState();
         saveState({
-          coinView: currentView,
-          amount,
-          amountMode,
-          coupon: $('#rechargeCoupon').value,
-          pay: state.pay || '支付宝',
-          balanceAmount,
           txSearch,
           txType: appliedTxFilters.type,
           txNo: appliedTxFilters.no,
@@ -803,170 +561,6 @@
         drawTxPage(pagerState);
         updateFilterButton();
         renderAnno();
-      }
-
-      function updateViewTabs() {
-        ['records', 'recharge', 'cdkey'].forEach(key => $('#' + key + 'View').classList.toggle('hidden', key !== currentView));
-        $$('[data-coin-view]').forEach(button => {
-          const active = button.dataset.coinView === currentView;
-          button.classList.toggle('active', active);
-          button.setAttribute('aria-selected', String(active));
-        });
-      }
-
-      function switchCoinView(view) {
-        currentView = view;
-        updateViewTabs();
-        saveState({coinView: view});
-        renderAnno();
-      }
-
-      function updateAmountButtons() {
-        $$('[data-amount]').forEach(button => {
-          const selected = button.dataset.amount === amountMode;
-          button.classList.toggle('active', selected);
-          button.classList.toggle('selected', selected);
-        });
-        $('#customAmount').value = amountMode === 'custom' && Number.isFinite(amount) && amount > 0 ? String(amount) : '';
-      }
-
-      function campaignMoney(value) {
-        return '¥' + Number(value || 0).toLocaleString('zh-CN', {maximumFractionDigits:0});
-      }
-
-      function renderCampaignLevels() {
-        const active = Date.now() < coinRechargeCampaign.deadline.getTime();
-        $('#coinCampaignLevels').innerHTML = coinRechargeCampaign.tiers.map(tier => {
-          const selected = active && amount >= tier.threshold;
-          return '<div class="coin-recharge-campaign-level' + (selected ? ' is-active' : '') + '"><strong>满 ' + campaignMoney(tier.threshold) + '</strong><span>送 ' + campaignMoney(tier.bonus).replace('¥', '') + ' 云币</span></div>';
-        }).join('');
-      }
-
-      function updateCampaignState() {
-        const active = Date.now() < coinRechargeCampaign.deadline.getTime();
-        const current = [...coinRechargeCampaign.tiers].reverse().find(tier => amount >= tier.threshold);
-        const next = coinRechargeCampaign.tiers.find(tier => amount < tier.threshold);
-        campaignBonus = active ? (current?.bonus || 0) : 0;
-        renderCampaignLevels();
-        $('#coinCampaignProgressText').textContent = active ? '当前已选 ' + campaignMoney(amount) : '活动已结束';
-        const progress = active ? (next ? Math.min(100, Math.round((amount / next.threshold) * 100)) : 100) : 0;
-        const progressBar = $('#coinCampaignProgressBar');
-        progressBar.style.width = progress + '%';
-        progressBar.parentElement.setAttribute('aria-valuenow', String(progress));
-        if (!active) {
-          $('#coinCampaignSummary').textContent = '活动已结束';
-        } else if (!current && next) {
-          $('#coinCampaignSummary').textContent = '再充值 ' + campaignMoney(next.threshold - amount) + '，可多得 ' + campaignMoney(next.bonus).replace('¥', '') + ' 云币';
-        } else if (next) {
-          $('#coinCampaignSummary').textContent = '已解锁 ' + campaignMoney(current.bonus).replace('¥', '') + ' 云币，再充值 ' + campaignMoney(next.threshold - amount) + '，可多得 ' + campaignMoney(next.bonus - current.bonus).replace('¥', '') + ' 云币';
-        } else {
-          $('#coinCampaignSummary').textContent = '已解锁最高奖励 ' + campaignMoney(current.bonus).replace('¥', '') + ' 云币';
-        }
-      }
-
-      function updateCampaignCountdown() {
-        const remaining = Math.max(0, coinRechargeCampaign.deadline.getTime() - Date.now());
-        const totalSeconds = Math.floor(remaining / 1000);
-        const days = Math.floor(totalSeconds / 86400);
-        const hours = Math.floor((totalSeconds % 86400) / 3600);
-        const minutes = Math.floor((totalSeconds % 3600) / 60);
-        const seconds = totalSeconds % 60;
-        $('#coinCampaignCountdown').textContent = remaining ? String(days).padStart(2, '0') + '天 ' + [hours, minutes, seconds].map(value => String(value).padStart(2, '0')).join(':') : '活动已结束';
-        if (!remaining) {
-          clearInterval(campaignCountdownTimer);
-          campaignCountdownTimer = null;
-          updateCampaignState();
-        }
-      }
-
-      function startCampaignCountdown() {
-        updateCampaignCountdown();
-        if (campaignCountdownTimer) clearInterval(campaignCountdownTimer);
-        if (Date.now() < coinRechargeCampaign.deadline.getTime()) campaignCountdownTimer = setInterval(updateCampaignCountdown, 1000);
-      }
-
-      function updatePayable() {
-        const discount = Number($('#rechargeCoupon').value || 0);
-        $('#payable').textContent = money(Math.max(0, amount - discount));
-        updateCampaignState();
-        saveState({amount, amountMode, coupon: $('#rechargeCoupon').value, pay: state.pay || '支付宝'});
-      }
-
-      function openModal(title, body, action = '确定') {
-        modalFocus = document.activeElement;
-        $('#modalTitle').textContent = title;
-        $('#modalBody').innerHTML = body;
-        $('#modalConfirm').textContent = action;
-        $('#modal').classList.remove('hidden');
-        requestAnimationFrame(() => $('#modalConfirm').focus());
-      }
-
-      function buildPaymentQr(selector, seed) {
-        const size = 29;
-        const cells = Array.from({length:size * size}, () => false);
-        const reserved = new Set();
-        const indexOf = (x, y) => y * size + x;
-        const mark = (x, y, value) => {
-          if (x < 0 || y < 0 || x >= size || y >= size) return;
-          cells[indexOf(x, y)] = value;
-          reserved.add(indexOf(x, y));
-        };
-        const finder = (originX, originY) => {
-          for (let y = -1; y < 8; y += 1) {
-            for (let x = -1; x < 8; x += 1) {
-              const edge = x === 0 || x === 6 || y === 0 || y === 6;
-              const core = x >= 2 && x <= 4 && y >= 2 && y <= 4;
-              mark(originX + x, originY + y, x >= 0 && x <= 6 && y >= 0 && y <= 6 && (edge || core));
-            }
-          }
-        };
-        finder(0, 0);
-        finder(size - 7, 0);
-        finder(0, size - 7);
-        let value = seed;
-        for (let y = 0; y < size; y += 1) {
-          for (let x = 0; x < size; x += 1) {
-            const index = indexOf(x, y);
-            if (reserved.has(index)) continue;
-            value = (value * 1664525 + 1013904223) >>> 0;
-            cells[index] = ((value >>> 28) & 1) === 1;
-          }
-        }
-        $(selector).innerHTML = cells.map(dark => '<span class="' + (dark ? 'is-dark' : 'is-light') + '"></span>').join('');
-      }
-
-      function openCoinPaymentDialog() {
-        const isWechat = state.pay === '微信';
-        const title = isWechat ? '微信支付' : '支付宝支付';
-        paymentDialogFocus = document.activeElement;
-        $('#coinPaymentDialogTitle').textContent = title;
-        $('#closeCoinPaymentDialog').setAttribute('aria-label', '关闭' + title + '弹窗');
-        $('#coinPaymentAmount').textContent = $('#payable').textContent;
-        const campaignLine = $('#coinPaymentCampaign');
-        campaignLine.textContent = campaignBonus ? '限时活动赠送 ' + campaignMoney(campaignBonus).replace('¥', '') + ' 云币，预计到账 ' + campaignMoney(amount + campaignBonus).replace('¥', '') + ' 云币' : '';
-        campaignLine.classList.toggle('hidden', !campaignBonus);
-        $('#coinPaymentQr').setAttribute('aria-label', title + '二维码');
-        $('#coinPaymentHint').textContent = '请打开' + (isWechat ? '微信' : '支付宝') + '扫一扫';
-        buildPaymentQr('#coinPaymentQr', Math.round(Number($('#payable').textContent.replace(/[^\d.]/g, '')) * 100) || 5000);
-        $('#coinPaymentDialog').classList.remove('hidden');
-        $('#coinPaymentDialog').setAttribute('aria-hidden', 'false');
-        setShellControlsVisible(false);
-        lucide.createIcons();
-        $('#closeCoinPaymentDialog').focus({preventScroll:true});
-      }
-
-      function closeCoinPaymentDialog() {
-        $('#coinPaymentDialog').classList.add('hidden');
-        $('#coinPaymentDialog').setAttribute('aria-hidden', 'true');
-        setShellControlsVisible(true);
-        paymentDialogFocus?.focus?.({preventScroll:true});
-        paymentDialogFocus = null;
-      }
-
-      function closeModal() {
-        $('#modal').classList.add('hidden');
-        modalFocus?.focus?.();
-        modalFocus = null;
       }
 
       function txDateKey(date) {
@@ -1194,51 +788,12 @@
         txSearchClear.classList.toggle('hidden', !txSearchInput.value);
       }
 
-      function refreshBalanceView() {
-        toast('云币余额已刷新（演示）', 'info');
-      }
-
-      function updateRechargeState() {
-        $('#rechargeCoupon').value = state.coupon || '0';
-        if (state.pay) {
-          $$('[data-pay]').forEach(button => {
-            const selected = button.dataset.pay === state.pay;
-            button.classList.toggle('active', selected);
-            button.classList.toggle('selected', selected);
-          });
-        }
-        amountMode = state.amountMode || (amount === 50 ? '50' : 'custom');
-        updateAmountButtons();
-        updatePayable();
-      }
-
-      function submitRecharge() {
-        if (!Number.isFinite(amount) || amount <= 0 || amount > 100000 || Math.round(amount * 100) !== amount * 100) {
-          toast('请输入 0-100000 元且最多两位小数的有效金额', 'warning');
-          return;
-        }
-        openCoinPaymentDialog();
-      }
-
-      function redeemCdkey() {
-        const value = $('#cdkey').value.trim();
-        const valid = /^[A-Za-z0-9-]{8,32}$/.test(value);
-        $('#cdkey').classList.toggle('invalid', !valid);
-        $('#cdkeyError').classList.toggle('hidden', valid);
-        if (valid) openModal('确认兑换', '<p>兑换后卡号立即失效。原型不会调用真实兑换服务。</p>', '确认（演示）');
-      }
-
       const annotations = {
-        1: {title:'云币余额刷新', desc:['触发：点击余额卡片下方刷新','响应：刷新余额展示并给出反馈','规则：仅为原型演示，不修改真实资产']},
-        2: {title:'云币业务页签', desc:['触发：点击交易流水、在线充值或 CDKEY 兑换','响应：切换当前云币业务内容','规则：当前页签状态保留在会话中']},
-        3: {title:'充值金额', desc:['触发：选择预设或自定义金额','响应：实时更新应付金额','规则：金额须大于 0、最多两位小数且不超过 100000 元']},
-        4: {title:'限时充值加赠', desc:['触发：进入在线充值或切换充值金额','响应：展示活动倒计时、赠送档位和下一档进度','规则：每笔充值按最高档位计算，赠送不与其他充值赠送叠加']},
-        5: {title:'立即支付', desc:['触发：点击立即支付','响应：打开支付前确认弹窗并展示本次活动赠送','规则：不创建真实订单或发起真实扣款']},
-        6: {title:'CDKEY 卡号', desc:['触发：输入卡号并点击确定兑换','响应：校验格式并打开确认弹窗','规则：仅接受 8-32 位字母、数字和短横线']},
-        7: {title:'流水搜索框', desc:['触发：输入交易单号、订单号、项目或操作人关键词','响应：实时刷新流水列表','规则：搜索范围作用于全部流水字段']},
-        8: {title:'流水筛选入口', desc:['触发：点击筛选','响应：打开右侧筛选抽屉','规则：取消不提交草稿，确认后才应用条件']},
-        9: {title:'云币流水列表', desc:['触发：搜索、筛选或翻页','响应：展示匹配流水及总数','规则：金额、单号和时间使用等宽字体']},
-        10: {title:'筛选云币流水', desc:['触发：点击确认提交','响应：应用收支类型、交易单号、订单号与日期时间范围条件','规则：开始日期时间不能晚于结束日期时间']},
+        1: {title:'导出流水',desc:['导出当前搜索和筛选结果的全部 Mock 流水，格式为 CSV']},
+        2: {title:'流水搜索框',desc:['关键词实时过滤完整结果集，并回到第一页']},
+        3: {title:'流水筛选入口',desc:['打开右侧抽屉；取消不提交草稿，确认后应用条件']},
+        4: {title:'云币交易流水',desc:['保留交易单号、订单号、类型、时间、项目、金额、账户金额和操作人']},
+        5: {title:'提交筛选',desc:['日期范围校验通过后应用条件']}
       };
       let currentAnnotations = annotations;
       const annoToggle = $('#annoToggle');
@@ -1278,21 +833,6 @@
         renderTx(true);
       }
 
-      txSearchInput.value = txSearch;
-      updateSearchClear();
-      $('#rechargeCoupon').value = state.coupon || '0';
-      $('#customAmount').value = amountMode === 'custom' ? String(amount || '') : '';
-      populateTxDateTimeOptions();
-      txFilterStartDate.value = appliedTxFilters.startDate;
-      txFilterEndDate.value = appliedTxFilters.endDate;
-      txFilterStartTime.value = appliedTxFilters.startTime || '00:00';
-      txFilterEndTime.value = appliedTxFilters.endTime || '23:59';
-      syncTxDateTimeTrigger();
-      updateViewTabs();
-      updateRechargeState();
-      updateFilterButton();
-
-      $$('[data-coin-view]').forEach(button => button.addEventListener('click', () => switchCoinView(button.dataset.coinView)));
       txSearchInput.addEventListener('input', event => updateSearchFromInput(event.target.value));
       txSearchInput.addEventListener('keydown', event => {
         if (event.key === 'Enter') {
@@ -1362,55 +902,7 @@
         if (!txDateTimePicker.classList.contains('hidden') && !txDateTimeControlWrap.contains(event.target) && !txDateTimePicker.contains(event.target)) closeTxDateTimePicker(false);
       });
       window.addEventListener('resize', positionTxDateTimePicker);
-      $('#refreshBalance').addEventListener('click', refreshBalanceView);
-      $('#rechargeCoupon').addEventListener('change', updatePayable);
-      $('#amountChoices').addEventListener('click', event => {
-        const button = event.target.closest('[data-amount]');
-        if (!button) return;
-        amountMode = button.dataset.amount;
-        amount = amountMode === 'custom' ? Number($('#customAmount').value) || 0 : Number(amountMode);
-        saveState({amount, amountMode});
-        updateAmountButtons();
-        updatePayable();
-      });
-      $('#customAmount').addEventListener('input', event => {
-        amountMode = 'custom';
-        amount = Number(event.target.value) || 0;
-        saveState({amount, amountMode});
-        updateAmountButtons();
-        updatePayable();
-      });
-      $('#payChoices').addEventListener('click', event => {
-        const button = event.target.closest('[data-pay]');
-        if (!button) return;
-        state.pay = button.dataset.pay;
-        $$('[data-pay]').forEach(item => {
-          const selected = item === button;
-          item.classList.toggle('active', selected);
-          item.classList.toggle('selected', selected);
-        });
-        saveState({pay: state.pay});
-      });
-      $('#submitRecharge').addEventListener('click', submitRecharge);
-      $('#closeCoinPaymentDialog').addEventListener('click', closeCoinPaymentDialog);
-      $('#coinPaymentDialog').addEventListener('click', event => {
-        if (event.target === $('#coinPaymentDialog')) closeCoinPaymentDialog();
-      });
-      $('#redeem').addEventListener('click', redeemCdkey);
-      $$('[data-contact-service]').forEach(link => link.addEventListener('click', event => {
-        event.preventDefault();
-        toast('在线客服入口为原型演示', 'info');
-      }));
-
-      let modalCloseButtons = $$('[data-close]');
-      modalCloseButtons.forEach(button => button.addEventListener('click', closeModal));
-      $('#modal').addEventListener('click', event => { if (event.target === $('#modal')) closeModal(); });
-      $('#modalConfirm').addEventListener('click', () => { closeModal(); toast('演示操作已完成，未影响真实数据', 'success'); });
       document.addEventListener('keydown', event => {
-        if (event.key === 'Escape' && !$('#coinPaymentDialog').classList.contains('hidden')) {
-          closeCoinPaymentDialog();
-          return;
-        }
         if (!txDateTimePicker.classList.contains('hidden') && event.key === 'Escape') {
           event.preventDefault();
           closeTxDateTimePicker(false);
@@ -1442,7 +934,6 @@
           }
           return;
         }
-        if (event.key === 'Escape' && !$('#modal').classList.contains('hidden')) closeModal();
       });
 
       annoToggle.addEventListener('click', () => {
@@ -1456,19 +947,21 @@
       window.addEventListener('resize', renderAnno);
       $('#mainContent').addEventListener('scroll', renderAnno);
 
-      function finishInit() {
-        switchCoinView(currentView);
-        txSearchInput.value = txSearch;
-        updateSearchClear();
-        updateAmountButtons();
-        updatePayable();
-        startCampaignCountdown();
-        renderTx(false);
-        lucide.createIcons();
-        renderAnno();
-      }
-
-      finishInit();
+      // Export the complete filtered result, independent of the current page.
+      $('#exportTransactions').addEventListener('click', () => {
+        if (!filteredTransactions.length) { toast('暂无可导出的流水', 'warning'); return; }
+        const rows = [['交易单号','订单号','交易类型','交易时间','项目','金额','账户金额','操作人'], ...filteredTransactions.map(item => [item.no,item.order,item.type,item.time,item.project,item.amount.toFixed(2),item.balance.toFixed(2),item.user])];
+        const csv = rows.map(row => row.map(value => '"' + String(value).replace(/"/g, '""') + '"').join(',')).join('\r\n');
+        const url = URL.createObjectURL(new Blob(['\uFEFF' + csv], {type:'text/csv;charset=utf-8;'}));
+        const link = document.createElement('a');
+        link.href = url; link.download = '云币交易流水.csv';
+        document.body.appendChild(link); link.click(); link.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        toast('已导出 ' + filteredTransactions.length + ' 条流水', 'success');
+      });
+      renderTx(false);
+      lucide.createIcons();
+      renderAnno();
     })();
   </script>
 </body>

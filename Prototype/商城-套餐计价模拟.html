@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>云登 · 套餐计价模拟</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://unpkg.com/lucide@1.34.0/dist/umd/lucide.min.js"></script>
+  <link rel="stylesheet" href="../src/styles/global.css?v=20260821a">
+  <link rel="stylesheet" href="公共导航.css?v=20260828e">
+  <script>
+    if (window.tailwind) tailwind.config = { theme: { extend: {
+      colors: {
+        primary:{DEFAULT:'#0066FF',hover:'#0052CC',active:'#0047B3',bg:'#E6F0FF'},
+        ink:{title:'#1A1D24',body:'#3A3F4A',sub:'#6E7685',muted:'#9DA2AC'},
+        line:{DEFAULT:'#DFE1E5',light:'#E8EAED',lighter:'#F0F1F3'},
+        page:'#F7F8FA',card:'#FFFFFF',hover:'#F3F4F6',success:{DEFAULT:'#0FC060',bg:'#E7F9F0'},
+        warning:{DEFAULT:'#E7772D',bg:'#FDF2E9'},info:{DEFAULT:'#0091D5',bg:'#E4F4FB'}
+      },
+      borderRadius:{DEFAULT:'4px',lg:'8px'},
+      fontFamily:{sans:['-apple-system','BlinkMacSystemFont','PingFang SC','Hiragino Sans GB','Microsoft YaHei','Helvetica Neue','Helvetica','Arial','sans-serif'],mono:['JetBrains Mono','monospace']}
+    } } };
+  </script>
+  <style>
+    :root { --primary:#0066FF; --primary-hover:#0052CC; --primary-bg:#E6F0FF; --ink-title:#1A1D24; --ink-body:#3A3F4A; --ink-sub:#6E7685; --ink-muted:#9DA2AC; --line:#DFE1E5; --line-light:#E8EAED; --line-lighter:#F0F1F3; --page:#F7F8FA; --card:#FFFFFF; --hover:#F3F4F6; --success:#0FC060; --success-bg:#E7F9F0; --warning:#E7772D; --warning-bg:#FDF2E9; }
+    * { box-sizing:border-box; }
+    html,body { min-height:100%; margin:0; letter-spacing:0; }
+    body { color:var(--ink-body); background:var(--page); font:14px/1.5 -apple-system,BlinkMacSystemFont,'PingFang SC','Hiragino Sans GB','Microsoft YaHei','Helvetica Neue',Helvetica,Arial,sans-serif; }
+    button,input,select { font:inherit; }
+    button { white-space:nowrap; }
+    .mono { font-family:'JetBrains Mono',monospace; font-variant-numeric:tabular-nums; }
+    .sim-page { min-width:0; min-height:100%; padding:20px; overflow:auto; background:var(--page); }
+    .sim-header { display:flex; align-items:flex-start; justify-content:space-between; gap:20px; margin-bottom:20px; }
+    .sim-title { margin:0; color:var(--ink-title); font-size:20px; line-height:28px; font-weight:600; }
+    .sim-subtitle { margin:4px 0 0; color:var(--ink-sub); font-size:13px; line-height:20px; }
+    .header-actions { display:flex; align-items:center; gap:8px; }
+    .btn { height:32px; padding:0 12px; border:1px solid var(--line); border-radius:4px; display:inline-flex; align-items:center; justify-content:center; gap:6px; color:var(--ink-body); background:var(--card); cursor:pointer; font-size:13px; }
+    .btn:hover { background:var(--hover); }
+    .btn svg { width:15px; height:15px; }
+    .btn-primary { border-color:var(--primary); color:#fff; background:var(--primary); }
+    .btn-primary:hover { border-color:var(--primary-hover); background:var(--primary-hover); }
+    .sim-layout { display:grid; grid-template-columns:minmax(320px,380px) minmax(0,1fr); gap:16px; align-items:start; }
+    .panel { min-width:0; border-radius:8px; background:var(--card); }
+    .panel-header { padding:16px 20px; border-bottom:1px solid var(--line-light); display:flex; align-items:center; justify-content:space-between; gap:12px; }
+    .panel-title { margin:0; color:var(--ink-title); font-size:16px; line-height:24px; font-weight:600; }
+    .panel-body { padding:20px; }
+    .status-label { color:var(--ink-sub); font-size:12px; }
+    .segmented { display:flex; gap:4px; padding:4px; border-radius:4px; background:var(--page); }
+    .segmented button { height:30px; padding:0 12px; border:0; border-radius:3px; color:var(--ink-sub); background:transparent; cursor:pointer; font-size:13px; }
+    .segmented button:hover { color:var(--ink-body); background:var(--hover); }
+    .segmented button.active,.segmented button[data-selected="true"] { color:var(--primary); background:#fff; box-shadow:0 1px 3px rgba(28,35,49,.08); font-weight:600; }
+    .segmented button[data-selected="false"] { color:var(--ink-sub); background:transparent; box-shadow:none; font-weight:400; }
+    .status-row { display:flex; align-items:center; justify-content:space-between; gap:12px; padding-bottom:16px; border-bottom:1px solid var(--line-light); }
+    .form-section { padding:18px 0; border-bottom:1px solid var(--line-light); }
+    .form-section:last-child { border-bottom:0; padding-bottom:0; }
+    .section-label { margin:0 0 12px; color:var(--ink-title); font-size:14px; font-weight:600; }
+    .scenario-grid { display:grid; gap:8px; }
+    .scenario-button { min-height:52px; padding:9px 12px; border:1px solid var(--line); border-radius:4px; display:flex; align-items:flex-start; gap:10px; color:var(--ink-body); background:#fff; cursor:pointer; text-align:left; }
+    .scenario-button:hover { border-color:var(--primary); background:#f8fbff; }
+    .scenario-button.active { border-color:var(--primary); background:#f8fbff; box-shadow:inset 0 0 0 1px var(--primary); }
+    .scenario-button::before { width:14px; height:14px; flex:0 0 14px; margin-top:2px; border:2px solid var(--ink-muted); border-radius:50%; content:""; }
+    .scenario-button.active::before { border:4px solid var(--primary); }
+    .scenario-button strong { display:block; color:var(--ink-title); font-size:13px; font-weight:600; }
+    .scenario-button.active strong { color:var(--primary); }
+    .scenario-button span { display:block; margin-top:2px; color:var(--ink-muted); font-size:12px; line-height:18px; }
+    .field-grid { display:grid; gap:12px; }
+    .field-row { display:grid; grid-template-columns:96px minmax(0,1fr); align-items:center; gap:10px; }
+    .field-row label { color:var(--ink-sub); font-size:13px; text-align:right; white-space:nowrap; }
+    .field-control { min-width:0; display:flex; align-items:center; gap:8px; }
+    .field-control input,.field-control select { flex:0 0 180px; width:180px; height:32px; min-width:0; padding:0 10px; border:1px solid var(--line); border-radius:4px; outline:none; color:var(--ink-body); background:#fff; font-size:13px; }
+    .field-control input:focus,.field-control select:focus { border-color:var(--primary); box-shadow:0 0 0 2px var(--primary-bg); }
+    .field-control input[readonly] { color:var(--ink-sub); background:var(--page); }
+    .field-unit { flex:0 0 auto; color:var(--ink-sub); font-size:12px; white-space:nowrap; }
+    .field-note { margin:4px 0 0 106px; color:var(--ink-muted); font-size:11px; line-height:18px; }
+    .duration-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:8px; }
+    .duration-section-head { display:flex; align-items:center; justify-content:space-between; gap:16px; }
+    .duration-section-head .section-label { margin-bottom:12px; }
+    .duration-section-head .duration-context { margin:0 0 12px auto; }
+    .duration-button { position:relative; height:38px; border:1px solid var(--line); border-radius:4px; color:var(--ink-body); background:#fff; cursor:pointer; font-size:13px; }
+    .duration-button:hover { border-color:var(--primary); color:var(--primary); }
+    .duration-button.active { border-color:var(--primary); color:var(--primary); background:var(--primary-bg); box-shadow:inset 0 0 0 1px var(--primary); font-weight:600; }
+    .duration-button small { position:absolute; top:-8px; right:-2px; padding:1px 4px; border-radius:4px 4px 2px 2px; color:#fff; background:var(--warning); font-size:10px; line-height:16px; }
+    .duration-grid.change-renew-mode .duration-button small { display:none; }
+    .duration-context { min-height:20px; margin:10px 0 0; color:var(--primary); font-size:12px; line-height:20px; text-align:right; }
+    .hidden { display:none !important; }
+    .result-panel { position:sticky; top:20px; }
+    .result-meta { color:var(--ink-sub); font-size:12px; }
+    .result-summary { padding:20px; border-bottom:1px solid var(--line-light); }
+    .result-context { margin:0 0 16px; padding:10px 12px; border-radius:4px; color:var(--primary); background:var(--primary-bg); font-size:12px; line-height:18px; }
+    .amount-list { display:grid; gap:0; }
+    .amount-row { min-height:36px; display:flex; align-items:center; justify-content:space-between; gap:16px; color:var(--ink-sub); font-size:13px; }
+    .amount-row strong { color:var(--ink-body); font-family:'JetBrains Mono',monospace; font-weight:500; }
+    .amount-row.total { margin-top:8px; padding-top:14px; border-top:1px solid var(--line-light); color:var(--ink-title); font-weight:600; }
+    .amount-row.total strong { color:var(--primary); font-size:22px; font-weight:600; }
+    .resource-breakdown { margin-top:18px; padding-top:16px; border-top:1px solid var(--line-light); }
+    .resource-breakdown-title { margin:0 0 8px; color:var(--ink-title); font-size:13px; font-weight:600; }
+    .resource-breakdown-row { min-height:28px; display:flex; align-items:center; justify-content:space-between; gap:16px; color:var(--ink-sub); font-size:12px; }
+    .resource-breakdown-row strong { color:var(--ink-body); font-family:'JetBrains Mono',monospace; font-weight:500; }
+    .resource-breakdown-row small { margin-left:6px; color:var(--ink-muted); font-size:11px; }
+    .formula-section { padding:20px; }
+    .formula-heading { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:14px; }
+    .formula-heading h3 { margin:0; color:var(--ink-title); font-size:14px; font-weight:600; }
+    .formula-heading span { color:var(--ink-muted); font-size:11px; }
+    .formula-list { display:grid; gap:10px; }
+    .formula-step { padding:12px 14px; border:1px solid var(--line-light); border-radius:4px; background:#fff; }
+    .formula-step.primary-step { border-color:#cfe0ff; background:#f8fbff; }
+    .formula-step-title { display:flex; align-items:center; gap:8px; color:var(--ink-title); font-size:13px; font-weight:600; }
+    .formula-index { width:20px; height:20px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; color:var(--primary); background:var(--primary-bg); font:500 11px/1 'JetBrains Mono',monospace; }
+    .formula-line { margin-top:8px; color:var(--ink-sub); font-size:12px; line-height:19px; word-break:break-word; }
+    .formula-line code { color:var(--ink-body); font-family:'JetBrains Mono',monospace; font-size:11px; }
+    .formula-result { margin-top:6px; color:var(--ink-body); font-family:'JetBrains Mono',monospace; font-size:13px; font-weight:600; }
+    .formula-step.primary-step .formula-result { color:var(--primary); }
+    .copy-status { min-height:18px; margin:12px 0 0; color:var(--success); font-size:12px; text-align:right; }
+    @media (max-width:980px) { .sim-layout { grid-template-columns:1fr; } .result-panel { position:static; } }
+    @media (max-width:600px) { .sim-page { padding:14px; } .sim-header { flex-direction:column; } .header-actions { width:100%; } .header-actions .btn { flex:1; } .status-row { align-items:flex-start; flex-direction:column; } .segmented { width:100%; } .segmented button { flex:1; } .field-row { grid-template-columns:88px minmax(0,1fr); } .field-control input,.field-control select { flex:1 1 auto; width:100%; } .field-note { margin-left:98px; } .duration-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+  </style>
+  <script src="公共导航.js?v=20260828e"></script>
+</head>
+<body>
+  <main class="sim-page" aria-labelledby="simTitle">
+    <header class="sim-header">
+      <div>
+        <h1 id="simTitle" class="sim-title">套餐计价模拟</h1>
+        <p class="sim-subtitle">用于销售或运营还原用户购买场景，逐步核对套餐费用、抵扣金额和最终应付金额。</p>
+      </div>
+      <div class="header-actions">
+        <a class="btn" href="商城-套餐.html"><i data-lucide="external-link"></i>打开套餐购买页</a>
+        <button type="button" class="btn" id="resetButton"><i data-lucide="rotate-ccw"></i>重置参数</button>
+        <button type="button" class="btn btn-primary" id="copyButton"><i data-lucide="copy"></i>复制计算结果</button>
+      </div>
+    </header>
+
+    <div class="sim-layout">
+      <section class="panel" aria-labelledby="inputTitle">
+        <div class="panel-header"><h2 id="inputTitle" class="panel-title">场景与参数</h2><span class="result-meta">Mock 试算</span></div>
+        <div class="panel-body">
+          <div class="status-row">
+            <span class="status-label">用户状态</span>
+            <div class="segmented" role="group" aria-label="用户状态">
+              <button type="button" class="active" data-account-status="first" data-selected="true" aria-pressed="true">新用户首次购买</button>
+              <button type="button" data-account-status="subscribed" data-selected="false" aria-pressed="false">已订阅套餐</button>
+            </div>
+          </div>
+
+          <div class="form-section" id="scenarioSection">
+            <h3 class="section-label">购买场景</h3>
+            <div class="scenario-grid">
+              <button type="button" class="scenario-button active" data-scenario="first"><span><strong>首次购买</strong><span>从零购买环境、成员和使用时长。</span></span></button>
+              <button type="button" class="scenario-button" data-scenario="renew"><span><strong>历史套餐续期</strong><span>环境数和成员数不变，仅延长使用时间。</span></span></button>
+              <button type="button" class="scenario-button" data-scenario="change-only"><span><strong>更改套餐，不续期</strong><span>按剩余套餐时间变更环境数或成员数。</span></span></button>
+              <button type="button" class="scenario-button" data-scenario="change-renew"><span><strong>更改套餐，同时续期</strong><span>覆盖剩余套餐并叠加新的续期时长。</span></span></button>
+            </div>
+          </div>
+
+          <div class="form-section" id="currentPlanSection">
+            <h3 class="section-label">原套餐参数</h3>
+            <div class="field-grid">
+              <div class="field-row"><label for="currentEnvs">环境数</label><div class="field-control"><input id="currentEnvs" type="number" min="10" step="10" value="10"><span class="field-unit">个</span></div></div>
+              <div class="field-row"><label for="currentEnvPrice">环境单价</label><div class="field-control"><input id="currentEnvPrice" type="number" min="0" step="0.01" value="0.90"><span class="field-unit">元/个</span></div></div>
+              <div class="field-row"><label for="currentMembers">成员数</label><div class="field-control"><input id="currentMembers" type="number" min="1" step="1" value="5"><span class="field-unit">位</span></div></div>
+              <div class="field-row"><label for="currentMemberPrice">成员单价</label><div class="field-control"><input id="currentMemberPrice" type="number" min="0" step="0.01" value="19"><span class="field-unit">元/位</span></div></div>
+              <div class="field-row"><label for="remainingDays">剩余天数</label><div class="field-control"><input id="remainingDays" type="number" min="1" step="1" value="20"><span class="field-unit">天</span></div></div>
+              <div class="field-row" id="currentDiscountRow"><label for="currentDiscount">原套餐折扣</label><div class="field-control"><select id="currentDiscount"><option value="0.85">8.5折</option><option value="0.80">8折</option><option value="0.75">7.5折</option><option value="0.70">7折</option><option value="0.50">5折</option></select></div></div>
+            </div>
+          </div>
+
+          <div class="form-section" id="resourceSection">
+            <h3 class="section-label">购买资源</h3>
+            <div class="field-grid">
+              <div class="field-row"><label for="newEnvs">环境数</label><div class="field-control"><input id="newEnvs" type="number" min="10" step="10" value="10"><span class="field-unit">个</span></div></div>
+              <p class="field-note">输入非整 10 数值时按 10 的倍数向上取整，单价按所在环境区间自动读取。</p>
+              <div class="field-row"><label for="newMembers">成员数</label><div class="field-control"><input id="newMembers" type="number" min="1" step="1" value="1"><span class="field-unit">位</span></div></div>
+              <div class="field-row"><label>环境单价</label><div class="field-control"><input id="newEnvPrice" type="text" value="¥0.90/个" readonly></div></div>
+              <div class="field-row"><label>成员单价</label><div class="field-control"><input id="newMemberPrice" type="text" value="¥19.00/位" readonly></div></div>
+            </div>
+          </div>
+
+          <div class="form-section" id="durationSection">
+            <div class="duration-section-head"><h3 class="section-label" id="durationTitle">购买时长</h3><span class="duration-context" id="durationContext"></span></div>
+            <div class="duration-grid" id="durationGrid" role="group" aria-label="购买时长">
+              <button type="button" class="duration-button active" data-duration="30">30天<small>8.5折</small></button>
+              <button type="button" class="duration-button" data-duration="90">90天<small>8折</small></button>
+              <button type="button" class="duration-button" data-duration="180">180天<small>7.5折</small></button>
+              <button type="button" class="duration-button" data-duration="360">360天<small>5折</small></button>
+            </div>
+            <div class="change-duration-options hidden" id="changeRenewOptions">
+              <p class="field-note" style="margin-top:10px">同时续期时，续期天数会叠加到原套餐剩余天数。</p>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <div class="field-row"><label for="coupon">优惠券</label><div class="field-control"><select id="coupon"><option value="0">请选择优惠券</option><option value="50">满100减50</option></select></div></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel result-panel" aria-labelledby="resultTitle">
+        <div class="panel-header"><h2 id="resultTitle" class="panel-title">计算结果</h2><span class="result-meta" id="resultScenario">新用户首次购买</span></div>
+        <div class="result-summary">
+          <p class="result-context" id="resultContext">按购买资源与购买时长计算套餐费用。</p>
+          <div class="amount-list">
+            <div class="amount-row"><span>订单金额</span><strong id="orderAmount">¥23.80</strong></div>
+            <div class="amount-row"><span>原套餐抵扣金额</span><strong id="creditAmount">-¥0.00</strong></div>
+            <div class="amount-row"><span>折扣优惠金额</span><strong id="discountAmount">-¥4.20</strong></div>
+            <div class="amount-row"><span>优惠券抵扣金额</span><strong id="couponAmount">-¥0.00</strong></div>
+            <div class="amount-row total"><span>最终应付金额</span><strong id="totalAmount">¥19.60</strong></div>
+          </div>
+          <div class="resource-breakdown" aria-label="套餐资源构成">
+            <h3 class="resource-breakdown-title">套餐资源构成</h3>
+            <div class="resource-breakdown-row"><span>环境总数</span><strong><span id="totalEnvs">20</span> 个<small>计费 <span id="paidEnvs">10</span> + 免费 10</small></strong></div>
+            <div class="resource-breakdown-row"><span>成员总数</span><strong><span id="totalMembers">2</span> 位<small>计费 <span id="paidMembers">1</span> + 免费 1</small></strong></div>
+            <div class="resource-breakdown-row"><span>免费资源价格</span><strong>¥0.00</strong></div>
+          </div>
+        </div>
+        <div class="formula-section">
+          <div class="formula-heading"><h3>计算过程</h3><span>中间结果保留精度，最终金额四舍五入到 2 位</span></div>
+          <div class="formula-list" id="formulaList"></div>
+          <p class="copy-status" id="copyStatus" aria-live="polite"></p>
+        </div>
+      </section>
+    </div>
+  </main>
+  <div id="toast" role="status" aria-live="polite"></div>
+  <script>
+    (() => {
+      const envPricing = [
+        { max:10, price:.90 }, { max:100, price:.30 }, { max:400, price:.25 }, { max:800, price:.15 },
+        { max:1000, price:.13 }, { max:10000, price:.10 }, { max:50000, price:.05 }, { max:100000, price:.03 }, { max:Infinity, price:.01 }
+      ];
+      const durationRates = { 30:.85, 90:.80, 180:.75, 360:.50 };
+      const scenarioLabels = { first:'新用户首次购买', renew:'历史套餐续期', 'change-only':'更改套餐，不续期', 'change-renew':'更改套餐，同时续期' };
+      const state = { accountStatus:'first', scenario:'first', duration:30 };
+      const $ = (selector) => document.querySelector(selector);
+      const number = (id, fallback) => { const value = Number($(id).value); return Number.isFinite(value) ? value : fallback; };
+      const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+      const ceilTen = (value) => clamp(Math.ceil(Math.max(10, value) / 10) * 10, 10, 100000);
+      const round = (value) => Math.round((value + Number.EPSILON) * 100) / 100;
+      const money = (value) => `¥${Number(value || 0).toFixed(2)}`;
+      const envPriceFor = (value) => envPricing.find((tier) => value <= tier.max)?.price || .01;
+      const discountForDays = (days) => days >= 360 ? .50 : days >= 180 ? .75 : days >= 90 ? .80 : .85;
+      const discountText = (rate) => `${(rate * 10).toFixed(1).replace('.0', '')}折`;
+      const read = () => ({
+        currentEnvs:ceilTen(number('#currentEnvs',10)), currentEnvPrice:clamp(number('#currentEnvPrice',.90),0,1000), currentMembers:clamp(Math.round(number('#currentMembers',5)),1,100000), currentMemberPrice:clamp(number('#currentMemberPrice',19),0,1000),
+        remainingDays:clamp(Math.round(number('#remainingDays',20)),1,3650), currentDiscount:number('#currentDiscount',.85), newEnvs:ceilTen(number('#newEnvs',10)), newMembers:clamp(Math.round(number('#newMembers',1)),1,100000), coupon:number('#coupon',0)
+      });
+      const format = (value) => Number(value).toFixed(2);
+      const step = (index, title, formula, result, primary = false) => `<article class="formula-step${primary ? ' primary-step' : ''}"><div class="formula-step-title"><span class="formula-index">${index}</span>${title}</div><div class="formula-line"><code>${formula}</code></div><div class="formula-result">${result}</div></article>`;
+      const render = () => {
+        const data = read();
+        const isFirst = state.accountStatus === 'first';
+        const isRenew = !isFirst && state.scenario === 'renew';
+        const isChange = !isFirst && state.scenario.startsWith('change');
+        const isChangeRenew = state.scenario === 'change-renew';
+        const envs = isRenew ? data.currentEnvs : data.newEnvs;
+        const members = isRenew ? data.currentMembers : data.newMembers;
+        const envPrice = isRenew ? data.currentEnvPrice : envPriceFor(envs);
+        const memberPrice = isRenew ? data.currentMemberPrice : 19;
+        const billingDays = isFirst || isRenew ? state.duration : isChangeRenew ? data.remainingDays + state.duration : data.remainingDays;
+        const rate = isChangeRenew ? discountForDays(billingDays) : isFirst || isRenew ? durationRates[state.duration] : data.currentDiscount;
+        const monthly = envs * envPrice + members * memberPrice;
+        const order = round(monthly / 30 * billingDays);
+        const discount = round(order * (1 - rate));
+        const originalMonthly = data.currentEnvs * data.currentEnvPrice + data.currentMembers * data.currentMemberPrice;
+        const credit = isChange ? round(originalMonthly / 30 * data.remainingDays * rate) : 0;
+        const coupon = Math.min(data.coupon, order);
+        const total = Math.max(0, round(order - credit - discount - coupon));
+        const freeEnvs = 10;
+        const freeMembers = 1;
+        const totalEnvs = envs + freeEnvs;
+        const totalMembers = members + freeMembers;
+        const envDisplay = envPrice.toFixed(2);
+        const memberDisplay = memberPrice.toFixed(2);
+        $('#currentPlanSection').classList.toggle('hidden', isFirst);
+        $('#resourceSection').classList.toggle('hidden', isRenew);
+        $('#durationSection').classList.toggle('hidden', isChange && !isChangeRenew);
+        $('#durationTitle').textContent = '购买时长';
+        $('#durationContext').textContent = isChangeRenew ? `剩余 ${data.remainingDays} 天 + 购买 ${state.duration} 天 = ${billingDays} 天，命中 ${discountText(rate)}` : '';
+        $('#durationGrid').classList.toggle('change-renew-mode', isChangeRenew);
+        $('#currentDiscountRow').classList.toggle('hidden', isChangeRenew);
+        $('#newEnvPrice').value = `${money(envPrice)}/个`;
+        $('#newMemberPrice').value = `${money(memberPrice)}/位`;
+        $('#resultScenario').textContent = scenarioLabels[state.scenario];
+        $('#resultContext').textContent = isFirst ? `首次购买：${envs} 个环境、${members} 位成员，购买 ${billingDays} 天。` : isRenew ? `历史套餐续期：原套餐资源不变，续期 ${billingDays} 天。` : state.scenario === 'change-renew' ? `变更并续期：按新资源配置计费 ${data.remainingDays}+${state.duration}=${billingDays} 天。` : `变更套餐：新资源配置覆盖原套餐剩余 ${billingDays} 天。`;
+        $('#orderAmount').textContent = money(order);
+        $('#creditAmount').textContent = `-${money(credit)}`;
+        $('#discountAmount').textContent = `-${money(discount)}`;
+        $('#couponAmount').textContent = `-${money(coupon)}`;
+        $('#totalAmount').textContent = money(total);
+        $('#totalEnvs').textContent = String(totalEnvs);
+        $('#paidEnvs').textContent = String(envs);
+        $('#totalMembers').textContent = String(totalMembers);
+        $('#paidMembers').textContent = String(members);
+        const formula = [];
+        formula.push(step(1, '计算月度资源金额', `${envs}×${envDisplay} + ${members}×${memberDisplay}`, `${format(envs * envPrice)} + ${format(members * memberPrice)} = ${money(monthly)}`));
+        formula.push(step(2, '计算订单金额', `(${format(monthly)}) ÷ 30 × ${billingDays}`, `${format(monthly / 30)} × ${billingDays} = ${money(order)}`));
+        if (isChange) formula.push(step(3, '计算原套餐抵扣金额', `(${data.currentEnvs}×${format(data.currentEnvPrice)} + ${data.currentMembers}×${format(data.currentMemberPrice)}) ÷ 30 × ${data.remainingDays} × ${format(rate)}`, `${format(originalMonthly / 30)} × ${data.remainingDays} × ${format(rate)} = ${money(credit)}`));
+        const discountIndex = isChange ? 4 : 3;
+        formula.push(step(discountIndex, '计算折扣优惠金额', `${money(order)} × (1 - ${format(rate)})`, `${money(order)} × ${format(1 - rate)} = ${money(discount)}`));
+        const totalIndex = discountIndex + 1;
+        formula.push(step(totalIndex, '计算最终应付金额', isChange ? `${money(order)} - ${money(credit)} - ${money(discount)} - ${money(coupon)}` : `${money(order)} - ${money(discount)} - ${money(coupon)}`, `${money(order)} - ${money(credit)} - ${money(discount)} - ${money(coupon)} = ${money(total)}`, true));
+        $('#formulaList').innerHTML = formula.join('');
+        document.querySelectorAll('[data-account-status]').forEach((button) => {
+          const active = button.dataset.accountStatus === state.accountStatus;
+          button.classList.toggle('active', active);
+          button.dataset.selected = String(active);
+          button.setAttribute('aria-pressed', String(active));
+        });
+        $('.segmented').setAttribute('data-active-status', state.accountStatus);
+        document.querySelectorAll('[data-scenario]').forEach((button) => {
+          button.hidden = isFirst ? button.dataset.scenario !== 'first' : button.dataset.scenario === 'first';
+          button.classList.toggle('active', button.dataset.scenario === state.scenario);
+        });
+        document.querySelectorAll('[data-duration]').forEach((button) => button.classList.toggle('active', Number(button.dataset.duration) === state.duration));
+        lucide.createIcons();
+      };
+      const normalizeInputs = () => { $('#newEnvs').value = ceilTen(number('#newEnvs',10)); $('#currentEnvs').value = ceilTen(number('#currentEnvs',10)); $('#newMembers').value = clamp(Math.round(number('#newMembers',1)),1,100000); $('#currentMembers').value = clamp(Math.round(number('#currentMembers',5)),1,100000); };
+      document.querySelectorAll('[data-account-status]').forEach((button) => button.addEventListener('click', () => { state.accountStatus = button.dataset.accountStatus; document.querySelectorAll('[data-account-status]').forEach((item) => { const active = item === button; item.classList.toggle('active', active); item.dataset.selected = String(active); item.setAttribute('aria-pressed', String(active)); }); button.closest('.segmented')?.setAttribute('data-active-status', state.accountStatus); state.scenario = state.accountStatus === 'first' ? 'first' : 'renew'; render(); }));
+      document.querySelectorAll('[data-scenario]').forEach((button) => button.addEventListener('click', () => { if (state.accountStatus === 'first' && button.dataset.scenario !== 'first') return; state.scenario = button.dataset.scenario; render(); }));
+      document.querySelectorAll('[data-duration]').forEach((button) => button.addEventListener('click', () => { state.duration = Number(button.dataset.duration); render(); }));
+      document.querySelectorAll('input,select').forEach((input) => input.addEventListener('input', () => { normalizeInputs(); render(); }));
+      document.querySelectorAll('select').forEach((input) => input.addEventListener('change', render));
+      $('#resetButton').addEventListener('click', () => { Object.assign(state, { accountStatus:'first', scenario:'first', duration:30 }); $('#currentEnvs').value=10; $('#currentEnvPrice').value='.90'; $('#currentMembers').value=5; $('#currentMemberPrice').value=19; $('#remainingDays').value=20; $('#currentDiscount').value='.85'; $('#newEnvs').value=10; $('#newMembers').value=1; $('#coupon').value=0; render(); });
+      $('#copyButton').addEventListener('click', async () => { const text = `套餐计价模拟\n场景：${$('#resultScenario').textContent}\n订单金额：${$('#orderAmount').textContent}\n原套餐抵扣金额：${$('#creditAmount').textContent}\n折扣优惠金额：${$('#discountAmount').textContent}\n优惠券抵扣金额：${$('#couponAmount').textContent}\n最终应付金额：${$('#totalAmount').textContent}\n\n${[...document.querySelectorAll('.formula-step')].map((item) => item.innerText).join('\n')}`; try { await navigator.clipboard.writeText(text); $('#copyStatus').textContent='计算结果已复制'; window.setTimeout(() => { $('#copyStatus').textContent=''; }, 1800); } catch (_) { $('#copyStatus').textContent='当前浏览器不支持自动复制，请手动查看计算过程'; } });
+      render();
+    })();
+  </script>
+</body>
+</html>
