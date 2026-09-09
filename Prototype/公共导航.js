@@ -18,8 +18,8 @@
     { key: 'proxy', label: '代理管理', icon: 'network', href: '代理管理.html' },
     { key: 'store', label: '商城', icon: 'shopping-bag', href: '商城-代理.html' },
     { key: 'billing', label: '费用管理', icon: 'wallet-cards', group: true, children: [
-      { key: 'billing-orders', label: '订单管理', icon: 'receipt-text', href: '费用管理-订单管理.html' },
       { key: 'billing-coin-transactions', label: '云币交易流水', icon: 'list', href: '费用管理-云币交易流水.html' },
+      { key: 'billing-orders', label: '订单管理', icon: 'receipt-text', href: '费用管理-订单管理.html' },
       { key: 'billing-invoice', label: '开票管理', icon: 'file-text', href: '费用管理-开票管理.html' },
       { key: 'billing-coupons', label: '优惠券', icon: 'ticket-percent', href: '费用管理-优惠券.html' }
     ]},

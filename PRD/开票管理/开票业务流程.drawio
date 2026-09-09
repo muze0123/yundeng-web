@@ -1,6 +1,6 @@
 <mxfile host="127.0.0.1" agent="Codex" pages="4">
   <diagram id="invoice-swimlane" name="01-完整开票泳道">
-    <mxGraphModel dx="2910" dy="2657" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2800" pageHeight="2300" math="0" shadow="0">
+    <mxGraphModel dx="2177" dy="1537" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2800" pageHeight="2300" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -43,7 +43,7 @@
         <mxCell id="p1-d1" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FDF2E9;strokeColor=#E7772D;fontColor=#1A1D24;fontSize=13;" value="资格有效？" vertex="1">
           <mxGeometry height="88" width="120" x="410" y="560" as="geometry" />
         </mxCell>
-        <mxCell id="p1-c-invalid" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FDF2E9;strokeColor=#E7772D;fontColor=#1A1D24;fontSize=13;arcSize=8;" value="展示不可申请原因&#xa;或转人工处理" vertex="1">
+        <mxCell id="p1-c-invalid" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FDF2E9;strokeColor=#E7772D;fontColor=#1A1D24;fontSize=13;arcSize=8;" value="仅展示一条主原因说明&#xa;关闭后返回订单列表" vertex="1">
           <mxGeometry height="72" width="160" x="410" y="330" as="geometry" />
         </mxCell>
         <mxCell id="p1-s2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E7F9F0;strokeColor=#0FC060;fontColor=#1A1D24;fontSize=14;arcSize=8;" value="4. 校验单订单主体与税务兼容性&#xa;返回金额和一张发票" vertex="1">
@@ -67,7 +67,7 @@
         <mxCell id="p1-d2" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FDF2E9;strokeColor=#E7772D;fontColor=#1A1D24;fontSize=13;" value="单订单结果" vertex="1">
           <mxGeometry height="90" width="125" x="1160" y="560" as="geometry" />
         </mxCell>
-        <mxCell id="p1-c-conflict" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FDF2E9;strokeColor=#E7772D;fontColor=#1A1D24;fontSize=13;arcSize=8;" value="订单失败：列原因并保留表单&#xa;确认未开票且旧任务关闭后继续补正" vertex="1">
+        <mxCell id="p1-c-conflict" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FDF2E9;strokeColor=#E7772D;fontColor=#1A1D24;fontSize=13;arcSize=8;" value="订单失败：列原因并保留表单&#xa;确认未开票且旧任务关闭后修改重提" vertex="1">
           <mxGeometry height="78" width="210" x="1135" y="330" as="geometry" />
         </mxCell>
         <mxCell id="p1-c4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E6F0FF;strokeColor=#0066FF;fontColor=#1A1D24;fontSize=14;arcSize=8;" value="9. 单订单进入开票记录&#xa;状态：待审核" vertex="1">
@@ -82,7 +82,7 @@
         <mxCell id="p1-s-reject" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FDF2E9;strokeColor=#E7772D;fontColor=#1A1D24;fontSize=13;arcSize=8;" value="驳回并释放占用&#xa;保存原因与旧版本" vertex="1">
           <mxGeometry height="75" width="180" x="1550" y="700" as="geometry" />
         </mxCell>
-        <mxCell id="p1-c-reject" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FDF2E9;strokeColor=#E7772D;fontColor=#1A1D24;fontSize=13;arcSize=8;" value="状态：已驳回&#xa;允许修改并生成新申请重提" vertex="1">
+        <mxCell id="p1-c-reject" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FDF2E9;strokeColor=#E7772D;fontColor=#1A1D24;fontSize=13;arcSize=8;" value="状态：已驳回&#xa;原单新增版本后回到待审核" vertex="1">
           <mxGeometry height="78" width="205" x="1535" y="330" as="geometry" />
         </mxCell>
         <mxCell id="p1-s4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E7F9F0;strokeColor=#0FC060;fontColor=#1A1D24;fontSize=14;fontStyle=1;arcSize=8;" value="11. 固化最终快照&#xa;创建 ProviderTask" vertex="1">
@@ -157,10 +157,10 @@
         <mxCell id="p1-r-reserve-conflict" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE8EB;strokeColor=#D9001B;fontColor=#1A1D24;fontSize=12;arcSize=8;" value="更正冲突：整组零新增占用&#xa;保持 PENDING_REVIEW，刷新后处理&#xa;退款余额不足：等待前序对账" vertex="1">
           <mxGeometry height="90" width="235" x="1160" y="1915" as="geometry" />
         </mxCell>
-        <mxCell id="p1-r-confirm-decision" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FDF2E9;strokeColor=#E7772D;fontColor=#1A1D24;fontSize=13;" value="E. 需要受票方确认？" vertex="1">
+        <mxCell id="p1-r-confirm-decision" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FDF2E9;strokeColor=#E7772D;fontColor=#1A1D24;fontSize=13;" value="E. 第三方需要额外处理？" vertex="1">
           <mxGeometry height="110" width="160" x="1180" y="2075" as="geometry" />
         </mxCell>
-        <mxCell id="p1-r-confirm" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E6F0FF;strokeColor=#0066FF;fontColor=#1A1D24;fontSize=13;arcSize=8;" value="按指引完成确认&#xa;客户端持续查询真实结果" vertex="1">
+        <mxCell id="p1-r-confirm" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E6F0FF;strokeColor=#0066FF;fontColor=#1A1D24;fontSize=13;arcSize=8;" value="后台跟进第三方处理&#xa;客户端只查看进度" vertex="1">
           <mxGeometry height="70" width="205" x="1390" y="1570" as="geometry" />
         </mxCell>
         <mxCell id="p1-r-submit" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F0F1F3;strokeColor=#6E7685;fontColor=#1A1D24;fontSize=13;arcSize=8;" value="F. 提交红冲&#xa;同任务幂等调用" vertex="1">
@@ -184,7 +184,7 @@
         <mxCell id="p1-r-source" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#E7F9F0;strokeColor=#0FC060;fontColor=#1A1D24;fontSize=13;" value="来源为更正且全部目标成功？" vertex="1">
           <mxGeometry height="105" width="145" x="2300" y="1720" as="geometry" />
         </mxCell>
-        <mxCell id="p1-r-reapply" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E6F0FF;strokeColor=#0066FF;fontColor=#1A1D24;fontSize=13;fontStyle=1;arcSize=8;" value="H. 系统创建新申请草稿&#xa;用户修改并确认重提" vertex="1">
+        <mxCell id="p1-r-reapply" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E6F0FF;strokeColor=#0066FF;fontColor=#1A1D24;fontSize=13;fontStyle=1;arcSize=8;" value="H. 原单新增开具版本&#xa;系统自动提交重开" vertex="1">
           <mxGeometry height="70" width="205" x="2510" y="1570" as="geometry" />
         </mxCell>
         <mxCell id="p1-r-end" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#F0F1F3;strokeColor=#9DA2AC;fontColor=#6E7685;fontSize=12;" value="退款闭环结束 / 更正继续剩余任务" vertex="1">
@@ -356,10 +356,10 @@
         <mxCell id="p1-er9" edge="1" parent="1" source="p1-r-confirm-decision" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#0066FF;strokeWidth=2;endArrow=block;endFill=1;fontColor=#0066FF;" target="p1-r-confirm" value="需要">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="p1-er10" edge="1" parent="1" source="p1-r-confirm" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#0091D5;strokeWidth=2;endArrow=block;endFill=1;fontColor=#0091D5;" target="p1-r-submit" value="确认完成">
+        <mxCell id="p1-er10" edge="1" parent="1" source="p1-r-confirm" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#0091D5;strokeWidth=2;endArrow=block;endFill=1;fontColor=#0091D5;" target="p1-r-submit" value="后台处理完成">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="p1-er11" edge="1" parent="1" source="p1-r-confirm-decision" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#6E7685;strokeWidth=2;endArrow=block;endFill=1;fontColor=#6E7685;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" target="p1-r-submit" value="无需确认">
+        <mxCell id="p1-er11" edge="1" parent="1" source="p1-r-confirm-decision" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#6E7685;strokeWidth=2;endArrow=block;endFill=1;fontColor=#6E7685;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" target="p1-r-submit" value="直接处理">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="1260" y="2195" />
@@ -424,7 +424,7 @@
     </mxGraphModel>
   </diagram>
   <diagram id="client-state" name="02-YunLogin客户端状态">
-    <mxGraphModel dx="3065" dy="1993" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2100" pageHeight="1200" math="0" shadow="0">
+    <mxGraphModel dx="2041" dy="1441" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2100" pageHeight="1200" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -449,7 +449,7 @@
         <mxCell id="p2-reviewing" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E4F4FB;strokeColor=#0091D5;fontColor=#1A1D24;fontSize=13;arcSize=8;" value="审批决定（瞬时命令）&#xa;status + version 原子竞争" vertex="1">
           <mxGeometry height="90" width="190" x="980" y="150" as="geometry" />
         </mxCell>
-        <mxCell id="p2-rejected" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE8EB;strokeColor=#D9001B;fontColor=#1A1D24;fontSize=14;arcSize=8;" value="已驳回&#xa;查看原因 / 修改并重提" vertex="1">
+        <mxCell id="p2-rejected" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE8EB;strokeColor=#D9001B;fontColor=#1A1D24;fontSize=14;arcSize=8;" value="已驳回&#xa;查看进度 / 修改并重提" vertex="1">
           <mxGeometry height="90" width="190" x="980" y="350" as="geometry" />
         </mxCell>
         <mxCell id="p2-withdrawn" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F0F1F3;strokeColor=#9DA2AC;fontColor=#6E7685;fontSize=14;arcSize=8;" value="已撤回 / 已取消&#xa;占用已释放" vertex="1">
@@ -476,19 +476,19 @@
         <mxCell id="p2-correction-reviewing" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E4F4FB;strokeColor=#0091D5;fontColor=#1A1D24;fontSize=13;arcSize=8;" value="更正审批决定（瞬时）&#xa;无领取锁；原蓝票仍有效" vertex="1">
           <mxGeometry height="90" width="200" x="1050" y="540" as="geometry" />
         </mxCell>
-        <mxCell id="p2-correction-rejected" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE8EB;strokeColor=#D9001B;fontColor=#1A1D24;fontSize=13;arcSize=8;" value="更正申请已驳回&#xa;查看原因，修改后可重提" vertex="1">
+        <mxCell id="p2-correction-rejected" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE8EB;strokeColor=#D9001B;fontColor=#1A1D24;fontSize=13;arcSize=8;" value="更正申请已驳回&#xa;查看进度，修改后可重提" vertex="1">
           <mxGeometry height="90" width="210" x="990" y="730" as="geometry" />
         </mxCell>
-        <mxCell id="p2-correction-withdrawn" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F0F1F3;strokeColor=#9DA2AC;fontColor=#6E7685;fontSize=13;arcSize=8;" value="更正申请已撤回&#xa;终态；重新发起使用新 ID" vertex="1">
+        <mxCell id="p2-correction-withdrawn" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F0F1F3;strokeColor=#9DA2AC;fontColor=#6E7685;fontSize=13;arcSize=8;" value="更正申请已撤回（可原单重提）&#xa;终态；重新发起使用新 ID" vertex="1">
           <mxGeometry height="90" width="210" x="500" y="730" as="geometry" />
         </mxCell>
         <mxCell id="p2-correction-cancelled" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F0F1F3;strokeColor=#9DA2AC;fontColor=#6E7685;fontSize=13;arcSize=8;" value="更正申请已取消&#xa;审批前原票有效金额归零" vertex="1">
           <mxGeometry height="90" width="210" x="760" y="940" as="geometry" />
         </mxCell>
-        <mxCell id="p2-red-decision" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FDF2E9;strokeColor=#E7772D;fontColor=#1A1D24;fontSize=13;" value="需要受票方确认？" vertex="1">
+        <mxCell id="p2-red-decision" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FDF2E9;strokeColor=#E7772D;fontColor=#1A1D24;fontSize=13;" value="第三方处理完成？" vertex="1">
           <mxGeometry height="100" width="140" x="1540" y="540" as="geometry" />
         </mxCell>
-        <mxCell id="p2-red-confirm" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FDF2E9;strokeColor=#E7772D;fontColor=#1A1D24;fontSize=14;arcSize=8;" value="红冲待确认&#xa;按指引完成受票方确认" vertex="1">
+        <mxCell id="p2-red-confirm" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FDF2E9;strokeColor=#E7772D;fontColor=#1A1D24;fontSize=14;arcSize=8;" value="红冲处理中&#xa;后台查询，用户无需操作" vertex="1">
           <mxGeometry height="90" width="210" x="1240" y="730" as="geometry" />
         </mxCell>
         <mxCell id="p2-red-processing" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E4F4FB;strokeColor=#0091D5;fontColor=#1A1D24;fontSize=14;arcSize=8;" value="红冲处理中&#xa;未知先查询" vertex="1">
@@ -497,7 +497,7 @@
         <mxCell id="p2-red-partial" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FDF2E9;strokeColor=#E7772D;fontColor=#1A1D24;fontSize=14;arcSize=8;" value="后台部分红冲记录&#xa;客户端按红冲处理中/已红冲展示" vertex="1">
           <mxGeometry height="90" width="200" x="1810" y="730" as="geometry" />
         </mxCell>
-        <mxCell id="p2-red-full" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F0F1F3;strokeColor=#6E7685;fontColor=#1A1D24;fontSize=14;arcSize=8;" value="已红冲&#xa;符合条件可重新申请" vertex="1">
+        <mxCell id="p2-red-full" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F0F1F3;strokeColor=#6E7685;fontColor=#1A1D24;fontSize=14;arcSize=8;" value="已红冲&#xa;退款结束；更正自动重开" vertex="1">
           <mxGeometry height="90" width="190" x="1530" y="940" as="geometry" />
         </mxCell>
         <mxCell id="p2-red-failed" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE8EB;strokeColor=#D9001B;fontColor=#1A1D24;fontSize=14;arcSize=8;" value="红冲失败&#xa;金额冻结，后台处理" vertex="1">
@@ -550,7 +550,7 @@
         <mxCell id="p2-e11" edge="1" parent="1" source="p2-failed" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;strokeColor=#E7772D;strokeWidth=2;endArrow=block;endFill=1;fontColor=#E7772D;" target="p2-issuing" value="管理员安全重试">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="p2-e11b" edge="1" parent="1" source="p2-failed" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;strokeColor=#D9001B;strokeWidth=2;endArrow=block;endFill=1;fontColor=#D9001B;" target="p2-edit" value="确认未开票并关闭；用户点击创建 / 继续补正草稿">
+        <mxCell id="p2-e11b" edge="1" parent="1" source="p2-failed" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;strokeColor=#D9001B;strokeWidth=2;endArrow=block;endFill=1;fontColor=#D9001B;" target="p2-edit" value="确认未开票并关闭；用户编辑原单补正草稿，提交新增版本">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="1365" y="510" />
@@ -627,7 +627,7 @@
         <mxCell id="p2-e16" edge="1" parent="1" source="p2-red-decision" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#E7772D;strokeWidth=2;endArrow=block;endFill=1;fontColor=#E7772D;" target="p2-red-confirm">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="p2-e17" edge="1" parent="1" source="p2-red-decision" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#0091D5;strokeWidth=2;endArrow=block;endFill=1;fontColor=#0091D5;" target="p2-red-processing" value="无需确认 / 已确认">
+        <mxCell id="p2-e17" edge="1" parent="1" source="p2-red-decision" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#0091D5;strokeWidth=2;endArrow=block;endFill=1;fontColor=#0091D5;" target="p2-red-processing" value="处理完成">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="p2-e18" edge="1" parent="1" source="p2-red-confirm" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#0091D5;strokeWidth=2;endArrow=block;endFill=1;" target="p2-red-processing">
@@ -659,14 +659,14 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="p2-e23" edge="1" parent="1" source="p2-red-full" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;strokeColor=#0066FF;strokeWidth=2;endArrow=block;endFill=1;fontColor=#0066FF;" target="p2-edit" value="仅更正：全部目标成功后系统幂等创建唯一重开草稿">
+        <mxCell id="p2-e23" edge="1" parent="1" source="p2-red-full" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;strokeColor=#0066FF;strokeWidth=2;endArrow=block;endFill=1;fontColor=#0066FF;" target="p2-issuing" value="更正红冲完成：原单新增开具版本并自动重开">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
   </diagram>
   <diagram id="admin-state" name="03-云登后台开票状态">
-    <mxGraphModel dx="2494" dy="2277" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2300" pageHeight="1650" math="0" shadow="0">
+    <mxGraphModel dx="2333" dy="1647" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2300" pageHeight="1650" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -727,7 +727,7 @@
         <mxCell id="p3-i-partial" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FDF2E9;strokeColor=#E7772D;fontColor=#1A1D24;fontSize=13;arcSize=8;" value="PARTIAL&#xa;部分成功" vertex="1">
           <mxGeometry height="70" width="160" x="880" y="380" as="geometry" />
         </mxCell>
-        <mxCell id="p3-i-rule" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F7F8FA;strokeColor=#DFE1E5;fontColor=#3A3F4A;fontSize=13;align=left;spacingLeft=10;arcSize=6;" value="UNKNOWN 只允许查询；FAILED 可安全重试，或关闭旧任务后要求补正，二者互斥。&#xa;补正不回退 APPROVED；provider_request_id 与回调 event_id 均唯一。" vertex="1">
+        <mxCell id="p3-i-rule" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F7F8FA;strokeColor=#DFE1E5;fontColor=#3A3F4A;fontSize=13;align=left;spacingLeft=10;arcSize=6;" value="UNKNOWN 只允许查询；FAILED 可安全重试，或关闭旧任务后要求补正，二者互斥。&#xa;补正保留原单，新版本重新待审核；旧版本保留 APPROVED/FAILED；provider_request_id 与回调 event_id 均唯一。" vertex="1">
           <mxGeometry height="90" width="700" x="1440" y="430" as="geometry" />
         </mxCell>
         <mxCell id="p3-doc-lane" parent="1" style="swimlane;html=1;horizontal=1;startSize=38;fillColor=#E7F9F0;swimlaneFillColor=#FFFFFF;strokeColor=#0FC060;fontColor=#0A8F48;fontStyle=1;fontSize=15;" value="票据状态 document_status" vertex="1">
@@ -739,7 +739,7 @@
         <mxCell id="p3-d-active" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E7F9F0;strokeColor=#0FC060;fontColor=#1A1D24;fontSize=13;arcSize=8;" value="ACTIVE&#xa;正常蓝票" vertex="1">
           <mxGeometry height="70" width="150" x="330" y="710" as="geometry" />
         </mxCell>
-        <mxCell id="p3-d-pending" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FDF2E9;strokeColor=#E7772D;fontColor=#1A1D24;fontSize=13;arcSize=8;" value="RED_PENDING&#xa;红冲中 / 待确认" vertex="1">
+        <mxCell id="p3-d-pending" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FDF2E9;strokeColor=#E7772D;fontColor=#1A1D24;fontSize=13;arcSize=8;" value="RED_PENDING&#xa;红冲处理中" vertex="1">
           <mxGeometry height="70" width="180" x="590" y="710" as="geometry" />
         </mxCell>
         <mxCell id="p3-d-partial" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FDF2E9;strokeColor=#E7772D;fontColor=#1A1D24;fontSize=13;arcSize=8;" value="后台部分红冲记录&#xa;客户端不作为主状态展示" vertex="1">
@@ -799,13 +799,13 @@
         <mxCell id="p3-c-red" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FDF2E9;strokeColor=#E7772D;fontColor=#1A1D24;fontSize=12;arcSize=8;" value="RED_PROCESSING&#xa;红冲处理中" vertex="1">
           <mxGeometry height="70" width="170" x="760" y="1210" as="geometry" />
         </mxCell>
-        <mxCell id="p3-c-completed" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E7F9F0;strokeColor=#0FC060;fontColor=#1A1D24;fontSize=12;arcSize=8;" value="COMPLETED&#xa;红冲完成，已建新草稿" vertex="1">
+        <mxCell id="p3-c-completed" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E7F9F0;strokeColor=#0FC060;fontColor=#1A1D24;fontSize=12;arcSize=8;" value="COMPLETED&#xa;红冲完成，自动重开任务已建" vertex="1">
           <mxGeometry height="70" width="190" x="1010" y="1210" as="geometry" />
         </mxCell>
         <mxCell id="p3-c-failed" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE8EB;strokeColor=#D9001B;fontColor=#1A1D24;fontSize=12;arcSize=8;" value="RED_FAILED&#xa;红冲异常待处理" vertex="1">
           <mxGeometry height="70" width="180" x="1100" y="1450" as="geometry" />
         </mxCell>
-        <mxCell id="p3-c-rule" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F7F8FA;strokeColor=#DFE1E5;fontColor=#3A3F4A;fontSize=12;align=left;spacingLeft=10;arcSize=6;" value="更正申请有独立编号、版本、最终审核人、驳回原因和来源蓝票。直接通过命令先整组重校验、短事务锁原票账本、占额并创建 RedTask，全部成功后才进入 APPROVED；任一冲突则保持 PENDING_REVIEW 且零新增占用。&#xa;长期 UNKNOWN 保持 RED_PROCESSING 并人工核对；只有全部目标红冲成功且唯一重开草稿创建成功才进入 COMPLETED，已通过后不得撤回或取消。" vertex="1">
+        <mxCell id="p3-c-rule" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F7F8FA;strokeColor=#DFE1E5;fontColor=#3A3F4A;fontSize=12;align=left;spacingLeft=10;arcSize=6;" value="更正申请有独立编号、版本、最终审核人、驳回原因和来源蓝票。直接通过命令先整组重校验、短事务锁原票账本、占额并创建 RedTask，全部成功后才进入 APPROVED；任一冲突则保持 PENDING_REVIEW 且零新增占用。&#xa;长期 UNKNOWN 保持 RED_PROCESSING 并人工核对；只有全部目标红冲成功且唯一自动重开任务创建成功才进入 COMPLETED，已通过后不得撤回或取消。" vertex="1">
           <mxGeometry height="145" width="810" x="1320" y="1270" as="geometry" />
         </mxCell>
         <mxCell id="p3-a1" edge="1" parent="1" source="p3-app-draft" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#6E7685;strokeWidth=2;endArrow=block;endFill=1;" target="p3-app-pending">
@@ -1009,7 +1009,7 @@
         <mxCell id="p3-c6" edge="1" parent="1" source="p3-c-approved" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#E7772D;strokeWidth=2;endArrow=block;endFill=1;" target="p3-c-red" value="任务排队 / 开始">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="p3-c7" edge="1" parent="1" source="p3-c-red" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#0FC060;strokeWidth=2;endArrow=block;endFill=1;" target="p3-c-completed" value="全成功 + 草稿已建">
+        <mxCell id="p3-c7" edge="1" parent="1" source="p3-c-red" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#0FC060;strokeWidth=2;endArrow=block;endFill=1;" target="p3-c-completed" value="全成功 + 重开任务已建">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="p3-c8" edge="1" parent="1" source="p3-c-red" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#D9001B;strokeWidth=2;endArrow=block;endFill=1;" target="p3-c-failed" value="关联任务明确失败">
@@ -1040,7 +1040,7 @@
     </mxGraphModel>
   </diagram>
   <diagram id="exceptions" name="04-异常与并发补偿">
-    <mxGraphModel dx="2494" dy="2277" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2300" pageHeight="2150" math="0" shadow="0">
+    <mxGraphModel dx="2333" dy="1647" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2300" pageHeight="2150" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />

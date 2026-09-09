@@ -553,6 +553,7 @@
       window.addEventListener('resize',()=>{closeGlobalPopover();});
     }
     renderNav(); renderTeams(); renderCurrentTeam(); renderDevices(); $('deviceUpdated').textContent=`最近更新：${formatLocalDateTime()}`; bindPageEvents(); iconRefresh();
+    if(new URLSearchParams(location.search).get('support')==='online')openSupport('online',document.querySelector('[data-support="online"]'));
   </script>
 </body>
 </html>
