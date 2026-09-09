@@ -344,11 +344,11 @@
 - 遮罩 `rgba(0,0,0,.3)`；阴影 `-4px 0 24px rgba(0,0,0,.1)`；入场动画 `ds-drawer-in .22s ease`；
 - 结构：标题栏（16px/600 + 关闭 ×）+ 内容区（`overflow-y:auto`）+ 底部按钮。
 - 默认业务 Drawer 仍由 ModuleFrame 在 iframe 视口内渲染。仅当模块 PRD 明确要求遮罩整个 App Shell 时，允许使用 SystemFrame 的受信全局 Drawer Portal：ModuleFrame 只传结构化视图模型，SystemFrame 校验消息来源与业务白名单后用受控 DOM 渲染，禁止传递原始 HTML 或直接操作父文档。
-- 全局业务 Drawer 的蒙版与 Drawer 面板均从 BrowserChrome 底部开始，覆盖 TopBar、Sidebar 与 MainContent，并贴合视口底部，使面板与网页可用高度齐平且顶部不留空；桌面宽 800px，小于 768px 时占满可用宽度。打开时背景必须 `inert` 并锁定滚动，关闭后恢复焦点、滚动及原有可交互状态。
+- 全局业务 Drawer 的蒙版与 Drawer 面板均覆盖整个页面视口（包括 BrowserChrome、TopBar、Sidebar 与 MainContent），从视口顶部贴合到底部，不得从导航栏底部开始或在顶部留空；遮罩使用 `position:fixed;inset:0;z-index:9999`。桌面宽 800px，小于 768px 时占满可用宽度。打开时背景必须 `inert` 并锁定滚动，关闭后恢复焦点、滚动及原有可交互状态。
 
 **标准业务详情 Drawer（以订单详情为基准）**：
 
-- ModuleFrame 内默认使用 `position:fixed;inset:0` 的本地遮罩，遮罩本身不留内边距；面板贴右、贴顶、满高，`width:800px;max-width:100%`，采用纵向 Flex 布局。不得改造成居中 Modal，也不得在面板外再套卡片边框。
+- ModuleFrame 内默认使用 `position:fixed;inset:0` 的本地遮罩，遮罩本身不留内边距；面板贴右、贴顶、满视口高（`height:100dvh`），`width:800px;max-width:100%`，采用纵向 Flex 布局。不得改造成居中 Modal，也不得在面板外再套卡片边框。
 - 标题栏固定高 `56px`，左右内边距 `24px`，白底，可使用 `line-light` 下分隔线；标题为 16px/600，关闭按钮为 `32×32px`，图标使用 `x`、18px、`ink-sub`。
 - 内容区使用 `flex:1;overflow-y:auto;padding:16px;background:page`。详情分区为白底、8px 圆角、16px 内边距、无外描边，分区之间保持 16px 垂直间距；分区标题为 16px/600，标题下间距 16px。
 - 信息项默认两列网格，列间距 24px、行间距 12px；每项内部标签列宽 96px、右对齐且带中文冒号，值沿用正文色。小于 768px 时降为单列。金额、编号、账号、时间使用 mono 字体。
