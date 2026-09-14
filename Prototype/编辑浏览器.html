@@ -147,6 +147,7 @@
     .account-modal.hidden{display:none}
     .account-form-panel{width:760px;max-width:94vw;max-height:88vh;background:#fff;border-radius:8px;box-shadow:0 10px 32px rgba(26,29,36,.18);display:flex;flex-direction:column;overflow:hidden}
     .account-form-body{min-height:0;overflow:auto;padding:28px 32px}
+    .account-form-hint{width:min(100%,560px);margin:0 auto 12px;font-size:12px;line-height:18px;color:#9DA2AC}
     .account-form-grid{width:min(100%,560px);margin:0 auto;display:flex;flex-direction:column;gap:16px}
     .account-form-row{display:grid;grid-template-columns:126px minmax(0,400px);gap:14px;align-items:start}
     .account-form-label{min-height:32px;display:flex;align-items:center;justify-content:flex-end;color:#3A3F4A;font-size:13px;font-weight:500;text-align:right;white-space:nowrap}
@@ -416,7 +417,7 @@
                         <div class="proxy-list-shell">
                           <div class="proxy-list-toolbar">
                             <select id="proxyProtocol" class="control" aria-label="代理类型筛选"></select>
-                            <select id="proxyRegionFilter" class="control" aria-label="地区筛选"><option value="">全部地区</option><option>美国</option><option>日本</option><option>新加坡</option><option>德国</option><option>英国</option></select>
+                            <select id="proxyRegionFilter" class="control" aria-label="地区筛选"><option value="">全部地区</option><option>美国</option><option>日本</option><option>新加坡</option><option>德国</option><option>英国</option><option>澳大利亚</option><option>加拿大</option></select>
                             <select id="proxyStatusFilter" class="control" aria-label="状态筛选"><option value="">全部状态</option><option>未绑环境</option><option>已绑环境</option></select>
                             <label class="proxy-search"><i data-lucide="search"></i><input id="proxySearch" class="control" placeholder="搜索序号、名称、IP" aria-label="搜索代理"></label>
                             <button type="button" id="refreshProxyList" class="btn btn-secondary px-3"><i data-lucide="refresh-cw" class="w-4"></i><span>刷新</span></button>
@@ -485,6 +486,7 @@
                   <div class="account-form-panel modal-in">
                     <header class="h-14 shrink-0 px-6 border-b border-line flex items-center justify-between"><h2 id="accountFormTitle" class="text-[16px] font-semibold text-ink-title">添加新账号</h2><button type="button" id="closeAccountForm" class="w-8 h-8 rounded flex items-center justify-center text-ink-muted hover:bg-hover hover:text-ink-body" aria-label="关闭添加账号弹窗" title="关闭"><i data-lucide="x" class="w-5"></i></button></header>
                     <div class="account-form-body">
+                      <p class="account-form-hint">密码与 2FA 密钥仅用于安全存储，不会写入日志、URL 或埋点。</p>
                       <div class="account-form-grid">
                         <div class="account-form-row"><label class="account-form-label" for="accountPlatform"><span class="required">*</span>平台：</label><div class="account-form-control"><select id="accountPlatform" class="control"><option value="">请选择平台</option><option>亚马逊后台 · 美国</option><option>亚马逊后台 · 西班牙</option><option>TikTok Shop · 全球跨境</option><option>Shopee 后台 · 新加坡</option><option>Shopify 后台 · 加拿大</option><option>Ebay 后台 · 英国</option><option>Google Ads · 美国</option><option>Meta Business · 美国</option><option>自定义平台</option></select></div></div>
                         <div class="account-form-row"><label class="account-form-label" for="accountAlias">名称：</label><div class="account-form-control"><input id="accountAlias" maxlength="100" class="control" placeholder="用于账号管理中区分"></div></div>
@@ -638,7 +640,7 @@
 </div><input id="ua" data-summary="ua" class="control mono text-[11px]" value="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36"><button type="button" id="refreshUa" class="btn btn-secondary px-3" aria-label="刷新 UA"><i data-lucide="refresh-cw" class="w-4"></i></button></div></div>
                   <div class="field"><label class="field-label">分组：</label>
                     <div id="grpWrap" class="grp-wrap" style="--grp-width: 500px;">
-                      <select id="browserGroup" style="position:absolute;opacity:0;pointer-events:none;inset:0;width:100%;height:100%" tabindex="-1" aria-hidden="true"><option value="默认分组" selected>默认分组</option></select>
+                      <select id="browserGroup" style="position:absolute;opacity:0;pointer-events:none;inset:0;width:100%;height:100%" tabindex="-1" aria-hidden="true"><option value="默认分组" selected>默认分组</option><option value="跨境电商">跨境电商</option><option value="内容运营">内容运营</option></select>
                       <div id="grpControl" class="grp-control" role="combobox" tabindex="0" aria-haspopup="listbox" aria-expanded="false">
                         <span id="grpControlVal">默认分组</span>
                         <i class="grp-caret" data-lucide="chevron-down" class="w-4"></i>
@@ -702,13 +704,13 @@
   <div id="assistantDrawer" class="hidden fixed inset-0 z-50 bg-black/30" role="dialog" aria-modal="true" aria-labelledby="assistantTitle"><section id="assistantPanel" class="drawer-panel ml-auto h-full w-[800px] max-w-full bg-card shadow-[-4px_0_24px_rgba(0,0,0,.1)] flex flex-col"><header class="h-14 px-6 border-b border-line flex items-center justify-between"><div class="flex items-center gap-2"><span class="w-7 h-7 rounded bg-primary-bg text-primary flex items-center justify-center"><i data-lucide="sparkles" class="w-4 h-4"></i></span><h2 id="assistantTitle" class="text-[16px] font-semibold text-ink-title">云登智能助手</h2></div><button class="text-ink-muted hover:text-ink-body" data-close="assistantDrawer" aria-label="关闭"><i data-lucide="x" class="w-5 h-5"></i></button></header><div class="flex-1 p-6 overflow-auto"><div class="max-w-lg"><p class="text-ink-title font-medium">我可以帮你检查浏览器环境配置。</p><p class="mt-2 text-ink-sub leading-relaxed">你可以询问代理、指纹、账号绑定或保存校验规则。当前原型保留完整入口与反馈容器。</p><div class="mt-5 flex flex-wrap gap-2"><button class="quick-question btn btn-secondary">如何更换代理？</button><button class="quick-question btn btn-secondary">哪些指纹项有风险？</button><button class="quick-question btn btn-secondary">保存前会校验什么？</button></div><div id="assistantReply" class="hidden mt-5 p-3 border border-info bg-info-bg rounded text-info"></div></div></div><form id="assistantForm" class="p-4 border-t border-line flex gap-2"><input id="assistantInput" maxlength="120" class="control flex-1" placeholder="输入问题（演示入口）"><button class="btn btn-primary">发送</button></form></section></div>
   <div id="toastContainer" class="fixed top-4 left-1/2 -translate-x-1/2 z-[2000] flex flex-col gap-2 pointer-events-none" aria-live="polite"></div>
   <div id="proxyHelpPopover" class="field-help-popover hidden fixed z-50 bg-card border border-line rounded-lg popover p-4" role="tooltip"><div id="fieldHelpContent" class="text-[12px] text-ink-sub leading-relaxed"></div></div>
-  <!-- Portal 标注系统 --></div></div>
   <script>
   window.lucide=window.lucide||{createIcons(){}};
   // ===== Mock data =====
   const proxyRegionPool=[
-    {country:'美国',city:'洛杉矶',code:'US'},{country:'日本',city:'东京',code:'JP'},{country:'新加坡',city:'新加坡',code:'SG'},
-    {country:'德国',city:'法兰克福',code:'DE'},{country:'英国',city:'伦敦',code:'GB'}
+    {country:'美国',city:'洛杉矶',code:'US'},{country:'美国',city:'弗吉尼亚',code:'US'},{country:'日本',city:'东京',code:'JP'},
+    {country:'新加坡',city:'新加坡',code:'SG'},{country:'德国',city:'法兰克福',code:'DE'},{country:'英国',city:'伦敦',code:'GB'},
+    {country:'澳大利亚',city:'悉尼',code:'AU'},{country:'加拿大',city:'多伦多',code:'CA'}
   ];
   const proxyData=[
     ...Array.from({length:18},(_,i)=>{const place=proxyRegionPool[i%proxyRegionPool.length],protocol=i%3===0?'SOCKS5':'HTTP',environmentCount=i%5,status=environmentCount===0?'未绑环境':'已绑环境';return {id:`PL-${String(1001+i)}`,source:'platform',seq:i+1,name:`${place.city}-${place.code}-${String(i+1).padStart(2,'0')}`,ip:`198.51.100.${20+i}:${protocol==='SOCKS5'?'1080':'443'}`,protocol,proxyClass:i%3===0?'动态住宅':i%3===1?'静态住宅':'ISP',provider:i%2?'云登精选':'BrightRoute',region:`${place.country} · ${place.city}`,country:place.country,tag:i%3===0?'动态':i%3===1?'长效':'独享',status,environmentCount,expires:`2026-${String(9+i%3).padStart(2,'0')}-${String(10+i%16).padStart(2,'0')} 18:00`}}),
@@ -1232,8 +1234,8 @@
     const nativeSel=$('#browserTag'),placeholder=$('#tagPlaceholder');
     const DELETE_SVG='<svg viewBox="0 0 24 24" class="w-3.5 h-3.5"><path d="M18 6 6 18M6 6l12 12" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>';
     lucide.createIcons({root:ctrl});
-    // 当前标签存储 [{name, colorIndex}]，不包含占位符"请选择"
-    let tagStore=[];
+    // 当前标签存储 [{name, colorIndex}]，不包含占位符"请选择"；预置标签来自团队标签库 Mock
+    let tagStore=['稳定环境','广告账户','店铺运营'].map(name=>({name,colorIndex:pickTagColor(name)}));
     function names(){return tagStore.map(t=>t.name)}
     // 原生 select options 同步（保持顺序）
     function syncNativeOptions(currentVal){
@@ -1398,6 +1400,8 @@
   $('#randomFingerprint').onclick=()=>{if(state.configEdited)openDialog({title:'覆盖当前自定义指纹？',desc:'新指纹将覆盖基础设置、指纹设置、插件选择和偏好设置；名称、代理、IP 查询渠道和账号平台不会改变。',confirm:'覆盖并生成',action:()=>generateFingerprint(true)});else generateFingerprint(true)};
   function generateFingerprint(fullConfig=true){const pick=a=>a[Math.floor(Math.random()*a.length)];state.fingerprint.language='基于 IP 生成';state.fingerprint.timezone='基于 IP 生成';state.fingerprint.geoPermission=pick(['询问','允许']);state.fingerprint.geoSource='IP 匹配';state.fingerprint.screen='快捷选择';state.fingerprint.fonts='默认';state.fingerprint.clientRects='开启';state.fingerprint.webrtc='禁用';state.fingerprint.canvas='噪声';state.fingerprint.canvasBias='倾向一致性';state.fingerprint.webgl='噪声';state.fingerprint.webglInfo='自定义';state.fingerprint.audio=pick(['噪声','真实']);state.fingerprint.speech='噪声';state.fingerprint.media='噪声';state.fingerprint.hardware=pick(['4','8','12','16']);state.fingerprint.memory=pick(['8','16','32']);state.fingerprint.deviceNameMode=`DESKTOP-${Math.random().toString(36).slice(2,9).toUpperCase()}`;state.fingerprint.macMode=createValidMac();state.fingerprint.acceleration='开启';state.fingerprint.bluetooth='噪声';state.fingerprint.dnt='默认';state.fingerprint.battery='噪声';state.fingerprint.portProtection='开启';state.fingerprint.portWhitelist='4000,4001';if(fullConfig){const profile=pick([{kernel:'Chromium134',os:'Windows 10',version:'134'},{kernel:'Chromium140',os:'Windows 11',version:'140'},{kernel:'Chromium145',os:'MacOS 14',version:'145'}]);$('#kernel').value=profile.kernel;$('#os').value=profile.os;$('#uaVersion').value=profile.version;$('#uaVersion').dispatchEvent(new Event('change'));$('#os').dispatchEvent(new Event('change'));$('#browserGroup').value='默认分组';$('#browserGroup').dispatchEvent(new Event('change'));$('#browserTag').value='请选择';$('#browserTag').dispatchEvent(new Event('change'));$('#cookie').value='';$('#cookieExtra').innerHTML='';$('#startUrls').value='';$('#remark').value='';$('#remarkCount').textContent='0';$('#pluginGroup').value='请选择插件分组';state.plugins.forEach((p,i)=>p.enabled=i<2&&!p.incompatible);preferenceData.forEach(p=>p.value=p.options[0])}syncFingerprintControls();renderFingerprintFields();renderPlugins();renderPreferences();updateSummary();if(fullConfig)markGenerated();else{markDirty();$('#fingerprintSource').textContent='已根据新 IP 更新指纹';$('#summarySource').textContent=state.configEdited?'系统生成 + 用户自定义':'根据 IP 生成';$('#fingerprintTime').textContent=new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})}showToast(fullConfig?'已生成并应用一套新的完整指纹':'已根据新 IP 更新指纹信息')}
   $('#copySummary').onclick=async()=>{const text=$$('#summaryList .summary-row').map(r=>`${r.children[0].textContent}: ${r.children[1].textContent}`).join('\n');try{await navigator.clipboard.writeText(text);showToast('非敏感指纹摘要已复制')}catch{showToast('当前浏览器不允许访问剪贴板','warning')}};
+  // ===== Initialize =====
+  renderProxyRows();renderAccountRows();renderBoundAccounts();renderFingerprintFields();renderPlugins();renderPreferences();updateSummary();normalizeFieldLabels();initOSSelector();initUaVersionMultiSelect();initGroupSelector();initTagSelector();lucide.createIcons();
   // ===== Save, cancel, dialog =====
   let dialogAction=null,dialogLastFocus=null;
   function openDialog({title,desc,confirm='确定',action}){dialogLastFocus=document.activeElement;$('#dialogTitle').textContent=title;$('#dialogDesc').textContent=desc;$('#dialogConfirm').textContent=confirm;dialogAction=action;$('#dialogOverlay').classList.remove('hidden');lucide.createIcons();requestAnimationFrame(()=>$('#dialogConfirm').focus({preventScroll:true}))}
