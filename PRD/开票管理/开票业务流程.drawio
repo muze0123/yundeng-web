@@ -34,7 +34,7 @@
         <mxCell id="p1-client-lane" parent="1" style="swimlane;html=1;horizontal=0;startSize=52;fillColor=#E6F0FF;swimlaneFillColor=#F7F8FA;strokeColor=#DFE1E5;fontColor=#1A1D24;fontStyle=1;fontSize=14;" value="YunLogin 客户端" vertex="1">
           <mxGeometry height="230" width="2700" x="70" y="270" as="geometry" />
         </mxCell>
-        <mxCell id="p1-c-invalid" parent="p1-client-lane" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FDF2E9;strokeColor=#E7772D;fontColor=#1A1D24;fontSize=13;arcSize=8;" value="仅展示一条主原因说明&#xa;关闭后返回订单列表" vertex="1">
+        <mxCell id="p1-c-invalid" parent="p1-client-lane" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FDF2E9;strokeColor=#E7772D;fontColor=#1A1D24;fontSize=13;arcSize=8;" value="版本前历史订单或其他原因&#xa;固定不可申请，仅展示主原因" vertex="1">
           <mxGeometry height="72" width="160" x="320" y="60" as="geometry" />
         </mxCell>
         <mxCell id="p1-c1" parent="p1-client-lane" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E6F0FF;strokeColor=#0066FF;fontColor=#1A1D24;fontSize=14;arcSize=8;" value="2. 查询可开票订单&#xa;展示余额与不可开原因" vertex="1">
@@ -82,7 +82,7 @@
         <mxCell id="p1-e21" edge="1" parent="p1-provider-lane" source="p1-p1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#6E7685;strokeWidth=2;endArrow=block;endFill=1;" target="p1-d4">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="p1-s1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E7F9F0;strokeColor=#0FC060;fontColor=#1A1D24;fontSize=14;arcSize=8;" value="3. 鉴权并计算资格&#xa;法币实付 / 履约 / 退款 / 占用" vertex="1">
+        <mxCell id="p1-s1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E7F9F0;strokeColor=#0FC060;fontColor=#1A1D24;fontSize=14;arcSize=8;" value="3. 鉴权并计算资格&#xa;先校验开票版本边界，再校验法币实付 / 履约 / 退款 / 占用" vertex="1">
           <mxGeometry height="88" width="210" x="150" y="560" as="geometry" />
         </mxCell>
         <mxCell id="p1-d1" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FDF2E9;strokeColor=#E7772D;fontColor=#1A1D24;fontSize=13;" value="资格有效？" vertex="1">
@@ -459,7 +459,7 @@
         <mxCell id="p2-title" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=24;fontStyle=1;fontColor=#1A1D24;" value="YunLogin 客户端发票状态图" vertex="1">
           <mxGeometry height="40" width="650" x="30" y="20" as="geometry" />
         </mxCell>
-        <mxCell id="p2-note" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F7F8FA;strokeColor=#DFE1E5;fontColor=#3A3F4A;fontSize=13;align=left;spacingLeft=12;arcSize=6;" value="客户端状态由后台四维状态派生；审批不持久化审核中，交付失败也不回退开票成功事实。" vertex="1">
+        <mxCell id="p2-note" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F7F8FA;strokeColor=#DFE1E5;fontColor=#3A3F4A;fontSize=13;align=left;spacingLeft=12;arcSize=6;" value="客户端状态由后台四维状态派生；开票能力版本发布前历史订单固定不可申请；审批不持久化审核中，交付失败也不回退开票成功事实。" vertex="1">
           <mxGeometry height="44" width="880" x="1170" y="20" as="geometry" />
         </mxCell>
         <mxCell id="p2-start" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#E6F0FF;strokeColor=#0066FF;fontColor=#0066FF;fontStyle=1;fontSize=14;" value="开始申请" vertex="1">
@@ -708,7 +708,7 @@
         <mxCell id="p3-title" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=24;fontStyle=1;fontColor=#1A1D24;" value="云登后台开票四维状态与更正申请状态图" vertex="1">
           <mxGeometry height="40" width="800" x="30" y="20" as="geometry" />
         </mxCell>
-        <mxCell id="p3-note" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F7F8FA;strokeColor=#DFE1E5;fontColor=#3A3F4A;fontSize=13;align=left;spacingLeft=12;arcSize=6;" value="开票四维状态独立保存；更正申请是独立审核聚合。页面派生状态不能覆盖原始事实。" vertex="1">
+        <mxCell id="p3-note" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F7F8FA;strokeColor=#DFE1E5;fontColor=#3A3F4A;fontSize=13;align=left;spacingLeft=12;arcSize=6;" value="开票四维状态独立保存；更正申请是独立审核聚合。开票能力版本发布前历史订单固定不可自助申请，页面派生状态不能覆盖原始事实。" vertex="1">
           <mxGeometry height="44" width="910" x="1320" y="20" as="geometry" />
         </mxCell>
         <mxCell id="p3-app-lane" parent="1" style="swimlane;html=1;horizontal=1;startSize=38;fillColor=#E6F0FF;swimlaneFillColor=#FFFFFF;strokeColor=#0066FF;fontColor=#0066FF;fontStyle=1;fontSize=15;" value="申请状态 application_status" vertex="1">

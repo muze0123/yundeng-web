@@ -350,14 +350,17 @@
 #invoiceApplyModal .invoice-apply-radio-control { justify-self:start; }
 #invoiceApplyModal #invoiceApplyHeadTypeControl label { display:inline-flex; align-items:center; gap:6px; min-height:30px; color:#3A3F4A; cursor:pointer; white-space:nowrap; }
 #invoiceApplyModal #invoiceApplyHeadTypeControl input { accent-color:#0066FF; }
+#invoiceApplyModal #invoiceApplyHeadType { display:none !important; }
 #invoiceApplyModal #invoiceTitleEditWrap { width:400px; max-width:100%; }
+#invoiceApplyModal #invoiceTitleEditWrap > #invoiceTitleCombobox { width:calc(100% - 40px); }
+#invoiceApplyModal #invoiceTitleRefresh { width:32px; height:32px; padding:0; flex:0 0 32px; }
 #invoiceApplyModal #invoiceTitleCombobox { position:relative; width:100%; }
 #invoiceApplyModal #invoiceTitleInput { width:100%; height:30px; padding:0 58px 0 10px; border:1px solid #DFE1E5; border-radius:4px; background:#fff; color:#3A3F4A; outline:none; }
 #invoiceApplyModal #invoiceTitleInput:focus { border-color:#0066FF; box-shadow:0 0 0 2px #E6F0FF; }
 #invoiceApplyModal #invoiceTitleInput[aria-invalid="true"] { border-color:#D9001B; }
-#invoiceApplyModal #invoiceTitleClear { position:absolute; right:28px; top:3px; width:24px; height:24px; border:0; border-radius:4px; color:#9DA2AC; background:transparent; display:none; align-items:center; justify-content:center; cursor:pointer; }
-#invoiceApplyModal #invoiceTitleClear.is-visible { display:inline-flex; }
-#invoiceApplyModal #invoiceTitleClear:hover { color:#3A3F4A; background:#F3F4F6; }
+#invoiceApplyModal #invoiceTitleInputClear { position:absolute; right:28px; top:3px; width:24px; height:24px; border:0; border-radius:4px; color:#9DA2AC; background:transparent; display:none; align-items:center; justify-content:center; cursor:pointer; }
+#invoiceApplyModal #invoiceTitleInputClear.is-visible { display:inline-flex; }
+#invoiceApplyModal #invoiceTitleInputClear:hover { color:#3A3F4A; background:#F3F4F6; }
 #invoiceApplyModal #invoiceTitleChevron { position:absolute; right:8px; top:8px; width:14px; height:14px; color:#6E7685; pointer-events:none; }
 #invoiceApplyModal #invoiceTitleOptions { position:absolute; left:0; right:0; top:36px; z-index:1203; max-height:220px; overflow:auto; padding:4px 0; border:1px solid #DFE1E5; border-radius:4px; background:#fff; box-shadow:0 6px 24px rgba(0,0,0,.12); }
 #invoiceApplyModal #invoiceTitleOptions.hidden { display:none; }
@@ -479,6 +482,10 @@ invoiceOrders.push(
 );
 // 不可申请原因采用 PRD 原因码；每类场景保留独立的处理建议。
 const invoiceReasonConfig={
+ "ORDER_BEFORE_INVOICE_RELEASE": {
+  "label": "该订单创建于开票功能版本发布前，暂不支持在客户端申请开票。如需申请开票,请联系商务经理或客服。",
+  "action": "如需申请历史订单发票，请联系平台客服协助核实处理。"
+ },
  "NO_PERMISSION": {
   "label": "当前账号无权申请该订单发票",
   "action": "申请权限或联系团队管理员；不得返回关联申请或票据详情"
@@ -577,12 +584,17 @@ invoiceReasonConfig.RED_CONFIRMATION={label:'红冲处理中',action:'第三方�
 const invoiceReasonLabels=Object.fromEntries(Object.entries(invoiceReasonConfig).map(([code,item])=>[code,item.label]));
 const invoiceOrderStatusByReason={ORDER_CANCELLED:'已关闭',PAYMENT_PENDING:'待支付',PAYMENT_FAILED:'异常',FULFILLMENT_PENDING:'开通中',FULFILLMENT_FAILED:'异常',REFUND_PROCESSING:'处理中',FULLY_REFUNDED:'已退款'};
 // 独立资格样例不关联开票记录，避免不同场景互相覆盖；每种规范原因均可查看。
-const invoiceIneligibleExamples=["NO_PERMISSION", "ORDER_TYPE_NOT_ELIGIBLE", "ORDER_CANCELLED", "PAYMENT_PENDING", "PAYMENT_FAILED", "PAYMENT_NOT_ELIGIBLE", "COMPOSITE_PAYMENT_UNSUPPORTED", "ZERO_FIAT_AMOUNT", "FULFILLMENT_PENDING", "FULFILLMENT_FAILED", "REFUND_PROCESSING", "FULLY_REFUNDED", "NO_BALANCE", "RESERVED", "TEAM_RESERVED", "TEAM_INVOICED", "SELF_SERVICE_EXPIRED", "SELLER_CONFIG_MISSING", "TAX_CONFIG_MISSING"];
+const invoiceIneligibleExamples=["NO_PERMISSION", "ORDER_BEFORE_INVOICE_RELEASE", "ORDER_TYPE_NOT_ELIGIBLE", "ORDER_CANCELLED", "PAYMENT_PENDING", "PAYMENT_FAILED", "PAYMENT_NOT_ELIGIBLE", "COMPOSITE_PAYMENT_UNSUPPORTED", "ZERO_FIAT_AMOUNT", "FULFILLMENT_PENDING", "FULFILLMENT_FAILED", "REFUND_PROCESSING", "FULLY_REFUNDED", "NO_BALANCE", "RESERVED", "TEAM_RESERVED", "TEAM_INVOICED", "SELF_SERVICE_EXPIRED", "SELLER_CONFIG_MISSING", "TAX_CONFIG_MISSING"];
 invoiceIneligibleExamples.forEach((reason,index)=>{
  const day=String(28-Math.floor(index/6)).padStart(2,'0'),minute=String(index%60).padStart(2,'0');
  const unpaid=['PAYMENT_PENDING','PAYMENT_FAILED','ORDER_CANCELLED'].includes(reason);
  invoiceOrders.push({no:'YL202608'+day+'09'+minute+'90'+String(index).padStart(2,'0'),type:'套餐订单',name:reason==='ORDER_TYPE_NOT_ELIGIBLE'?'活动赠送套餐':reason==='ZERO_FIAT_AMOUNT'?'优惠全额抵扣套餐':'环境套餐 · 30 天',seller:'云登云服务',pay:reason==='PAYMENT_NOT_ELIGIBLE'?'云币':reason==='COMPOSITE_PAYMENT_UNSUPPORTED'?'支付宝 + 云币':'支付宝',amount:reason==='ZERO_FIAT_AMOUNT'?0:99,state:'不可申请',payTime:unpaid?'-':reason==='SELF_SERVICE_EXPIRED'?'2025-07-01 09:00':'2026-08-'+day+' 09:'+minute,reason,detail:invoiceReasonConfig[reason].label,orderStatus:invoiceOrderStatusByReason[reason]||'已完成'});
 });
+// 以订单创建时点相对于开票功能发布时间的服务端判定为准，不以支付时间或本机版本推断。
+// 发布时间未确定：Mock 用布尔资格标记演示；生产须由服务端生成并在提交时复核。
+// 后台“新增开票申请”代客处理另行设计；本客户端不新增入口，也不承诺历史订单自动可开票。
+invoiceOrders.forEach(order=>{order.createdBeforeInvoiceRelease=order.reason==='ORDER_BEFORE_INVOICE_RELEASE'});
+function isInvoiceHistoricalOrder(order){return order.createdBeforeInvoiceRelease===true||order.reason==='ORDER_BEFORE_INVOICE_RELEASE'}
 invoiceOrders.forEach(order=>{order.orderStatus=order.orderStatus||invoiceOrderStatusByReason[order.reason]||'已完成'});
 const invoiceOrderEligibilitySnapshots=new Map(invoiceOrders.map(order=>[order.no,{state:order.state,reason:order.reason,detail:order.detail}]));
 // 初始 Mock 每种状态一条，按申请、审核、开具、红冲的业务阶段展示（含异常分支）。
@@ -634,6 +646,7 @@ invoiceRecords.forEach((record,index)=>{record.teamId=invoiceMockIdentity.teamId
 const invoiceActiveOrderRecordStatuses=new Set(['待审核','开票中','开票失败','已开票','红冲处理中','红冲处理中','红冲失败','开票中']);
 // 先保留订单资格限制，再按关联记录区分占用、有效蓝票和红冲状态。
 function refreshInvoiceOrderEligibility(order){
+ if(isInvoiceHistoricalOrder(order)){Object.assign(order,{state:'不可申请',reason:'ORDER_BEFORE_INVOICE_RELEASE',detail:invoiceReasonConfig.ORDER_BEFORE_INVOICE_RELEASE.label});return}
  const snapshot=invoiceOrderEligibilitySnapshots.get(order.no);
  if(snapshot&&snapshot.state==='不可申请'&&snapshot.reason!=='RESERVED'){Object.assign(order,snapshot);return}
  const records=invoiceRecords.filter(record=>invoiceActiveOrderRecordStatuses.has(record.status)&&(record.orders||[]).includes(order.no));
@@ -943,7 +956,7 @@ function syncInvoiceTitle(fillProfile=false){const select=q('#invoiceTitle'),opt
 function syncInvoiceTitleContactProfile(){const option=q('#invoiceTitle')?.selectedOptions[0],t=titles.find(x=>x.id===q('#invoiceTitle')?.value);if(!option)return;q('#invoiceEmail').value=t?.contactEmail||option.dataset.contactEmail||'';q('#invoicePhone').value=t?.contactPhone||option.dataset.contactPhone||''}
 function syncInvoiceApplyHeadType(){const headType=invoiceApplyHeadType(),current=q('#invoiceTitle')?.value,match=titles.find(t=>t.enabled&&t.id===current&&(headType==='企业'?t.type==='企业':t.type!=='企业'));if(!match)fillInvoiceTitles();else syncInvoiceTitle(true)}
 function setInvoiceApplyHeadType(value){const select=q('#invoiceApplyHeadType');if(select)select.value=value==='个人或事业单位'?'个人或事业单位':'企业';syncInvoiceApplyHeadType()}
-function upgradeInvoiceApplyFields(){const step2=q('#invoiceStep2'),typeSelect=q('#invoiceType'),typeRow=typeSelect?.closest('.grid'),titleRow=q('#invoiceTitle')?.closest('.grid');if(!step2||!typeSelect||!typeRow||!titleRow||q('#invoiceTitleTypeRow'))return;const headRow=document.createElement('div');headRow.id='invoiceTitleTypeRow';headRow.className='grid grid-cols-[104px_1fr] gap-3 items-start';headRow.innerHTML='<label for="invoiceApplyHeadType" class="text-right text-ink-sub pt-2"><span class="invoice-required" aria-hidden="true">*</span>抬头类型</label><select id="invoiceApplyHeadType" class="field" required aria-required="true" aria-describedby="invoiceFormError"><option value="企业" selected>企业</option><option value="个人或事业单位">个人</option></select>';step2.insertBefore(headRow,typeRow);typeSelect.hidden=true;typeSelect.tabIndex=-1;typeSelect.setAttribute('aria-hidden','true');const typeLabel=typeRow.querySelector('label');if(typeLabel)typeLabel.removeAttribute('for');const typeControl=document.createElement('div');typeControl.className='invoice-apply-radio-control';typeControl.setAttribute('role','radiogroup');typeControl.setAttribute('aria-label','发票类型');typeControl.innerHTML='<label class="invoice-apply-radio-option"><input type="radio" name="invoiceApplyType" value="普通" checked required>数电普通发票</label><label class="invoice-apply-radio-option"><input type="radio" name="invoiceApplyType" value="专用">数电专用发票</label>';typeSelect.insertAdjacentElement('afterend',typeControl);const fields=q('#invoiceSpecialFields'),emailRow=q('#invoiceEmail')?.closest('.grid');if(fields){fields.classList.add('invoice-enterprise-fields');fields.innerHTML='<div class="grid grid-cols-[96px_1fr] gap-3 items-start"><label class="text-right text-ink-sub pt-2">开户银行（选填）：</label><input id="invoiceBank" class="field" placeholder="请输入开户银行"></div><div class="grid grid-cols-[96px_1fr] gap-3 items-start"><label class="text-right text-ink-sub pt-2">银行账号（选填）：</label><input id="invoiceAccount" class="field mono" placeholder="请输入银行账号"></div><div class="grid grid-cols-[96px_1fr] gap-3 items-start"><label class="text-right text-ink-sub pt-2">企业地址（选填）：</label><input id="invoiceAddress" class="field" placeholder="请输入企业地址"></div><div class="grid grid-cols-[96px_1fr] gap-3 items-start"><label class="text-right text-ink-sub pt-2">企业电话（选填）：</label><input id="invoicePhoneCompany" class="field" placeholder="请输入企业电话"></div>';if(emailRow)step2.insertBefore(fields,emailRow)}const confirmCopy=q('#invoiceConfirm')?.nextElementSibling;if(confirmCopy)confirmCopy.textContent='我确认发票抬头和收票信息真实有效。';q('#invoiceApplyHeadType').addEventListener('change',syncInvoiceApplyHeadType);qa('[name="invoiceApplyType"]').forEach(r=>r.addEventListener('change',syncInvoiceTypeRadio));syncInvoiceApplyHeadType()}
+function upgradeInvoiceApplyFields(){const step2=q('#invoiceStep2'),typeSelect=q('#invoiceType'),typeRow=typeSelect?.closest('.grid'),titleRow=q('#invoiceTitle')?.closest('.grid');if(!step2||!typeSelect||!typeRow||!titleRow||q('#invoiceTitleTypeRow'))return;const headRow=document.createElement('div');headRow.id='invoiceTitleTypeRow';headRow.className='grid grid-cols-[104px_1fr] gap-3 items-start';headRow.innerHTML='<label for="invoiceApplyHeadType" class="text-right text-ink-sub pt-2"><span class="invoice-required" aria-hidden="true">*</span>抬头类型</label><select id="invoiceApplyHeadType" class="field" required aria-required="true" aria-describedby="invoiceFormError"><option value="企业" selected>企业</option><option value="个人或事业单位">个人</option></select><div id="invoiceApplyHeadTypeControl" class="invoice-apply-radio-control" role="radiogroup" aria-label="抬头类型"><label class="invoice-apply-radio-option"><input type="radio" name="invoiceApplyHeadType" value="企业" checked required>企业</label><label class="invoice-apply-radio-option"><input type="radio" name="invoiceApplyHeadType" value="个人或事业单位">个人</label></div>';step2.insertBefore(headRow,typeRow);typeSelect.hidden=true;typeSelect.tabIndex=-1;typeSelect.setAttribute('aria-hidden','true');const typeLabel=typeRow.querySelector('label');if(typeLabel)typeLabel.removeAttribute('for');const typeControl=document.createElement('div');typeControl.className='invoice-apply-radio-control';typeControl.setAttribute('role','radiogroup');typeControl.setAttribute('aria-label','发票类型');typeControl.innerHTML='<label class="invoice-apply-radio-option"><input type="radio" name="invoiceApplyType" value="普通" checked required>数电普通发票</label><label class="invoice-apply-radio-option"><input type="radio" name="invoiceApplyType" value="专用">数电专用发票</label>';typeSelect.insertAdjacentElement('afterend',typeControl);const fields=q('#invoiceSpecialFields'),emailRow=q('#invoiceEmail')?.closest('.grid');if(fields){fields.classList.add('invoice-enterprise-fields');fields.innerHTML='<div class="grid grid-cols-[96px_1fr] gap-3 items-start"><label class="text-right text-ink-sub pt-2">开户银行（选填）：</label><input id="invoiceBank" class="field" placeholder="请输入开户银行"></div><div class="grid grid-cols-[96px_1fr] gap-3 items-start"><label class="text-right text-ink-sub pt-2">银行账号（选填）：</label><input id="invoiceAccount" class="field mono" placeholder="请输入银行账号"></div><div class="grid grid-cols-[96px_1fr] gap-3 items-start"><label class="text-right text-ink-sub pt-2">企业地址（选填）：</label><input id="invoiceAddress" class="field" placeholder="请输入企业地址"></div><div class="grid grid-cols-[96px_1fr] gap-3 items-start"><label class="text-right text-ink-sub pt-2">企业电话（选填）：</label><input id="invoicePhoneCompany" class="field" placeholder="请输入企业电话"></div>';if(emailRow)step2.insertBefore(fields,emailRow)}const confirmCopy=q('#invoiceConfirm')?.nextElementSibling;if(confirmCopy)confirmCopy.textContent='我确认发票抬头和收票信息真实有效。';q('#invoiceApplyHeadType').addEventListener('change',syncInvoiceApplyHeadType);qa('[name="invoiceApplyType"]').forEach(r=>r.addEventListener('change',syncInvoiceTypeRadio));syncInvoiceApplyHeadType()}
 window.refreshInvoiceTitle=refreshInvoiceTitle;
 function invoiceFieldErrorNode(key){return q('[data-invoice-field-error="'+key+'"]')}
 function ensureInvoiceFieldErrors(){
@@ -972,6 +985,7 @@ function requestInvoiceWithdrawal(record,trigger){const version=record.version;i
 function invoiceSubmissionError(order,source,expectedVersion){
  refreshInvoiceSharedState();
  if(!order)return '订单不存在，请刷新后重试';
+ if(isInvoiceHistoricalOrder(order))return invoiceReasonConfig.ORDER_BEFORE_INVOICE_RELEASE.label;
  if(source){
   if(!invoiceRecords.includes(source)||source.orders?.length!==1||source.orders[0]!==order.no)return '申请与订单不匹配';
   if((source.version||1)!==expectedVersion)return invoiceConflictMessage(source);
@@ -1012,13 +1026,13 @@ function validateInvoice(requireConfirm=true){
  if(requireConfirm&&!q('#invoiceConfirm').checked){if(reviewError){reviewError.textContent='请确认发票信息真实有效';reviewError.classList.remove('hidden')}return false}
  return true;
 }
-// 原因说明只显示一次，下方保留订单信息和对应恢复动作。
+// 原因说明只显示一次，下方保留订单信息。
 const invoiceReasonMessages={"NO_PERMISSION": "当前账号无权申请该订单发票，请联系团队管理员。", "SELF_SERVICE_EXPIRED": "已超过 12 个月自助开票期限，请联系平台支持。", "SELLER_CONFIG_MISSING": "销售主体开票配置缺失，请联系平台客服。", "TAX_CONFIG_MISSING": "商品开票内容或税务映射缺失，请联系平台客服。", "COMPOSITE_PAYMENT_UNSUPPORTED": "组合支付订单暂不支持自助开票，请联系平台支持。"};
 function showInvoiceReason(no){
  const order=invoiceOrders.find(item=>item.no===no);if(!order)return;
  invoiceReasonLastFocus=document.activeElement;
  const message=invoiceReasonLabels[order.reason]||'暂不可申请，请联系平台客服。';
- q('#invoiceReasonBody').innerHTML='<p class="p-4 rounded bg-warning-bg text-warning">'+esc(message)+'</p><dl class="grid grid-cols-[96px_1fr] gap-y-3 mt-5"><dt class="text-ink-sub">订单号</dt><dd class="mono">'+esc(order.no)+'</dd><dt class="text-ink-sub">支付方式</dt><dd>'+esc(order.pay||'-')+'</dd><dt class="text-ink-sub">订单金额</dt><dd class="mono">'+imoney(order.orderAmount??order.amount)+'</dd><dt class="text-ink-sub">恢复动作</dt><dd>'+esc(invoiceReasonConfig[order.reason]?.action||'请联系平台支持核查订单资格。')+'</dd></dl>';
+ q('#invoiceReasonBody').innerHTML='<p class="p-4 rounded bg-warning-bg text-warning">'+esc(message)+'</p><dl class="grid grid-cols-[96px_1fr] gap-y-3 mt-5"><dt class="text-ink-sub">订单号</dt><dd class="mono">'+esc(order.no)+'</dd><dt class="text-ink-sub">支付方式</dt><dd>'+esc(order.pay||'-')+'</dd><dt class="text-ink-sub">订单金额</dt><dd class="mono">'+imoney(order.orderAmount??order.amount)+'</dd></dl>';
  q('#invoiceReasonDrawer').classList.remove('hidden');q('#invoiceReasonPanel').focus();lucide.createIcons();
 }
 let activeInvoiceRecord=null,invoiceRecordLastFocus=null,invoiceRecordLayerLastFocus=null;
@@ -1092,8 +1106,9 @@ function openInvoiceProgress(r,mode){
 }
 // 可选服务适配器：生产返回已鉴权的版本快照；原型不伪造税务确认或远端成功。
 // 跨标签页只共享状态与版本；抬头、税号和联系人等表单资料不写浏览器存储。
-// 新版状态样例独立存储，不导入旧演示记录（含 IV8940238469、IV8939701984）。
-const invoiceSharedKey='yundeng.invoice.lifecycle.v3-status-examples';
+// 新版状态样例独立存储，不导入旧演示记录（含 IV8940238469、IV8939701984、IV9353863230）。
+// 旧提交申请产生的记录只存在于浏览器本地存储，换键后不再回灌到开票记录列表。
+const invoiceSharedKey='yundeng.invoice.lifecycle.v4-status-examples';
 function refreshInvoiceSharedState(){
  try{const states=JSON.parse(localStorage.getItem(invoiceSharedKey)||'[]');for(const state of states){let r=invoiceRecords.find(x=>x.id===state.id);if(!r){r={...state,email:'',title:'其他用户的申请',tax:'',phone:''};invoiceRecords.push(r)}else if(state.version>r.version)Object.assign(r,state)}}catch(_){}
 }
@@ -1508,7 +1523,7 @@ window.addEventListener('DOMContentLoaded',()=>{
     input.autocomplete='off';
     input.setAttribute('aria-label','发票抬头');
     const clearButton=document.createElement('button');
-    clearButton.id='invoiceTitleClear';
+    clearButton.id='invoiceTitleInputClear';
     clearButton.type='button';
     clearButton.setAttribute('aria-label','清空发票抬头');
     clearButton.innerHTML='<i data-lucide="x" class="w-4" aria-hidden="true"></i>';
@@ -1563,4 +1578,5 @@ window.addEventListener('DOMContentLoaded',()=>{
   window.invoiceValidationUi?.bind?.();
   window.lucide?.createIcons?.();
 },{once:true});
+</script>
 </body></html>

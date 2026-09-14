@@ -4,24 +4,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>云登 · 套餐计价模拟</title>
-  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
-  <script src="https://unpkg.com/lucide@1.34.0/dist/umd/lucide.min.js"></script>
-  <link rel="stylesheet" href="../src/styles/global.css?v=20260821a">
-  <link rel="stylesheet" href="公共导航.css?v=20260828e">
-  <script>
-    if (window.tailwind) tailwind.config = { theme: { extend: {
-      colors: {
-        primary:{DEFAULT:'#0066FF',hover:'#0052CC',active:'#0047B3',bg:'#E6F0FF'},
-        ink:{title:'#1A1D24',body:'#3A3F4A',sub:'#6E7685',muted:'#9DA2AC'},
-        line:{DEFAULT:'#DFE1E5',light:'#E8EAED',lighter:'#F0F1F3'},
-        page:'#F7F8FA',card:'#FFFFFF',hover:'#F3F4F6',success:{DEFAULT:'#0FC060',bg:'#E7F9F0'},
-        warning:{DEFAULT:'#E7772D',bg:'#FDF2E9'},info:{DEFAULT:'#0091D5',bg:'#E4F4FB'}
-      },
-      borderRadius:{DEFAULT:'4px',lg:'8px'},
-      fontFamily:{sans:['-apple-system','BlinkMacSystemFont','PingFang SC','Hiragino Sans GB','Microsoft YaHei','Helvetica Neue','Helvetica','Arial','sans-serif'],mono:['JetBrains Mono','monospace']}
-    } } };
-  </script>
+  <!-- 商务独立版：样式、图标、数据与计价逻辑均内嵌，无需网络或其他文件。 -->
   <style>
+    *,::before,::after { border-width:0; border-style:solid; }
+    h1,h2,h3,p { margin:0; }
+    button,input,select { margin:0; }
+    button { text-transform:none; }
+    [hidden] { display:none !important; }
+    svg { display:block; vertical-align:middle; }
+    body { -webkit-font-smoothing:antialiased; }
+
     :root { --primary:#0066FF; --primary-hover:#0052CC; --primary-bg:#E6F0FF; --ink-title:#1A1D24; --ink-body:#3A3F4A; --ink-sub:#6E7685; --ink-muted:#9DA2AC; --line:#DFE1E5; --line-light:#E8EAED; --line-lighter:#F0F1F3; --page:#F7F8FA; --card:#FFFFFF; --hover:#F3F4F6; --success:#0FC060; --success-bg:#E7F9F0; --warning:#E7772D; --warning-bg:#FDF2E9; }
     * { box-sizing:border-box; }
     html,body { min-height:100%; margin:0; letter-spacing:0; }
@@ -114,7 +106,6 @@
     @media (max-width:980px) { .sim-layout { grid-template-columns:1fr; } .result-panel { position:static; } }
     @media (max-width:600px) { .sim-page { padding:14px; } .sim-header { flex-direction:column; } .header-actions { width:100%; } .header-actions .btn { flex:1; } .status-row { align-items:flex-start; flex-direction:column; } .segmented { width:100%; } .segmented button { flex:1; } .field-row { grid-template-columns:88px minmax(0,1fr); } .field-control input,.field-control select { flex:1 1 auto; width:100%; } .field-note { margin-left:98px; } .duration-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
   </style>
-  <script src="公共导航.js?v=20260828e"></script>
 </head>
 <body>
   <main class="sim-page" aria-labelledby="simTitle">
@@ -124,9 +115,8 @@
         <p class="sim-subtitle">用于销售或运营还原用户购买场景，逐步核对套餐费用、抵扣金额和最终应付金额。</p>
       </div>
       <div class="header-actions">
-        <a class="btn" href="商城-套餐.html"><i data-lucide="external-link"></i>打开套餐购买页</a>
-        <button type="button" class="btn" id="resetButton"><i data-lucide="rotate-ccw"></i>重置参数</button>
-        <button type="button" class="btn btn-primary" id="copyButton"><i data-lucide="copy"></i>复制计算结果</button>
+        <button type="button" class="btn" id="resetButton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>重置参数</button>
+        <button type="button" class="btn btn-primary" id="copyButton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>复制计算结果</button>
       </div>
     </header>
 
@@ -168,7 +158,7 @@
             <h3 class="section-label">购买资源</h3>
             <div class="field-grid">
               <div class="field-row"><label for="newEnvs">环境数</label><div class="field-control"><input id="newEnvs" type="number" min="10" step="10" value="10"><span class="field-unit">个</span></div></div>
-              <p class="field-note">输入非整 10 数值时按 10 的倍数向上取整，单价按所在环境区间自动读取。</p>
+              <p class="field-note">输入非整 10 数值时按 10 的倍数向上取整，单价请按实际报价填写。</p>
               <div class="field-row"><label for="newMembers">成员数</label><div class="field-control"><input id="newMembers" type="number" min="1" step="1" value="1"><span class="field-unit">位</span></div></div>
               <div class="field-row"><label for="newEnvPrice">环境单价</label><div class="field-control"><input id="newEnvPrice" type="number" min="0" step="0.01" placeholder="0.00"><span class="field-unit">元/个</span></div></div>
               <div class="field-row"><label for="newMemberPrice">成员单价</label><div class="field-control"><input id="newMemberPrice" type="number" min="0" step="0.01" placeholder="0.00"><span class="field-unit">元/位</span></div></div>
@@ -310,7 +300,7 @@
           button.classList.toggle('active', button.dataset.scenario === state.scenario);
         });
         document.querySelectorAll('[data-duration]').forEach((button) => button.classList.toggle('active', Number(button.dataset.duration) === state.duration));
-        lucide.createIcons();
+
       };
       const normalizeInputs = () => { $('#newEnvs').value = ceilTen(number('#newEnvs',10)); $('#currentEnvs').value = ceilTen(number('#currentEnvs',10)); $('#newMembers').value = clamp(Math.round(number('#newMembers',1)),1,100000); $('#currentMembers').value = clamp(Math.round(number('#currentMembers',5)),1,100000); };
       document.querySelectorAll('[data-account-status]').forEach((button) => button.addEventListener('click', () => { state.accountStatus = button.dataset.accountStatus; document.querySelectorAll('[data-account-status]').forEach((item) => { const active = item === button; item.classList.toggle('active', active); item.dataset.selected = String(active); item.setAttribute('aria-pressed', String(active)); }); button.closest('.segmented')?.setAttribute('data-active-status', state.accountStatus); state.scenario = state.accountStatus === 'first' ? 'first' : 'renew'; render(); }));
@@ -318,8 +308,17 @@
       document.querySelectorAll('[data-duration]').forEach((button) => button.addEventListener('click', () => { state.duration = Number(button.dataset.duration); render(); }));
       document.querySelectorAll('input,select').forEach((input) => input.addEventListener('input', () => { normalizeInputs(); render(); }));
       document.querySelectorAll('select').forEach((input) => input.addEventListener('change', render));
-      $('#resetButton').addEventListener('click', () => { Object.assign(state, { accountStatus:'first', scenario:'first', duration:30 }); $('#currentEnvs').value=10; $('#currentEnvPrice').value='.90'; $('#currentMembers').value=5; $('#currentMemberPrice').value=19; $('#remainingDays').value=20; $('#currentDiscount').value='.85'; $('#newEnvs').value=10; $('#newMembers').value=1; $('#newEnvPrice').value=''; $('#newMemberPrice').value=''; $('#coupon').value=0; render(); });
-      $('#copyButton').addEventListener('click', async () => { const text = `套餐计价模拟\n场景：${$('#resultScenario').textContent}\n订单金额：${$('#orderAmount').textContent}\n原套餐抵扣金额：${$('#creditAmount').textContent}\n折扣优惠金额：${$('#discountAmount').textContent}\n优惠券抵扣金额：${$('#couponAmount').textContent}\n最终应付金额：${$('#totalAmount').textContent}\n\n${[...document.querySelectorAll('.formula-step')].map((item) => item.innerText).join('\n')}`; try { await navigator.clipboard.writeText(text); $('#copyStatus').textContent='计算结果已复制'; window.setTimeout(() => { $('#copyStatus').textContent=''; }, 1800); } catch (_) { $('#copyStatus').textContent='当前浏览器不支持自动复制，请手动查看计算过程'; } });
+      $('#resetButton').addEventListener('click', () => { Object.assign(state, { accountStatus:'first', scenario:'first', duration:30 }); $('#currentEnvs').value=10; $('#currentEnvPrice').value='.90'; $('#currentMembers').value=5; $('#currentMemberPrice').value=19; $('#remainingDays').value=20; $('#currentDiscount').value='0.85'; $('#newEnvs').value=10; $('#newMembers').value=1; $('#newEnvPrice').value=''; $('#newMemberPrice').value=''; $('#coupon').value=0; render(); });
+      $('#copyButton').addEventListener('click', async () => { const text = `套餐计价模拟\n场景：${$('#resultScenario').textContent}\n订单金额：${$('#orderAmount').textContent}\n原套餐抵扣金额：${$('#creditAmount').textContent}\n折扣优惠金额：${$('#discountAmount').textContent}\n优惠券抵扣金额：${$('#couponAmount').textContent}\n最终应付金额：${$('#totalAmount').textContent}\n\n${[...document.querySelectorAll('.formula-step')].map((item) => item.innerText).join('\n')}`; try {
+          // 本地文件打开时优先使用剪贴板 API，受限时回退到浏览器复制命令。
+          try { await navigator.clipboard.writeText(text); }
+          catch (_) {
+            const field = document.createElement('textarea');
+            field.value = text; field.style.cssText = 'position:fixed;left:-9999px;top:0';
+            document.body.appendChild(field); field.select();
+            const copied = document.execCommand('copy'); field.remove();
+            if (!copied) throw new Error('copy unavailable');
+          } $('#copyStatus').textContent='计算结果已复制'; window.setTimeout(() => { $('#copyStatus').textContent=''; }, 1800); } catch (_) { $('#copyStatus').textContent='当前浏览器不支持自动复制，请手动查看计算过程'; } });
       render();
     })();
   </script>
