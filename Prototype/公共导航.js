@@ -248,20 +248,25 @@
     return `系统框架.html?${params.toString()}`;
   }
 
-  function embeddedModuleSrc() {
-    const params = new URLSearchParams(searchParams.get('moduleSearch') || '');
-    searchParams.forEach((value, name) => {
+  function buildEmbeddedModuleSrc(moduleFile, shellSearch) {
+    const shellParams = new URLSearchParams(shellSearch || '');
+    const params = new URLSearchParams(shellParams.get('moduleSearch') || '');
+    shellParams.forEach((value, name) => {
       if (!shellParamNames.has(name)) params.append(name, value);
     });
     params.set('embedded', '1');
-    const hash = searchParams.get('moduleHash');
+    const hash = shellParams.get('moduleHash');
     let normalizedHash = '';
     if (hash) {
       const hashUrl = new URL('https://yundeng.invalid/');
       hashUrl.hash = hash.startsWith('#') ? hash : `#${hash}`;
       normalizedHash = hashUrl.hash;
     }
-    return `${routedModule}?${params.toString()}${normalizedHash}`;
+    return `${moduleFile}?${params.toString()}${normalizedHash}`;
+  }
+
+  function embeddedModuleSrc() {
+    return buildEmbeddedModuleSrc(routedModule, location.search);
   }
 
   function redirectStandaloneModule() {
@@ -467,6 +472,15 @@
       tabsHost.innerHTML = tabs.map(tab => `<div class="yundeng-browser-tab" data-tab-id="${tab.id}" data-active="${tab.id === activeTabId}" role="tab" aria-selected="${tab.id === activeTabId}" tabindex="${tab.id === activeTabId ? '0' : '-1'}" title="${escapeHtml(tab.title)}"><span class="yundeng-browser-tab-mark">云</span><span class="yundeng-browser-tab-title">${escapeHtml(tab.title)}</span><button type="button" class="yundeng-close-tab" data-close-tab="${tab.id}" title="关闭标签页" aria-label="关闭${escapeHtml(tab.title)}"><i data-lucide="x"></i></button></div>`).join('');
       syncBrowserControls();
       window.lucide?.createIcons?.();
+    };
+    // 软导航时同步伪浏览器标签标题与地址，避免整壳重载。
+    window.yundengSyncBrowserRoute = (title, address) => {
+      const tab = activeTab();
+      if (!tab) return;
+      tab.title = title;
+      tab.history = [address];
+      tab.historyIndex = 0;
+      renderTabs();
     };
     const selectTab = id => { if (!tabs.some(tab => tab.id === id)) return; activeTabId = id; renderTabs(); tabsHost.querySelector(`[data-tab-id="${id}"]`)?.scrollIntoView({ block:'nearest', inline:'nearest' }); };
     const addTab = () => { const tab = makeTab(); tabs.push(tab); activeTabId = tab.id; renderTabs(); addressInput.focus(); addressInput.select(); announce('已新增标签页'); };
@@ -1336,6 +1350,9 @@
     let moduleReady = false;
     let moduleBackgroundControls = [];
     let moduleBackgroundRequestedHidden = false;
+    // 软导航运行时路由上下文（模块内事件与失败提示均以当前值为准）。
+    let activeRoutedModule = routedModule;
+    let activePageLabel = pageLabel;
     const syncModuleBackgroundControls = hidden => {
       const controls = [
         document.querySelector('#assistantBtn, #assistantButton, [data-yundeng-assistant-button]')
@@ -1364,11 +1381,11 @@
       syncModuleBackgroundControls(false);
       loading.hidden = false;
       loading.dataset.state = 'error';
-      loading.innerHTML = `<i data-lucide="circle-alert" aria-hidden="true"></i><div><strong>${pageLabel}加载失败</strong><span>请确认模块文件存在后重新加载。</span></div><button type="button">重新加载</button>`;
+      loading.innerHTML = `<i data-lucide="circle-alert" aria-hidden="true"></i><div><strong>${activePageLabel}加载失败</strong><span>请确认模块文件存在后重新加载。</span></div><button type="button">重新加载</button>`;
       loading.querySelector('button').onclick = () => location.reload();
       window.lucide?.createIcons?.();
     };
-    const loadTimeout = setTimeout(showLoadFailure, 8000);
+    let loadTimeout = setTimeout(showLoadFailure, 8000);
 
     const setDirty = dirty => {
       moduleDirty = Boolean(dirty);
@@ -1398,7 +1415,7 @@
     const confirmDiscard = () => !moduleDirty || confirm('当前有未保存修改，离开后将丢失。确定继续吗？');
     const syncModuleRouteState = data => {
       const item = itemForModule(data.file);
-      if (!item || data.file !== routedModule) return false;
+      if (!item || data.file !== activeRoutedModule) return false;
       const href = shellRouteHref(item.key, { module: data.file, moduleSearch: data.search, hash: data.hash });
       const nextUrl = new URL(href, location.href).href;
       if (nextUrl !== location.href) history.replaceState(history.state, '', href);
@@ -1412,9 +1429,95 @@
       setTimeout(action, 0);
       return true;
     };
+    // —— 软导航：同一 SystemFrame 文档内切换业务模块，侧栏不重建、菜单不收起-展开 ——
+    const parseShellRoute = href => {
+      try {
+        const url = new URL(href, location.href);
+        if (decodeURIComponent(url.pathname.split('/').pop() || '') !== '系统框架.html') return null;
+        const key = normalizeRequestedPage(url.searchParams.get('page')) || DEFAULT_ROUTE_KEY;
+        const item = allItems.find(candidate => candidate.key === key);
+        if (!item) return null;
+        const moduleParam = url.searchParams.get('module');
+        const moduleItem = moduleParam ? itemForModule(moduleParam) : null;
+        const moduleFile = moduleItem?.key === item.key ? moduleParam : item.href;
+        return { url, key, label: item.label, moduleFile };
+      } catch (_) { return null; }
+    };
+    const applySidebarActiveState = nextKey => {
+      const nav = document.getElementById('yundeng-primary-nav');
+      nav?.querySelectorAll('a[data-page-key]').forEach(link => {
+        const key = link.dataset.pageKey;
+        link.dataset.active = String(key === 'store' ? STORE_PAGE_KEYS.has(nextKey) : key === nextKey);
+      });
+      NAV.filter(item => item.group).forEach(item => {
+        const toggle = nav?.querySelector(`[data-group-key="${item.key}"]`);
+        toggle?.setAttribute('data-active', String(item.children.some(child => child.key === nextKey)));
+      });
+      document.querySelectorAll('a.yundeng-bottom-link').forEach(link => {
+        try {
+          const page = new URL(link.getAttribute('href'), location.href).searchParams.get('page');
+          link.dataset.active = String(page === nextKey);
+        } catch (_) {}
+      });
+    };
+    const applySidebarExpandedState = () => {
+      const expanded = readExpandedGroups();
+      const nav = document.getElementById('yundeng-primary-nav');
+      NAV.filter(item => item.group).forEach(item => {
+        const toggle = nav?.querySelector(`[data-group-key="${item.key}"]`);
+        const sub = toggle?.nextElementSibling;
+        const isOpen = expanded[item.key] !== false;
+        toggle?.setAttribute('aria-expanded', String(isOpen));
+        if (sub) sub.dataset.expanded = String(isOpen);
+      });
+    };
+    const softApplyRoute = (href, { push = true } = {}) => {
+      const target = parseShellRoute(href);
+      if (!target || !frame) return false;
+      // index 宿主模式下历史由外层 index.html 维护，仅同步外层地址。
+      if (!(isIndexHosted && window.parent !== window)) {
+        try {
+          if (push) history.pushState(history.state, '', href);
+          else history.replaceState(history.state, '', href);
+        } catch (_) { return false; }
+      }
+      const nextModuleSrc = buildEmbeddedModuleSrc(target.moduleFile, target.url.search);
+      let sameModule = false;
+      try { sameModule = new URL(nextModuleSrc, location.href).href === new URL(frame.getAttribute('src'), location.href).href; } catch (_) {}
+      syncExpandedGroupsForHref(href);
+      applySidebarActiveState(target.key);
+      applySidebarExpandedState();
+      activePageLabel = target.label;
+      document.title = `云登 · ${target.label}`;
+      window.yundengSyncBrowserRoute?.(`云登 · ${target.label}`, `https://app.yunlogin.com/${target.key}`);
+      outlet.setAttribute('aria-label', `${target.label}业务内容区`);
+      frame.title = target.label;
+      if (!sameModule) {
+        moduleReady = false;
+        clearTimeout(loadTimeout);
+        loadTimeout = setTimeout(showLoadFailure, 8000);
+        setDirty(false);
+        moduleBackgroundRequestedHidden = false;
+        syncModuleBackgroundControls(false);
+        loading.hidden = false;
+        loading.dataset.state = 'loading';
+        loading.innerHTML = `<i data-lucide="loader-circle" aria-hidden="true"></i><span>正在加载${target.label}</span>`;
+        window.lucide?.createIcons?.();
+        activeRoutedModule = target.moduleFile;
+        frame.src = nextModuleSrc;
+      }
+      if (isIndexHosted && window.parent !== window) {
+        window.parent.postMessage({ type: 'yundeng:index-route-state', page: target.key, search: target.url.search }, '*');
+      }
+      return true;
+    };
+    if (!(isIndexHosted && window.parent !== window)) {
+      window.addEventListener('popstate', () => { softApplyRoute(location.href, { push: false }); });
+    }
     const navigate = async (href, options = {}) => {
       if (!options.confirmed && !confirmDiscard()) return false;
       return finishNavigation(() => {
+        if (!options.replace && softApplyRoute(href, { push: true })) return;
         syncExpandedGroupsForHref(href);
         if (isIndexHosted && window.parent !== window) {
           window.parent.postMessage({ type: 'yundeng:index-route-request', href }, '*');
@@ -1479,7 +1582,7 @@
         markReady();
         const item = itemForModule(event.data.file);
         if (!item) return;
-        if (event.data.file !== routedModule) {
+        if (event.data.file !== activeRoutedModule) {
           navigate(shellRouteHref(item.key, { module: event.data.file, moduleSearch: event.data.search, hash: event.data.hash }), { replace: true, confirmed: true });
           return;
         }
@@ -1509,7 +1612,15 @@
       if (!link) return;
       setMobileOpen(false);
       const plainNavigation = e.button === 0 && !e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey && link.target !== '_blank';
-      if (!e.defaultPrevented && plainNavigation) syncExpandedGroupsForHref(link.href);
+      if (!e.defaultPrevented && plainNavigation) {
+        // 优先走壳内软导航（不重载侧栏）；不可用时退回整页跳转。
+        if (window.yundengNavigateShell) {
+          window.yundengNavigateShell(link.href);
+          e.preventDefault();
+        } else {
+          syncExpandedGroupsForHref(link.href);
+        }
+      }
     });
     document.addEventListener('click', e => {
       const link = e.target.closest('a[href]');

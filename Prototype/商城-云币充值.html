@@ -47,6 +47,14 @@
     .data-table-row{border-bottom:1px solid #E8EAED}.data-table-row:hover{background:#F3F4F6}
     @media(max-width:720px){.page-tabs{overflow-x:auto}.coin-summary{grid-template-columns:1fr!important}.responsive-field{width:100%!important}.modal-card{width:min(520px,100%)!important}.toast{min-width:0;width:calc(100vw - 32px)}.coin-filter-item{flex-basis:100%;width:100%}.coin-filter-control{width:calc(100% - 74px)}.coin-filter-actions{width:100%;justify-content:flex-start}}
 
+    /* 覆盖公共 page-content 的整屏最小高度，避免导航高度重复计入。 */
+    #mainContent { display:flex; flex-direction:column; height:100dvh; min-height:0; padding:16px; }
+    #mainContent > nav { flex:none; }
+    body[data-yundeng-embedded="true"] #mainContent > .page-content,
+    #mainContent > .page-content { display:flex; flex-direction:column; flex:1 0 auto; min-height:0; }
+    body[data-yundeng-embedded="true"] #mainContent > .page-content > #coinPanel,
+    #mainContent > .page-content > #coinPanel { flex:1 0 auto; min-height:0; align-items:stretch; }
+    #coinPanel > .coin-order-summary { align-self:stretch; }
   </style>
   <style>
     /* 余额视觉特例：参考需求图的超大金额层级，颜色仍使用 design.md 既有 token。 */
@@ -171,6 +179,13 @@
     .coin-recharge-control-row{display:grid;grid-template-columns:84px minmax(220px,326px);align-items:center;gap:12px}
     .coin-recharge-control-row .coin-recharge-field-label{margin:0;font-size:14px;font-weight:400;line-height:32px;text-align:right;white-space:nowrap}
     .coin-recharge-select{width:326px;max-width:100%}
+    /* 优惠券下拉框：去除原生外观与原生箭头，改用 design.md 的自定义箭头（#9DA2AC） */
+    .coin-recharge-select{appearance:none;-webkit-appearance:none;padding-right:28px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%239DA2AC' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center}
+    .coin-recharge-select:hover{border-color:#0066FF}
+    /* 优惠券下拉框焦点态：只保留单条主色描边，去掉阴影环与原生 outline，避免出现重影蓝边 */
+    #rechargeCoupon:focus,#rechargeCoupon:focus-visible{outline:0!important;outline-offset:0;box-shadow:none!important;border-color:#0066FF}
+    /* 未选择优惠券时展示占位灰，选中后恢复正文色 */
+    #rechargeCoupon:has(option[value="0"]:checked){color:#9DA2AC}
     .coin-recharge-payment-options{display:flex;gap:10px}
     .coin-recharge-payment-btn{position:relative;flex:0 0 158px;height:40px;padding:0 12px;border:1px solid #DFE1E5;border-radius:4px;display:flex;align-items:center;justify-content:flex-start;gap:8px;color:#3A3F4A;background:#fff;cursor:pointer;font-size:14px}
     .coin-recharge-payment-btn:hover,.coin-recharge-payment-btn:focus-visible{border-color:#0066FF;outline:none}
@@ -262,8 +277,9 @@
     }
     /* 充值双栏布局；沿用 design.md 的色板、间距和组件层级。 */
     #mainContent #coinPanel{display:grid}
-    #coinPanel{grid-template-columns:minmax(0,1fr) 320px;gap:2px;align-items:stretch;min-height:calc(100vh - 64px)}
-    .coin-form-column{min-width:0;background:#fff;padding:32px 40px}
+    #coinPanel{grid-template-columns:minmax(0,1fr) 320px;gap:12px;align-items:stretch;min-height:calc(100vh - 64px)}
+    /* 左侧业务区块：按 design.md 3.1「8px 用于卡片、大容器」设圆角，与右侧订单详情卡保持同一层级。 */
+    .coin-form-column{min-width:0;background:#fff;padding:32px 40px;border-radius:8px}
     .coin-balance-card{min-height:0;height:auto;width:320px;max-width:100%;padding:20px;background:#fff;border:1px solid #E8EAED;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,.08);overflow:visible;margin-bottom:28px}
     .coin-balance-heading,.coin-balance-bottom{display:flex;align-items:center;gap:8px}
     .coin-balance-bottom{justify-content:space-between;margin-top:16px}
@@ -273,13 +289,15 @@
     .coin-help{position:relative;display:flex}
     .coin-help-trigger{display:flex;color:#9DA2AC;padding:0;background:none;border:0;cursor:help}
     .coin-help-trigger svg{width:14px;height:14px}
-    .coin-help-popover{display:none;position:absolute;top:100%;left:-120px;padding:20px;width:560px;max-width:calc(100vw - 64px);background:#fff;border:1px solid #E8EAED;border-radius:6px;box-shadow:0 6px 24px rgba(0,0,0,.12);z-index:100}
+    .coin-help-popover{display:none;position:absolute;top:calc(100% + 8px);left:0;padding:16px;width:420px;max-width:calc(100vw - 64px);background:#fff;border:1px solid #E8EAED;border-radius:6px;box-shadow:0 6px 24px rgba(0,0,0,.12);z-index:100}
     .coin-help:hover .coin-help-popover,.coin-help:focus-within .coin-help-popover{display:block}
     .coin-help-popover h2{font-size:16px;font-weight:500;margin-bottom:16px}
     .coin-help-popover ul{list-style:disc;padding-left:20px;display:grid;gap:16px}
     .coin-help-popover li::marker{color:#0066FF}
-    .coin-business-card{overflow:visible;border-radius:0}
+    .coin-business-card{overflow:visible;border-radius:8px}
     .coin-recharge-body{padding:0;display:flex;flex-direction:column;gap:20px}
+    .coin-recharge-field-label-with-help{position:relative;display:flex;align-items:center;gap:6px;margin-bottom:12px;width:max-content;max-width:100%}
+    .coin-recharge-field-label-with-help .coin-recharge-field-label{margin:0}
     .coin-recharge-field,.coin-recharge-field + .coin-recharge-field{margin:0}
     .coin-recharge-amount-options{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-top:20px}
     .coin-recharge-amount-btn,.coin-recharge-custom-option{position:relative;width:auto;min-width:0;min-height:104px;height:auto;padding:16px;background:#F7F8FA;border:1px solid transparent;border-radius:4px;text-align:left;box-shadow:none}
@@ -296,29 +314,36 @@
     .coin-recharge-control-row,.coin-recharge-more-row{display:flex;align-items:center;gap:8px}
     .coin-recharge-field-label,.coin-recharge-more-label{width:64px;min-width:64px;flex:none;font-weight:400}
     .coin-recharge-section-label{width:auto}
-    .coin-recharge-select{width:360px;max-width:calc(100% - 72px)}
+    .coin-recharge-select{width:326px;max-width:calc(100% - 72px)}
     .coin-recharge-payment-options{display:flex;flex-wrap:wrap;gap:16px}
-    .coin-recharge-payment-btn{flex:0 0 220px;white-space:nowrap;width:220px;height:56px;justify-content:flex-start;padding:12px 16px;border:1px solid #DFE1E5;border-radius:4px;gap:12px;box-shadow:none}
+    .coin-recharge-payment-btn{flex:0 0 220px;white-space:nowrap;width:220px;height:40px;justify-content:flex-start;padding:0 12px;border:1px solid #DFE1E5;border-radius:4px;gap:8px;box-shadow:none}
     .coin-recharge-payment-btn.selected{background:#fff;color:#0066FF;border-color:#0066FF}
     .coin-recharge-payment-check{position:static;width:14px;height:14px;border:1px solid #9DA2AC;border-radius:50%;background:#fff;display:block;clip-path:none;transform:none}
     .coin-recharge-payment-check svg{display:none}
     .coin-recharge-payment-btn.selected .coin-recharge-payment-check{border:4px double #0066FF;background:#0066FF}
     .coin-recharge-more-methods{padding:12px 16px;border:1px solid #DFE1E5;border-radius:4px;min-height:56px;display:flex;align-items:center;gap:8px}
-    .coin-order-summary{background:#fff;padding:20px;min-width:0}
-    .coin-order-summary h2{font-size:16px;font-weight:600;margin-bottom:20px}
-    .coin-order-summary dl{display:grid;gap:24px;padding-bottom:24px;border-bottom:1px solid #DFE1E5}
-    .coin-order-summary dl>div,.coin-order-payable{display:flex;align-items:center;justify-content:space-between;gap:12px}
-    .coin-order-summary dd{font-family:'JetBrains Mono',monospace}
-    .coin-order-payable{margin:20px 0}
-    .coin-order-payable strong{font-size:24px;color:#0066FF}
-    .coin-order-summary>#submitRecharge{width:100%;height:40px;font-size:16px}
-    .coin-order-support{display:flex;align-items:center;gap:8px;margin-top:20px}
+    /* 订单详情复用套餐页 summary-panel 的标题、分区、金额行与支付按钮样式。 */
+    .coin-order-summary{background:#fff;padding:0;min-width:0;align-self:start;overflow:hidden;border:1px solid #E8EAED;border-radius:8px;box-shadow:0 1px 5px rgba(28,35,49,.07)}
+    .coin-order-summary h2{font-size:14px;font-weight:600;margin:0;padding:18px 20px;border-bottom:1px solid #E8EAED;color:#1A1D24}
+    .coin-order-summary dl{display:grid;gap:0;margin:0;padding:18px 20px;border-bottom:1px solid #F0F1F3}
+    .coin-order-summary dl>div,.coin-order-payable{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:28px;color:#60656c;font-size:14px}
+    .coin-order-summary dd{margin:0;color:#4b5057;font-family:'JetBrains Mono',monospace;font-weight:400;text-align:right}
+    /* 应付金额区与支付按钮之间不设分割线：下内边距归零，间距统一由 .coin-order-actions 的 18px 上外边距提供。 */
+    .coin-order-payable-section{padding:8px 20px 0}
+    .coin-order-payable{min-height:36px;margin:8px 0 0}
+    .coin-order-payable strong{color:#0066FF;font:600 22px/1 'JetBrains Mono',monospace}
+    .coin-order-actions{margin-top:18px;padding:0 20px 18px}
+    .coin-order-actions>#submitRecharge{width:100%;height:36px;min-height:36px;padding:0;border:0;border-radius:4px;font-size:14px;font-weight:400;background:#0066FF;color:#fff}
+    .coin-order-actions>#submitRecharge:hover{filter:brightness(.96)}
+    .coin-order-support{display:flex;align-items:center;justify-content:center;gap:8px;margin:10px 0 0;color:#9DA2AC;font-size:12px}
     .coin-order-support a{color:#0066FF}
     @media(min-width:1600px){.coin-form-column{padding:32px 80px}.coin-bonus-rate{position:absolute;right:8px;top:20px}}
-    @media(max-width:1279px){#coinPanel{grid-template-columns:minmax(0,1fr) 280px}.coin-form-column{padding:24px}.coin-recharge-amount-options{grid-template-columns:repeat(3,minmax(0,1fr))}.coin-recharge-payment-btn{width:180px;flex-basis:180px}.coin-recharge-more-row{flex-wrap:wrap}}
-    @media(max-width:900px){#coinPanel{grid-template-columns:1fr}.coin-order-summary{border-top:1px solid #E8EAED}.coin-recharge-amount-options{grid-template-columns:repeat(3,minmax(0,1fr))}.coin-order-summary dl{grid-template-columns:1fr 1fr;gap:16px}.coin-help-popover{width:480px}}
+    @media(max-width:1279px){#coinPanel{grid-template-columns:minmax(0,1fr) 300px}.coin-form-column{padding:24px}.coin-recharge-amount-options{grid-template-columns:repeat(3,minmax(0,1fr))}.coin-recharge-payment-btn{width:180px;flex-basis:180px}.coin-recharge-more-row{flex-wrap:wrap}}
+    @media(max-width:900px){#coinPanel{grid-template-columns:1fr}.coin-recharge-amount-options{grid-template-columns:repeat(3,minmax(0,1fr))}.coin-help-popover{width:360px}}
+    #mainContent { min-height:calc(100vh - 16px); }
+    #coinPanel { min-height:calc(100vh - 68px); }
   </style>
-  <script src="公共导航.js?v=20260828e"></script>
+  <script src="公共导航.js?v=20260916a"></script>
 </head>
 <body class="bg-page text-ink-body">
   <script>
@@ -343,7 +368,7 @@
         <div class="coin-form-column">
           <!-- 余额卡片与悬浮说明 -->
           <div class="coin-balance-card card">
-            <div class="coin-balance-heading"><h1 id="coinPageHeading" class="coin-balance-title">云币余额（元）</h1><div class="coin-help"><button type="button" class="coin-help-trigger" aria-label="关于云币" aria-describedby="coinHelp"><i data-lucide="circle-help"></i></button><div id="coinHelp" class="coin-help-popover" role="tooltip"><h2>关于云币</h2><ul><li>云币是云登提供的一种内部结算形式，1元=1云币。</li><li>云币可以用于购买代理与套餐，支付时选择云币支付，用多少扣多少。</li><li>云币充值记录、消费记录可在费用管理–云币交易流水页面查看，剩余余额可在商城–云币充值页面查看。</li></ul></div></div></div>
+            <div class="coin-balance-heading"><h1 id="coinPageHeading" class="coin-balance-title">云币余额（元）</h1></div>
             <div class="coin-balance-bottom"><div id="coinBalanceAmount" class="coin-balance-value">326.80</div><button data-anno="1" id="refreshBalance" type="button" class="coin-balance-refresh"><i data-lucide="refresh-cw" class="w-4 h-4"></i><span>刷新</span></button></div>
           </div>
 
@@ -351,7 +376,7 @@
           <div id="rechargeView" class="coin-recharge-view">
             <div class="coin-recharge-body">
               <div class="coin-recharge-field">
-                <label class="coin-recharge-field-label coin-recharge-section-label" for="customAmount">充值金额</label>
+                <div class="coin-recharge-field-label-with-help"><label class="coin-recharge-field-label coin-recharge-section-label" for="customAmount">充值金额</label><div class="coin-help"><button type="button" class="coin-help-trigger" aria-label="关于云币" aria-describedby="coinHelp"><i data-lucide="circle-help"></i></button><div id="coinHelp" class="coin-help-popover" role="tooltip"><h2>关于云币</h2><ul><li>云币是云登提供的一种内部结算形式，1元=1云币。</li><li>云币可以用于购买代理与套餐，支付时选择云币支付，用多少扣多少。</li><li>云币充值记录、消费记录可在费用管理–云币交易流水页面查看，剩余余额可在商城–云币充值页面查看。</li></ul></div></div></div>
                 <div data-anno="2" class="coin-recharge-amount-options" id="amountChoices">
                   <button type="button" class="coin-recharge-amount-btn selected" data-amount="500"><span class="coin-recharge-amount-check" aria-hidden="true"><i data-lucide="check"></i></span><span class="coin-recharge-amount-value">¥ 500</span><span class="coin-bonus-rate">加赠5%</span><span class="coin-recharge-amount-gift">赠送 25 云币</span><span class="coin-recharge-amount-total">实际到账 525 云币</span></button>
                   <button type="button" class="coin-recharge-amount-btn" data-amount="1000"><span class="coin-recharge-amount-check" aria-hidden="true"><i data-lucide="check"></i></span><span class="coin-recharge-amount-value">¥ 1000</span><span class="coin-bonus-rate">加赠10%</span><span class="coin-recharge-amount-gift">赠送 100 云币</span><span class="coin-recharge-amount-total">实际到账 1,100 云币</span></button>
@@ -399,9 +424,11 @@
         <aside class="coin-order-summary" aria-label="订单详情">
           <h2>订单详情</h2>
           <dl><div><dt>充值金额</dt><dd id="orderAmount">¥500.00</dd></div><div><dt>赠送云币</dt><dd id="orderBonus">¥25.00</dd></div><div><dt>优惠券赠送</dt><dd id="orderCoupon">¥0.00</dd></div><div><dt>实际到账</dt><dd id="orderTotal">¥525.00</dd></div></dl>
-          <div class="coin-order-payable"><span>应付金额</span><strong id="payable" class="mono">¥500.00</strong></div>
+          <div class="coin-order-payable-section"><div class="coin-order-payable"><span>应付金额</span><strong id="payable" class="mono">¥500.00</strong></div></div>
+          <div class="coin-order-actions">
           <button data-anno="3" id="submitRecharge" type="button" class="btn btn-primary">立即支付</button>
           <p class="coin-order-support"><i data-lucide="circle-alert" class="w-4 h-4"></i><span>如有疑问，请联系<a href="#" data-contact-service>客服</a></span></p>
+          </div>
         </aside>
       </section>
     </div>

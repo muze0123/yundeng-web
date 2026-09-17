@@ -48,7 +48,7 @@
     .store-tab svg { width: 16px; height: 16px; }
     .cart-layout { display: flex; flex-wrap: nowrap; gap: 16px; align-items: flex-start; }
     .cart-list-wrapper { flex: 1 1 auto; min-width: 0; overflow-x: auto; overflow-y: clip; }
-    .order-summary { flex: 0 0 350px; width: 350px; min-width: 0; position: sticky; top: 0; }
+    .order-summary { flex: 0 0 320px; width: 320px; min-width: 0; position: sticky; top: 0; }
     .cart-toolbar { padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; gap: 16px; border-bottom: 1px solid var(--line-lighter); background: var(--card); }
     .cart-toolbar-left, .cart-toolbar-actions { min-width: 0; display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
     .checkbox-line { display: inline-flex; align-items: flex-start; gap: 7px; cursor: pointer; }
@@ -88,6 +88,8 @@
     .cart-dynamic-validity { min-width: 0; display: inline-flex; align-items: center; color: var(--ink-sub); white-space: nowrap; }
     .cart-mini-select { width: 200px; min-width: 200px; max-width: 200px; height: 32px; padding: 0 30px 0 10px; border: 1px solid var(--line); border-radius: 4px; color: var(--ink-body); background: var(--card); outline: none; }
     .cart-mini-select:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(0,102,255,.12); }
+    .cart-mini-select[data-cart-coupon]:focus,
+    .cart-mini-select[data-cart-coupon]:focus-visible { outline: 0; outline-offset: 0; box-shadow: none; border-color: var(--primary); }
     .cart-quantity { display: inline-grid; grid-template-columns: 28px 44px 28px; height: 32px; border: 1px solid var(--line); border-radius: 4px; overflow: hidden; background: var(--card); }
     .cart-quantity button { border: 0; color: var(--ink-sub); background: var(--card); cursor: pointer; }
     .cart-quantity button:hover { color: var(--primary); background: var(--primary-bg); }
@@ -113,10 +115,12 @@
     .cart-empty { min-height: 320px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--ink-sub); text-align: center; }
     .cart-empty .empty-icon { width: 48px; height: 48px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--primary); background: var(--primary-bg); }
     .cart-empty h3 { margin: 12px 0 4px; color: var(--ink-title); font-size: 16px; }
-    .summary-card, .summary-payment, .summary-total-card { width: 100%; padding: 16px 20px; border-radius: 8px; background: var(--card); }
-    .summary-payment, .summary-total-card { margin-top: 10px; }
+    /* 结算区：订单信息 / 支付方式 / 应付金额 合并为同一张卡片，卡片内以分割线区分区块。 */
+    .summary-card { width: 100%; padding: 18px 20px; display: flex; flex-direction: column; border: 1px solid var(--line-light); border-radius: 8px; background: var(--card); box-shadow: 0 1px 5px rgba(28,35,49,.07); }
+    .summary-block { flex: none; }
+    .summary-block + .summary-block { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line-light); }
     .summary-title-row, .summary-total-top { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
-    .summary-title-row h2 { margin: 0; color: var(--ink-title); font-size: 16px; font-weight: 600; }
+    .summary-title-row h2 { margin: 0; color: var(--ink-title); font-size: 14px; font-weight: 600; }
     .selected-count { color: var(--ink-sub); }
     .summary-selected-list { display: grid; gap: 12px; margin-top: 12px; }
     .summary-selected-item { display: flex; align-items: flex-start; gap: 12px; }
@@ -129,10 +133,11 @@
     .summary-overview { margin: 16px -20px 0; padding: 10px 20px 0; border-top: 1px solid var(--line-lighter); }
     .summary-overview-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; padding: 6px 0; color: var(--ink-sub); }
     .summary-overview-row strong, .summary-overview-row span:last-child { color: var(--ink-title); text-align: right; }
-    .summary-payment h3 { margin: 0 0 12px; color: var(--ink-title); font-size: 16px; font-weight: 600; }
+    .summary-payment h3 { margin: 0 0 12px; color: var(--ink-title); font-size: 14px; font-weight: 600; }
     .summary-payment-options { display: grid; gap: 12px; }
-    .summary-payment-option { min-height: 42px; padding: 0 12px; border: 1px solid var(--line); border-radius: 4px; display: flex; align-items: center; justify-content: center; gap: 8px; color: var(--ink-body); background: var(--card); cursor: pointer; }
-    .summary-payment-option:hover, .summary-payment-option.is-selected { color: var(--primary); border-color: var(--primary); background: var(--primary-bg); }
+    .summary-payment-option { min-height: 40px; padding: 0 12px; border: 1px solid var(--line); border-radius: 4px; display: flex; align-items: center; justify-content: flex-start; gap: 8px; color: var(--ink-body); background: var(--card); cursor: pointer; font-size: 14px; }
+    .summary-payment-option:hover { color: var(--primary); border-color: var(--primary); background: var(--card); }
+    .summary-payment-option.is-selected { color: var(--primary); border-color: var(--primary); background: var(--primary-bg); }
     .payment-label { display: flex; align-items: center; gap: 8px; }
     .payment-label svg { width: 16px; height: 16px; }
     .payment-balance { color: var(--ink-sub); }
@@ -145,6 +150,8 @@
     .summary-agreement { margin-top: 16px; color: var(--ink-sub); font-size: 12px; }
     .summary-agreement a { color: var(--primary); font-weight: 600; text-decoration: none; }
     .summary-agreement a:hover { text-decoration: underline; }
+    .store-page { min-height:calc(100vh - 16px); padding-bottom:16px; }
+    #cartPanel { min-height:calc(100vh - 68px); }
     .modal-mask { position: fixed; inset: 0; z-index: 2000; padding: 16px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,.3); }
     .modal-mask.hidden { display: none; }
     .modal-panel { width: 520px; max-width: 92vw; max-height: 88vh; border-radius: 8px; display: flex; flex-direction: column; background: var(--card); box-shadow: 0 6px 24px rgba(0,0,0,.12); }
@@ -181,9 +188,16 @@
       .cart-row-actions { min-width: 0; }
     }
     :where(button, input, select):focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+    /* 左侧列表与右侧结算末区块拉伸至同一底线，页面底部留白 16px。 */
+    #mainContent.store-page { display:flex; flex-direction:column; height:100dvh; min-height:0; padding:16px; }
+    #mainContent > nav { flex:none; }
+    #mainContent > #cartPanel { flex:1 0 auto; min-height:0; align-items:stretch; }
+    #cartPanel > .order-summary { position:static; display:flex; flex-direction:column; align-self:stretch; }
+    /* 合并后的结算卡片拉伸至左侧列表底线，区块按内容顺序自上而下排列。 */
+    .order-summary > .summary-card { flex:1 1 auto; min-height:0; }
   </style>
   <link rel="stylesheet" href="公共导航.css?v=20260825a">
-  <script src="公共导航.js?v=20260828e"></script>
+  <script src="公共导航.js?v=20260916a"></script>
 </head>
 <body class="overflow-hidden">
   <main id="mainContent" class="store-page" tabindex="-1">
@@ -383,7 +397,10 @@
       return `${item.region}${item.segment ? ` · ${item.segment}` : ''} · ${item.duration}个月 · ${item.qty}个`;
     }
     function renderSummary(selected, total, blocked) {
-      $('#cartSummary').innerHTML = `<section class="summary-card"><div class="summary-title-row"><h2 id="cartSummaryTitle">订单信息</h2><span class="selected-count">已选择 ${selected.length}</span></div><div class="summary-selected-list">${selected.map(item => `<div class="summary-selected-item"><div class="summary-item-main"><div class="summary-item-title">${item.type === '套餐' ? item.region : item.name}</div><div class="summary-item-spec">${cartItemSummarySpec(item)}</div></div><div class="summary-item-price"><span class="mono">${money(cartItemAmount(item))}</span><button class="summary-item-close" type="button" data-delete-cart="${escapeHtml(item.id)}" aria-label="移除商品"><i data-lucide="x"></i></button></div></div>`).join('') || '<div class="summary-item-spec">当前未选择商品</div>'}</div><div class="summary-overview"><div class="summary-overview-row"><span>订单总金额</span><strong class="mono">${money(selected.reduce((sum,item) => sum + item.unit * item.qty, 0))}</strong></div><div class="summary-overview-row"><span>子订单数</span><span class="mono">${selected.length}</span></div><div class="summary-overview-row"><span>共减</span><span class="mono">${money(selected.reduce((sum,item) => sum + (item.baseDiscount ?? item.discount ?? 0) + (item.couponDiscount ?? 0), 0))}</span></div><div class="summary-overview-row"><span>合计</span><strong class="mono">${money(total)}</strong></div></div></section><section class="summary-payment"><h3>支付方式</h3><div class="summary-payment-options">${paymentMethods.map(method => `<div class="summary-payment-option ${state.cartPayment === method.id ? 'is-selected' : ''}" role="radio" tabindex="0" aria-checked="${state.cartPayment === method.id}" data-cart-payment="${method.id}"><span class="payment-label"><i data-lucide="${method.icon}"></i><span>${method.label}</span>${method.suffix ? `<span class="payment-balance">${method.suffix}</span>` : ''}</span>${method.id === 'coin' ? '<span class="payment-recharge"><button type="button" data-recharge>充值</button></span>' : ''}</div>`).join('')}</div></section><section class="summary-total-card"><div class="summary-total-top"><span>实际应付金额</span><strong class="mono">${money(total)}</strong></div><button id="checkout" class="summary-primary-submit" type="button" ${selected.length === 0 || blocked.length ? 'disabled' : ''}>提交支付</button><label class="checkbox-line summary-agreement"><input id="cartNotice" type="checkbox" ${state.cartNotice ? 'checked' : ''}><span>请认真阅读并同意云登浏览器<a href="https://www.yunlogin.com/v2/news/proxyBuyNotice.html?lang=zh" target="_blank" rel="noopener noreferrer">《代理购买须知》</a></span></label></section>`;
+      const selectedList = selected.map(item => `<div class="summary-selected-item"><div class="summary-item-main"><div class="summary-item-title">${item.type === '套餐' ? item.region : item.name}</div><div class="summary-item-spec">${cartItemSummarySpec(item)}</div></div><div class="summary-item-price"><span class="mono">${money(cartItemAmount(item))}</span><button class="summary-item-close" type="button" data-delete-cart="${escapeHtml(item.id)}" aria-label="移除商品"><i data-lucide="x"></i></button></div></div>`).join('') || '<div class="summary-item-spec">当前未选择商品</div>';
+      const paymentOptions = paymentMethods.map(method => `<div class="summary-payment-option ${state.cartPayment === method.id ? 'is-selected' : ''}" role="radio" tabindex="0" aria-checked="${state.cartPayment === method.id}" data-cart-payment="${method.id}"><span class="payment-label"><i data-lucide="${method.icon}"></i><span>${method.label}</span>${method.suffix ? `<span class="payment-balance">${method.suffix}</span>` : ''}</span>${method.id === 'coin' ? '<span class="payment-recharge"><button type="button" data-recharge>充值</button></span>' : ''}</div>`).join('');
+      /* 订单信息 / 支付方式 / 应付金额 同处一张卡片，区块之间由 .summary-block 的分割线区分。 */
+      $('#cartSummary').innerHTML = `<section class="summary-card"><div class="summary-block summary-order"><div class="summary-title-row"><h2 id="cartSummaryTitle">订单信息</h2><span class="selected-count">已选择 ${selected.length}</span></div><div class="summary-selected-list">${selectedList}</div><div class="summary-overview"><div class="summary-overview-row"><span>订单总金额</span><strong class="mono">${money(selected.reduce((sum,item) => sum + item.unit * item.qty, 0))}</strong></div><div class="summary-overview-row"><span>子订单数</span><span class="mono">${selected.length}</span></div><div class="summary-overview-row"><span>共减</span><span class="mono">${money(selected.reduce((sum,item) => sum + (item.baseDiscount ?? item.discount ?? 0) + (item.couponDiscount ?? 0), 0))}</span></div><div class="summary-overview-row"><span>合计</span><strong class="mono">${money(total)}</strong></div></div></div><div class="summary-block summary-payment"><h3>支付方式</h3><div class="summary-payment-options">${paymentOptions}</div></div><div class="summary-block summary-total"><div class="summary-total-top"><span>实际应付金额</span><strong class="mono">${money(total)}</strong></div><button id="checkout" class="summary-primary-submit" type="button" ${selected.length === 0 || blocked.length ? 'disabled' : ''}>提交支付</button><label class="checkbox-line summary-agreement"><input id="cartNotice" type="checkbox" ${state.cartNotice ? 'checked' : ''}><span>请认真阅读并同意云登浏览器<a href="https://www.yunlogin.com/v2/news/proxyBuyNotice.html?lang=zh" target="_blank" rel="noopener noreferrer">《代理购买须知》</a></span></label></div></section>`;
     }
     function renderCart() {
       const selected = selectedCartItems();

@@ -88,9 +88,9 @@
     .stepper input { width: 54px; border: 0; outline: 0; text-align: center; color: #444; background: transparent; font-size: 14px; }
     .inline-note { color: #4b4f56; font-size: 14px; white-space: nowrap; }
     .help-icon { width: 18px; height: 18px; position: relative; display: inline-flex; flex: 0 0 18px; align-items: center; justify-content: center; color: #636a73; cursor: help; }
-    .price-tooltip { position: absolute; top: calc(100% + 14px); left: -92px; z-index: 80; width: min(720px, calc(100vw - 32px)); padding: 40px; border-radius: 8px; color: #3a3f4a; background: #fff; box-shadow: 0 6px 24px rgba(0,0,0,.12); opacity: 0; visibility: hidden; pointer-events: none; transform: translateY(6px); transition: opacity .15s ease, transform .15s ease; }
+    .price-tooltip { display:none; position: absolute; top: calc(100% + 14px); left: -92px; z-index: 80; width: min(720px, calc(100vw - 32px)); padding: 40px; border-radius: 8px; color: #3a3f4a; background: #fff; box-shadow: 0 6px 24px rgba(0,0,0,.12); opacity: 0; visibility: hidden; pointer-events: none; transform: translateY(6px); transition: opacity .15s ease, transform .15s ease; }
     .price-tooltip.member-tooltip { top: calc(100% + 14px); left: -92px; }
-    .help-icon:hover .price-tooltip, .help-icon:focus .price-tooltip { opacity: 1; visibility: visible; transform: translateY(0); }
+    .help-icon:hover .price-tooltip, .help-icon:focus .price-tooltip { display:block; opacity: 1; visibility: visible; transform: translateY(0); }
     .price-tooltip > strong { display: block; margin: 0; color: #3a3f4a; font-size: 16px; line-height: 24px; font-weight: 600; }
     .price-tooltip-intro { display: block; margin: 16px 0 18px; color: #3a3f4a; font-size: 13px; line-height: 20px; }
     .price-tooltip-table { width: 100%; overflow: hidden; border: 1px solid #e8eaed; border-radius: 8px; border-collapse: separate; border-spacing: 0; font-size: 13px; }
@@ -143,6 +143,15 @@
     .recharge-dialog-body { padding: 28px 30px 24px; overflow-y: auto; }
     .recharge-field + .recharge-field { margin-top: 24px; }
     .recharge-field-label { display: block; margin-bottom: 12px; color: #252525; font-size: 16px; font-weight: 600; }
+    .recharge-field-label-with-help { position:relative; display:flex; align-items:center; gap:6px; width:max-content; max-width:100%; }
+    .recharge-field-label-with-help .recharge-field-label { margin-bottom:12px; }
+    .recharge-help { position:relative; display:flex; margin-bottom:12px; }
+    .recharge-help-trigger { width:18px; height:18px; padding:0; border:0; display:inline-flex; align-items:center; justify-content:center; color:#9da2ac; background:transparent; cursor:help; }
+    .recharge-help-trigger svg { width:15px; height:15px; }
+    .recharge-help-popover { display:none; position:absolute; top:calc(100% + 8px); left:0; z-index:100; width:420px; max-width:calc(100vw - 64px); padding:16px; border:1px solid #e8eaed; border-radius:6px; color:#3a3f4a; background:#fff; box-shadow:0 6px 24px rgba(0,0,0,.12); }
+    .recharge-help:hover .recharge-help-popover,.recharge-help:focus-within .recharge-help-popover { display:block; }
+    .recharge-help-popover h3 { margin:0 0 12px; color:#252525; font-size:14px; font-weight:600; }
+    .recharge-help-popover .recharge-info-list { margin:0; }
     .recharge-amount-options { display: grid; grid-template-columns: repeat(4, 180px); gap: 20px; }
     .recharge-amount-btn, .recharge-custom-option { position: relative; width: 180px; height: 80px; padding: 12px 16px; border: 1px solid #f0f1f3; border-radius: 6px; display: inline-flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 4px; color: var(--primary); background: #f7f8fa; cursor: pointer; text-align: left; }
     .recharge-amount-btn { position: relative; }
@@ -210,6 +219,40 @@
     .total-price { color: #252525; font-family: JetBrains Mono, monospace; font-size: 24px; font-weight: 600; }
     .submit-button { width: 100%; height: 36px; border: 0; border-radius: 4px; color: #fff; background: var(--primary); cursor: pointer; }
     .submit-button:hover { filter: brightness(.96); }
+    /* 商城统一摘要与购买控件：四个商城页共享相同的层级与交互态。 */
+    .package-layout { grid-template-columns:minmax(0,1fr) 320px; gap:12px; }
+    .summary-panel { border-radius:8px; box-shadow:0 1px 5px rgba(28,35,49,.07); background:#fff; }
+    .summary-title { min-height:56px; padding:18px 20px; border-bottom:1px solid var(--line-light); font-size:14px; color:var(--ink-title); }
+    .summary-section { padding:18px 20px; border-bottom:1px solid var(--line-lighter); }
+    .summary-section.order-lines { padding-top:16px; padding-bottom:16px; }
+    .summary-line { min-height:32px; font-size:14px; }
+    .summary-line strong,.summary-value { font-family:'JetBrains Mono',monospace; font-weight:400; }
+    .summary-line.payable-line { margin-top:8px; }
+    .summary-line.payable-line strong { color:var(--primary); font-size:22px; font-weight:600; }
+    .total-card { margin:0; padding:18px 20px; background:#fff; box-shadow:none; border-radius:0; }
+    .select-control { width:326px; max-width:100%; height:32px; border-radius:4px; background:#fff; }
+    /* 优惠券下拉框：去除原生外观与原生箭头，改用 design.md 的自定义箭头（#9DA2AC） */
+    .select-control,
+    .recharge-select { padding-right: 28px; appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%239DA2AC' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; }
+    .select-control:hover,
+    .recharge-select:hover { border-color: var(--primary); }
+    /* 优惠券下拉框焦点态：只保留单条主色描边，去掉阴影环与原生 outline，避免出现重影蓝边 */
+    .select-control:focus,
+    .select-control:focus-visible,
+    .recharge-select:focus,
+    .recharge-select:focus-visible { outline: 0!important; outline-offset: 0; box-shadow: none!important; border-color: var(--primary); }
+    /* 未选择优惠券时展示占位灰，选中后恢复正文色 */
+    #planCoupon:has(option[value=""]:checked),
+    #rechargeCoupon:has(option[value=""]:checked) { color: var(--muted); }
+    .field-row { grid-template-columns:88px minmax(0,1fr); gap:12px; }
+    .field-label { white-space:nowrap; text-align:right; }
+    .check-line { min-height:32px; font-size:14px; }
+    .payment-options { gap:10px; }
+    .payment-option { min-height:40px; padding:0 12px; border-radius:4px; background:#fff; }
+    .payment-option:hover { background:#fff; }
+    .payment-option:has(input:checked) { color:var(--primary); border-color:var(--primary); background:var(--primary-bg); }
+    .package-page { min-height:100vh; padding-bottom:16px; }
+    .package-layout { min-height:calc(100vh - 68px); }
     .fine-print { margin-top: 10px; color: #a2a6ac; text-align: center; font-size: 12px; }
     .toast { position: fixed; left: 50%; bottom: 28px; transform: translateX(-50%); padding: 9px 16px; border-radius: 4px; color: #fff; background: rgba(37,37,37,.88); opacity: 0; pointer-events: none; transition: opacity .2s; z-index: 20; }
     .toast.show { opacity: 1; }
@@ -412,8 +455,15 @@
       .subscribed-compare-arrow { display: none; }
       .price-table th, .price-table td { padding: 0 8px; }
     }
+    /* 用剩余空间拉伸左右卡片，底部统一保留 16px。 */
+    main.package-page { display:flex; flex-direction:column; height:100dvh; min-height:0; padding:16px; }
+    main.package-page > nav { flex:none; }
+    main.package-page > .package-layout { flex:1 0 auto; min-height:0; align-items:stretch; }
+    .package-layout > .main-panel, .package-layout > .summary-panel { align-self:stretch; }
+    .summary-panel > .summary-section:not(.order-lines) { border-bottom:0; }
+    .summary-panel > .summary-section.order-lines { border-top:1px solid #E8EAED; }
   </style>
-  <script src="公共导航.js?v=20260828e"></script>
+  <script src="公共导航.js?v=20260916a"></script>
 </head>
   <body class="first-purchase-page" data-account-status="first" data-purchase-mode="renew">
   <main class="package-page">
@@ -620,7 +670,7 @@
       </header>
       <div class="recharge-dialog-body">
         <div class="recharge-field">
-          <label class="recharge-field-label">充值金额</label>
+          <div class="recharge-field-label-with-help"><label class="recharge-field-label">充值金额</label><div class="recharge-help"><button type="button" class="recharge-help-trigger" aria-label="关于云币" aria-describedby="rechargeCoinHelp"><i data-lucide="circle-help"></i></button><div id="rechargeCoinHelp" class="recharge-help-popover" role="tooltip"><h3>关于云币</h3><ul class="recharge-info-list"><li>云币是云登提供的一种内部结算形式，1元=1云币。</li><li>云币可以用于购买代理与套餐，支付时选择云币支付，用多少扣多少。</li><li>云币充值记录、消费记录、剩余余额，可在商城-云币充值页面查看。</li></ul></div></div></div>
           <div class="recharge-amount-options" id="rechargeAmountOptions">
             <button type="button" class="recharge-amount-btn selected" data-amount="500"><span class="recharge-amount-check" aria-hidden="true"><i data-lucide="check"></i></span><span class="recharge-amount-value">¥ 500</span><span class="recharge-amount-gift">赠送 25 云币</span><span class="recharge-amount-total">到账 525 云币</span></button>
             <button type="button" class="recharge-amount-btn" data-amount="1000"><span class="recharge-amount-check" aria-hidden="true"><i data-lucide="check"></i></span><span class="recharge-amount-value">¥ 1000</span><span class="recharge-amount-gift">赠送 100 云币</span><span class="recharge-amount-total">到账 1,100 云币</span></button>
@@ -629,17 +679,9 @@
             <label class="recharge-custom-option" id="rechargeCustomOption" data-amount="custom"><span class="recharge-amount-check" aria-hidden="true"><i data-lucide="check"></i></span><span class="recharge-custom-input"><span class="recharge-custom-prefix">¥</span><input id="customRechargeAmount" type="number" placeholder="自定义" min="1" max="100000" aria-label="自定义充值金额"></span><span id="rechargeCustomBenefit" class="recharge-custom-benefit">赠送 0 云币<br>到账 0 云币</span></label>
           </div>
         </div>
-        <div class="recharge-field">
-          <h3 class="recharge-field-label">关于云币</h3>
-          <ul class="recharge-info-list">
-            <li>云币是云登提供的一种内部结算形式，1元=1云币。</li>
-            <li>云币可以用于购买代理与套餐，支付时选择云币支付，用多少扣多少。</li>
-            <li>云币充值记录、消费记录、剩余余额，可在商城-云币充值页面查看。</li>
-          </ul>
-        </div>
         <div class="recharge-field recharge-control-row">
           <label class="recharge-field-label" for="rechargeCoupon">选择优惠券</label>
-          <select id="rechargeCoupon" class="recharge-select"><option>选择优惠券</option><option>满 100 减 10</option><option>满 500 减 50</option></select>
+          <select id="rechargeCoupon" class="recharge-select"><option value="">选择优惠券</option><option>满 100 减 10</option><option>满 500 减 50</option></select>
         </div>
         <div class="recharge-field recharge-control-row">
           <span class="recharge-field-label">支付方式</span>

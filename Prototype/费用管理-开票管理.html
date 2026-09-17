@@ -389,7 +389,7 @@
 }
 </style>
 <link rel="stylesheet" href="公共导航.css?v=20260825a">
-<script src="公共导航.js?v=20260828f"></script>
+<script src="公共导航.js?v=20260916a"></script>
 </head>
 <body class="bg-page text-ink-body"><script>
 // 直接打开时跳回系统框架
@@ -736,7 +736,7 @@ if(titleDrawer&&titlePanel){
     const toolbar=document.createElement('div');
     toolbar.id='invoiceTitleToolbar';
     toolbar.className='invoice-title-toolbar';
-    toolbar.innerHTML='<div class="order-toolbar-actions"><button id="titleAdd" class="btn btn-primary" type="button"><i data-lucide="plus" class="w-4" aria-hidden="true"></i>新增抬头</button></div><div class="order-search-filter-group"><div class="order-global-search" role="search"><label class="sr-only" for="invoiceTitleKeyword">搜索常用抬头</label><input id="invoiceTitleKeyword" class="field" type="search" placeholder="请输入抬头名称、税号或邮箱" autocomplete="off"><button id="invoiceTitleClear" type="button" class="order-search-clear hidden" aria-label="清空常用抬头搜索"><i data-lucide="x" class="w-4 h-4" aria-hidden="true"></i></button><button id="invoiceTitleSearch" type="button" class="order-search-submit" aria-label="搜索常用抬头"><i data-lucide="search" class="order-search-icon" aria-hidden="true"></i></button></div><button id="invoiceTitleFilterBtn" type="button" class="btn btn-default order-filter-button" aria-haspopup="dialog" aria-expanded="false" aria-controls="invoiceTitleFilterDrawer"><i data-lucide="list-filter" class="w-4 h-4" aria-hidden="true"></i><span>筛选</span><span id="invoiceTitleFilterCount" class="order-filter-count hidden" aria-label="已提交 0 个筛选条件">0</span></button></div>';
+    toolbar.innerHTML='<div class="order-toolbar-actions"><button id="titleAdd" class="btn btn-primary" type="button"><i data-lucide="plus" class="w-4" aria-hidden="true"></i>新增抬头</button></div><div class="order-search-filter-group"><div class="order-global-search" role="search"><label class="sr-only" for="invoiceTitleKeyword">搜索常用抬头</label><input id="invoiceTitleKeyword" class="field" type="search" placeholder="请输入关键词，多个用中文逗号分隔" autocomplete="off"><button id="invoiceTitleClear" type="button" class="order-search-clear hidden" aria-label="清空常用抬头搜索"><i data-lucide="x" class="w-4 h-4" aria-hidden="true"></i></button><button id="invoiceTitleSearch" type="button" class="order-search-submit" aria-label="搜索常用抬头"><i data-lucide="search" class="order-search-icon" aria-hidden="true"></i></button></div><button id="invoiceTitleFilterBtn" type="button" class="btn btn-default order-filter-button" aria-haspopup="dialog" aria-expanded="false" aria-controls="invoiceTitleFilterDrawer"><i data-lucide="list-filter" class="w-4 h-4" aria-hidden="true"></i><span>筛选</span><span id="invoiceTitleFilterCount" class="order-filter-count hidden" aria-label="已提交 0 个筛选条件">0</span></button></div>';
     titleBody.insertBefore(toolbar,titleBody.firstChild);
     const intro=titleBody.querySelector('.flex.items-center.justify-between.gap-3.mb-4');
     intro?.remove();

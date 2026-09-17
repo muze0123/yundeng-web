@@ -88,7 +88,7 @@
     .status-dot { width:8px; height:8px; border-radius:50%; display:inline-block; }
     @media (max-width: 767px) { .sidebar { position:fixed; z-index:50; height:100vh; box-shadow:0 6px 24px rgba(0,0,0,.12); } .sidebar.compact { width:0; overflow:hidden; } .module-global-drawer-panel { width:100%; } .module-global-drawer-info { grid-template-columns:1fr; } }
   </style>
-  <script src="公共导航.js?v=20260828i"></script>
+  <script src="公共导航.js?v=20260916a"></script>
 </head>
 <body class="bg-page text-[13px]">
   <div id="yundeng-app-frame">
@@ -422,9 +422,15 @@
     $('createDialog').onclick=e=>{ if(e.target===$('createDialog')) closeCreateDialog(); };
     $('moduleGlobalDrawerClose').onclick=()=>closeModuleGlobalDrawer();
     $('moduleGlobalDrawer').onclick=e=>{ if(e.target===$('moduleGlobalDrawer')) closeModuleGlobalDrawer(); };
+    // 模块弹层打开时让出右下角操作区域；切换模块后自动恢复助手入口。
+    function setModuleDialogOpen(open){$('assistantBtn').style.visibility=open?'hidden':'';}
+    function setModuleFooterHeight(height){$('assistantBtn').style.bottom=height>0?(height+20)+'px':'';}
+    document.addEventListener('load',event=>{if(event.target.id==='yundengModuleFrame'){setModuleDialogOpen(false);setModuleFooterHeight(0);event.target.contentWindow?.postMessage({type:'yundeng:request-footer-state'},'*')}},true);
     window.addEventListener('message',event=>{
       const frame=document.getElementById('yundengModuleFrame');
       if(!frame||event.source!==frame.contentWindow||!event.data)return;
+      if(event.data.type==='yundeng:module-footer-state'){const height=Number(event.data.height);setModuleFooterHeight(Number.isFinite(height)?Math.max(0,Math.min(128,height)):0);return;}
+      if(event.data.type==='yundeng:module-dialog-state'){setModuleDialogOpen(event.data.open===true);return;}
       if(event.data.type==='yundeng:global-drawer-open')openModuleGlobalDrawer(event.data.drawer,event.source);
       else if(event.data.type==='yundeng:global-drawer-close')closeModuleGlobalDrawer(false);
     });
