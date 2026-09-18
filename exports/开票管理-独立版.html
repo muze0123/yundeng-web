@@ -1,6 +1,90 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>云登 · 开票管理</title>
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>云登 · 开票管理（独立版）</title>
+<!--
+  云登 · 开票管理（独立版）
+  ------------------------------------------------------------------
+  用途：从 Prototype/费用管理-开票管理.html 导出的单文件版本，便于单独分享、
+        双击即可在浏览器中打开查看，不需要本地服务器或系统框架。
+  与原型版本的差异：
+    1. 不再回跳 index.html?page=billing-invoice 系统框架，直接独立渲染本模块；
+    2. 依赖的公共层已全部内嵌：src/styles/global.css、Prototype/公共导航.css、
+       Prototype/筛选布局.css、Prototype/分页器.css、Prototype/分页器.js；
+    3. 不再加载 Prototype/公共导航.js（其壳层/路由/嵌入适配职责由本文件的静态
+       data-yundeng-* 属性与内联样式复现）；
+    4. 仍使用 CDN 引入 Tailwind CSS、Lucide 图标与 JetBrains Mono 字体（联网时
+       视觉最佳，离线时页面内置的 Tailwind 回退样式保证结构可用）。
+  说明：文件内仍保留云币/订单/优惠券三个面板的原始标记（被内联样式隐藏），
+        它们与开票面板共用一段脚本，删除会破坏初始化，看开票管理时可忽略。
+  ------------------------------------------------------------------
+-->
+
 <script src="https://cdn.tailwindcss.com"></script><script src="https://unpkg.com/lucide@latest"></script><link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="筛选布局.css?v=20260814">
+<style>
+/* ===== 内联自 Prototype/筛选布局.css ===== */
+/* 云登 PC 端筛选区。标签在上，400px 条件项流式换行，操作组紧随末项。 */
+.filter-flow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 16px 24px;
+  min-width: 0;
+}
+
+.filter-flow .filter-item {
+  display: flex;
+  flex: 0 0 400px;
+  width: 400px;
+  max-width: 100%;
+  min-width: 0;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+}
+
+.filter-flow .filter-label,
+.filter-flow .filter-item > label,
+.filter-flow .filter-item > span:first-child {
+  width: auto;
+  min-height: 18px;
+  flex: none;
+  color: #3A3F4A;
+  font-size: 13px;
+  line-height: 18px;
+  text-align: left;
+}
+
+.filter-flow .control,
+.filter-flow .field,
+.filter-flow .filter-control {
+  width: 400px;
+  max-width: 100%;
+}
+
+.filter-flow .filter-actions {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 12px;
+  min-height: 32px;
+}
+
+@media (max-width: 720px) {
+  .filter-flow { gap: 12px; }
+
+  .filter-flow .filter-item {
+    flex-basis: 100%;
+    width: 100%;
+  }
+
+  .filter-flow .control,
+  .filter-flow .field,
+  .filter-flow .filter-control { width: 100%; }
+
+  .filter-flow .filter-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
+</style>
 <script>window.tailwind=window.tailwind||{};window.lucide=window.lucide||{createIcons(){}};tailwind.config={theme:{extend:{colors:{primary:'#0066FF','primary-hover':'#0052CC','primary-active':'#0047B3','primary-bg':'#E6F0FF','ink-title':'#1A1D24','ink-body':'#3A3F4A','ink-sub':'#6E7685','ink-muted':'#9DA2AC',line:'#DFE1E5','line-light':'#E8EAED','line-lighter':'#F0F1F3',page:'#F7F8FA',card:'#FFFFFF',hover:'#F3F4F6',success:'#0FC060','success-bg':'#E7F9F0',warning:'#E7772D','warning-bg':'#FDF2E9',danger:'#D9001B','danger-bg':'#FFE8EB',info:'#0091D5','info-bg':'#E4F4FB'}}}};</script>
 <style>*{box-sizing:border-box}body{font:14px/1.5 -apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif;background:#F7F8FA}.page-content{padding:0}.mono{font-family:'JetBrains Mono',monospace}.btn{height:32px;padding:0 12px;border-radius:4px;display:inline-flex;align-items:center;justify-content:center;gap:6px;font-weight:500}.btn-primary{background:#0066FF;color:white}.btn-primary:hover{background:#0052CC}.btn-default{border:1px solid #DFE1E5;background:#fff}.btn-default:hover{background:#F3F4F6}.field{height:32px;border:1px solid #DFE1E5;border-radius:4px;background:#fff;padding:0 10px;outline:none}.field:focus{border-color:#0066FF;box-shadow:0 0 0 2px #E6F0FF}.field.invalid,.field[aria-invalid="true"]{border-color:#D9001B}.date-range{display:flex;align-items:center;gap:4px}.date-range .field{width:100%;min-width:0;flex:1 1 0}.date-sep{margin:0 2px;color:#9DA2AC;font-size:14px;flex:none}.card{background:#fff;border:0;border-radius:8px}.tab{height:48px;padding:0 22px;border-bottom:2px solid transparent;color:#6E7685}.tab.active{color:#0066FF;border-color:#0066FF;font-weight:600}.subtab{height:34px;padding:0 14px;border-radius:4px}.subtab.active{color:#0066FF;background:#E6F0FF}.badge{display:inline-flex;padding:2px 8px;border-radius:4px;border:1px solid;font-size:12px}.modal-bg{position:fixed;inset:0;z-index:9999;background:#0006;display:flex;align-items:center;justify-content:center;padding:16px}.toast{position:fixed;left:50%;top:24px;z-index:9996;display:flex;align-items:center;gap:10px;min-width:320px;max-width:min(480px,calc(100vw - 32px));min-height:44px;padding:10px 14px;border:0;border-radius:8px;background:#fff;color:#3A3F4A;box-shadow:0 6px 24px rgba(0,0,0,.12);transform:translateX(-50%);animation:toast-in .15s ease}.toast.is-leaving{animation:toast-out .18s ease forwards}.toast-icon{width:18px;height:18px;flex:0 0 18px}.toast[data-tone="success"] .toast-icon{color:#0FC060}.toast[data-tone="info"] .toast-icon{color:#0091D5}.toast[data-tone="warning"] .toast-icon{color:#E7772D}.toast[data-tone="danger"] .toast-icon{color:#D9001B}@keyframes toast-in{from{opacity:0;transform:translate(-50%,-6px)}to{opacity:1;transform:translate(-50%,0)}}@keyframes toast-out{from{opacity:1;transform:translate(-50%,0)}to{opacity:0;transform:translate(-50%,-4px)}}@media(prefers-reduced-motion:reduce){.toast,.toast.is-leaving{animation:none}}.hidden{display:none!important}th{white-space:nowrap;font-weight:500}td{white-space:nowrap}#billingPrimaryTabs{display:none!important}#coinPanel,#ordersPanel,#couponsPanel{display:none!important}#invoicePanel{display:block!important}.billing-tabs{margin:0 0 16px}.billing-tabs .tab{height:40px;padding:0 18px;border-bottom:2px solid transparent;border-radius:4px 4px 0 0;background:#fff}.billing-tabs .tab.active{background:#fff}.invoice-page-tab-row .tab{height:40px;padding:0 18px;border-radius:4px 4px 0 0}.invoice-page-tab-row .tab.active{background:#E6F0FF}.invoice-inline-card{background:#fff;border-radius:8px}.invoice-title-page{padding:20px 24px}.invoice-title-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:16px}.invoice-title-filters{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.invoice-title-filter{width:180px}.invoice-title-filter.keyword{width:260px}.invoice-title-section .invoice-drawer-panel{position:static;width:100%;max-width:100%;height:auto;box-shadow:none;animation:none}.invoice-title-section .invoice-drawer-header{padding:0 0 16px;height:auto;flex:0 0 auto;border-bottom:1px solid #E8EAED}.invoice-title-section .invoice-drawer-body{padding:0;overflow:visible}.invoice-title-section .invoice-title-table{min-width:1840px}.invoice-title-section .invoice-title-table-wrap{overflow-x:auto}.invoice-title-section .invoice-title-actions button{background:transparent}.invoice-title-section .invoice-title-actions button:hover{color:#0052CC}.invoice-title-section .invoice-drawer-header button{width:32px;height:32px;border-radius:4px}.invoice-title-section .invoice-drawer-header button:hover{background:#F3F4F6}.toggle-switch{width:40px;height:22px;border-radius:11px;background:#DFE1E5;position:relative;cursor:pointer;border:none;transition:background .2s;flex-shrink:0}.toggle-switch::after{content:"";position:absolute;width:18px;height:18px;border-radius:50%;background:#fff;top:2px;left:2px;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.16)}.toggle-switch.is-on{background:#0066FF}.toggle-switch.is-on::after{transform:translateX(18px)}.toggle-switch:focus{outline:2px solid #0066FF;outline-offset:2px}@media(max-width:720px){.page-tabs{overflow-x:auto}.coin-summary{grid-template-columns:1fr!important}.coupon-grid{grid-template-columns:1fr!important}.responsive-field{width:100%!important}.modal-card{width:min(520px,100%)!important}.toast{min-width:0;width:calc(100vw - 32px)}.billing-tabs,.invoice-page-tab-row,.invoice-title-toolbar,.invoice-title-filters{overflow-x:auto}}/* 处理时间线：沿用 design.md 的主色、分割线与 8/12/20px 间距。 */
 .invoice-record-timeline{list-style:none;margin:0;padding:0 0 0 4px}
@@ -388,24 +472,1168 @@
   #invoiceApplyModal #invoiceTitleTypeRow > label { text-align:right; white-space:nowrap; }
 }
 </style>
-<link rel="stylesheet" href="公共导航.css?v=20260825a">
-<script src="公共导航.js?v=20260916a"></script>
+<style>
+/* ===== 内联自 src/styles/global.css ===== */
+:root {
+  --font-sans: -apple-system, BlinkMacSystemFont, "PingFang SC",
+    "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica,
+    Arial, sans-serif;
+}
+
+html,
+body,
+button,
+input,
+textarea,
+select,
+option {
+  font-family: var(--font-sans);
+}
+
+.font-sans {
+  font-family: var(--font-sans) !important;
+}
+
+body {
+  font-family: var(--font-sans) !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+/* ===== 内联自 Prototype/公共导航.css ===== */
+/* 云登 PC 端公共 App Shell。业务页面只负责主体内容，导航由公共脚本填充。 */
+html[data-yundeng-runtime-pending="true"] body { visibility: hidden; }
+body[data-yundeng-shell] { margin: 0; background: #F7F8FA; color: #3A3F4A; overflow: hidden; }
+body[data-yundeng-shell] #yundeng-app-frame { display: flex; width: 100%; height: 100vh; height: 100dvh; min-height: 0; flex-direction: column; gap: 0; overflow: hidden; }
+body[data-yundeng-shell] #yundeng-shell,
+body[data-yundeng-shell] .yundeng-shell-host { display: flex; width: 100%; height: auto !important; min-height: 0 !important; flex: 1; overflow: hidden; }
+body[data-yundeng-shell] [data-yundeng-app-column="true"] { min-width: 0; min-height: 0 !important; height: 100%; flex: 1; display: flex; flex-direction: column; }
+body[data-yundeng-shell] #mainContent { min-width: 0; min-height: 0; flex: 1; overflow: auto; padding: 16px !important; background: #F7F8FA; }
+body[data-yundeng-system-frame="true"] #mainContent { padding: 0 !important; overflow: hidden; }
+body[data-yundeng-system-frame="true"] .yundeng-router-outlet { width: 100%; height: 100%; min-width: 0; min-height: 0; position: relative; overflow: hidden; background: #F7F8FA; }
+body[data-yundeng-system-frame="true"] .yundeng-module-frame { width: 100%; height: 100%; min-width: 0; min-height: 0; display: block; border: 0; background: #F7F8FA; }
+body[data-yundeng-system-frame="true"] .yundeng-route-loading { position: absolute; inset: 0; z-index: 2; display: flex; align-items: center; justify-content: center; gap: 8px; color: #6E7685; background: #F7F8FA; font-size: 13px; }
+body[data-yundeng-system-frame="true"] .yundeng-route-loading[hidden] { display: none !important; }
+body[data-yundeng-system-frame="true"] .yundeng-route-loading[data-state="loading"] svg { width: 18px; height: 18px; animation: yundeng-browser-spin .8s linear infinite; }
+body[data-yundeng-system-frame="true"] .yundeng-route-loading[data-state="error"] { flex-direction: column; gap: 12px; text-align: center; color: #3A3F4A; }
+body[data-yundeng-system-frame="true"] .yundeng-route-loading[data-state="error"] > svg { width: 28px; height: 28px; color: #D9001B; }
+body[data-yundeng-system-frame="true"] .yundeng-route-loading[data-state="error"] div { display: flex; flex-direction: column; gap: 4px; }
+body[data-yundeng-system-frame="true"] .yundeng-route-loading[data-state="error"] strong { font-size: 14px; color: #1A1D24; }
+body[data-yundeng-system-frame="true"] .yundeng-route-loading[data-state="error"] span { color: #6E7685; }
+body[data-yundeng-system-frame="true"] .yundeng-route-loading[data-state="error"] button { height: 32px; padding: 0 14px; border: 0; border-radius: 4px; color: #FFFFFF; background: #0066FF; font-size: 13px; cursor: pointer; }
+body[data-yundeng-system-frame="true"] .yundeng-route-loading[data-state="error"] button:hover { background: #0052CC; }
+body[data-yundeng-system-frame="true"] #assistantBtn { z-index: 900 !important; }
+body[data-yundeng-system-frame="true"] #assistantDrawer,
+body[data-yundeng-system-frame="true"] #createDialog { z-index: 1200 !important; }
+
+body[data-yundeng-embedded="true"] { width: 100%; height: 100vh; height: 100dvh; min-width: 0; min-height: 0; margin: 0 !important; overflow: hidden !important; background: #F7F8FA; }
+body[data-yundeng-embedded="true"] [data-yundeng-embed-shell="true"] { display: none !important; }
+body[data-yundeng-embedded="true"] [data-yundeng-embed-path="true"] { width: 100% !important; max-width: none !important; min-width: 0 !important; height: 100% !important; min-height: 0 !important; margin: 0 !important; }
+body[data-yundeng-embedded="true"] [data-yundeng-business-root="true"] { box-sizing: border-box !important; width: 100% !important; max-width: none !important; min-width: 0 !important; height: 100% !important; min-height: 0 !important; margin: 0 !important; padding: 16px !important; flex: 1 1 auto !important; overflow: auto !important; background: #F7F8FA; }
+body[data-yundeng-embedded="true"] #mainContent > .page-content { min-height: 100%; display: flex; flex-direction: column; }
+body[data-yundeng-embedded="true"] #mainContent > .page-content > section:only-child { min-height: 100%; flex: 1 1 auto; display: flex; flex-direction: column; }
+body[data-yundeng-embedded="true"] #mainContent > .page-content > section:only-child > .card:only-child,
+body[data-yundeng-embedded="true"] #mainContent > .page-content > section#couponsPanel > .card:first-child,
+body[data-yundeng-embedded="true"] #mainContent > .page-content > section#ordersPanel > .card:first-child { flex: 1 1 auto; min-height: 0; }
+body[data-yundeng-embedded="true"] #annoToggle { display: none !important; }
+
+body[data-yundeng-shell] .yundeng-browser-frame { box-sizing: border-box; height: 84px; min-height: 84px; margin: 0; flex: 0 0 84px; display: flex; flex-direction: column; gap: 0; padding-bottom: 0; position: relative; z-index: 100; color: #3A3F4A; background: #F0F1F3; }
+body[data-yundeng-shell] .yundeng-tab-strip { box-sizing: border-box; height: 32px; min-height: 32px; flex: 0 0 32px; padding: 2px 8px 0; display: flex; align-items: flex-end; gap: 8px; background: #E6F0FF; }
+body[data-yundeng-shell] .yundeng-window-controls { width: 52px; height: 30px; display: flex; align-items: center; gap: 6px; flex: none; }
+body[data-yundeng-shell] .yundeng-window-controls span { width: 10px; height: 10px; border-radius: 50%; display: block; }
+body[data-yundeng-shell] .yundeng-window-controls .is-danger { background: #D9001B; }
+body[data-yundeng-shell] .yundeng-window-controls .is-warning { background: #E7772D; }
+body[data-yundeng-shell] .yundeng-window-controls .is-success { background: #0FC060; }
+body[data-yundeng-shell] .yundeng-tab-cluster { min-width: 0; height: 30px; flex: 1; display: flex; align-items: flex-end; gap: 4px; overflow: hidden; }
+body[data-yundeng-shell] .yundeng-browser-tabs { min-width: 0; width: auto; max-width: calc(100% - 32px); height: 30px; flex: 0 1 auto; display: flex; align-items: flex-end; gap: 4px; overflow-x: auto; overflow-y: hidden; scrollbar-width: none; }
+body[data-yundeng-shell] .yundeng-browser-tabs::-webkit-scrollbar { display: none; }
+body[data-yundeng-shell] .yundeng-browser-tab { min-width: 160px; max-width: 240px; height: 28px; padding: 0 6px 0 10px; flex: 0 1 240px; display: flex; align-items: center; gap: 8px; border-radius: 8px 8px 0 0; color: #6E7685; background: #F7F8FA; cursor: pointer; user-select: none; }
+body[data-yundeng-shell] .yundeng-browser-tab:hover { background: #F3F4F6; }
+body[data-yundeng-shell] .yundeng-browser-tab[data-active="true"] { color: #1A1D24; background: #fff; }
+body[data-yundeng-shell] .yundeng-browser-tab-mark { width: 18px; height: 18px; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; flex: none; color: #fff; background: #0066FF; font-size: 10px; font-weight: 700; }
+body[data-yundeng-shell] .yundeng-browser-tab-title { min-width: 0; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; }
+body[data-yundeng-shell] .yundeng-close-tab { width: 22px; height: 22px; padding: 0; border: 0; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; flex: none; color: #9DA2AC; background: transparent; cursor: pointer; opacity: 0; }
+body[data-yundeng-shell] .yundeng-browser-tab:hover .yundeng-close-tab,
+body[data-yundeng-shell] .yundeng-browser-tab[data-active="true"] .yundeng-close-tab,
+body[data-yundeng-shell] .yundeng-close-tab:focus-visible { opacity: 1; }
+body[data-yundeng-shell] .yundeng-close-tab:hover { color: #3A3F4A; background: #F3F4F6; }
+body[data-yundeng-shell] .yundeng-close-tab svg { width: 14px; height: 14px; }
+body[data-yundeng-shell] .yundeng-browser-toolbar { box-sizing: border-box; height: 52px; min-height: 52px; flex: 0 0 52px; margin: 0; padding: 1px 8px 2px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #F0F1F3; background: #fff; }
+body[data-yundeng-shell] .yundeng-history-actions,
+body[data-yundeng-shell] .yundeng-browser-actions { display: flex; align-items: center; gap: 4px; flex: none; position: relative; }
+body[data-yundeng-shell] .yundeng-browser-button { width: 28px; height: 28px; padding: 0; border: 0; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; flex: none; color: #6E7685; background: transparent; cursor: pointer; }
+body[data-yundeng-shell] .yundeng-browser-button:hover { color: #3A3F4A; background: #F3F4F6; }
+body[data-yundeng-shell] .yundeng-browser-button:disabled { color: #C7CAD1; background: transparent; cursor: default; }
+body[data-yundeng-shell] .yundeng-browser-button svg { width: 16px; height: 16px; }
+body[data-yundeng-shell] .yundeng-new-tab { margin-bottom: 0; }
+body[data-yundeng-shell] .yundeng-address-form { min-width: 160px; height: 32px; padding: 0 4px 0 12px; flex: 1; display: flex; align-items: center; gap: 8px; border: 1px solid #E8EAED; border-radius: 9999px; background: #F7F8FA; }
+body[data-yundeng-shell] .yundeng-address-form:focus-within { border-color: #0066FF; box-shadow: 0 0 0 2px rgba(0,102,255,.12); background: #fff; }
+body[data-yundeng-shell] .yundeng-address-form[data-invalid="true"] { border-color: #D9001B; box-shadow: 0 0 0 2px #FFE8EB; }
+body[data-yundeng-shell] .yundeng-address-form svg { width: 14px; height: 14px; flex: none; color: #9DA2AC; }
+body[data-yundeng-shell] .yundeng-address-form input { min-width: 0; width: auto; height: 28px; padding: 0; flex: 1; border: 0; outline: 0; color: #3A3F4A; background: transparent; font: 12px/1.5 'JetBrains Mono', monospace; }
+body[data-yundeng-shell] .yundeng-bookmark-button { width: 24px; height: 24px; padding: 0; position: relative; flex: none; border: 0; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; color: #6E7685; background: transparent; cursor: pointer; }
+body[data-yundeng-shell] .yundeng-bookmark-button:hover { color: #3A3F4A; background: #E8EAED; }
+body[data-yundeng-shell] .yundeng-bookmark-button[data-bookmarked="true"] { color: #0066FF; }
+body[data-yundeng-shell] .yundeng-bookmark-button[data-bookmarked="true"] svg { fill: currentColor; }
+body[data-yundeng-shell] .yundeng-bookmark-button svg { width: 16px; height: 16px; }
+body[data-yundeng-shell] .yundeng-bookmark-button::after { content: attr(data-yundeng-tooltip); position: absolute; left: 50%; top: calc(100% + 8px); z-index: 1400; width: max-content; max-width: 180px; padding: 5px 8px; border-radius: 4px; color: #FFFFFF; background: #1A1D24; font: 12px/1.4 var(--font-sans); white-space: nowrap; opacity: 0; pointer-events: none; transform: translate(-50%, -2px); transition: opacity .15s ease, transform .15s ease; }
+body[data-yundeng-shell] .yundeng-bookmark-button:hover::after,
+body[data-yundeng-shell] .yundeng-bookmark-button:focus-visible::after { opacity: 1; transform: translate(-50%, 0); }
+body[data-yundeng-shell] .yundeng-browser-panel { box-sizing: border-box; position: absolute; top: calc(100% + 12px); right: 0; z-index: 1300; width: 320px; padding: 0; overflow: hidden; border: 1px solid #DFE1E5; border-radius: 8px; color: #3A3F4A; background: #fff; box-shadow: 0 6px 24px rgba(0,0,0,.12); }
+body[data-yundeng-shell] .yundeng-browser-panel.hidden { display: none; }
+body[data-yundeng-shell] .yundeng-browser-panel strong { color: #1A1D24; font-size: 13px; }
+body[data-yundeng-shell] .yundeng-panel-header { min-height: 44px; padding: 0 10px 0 14px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #E8EAED; }
+body[data-yundeng-shell] .yundeng-panel-header strong { padding: 0; font-size: 14px; }
+body[data-yundeng-shell] .yundeng-panel-close { width: 28px !important; height: 28px !important; min-height: 28px !important; padding: 0 !important; justify-content: center !important; border-radius: 4px !important; }
+body[data-yundeng-shell] .yundeng-panel-copy { padding: 12px 14px 8px; }
+body[data-yundeng-shell] .yundeng-panel-copy strong { display: block; margin-bottom: 4px; font-size: 12px; }
+body[data-yundeng-shell] .yundeng-panel-copy p { margin: 0; padding: 0; color: #6E7685; font-size: 12px; line-height: 1.6; }
+body[data-yundeng-shell] .yundeng-extension-row { min-height: 48px; margin: 0 8px 8px; padding: 6px 4px 6px 8px; display: flex; align-items: center; gap: 8px; border-radius: 4px; background: #F7F8FA; }
+body[data-yundeng-shell] .yundeng-extension-icon { width: 28px; height: 28px; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; flex: none; color: #0066FF; background: #E6F0FF; }
+body[data-yundeng-shell] .yundeng-extension-icon svg { width: 16px; height: 16px; }
+body[data-yundeng-shell] .yundeng-extension-name { min-width: 0; flex: 1; overflow: hidden; color: #3A3F4A; font-size: 13px; text-overflow: ellipsis; white-space: nowrap; }
+body[data-yundeng-shell] .yundeng-panel-icon-button { width: 28px !important; height: 28px !important; min-height: 28px !important; padding: 0 !important; justify-content: center !important; flex: none; }
+body[data-yundeng-shell] .yundeng-panel-icon-button[data-pinned="true"] { color: #0066FF; background: #E6F0FF; }
+body[data-yundeng-shell] .yundeng-extension-more-menu { margin: 0 8px 8px; padding: 4px; border: 1px solid #DFE1E5; border-radius: 4px; background: #FFFFFF; box-shadow: 0 4px 12px rgba(0,0,0,.12); }
+body[data-yundeng-shell] .yundeng-extension-more-menu[hidden] { display: none; }
+body[data-yundeng-shell] .yundeng-panel-footer { min-height: 40px !important; padding: 0 14px !important; border-top: 1px solid #E8EAED; border-radius: 0 !important; }
+body[data-yundeng-shell] .yundeng-download-panel { width: 300px; }
+body[data-yundeng-shell] .yundeng-download-empty { padding: 20px 14px 24px; text-align: center; }
+body[data-yundeng-shell] .yundeng-download-empty svg { width: 24px; height: 24px; margin: 0 auto 8px; color: #9DA2AC; }
+body[data-yundeng-shell] .yundeng-download-empty p { margin: 0; padding: 0; color: #9DA2AC; font-size: 12px; }
+body[data-yundeng-shell] .yundeng-more-panel { width: 260px; padding: 4px 0; }
+body[data-yundeng-shell] .yundeng-browser-panel button { width: 100%; min-height: 32px; padding: 0 14px; border: 0; border-radius: 0; display: flex; align-items: center; gap: 10px; color: #3A3F4A; background: transparent; font: 13px/1.5 inherit; cursor: pointer; text-align: left; }
+body[data-yundeng-shell] .yundeng-browser-panel button:hover { background: #F3F4F6; }
+body[data-yundeng-shell] .yundeng-browser-panel button svg { width: 16px; height: 16px; color: #6E7685; }
+body[data-yundeng-shell] .yundeng-more-item span:first-of-type { min-width: 0; flex: 1; }
+body[data-yundeng-shell] .yundeng-more-shortcut { margin-left: auto; color: #6E7685; font: 12px/1.5 'JetBrains Mono', monospace; white-space: nowrap; }
+body[data-yundeng-shell] .yundeng-more-chevron { margin-left: auto; width: 14px !important; height: 14px !important; }
+body[data-yundeng-shell] .yundeng-more-divider { height: 1px; margin: 4px 0; background: #E8EAED; }
+body[data-yundeng-shell] .yundeng-zoom-row { min-height: 40px; padding: 0 8px; display: flex; align-items: center; gap: 4px; }
+body[data-yundeng-shell] .yundeng-zoom-row > span { min-width: 46px; color: #3A3F4A; font: 12px/1.5 'JetBrains Mono', monospace; text-align: center; }
+body[data-yundeng-shell] .yundeng-zoom-row button { width: 32px; min-height: 32px; padding: 0; justify-content: center; }
+body[data-yundeng-shell] .yundeng-zoom-row button:last-child { margin-left: auto; }
+body[data-yundeng-shell] .yundeng-sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+body[data-yundeng-shell] .is-spinning svg { animation: yundeng-browser-spin .45s linear; }
+@keyframes yundeng-browser-spin { to { transform: rotate(360deg); } }
+body[data-yundeng-shell] #sidebar {
+  width: 220px !important;
+  flex: 0 0 220px !important;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: visible;
+  position: relative;
+  z-index: 20;
+  background: #fff !important;
+  transition: width .22s ease, transform .22s ease;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+body[data-yundeng-shell] .yundeng-sidebar-toggle { width: 14px; height: 64px; padding: 0; position: absolute; top: 50%; right: -7px; z-index: 25; border: 0; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; color: #FFFFFF; background: #E5E6ED; box-shadow: 0 2px 8px rgba(0,0,0,.06); cursor: pointer; opacity: 0; pointer-events: none; transform: translate(4px,-50%); transition: opacity .18s linear, transform .18s linear, background-color .15s linear; }
+body[data-yundeng-shell] #sidebar:hover .yundeng-sidebar-toggle,
+body[data-yundeng-shell] .yundeng-sidebar-toggle:focus-visible { opacity: 1; pointer-events: auto; transform: translate(0,-50%); }
+body[data-yundeng-shell] .yundeng-sidebar-toggle:hover { background: #ACB0BA; }
+body[data-yundeng-shell] .yundeng-sidebar-toggle .yundeng-solid-arrow { width: 10px; height: 10px; display: block; flex: none; fill: #FFFFFF; stroke: none; transform: rotate(-90deg); filter: drop-shadow(0 1px 1px rgba(26,29,36,.28)); }
+body[data-yundeng-shell] #sidebar.compact .yundeng-sidebar-toggle .yundeng-solid-arrow { transform: rotate(90deg); }
+body[data-yundeng-shell] :where(button, a, input, select, textarea):focus-visible {
+  outline: 2px solid #0066FF;
+  outline-offset: 2px;
+}
+body[data-yundeng-shell] .yundeng-create-wrap { padding: 12px; }
+body[data-yundeng-shell] .yundeng-create { height: 32px; width: 100%; border-radius: 4px; display: flex; align-items: center; justify-content: center; gap: 8px; background: #0066FF; color: #fff; font-size: 14px; font-weight: 500; text-decoration: none; }
+body[data-yundeng-shell] .yundeng-create:hover { background: #0052CC; }
+body[data-yundeng-shell] #yundeng-primary-nav { min-height: 0; flex: 1; overflow-y: auto; padding: 0 12px 12px; }
+body[data-yundeng-shell] .yundeng-sidebar-bottom { padding: 12px; }
+body[data-yundeng-shell] .yundeng-sidebar-divider { height: 1px; margin-bottom: 12px; background: #DFE1E5; }
+body[data-yundeng-shell] .yundeng-bottom-link { height: 32px; width: 100%; padding: 0 8px; border: 0; border-radius: 4px; display: flex; align-items: center; gap: 12px; color: #6E7685; background: transparent; font-family: inherit; font-size: 14px; font-weight: 400; line-height: 1.5; text-align: left; text-decoration: none; cursor: pointer; }
+body[data-yundeng-shell] .yundeng-bottom-link .menu-icon { width: 16px; height: 16px; flex: 0 0 16px; }
+body[data-yundeng-shell] .yundeng-bottom-link:hover { background: #F3F4F6; }
+body[data-yundeng-shell] .yundeng-bottom-link[data-active="true"] { color: #0066FF; background: #E6F0FF; font-weight: 600; }
+body[data-yundeng-shell] #sidebar.compact {
+  width: 68px !important;
+  flex-basis: 68px !important;
+}
+body[data-yundeng-shell] #sidebar.compact .menu-label,
+body[data-yundeng-shell] #sidebar.compact .yundeng-group-chevron,
+body[data-yundeng-shell] #sidebar.compact .create-label,
+body[data-yundeng-shell] #sidebar.compact .bottom-label,
+body[data-yundeng-shell] #sidebar.compact .nav-label {
+  display: none !important;
+}
+body[data-yundeng-shell] #sidebar.compact .yundeng-create-wrap { padding-inline: 10px; }
+body[data-yundeng-shell] #sidebar.compact .yundeng-create { padding-inline: 0; }
+body[data-yundeng-shell] #sidebar.compact .menu-link,
+body[data-yundeng-shell] #sidebar.compact .nav-item,
+body[data-yundeng-shell] #sidebar.compact .bottom-link,
+body[data-yundeng-shell] #sidebar.compact .nav,
+body[data-yundeng-shell] #sidebar.compact .yundeng-menu-link,
+body[data-yundeng-shell] #sidebar.compact .yundeng-group-toggle,
+body[data-yundeng-shell] #sidebar.compact .yundeng-bottom-link {
+  justify-content: center !important;
+  padding-inline: 0 !important;
+}
+body[data-yundeng-shell] #sidebar.compact .submenu,
+body[data-yundeng-shell] #sidebar.compact .yundeng-subnav { display: none !important; }
+body[data-yundeng-shell] #sidebar.compact .yundeng-group-toggle[data-active="true"] { color: #0066FF; background: #E6F0FF; }
+body[data-yundeng-shell] [data-yundeng-topbar] {
+  height: 56px !important;
+  min-height: 56px;
+  margin: 0;
+  padding: 0 24px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 16px;
+  flex: 0 0 56px;
+  background: #fff !important;
+  color: #3A3F4A;
+  position: relative;
+  z-index: 30;
+  border-bottom: 0 !important;
+  box-shadow: 0 6px 8px -8px rgba(26,29,36,.24) !important;
+}
+body[data-yundeng-shell] .yundeng-topbar-start,
+body[data-yundeng-shell] .yundeng-topbar-actions { display: flex; align-items: center; gap: 8px; min-width: 0; }
+body[data-yundeng-shell] .yundeng-platform-brand { height: 36px; display: inline-flex; align-items: center; gap: 8px; flex: none; color: #1A1D24; text-decoration: none; }
+body[data-yundeng-shell] .yundeng-platform-mark { width: 28px; height: 28px; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; color: #fff; background: #0066FF; font-size: 15px; font-weight: 700; }
+body[data-yundeng-shell] .yundeng-platform-name { color: #1A1D24; font-size: 16px; font-weight: 600; white-space: nowrap; }
+body[data-yundeng-shell] .yundeng-icon-button { width: 32px; height: 32px; border: 0; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; color: #6E7685; background: transparent; cursor: pointer; }
+body[data-yundeng-shell] .yundeng-icon-button:hover { background: #F3F4F6; }
+body[data-yundeng-shell] .yundeng-icon-button svg { width: 18px; height: 18px; display: block; flex: none; stroke-width: 2; }
+body[data-yundeng-shell] .yundeng-topbar-actions .yundeng-icon-button[data-yundeng-tooltip] { position: relative; }
+body[data-yundeng-shell] .yundeng-topbar-actions .yundeng-icon-button[data-yundeng-tooltip]::before,
+body[data-yundeng-shell] .yundeng-topbar-actions .yundeng-icon-button[data-yundeng-tooltip]::after {
+  position: absolute;
+  left: 50%;
+  z-index: 1300;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity .15s ease, transform .15s ease, visibility .15s ease;
+}
+body[data-yundeng-shell] .yundeng-topbar-actions .yundeng-icon-button[data-yundeng-tooltip]::before {
+  content: '';
+  top: calc(100% + 3px);
+  border: 4px solid transparent;
+  border-bottom-color: #1A1D24;
+  transform: translate(-50%, -2px);
+}
+body[data-yundeng-shell] .yundeng-topbar-actions .yundeng-icon-button[data-yundeng-tooltip]::after {
+  content: attr(data-yundeng-tooltip);
+  top: calc(100% + 10px);
+  padding: 5px 8px;
+  border-radius: 4px;
+  color: #fff;
+  background: #1A1D24;
+  box-shadow: 0 2px 8px rgba(0,0,0,.06);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.4;
+  white-space: nowrap;
+  transform: translate(-50%, -2px);
+}
+body[data-yundeng-shell] .yundeng-topbar-actions .yundeng-icon-button[data-yundeng-tooltip]:hover::before,
+body[data-yundeng-shell] .yundeng-topbar-actions .yundeng-icon-button[data-yundeng-tooltip]:hover::after,
+body[data-yundeng-shell] .yundeng-topbar-actions .yundeng-icon-button[data-yundeng-tooltip]:focus-visible::before,
+body[data-yundeng-shell] .yundeng-topbar-actions .yundeng-icon-button[data-yundeng-tooltip]:focus-visible::after {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, 0);
+}
+body[data-yundeng-shell] .yundeng-topbar-actions .yundeng-icon-button[data-yundeng-tooltip][aria-expanded="true"]::before,
+body[data-yundeng-shell] .yundeng-topbar-actions .yundeng-icon-button[data-yundeng-tooltip][aria-expanded="true"]::after {
+  opacity: 0;
+  visibility: hidden;
+}
+body[data-yundeng-shell] .yundeng-icon-button:active,
+body[data-yundeng-shell] #collapseBtn:active { transform: translateY(1px); }
+body[data-yundeng-shell] .yundeng-account { height: 34px; padding: 0 4px; border: 0; border-radius: 4px; display: inline-flex; align-items: center; gap: 8px; color: #3A3F4A; background: transparent; cursor: pointer; font-size: 14px; line-height: 1.3; }
+body[data-yundeng-shell] .yundeng-account:hover { background: #F3F4F6; }
+body[data-yundeng-shell] .yundeng-account-name { font-weight: 500; white-space: nowrap; }
+body[data-yundeng-shell] .yundeng-avatar { width: 28px; height: 28px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; color: #0066FF; background: #E6F0FF; font-weight: 600; }
+body[data-yundeng-shell] .yundeng-avatar {
+  overflow: hidden;
+  border: 1px solid #DFE1E5;
+  background:
+    radial-gradient(circle at 38% 34%, rgba(255,255,255,.94) 0 10%, transparent 11%),
+    radial-gradient(circle at 52% 40%, #1A1D24 0 12%, transparent 13%),
+    radial-gradient(circle at 44% 60%, #3A3F4A 0 18%, transparent 19%),
+    radial-gradient(circle at 50% 50%, #9DA2AC 0 48%, #6E7685 49% 64%, #DFE1E5 65% 100%);
+  position: relative;
+}
+body[data-yundeng-shell] .yundeng-avatar::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 50% 28%, rgba(255,255,255,.88) 0 7%, transparent 8%),
+    radial-gradient(circle at 34% 72%, rgba(255,255,255,.28) 0 8%, transparent 9%);
+  mix-blend-mode: screen;
+}
+body[data-yundeng-shell] .yundeng-divider { width: 1px; height: 20px; margin: 0 4px; background: #DFE1E5; }
+body[data-yundeng-shell] .yundeng-dirty { padding: 2px 8px; border-radius: 4px; color: #E7772D; background: #FDF2E9; font-size: 11px; }
+body[data-yundeng-shell] .yundeng-dirty.hidden { display: none; }
+body[data-yundeng-shell] #yundeng-primary-nav,
+body[data-yundeng-shell] #primaryNav { scrollbar-width: thin; }
+body[data-yundeng-shell] .yundeng-menu-link {
+  min-height: 36px;
+  border-radius: 4px;
+  color: #3A3F4A;
+  transition: background .15s ease, color .15s ease;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 8px;
+  margin-bottom: 4px;
+  text-decoration: none;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+body[data-yundeng-shell] .yundeng-menu-link > .menu-icon,
+body[data-yundeng-shell] .yundeng-group-toggle > .menu-icon {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
+}
+body[data-yundeng-shell] .yundeng-menu-link:hover { background: #F3F4F6; }
+body[data-yundeng-shell] .yundeng-menu-link[data-active="true"] {
+  color: #0066FF !important;
+  background: #E6F0FF !important;
+  font-weight: 600;
+}
+body[data-yundeng-shell] .yundeng-group-label {
+  color: #6E7685;
+  font-size: 11px;
+  letter-spacing: .01em;
+  padding: 10px 12px 4px;
+}
+body[data-yundeng-shell] .yundeng-group-toggle {
+  color: #3A3F4A;
+  min-height: 36px;
+  padding: 0 8px;
+  margin-bottom: 4px;
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  cursor: pointer;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 0;
+  background: transparent;
+  text-align: left;
+}
+body[data-yundeng-shell] .yundeng-group-toggle:hover { background: #F3F4F6; }
+body[data-yundeng-shell] .yundeng-group-toggle[data-active="true"] { color: #0066FF; font-weight: 600; }
+body[data-yundeng-shell] .yundeng-subnav {
+  overflow: hidden;
+  max-height: 420px;
+  opacity: 1;
+  margin-left: 0;
+  padding-left: 0;
+  border-left: 0;
+  transition: max-height .22s ease, opacity .16s ease;
+}
+body[data-yundeng-shell] .yundeng-subnav .yundeng-menu-link { padding-left: 36px; font-size: 14px; }
+body[data-yundeng-shell] .yundeng-secondary-link { gap: 0; }
+body[data-yundeng-shell] .yundeng-subnav[data-expanded="false"] { max-height: 0; opacity: 0; pointer-events: none; }
+body[data-yundeng-shell] .yundeng-group-chevron { transition: transform .22s ease; }
+body[data-yundeng-shell] .yundeng-group-toggle[aria-expanded="false"] .yundeng-group-chevron { transform: rotate(-90deg); }
+body[data-yundeng-shell] .yundeng-popover {
+  position: fixed;
+  z-index: 1200;
+  background: #fff;
+  border: 1px solid #DFE1E5;
+  border-radius: 8px;
+  box-shadow: 0 6px 24px rgba(0,0,0,.12);
+  min-width: 176px;
+}
+body[data-yundeng-shell] .yundeng-popover.hidden { display: none; }
+body[data-yundeng-shell] .yundeng-popover button,
+body[data-yundeng-shell] .yundeng-popover a { font: inherit; color: inherit; }
+body[data-yundeng-shell] #accountPopover,
+body[data-yundeng-shell] #yundeng-account {
+  width: 340px;
+  min-width: 340px;
+  max-width: calc(100vw - 16px);
+  max-height: calc(100dvh - 156px);
+  padding: 20px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+  border-color: #E8EAED;
+}
+body[data-yundeng-shell] #accountPopover::-webkit-scrollbar,
+body[data-yundeng-shell] #yundeng-account::-webkit-scrollbar { width: 6px; }
+body[data-yundeng-shell] #accountPopover::-webkit-scrollbar-thumb,
+body[data-yundeng-shell] #yundeng-account::-webkit-scrollbar-thumb { border-radius: 999px; background: #DFE1E5; }
+body[data-yundeng-shell] #accountPopover::-webkit-scrollbar-track,
+body[data-yundeng-shell] #yundeng-account::-webkit-scrollbar-track { background: transparent; }
+body[data-yundeng-shell] .yundeng-account-panel { display: flex; flex-direction: column; gap: 0; }
+body[data-yundeng-shell] .yundeng-account-head {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+body[data-yundeng-shell] .yundeng-account-head:hover .yundeng-account-title,
+body[data-yundeng-shell] .yundeng-account-head:hover .yundeng-account-head-chevron {
+  color: #0066FF;
+}
+body[data-yundeng-shell] .yundeng-account-head-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  flex: none;
+  overflow: hidden;
+  border: 1px solid #DFE1E5;
+  background:
+    radial-gradient(circle at 38% 34%, rgba(255,255,255,.92) 0 10%, transparent 11%),
+    radial-gradient(circle at 52% 40%, #1A1D24 0 12%, transparent 13%),
+    radial-gradient(circle at 44% 60%, #3A3F4A 0 18%, transparent 19%),
+    radial-gradient(circle at 50% 50%, #9DA2AC 0 48%, #6E7685 49% 64%, #DFE1E5 65% 100%);
+  position: relative;
+}
+body[data-yundeng-shell] .yundeng-account-head-avatar::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 50% 28%, rgba(255,255,255,.88) 0 7%, transparent 8%),
+    radial-gradient(circle at 34% 72%, rgba(255,255,255,.32) 0 8%, transparent 9%);
+  mix-blend-mode: screen;
+}
+body[data-yundeng-shell] .yundeng-account-head-copy { min-width: 0; flex: 1; display: flex; flex-direction: column; gap: 2px; }
+body[data-yundeng-shell] .yundeng-account-title-row {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+body[data-yundeng-shell] .yundeng-account-title {
+  min-width: 0;
+  color: #3A3F4A;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 20px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+body[data-yundeng-shell] .yundeng-account-subtitle-row {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #9DA2AC;
+  font-size: 12px;
+  line-height: 18px;
+}
+body[data-yundeng-shell] .yundeng-account-dot {
+  width: 3px;
+  height: 3px;
+  border-radius: 999px;
+  flex: none;
+  background: #DFE1E5;
+}
+body[data-yundeng-shell] .yundeng-account-head-chevron,
+body[data-yundeng-shell] .yundeng-account-list-chevron {
+  width: 16px;
+  height: 16px;
+  flex: none;
+  color: #9DA2AC;
+}
+body[data-yundeng-shell] .yundeng-account-section {
+  min-width: 0;
+  padding: 0;
+}
+body[data-yundeng-shell] .yundeng-account-balance {
+  margin-top: 28px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 0;
+}
+body[data-yundeng-shell] .yundeng-account-balance-item {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+body[data-yundeng-shell] .yundeng-account-balance-item + .yundeng-account-balance-item {
+  padding-left: 16px;
+  border-left: 1px solid #E8EAED;
+}
+body[data-yundeng-shell] .yundeng-account-balance-top {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+body[data-yundeng-shell] .yundeng-account-balance-label {
+  min-width: 0;
+  color: #6E7685;
+  font-size: 13px;
+  line-height: 18px;
+}
+body[data-yundeng-shell] .yundeng-popover .yundeng-account-balance-action {
+  min-width: 34px;
+  height: 20px;
+  padding: 0 4px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: #0066FF;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 20px;
+  cursor: pointer;
+  text-align: center;
+}
+body[data-yundeng-shell] .yundeng-popover .yundeng-account-balance-action:hover,
+body[data-yundeng-shell] .yundeng-popover .yundeng-account-balance-action:focus-visible {
+  background: #E6F0FF;
+  box-shadow: inset 0 0 0 1px rgba(0,102,255,.08);
+}
+body[data-yundeng-shell] .yundeng-account-balance-value {
+  color: #1A1D24;
+  font: 500 24px/28px 'JetBrains Mono', monospace;
+  letter-spacing: 0;
+}
+body[data-yundeng-shell] .yundeng-account-vip {
+  width: 100%;
+  min-height: 48px;
+  margin-top: 20px;
+  padding: 10px 10px 10px 9px;
+  border: 0;
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  color: #fff;
+  background: linear-gradient(90deg, #5B9EFF 0%, #0066FF 54%, #0052CC 100%);
+  box-shadow: 0 6px 24px rgba(0,102,255,.24);
+  cursor: pointer;
+}
+body[data-yundeng-shell] .yundeng-account-vip::after {
+  content: '';
+  position: absolute;
+  left: -18px;
+  right: -18px;
+  bottom: -28px;
+  height: 38px;
+  border-radius: 50% 50% 0 0;
+  background: rgba(255,255,255,.28);
+  pointer-events: none;
+}
+body[data-yundeng-shell] .yundeng-account-vip:hover {
+  background: linear-gradient(90deg, #6AA8FF 0%, #0052CC 58%, #0047B3 100%);
+}
+body[data-yundeng-shell] .yundeng-account-vip-left {
+  min-width: 0;
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+body[data-yundeng-shell] .yundeng-account-vip-mark {
+  width: 18px;
+  height: 18px;
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+body[data-yundeng-shell] .yundeng-account-vip-mark svg {
+  width: 18px;
+  height: 18px;
+}
+body[data-yundeng-shell] .yundeng-account-vip-copy {
+  min-width: 0;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 18px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+body[data-yundeng-shell] .yundeng-account-vip-badge {
+  min-height: 26px;
+  padding: 0 11px;
+  border-radius: 9999px;
+  position: relative;
+  z-index: 1;
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #0066FF;
+  background: #E6F0FF;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.16);
+}
+body[data-yundeng-shell] .yundeng-account-package {
+  min-width: 0;
+  margin-top: 24px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px 24px;
+  padding: 0 14px;
+}
+body[data-yundeng-shell] .yundeng-account-package-item {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+}
+body[data-yundeng-shell] .yundeng-account-package-count {
+  min-width: 0;
+  color: #3A3F4A;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 20px;
+}
+body[data-yundeng-shell] .yundeng-account-package-label {
+  color: #6E7685;
+  font-size: 12px;
+  line-height: 16px;
+}
+body[data-yundeng-shell] .yundeng-account-package-expired {
+  grid-column: 1 / -1;
+  padding-top: 0;
+  color: #9DA2AC;
+  font-size: 12px;
+  line-height: 16px;
+  text-align: center;
+}
+body[data-yundeng-shell] .yundeng-account-traffic {
+  min-width: 0;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid #E8EAED;
+}
+body[data-yundeng-shell] .yundeng-account-traffic-heading {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+body[data-yundeng-shell] .yundeng-account-traffic-heading h3 {
+  margin: 0;
+  color: #1A1D24;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+}
+body[data-yundeng-shell] .yundeng-popover .yundeng-account-traffic-action {
+  min-height: 28px;
+  padding: 0 8px;
+  border: 1px solid #0066FF;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  flex: none;
+  color: #0066FF;
+  background: #fff;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 18px;
+  cursor: pointer;
+}
+body[data-yundeng-shell] .yundeng-popover .yundeng-account-traffic-action:hover,
+body[data-yundeng-shell] .yundeng-popover .yundeng-account-traffic-action:focus-visible {
+  background: #E6F0FF;
+  outline: 0;
+}
+body[data-yundeng-shell] .yundeng-account-traffic-action svg { width: 14px; height: 14px; }
+body[data-yundeng-shell] .yundeng-account-traffic-list {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+body[data-yundeng-shell] .yundeng-account-traffic-item {
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid #E8EAED;
+  border-radius: 6px;
+  background: #F7F8FA;
+}
+body[data-yundeng-shell] .yundeng-account-traffic-item-head {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+body[data-yundeng-shell] .yundeng-account-traffic-item-head strong {
+  color: #3A3F4A;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 18px;
+}
+body[data-yundeng-shell] .yundeng-account-traffic-item-head span {
+  color: #6E7685;
+  font-size: 11px;
+  line-height: 16px;
+  white-space: nowrap;
+}
+body[data-yundeng-shell] .yundeng-account-traffic-track {
+  width: 100%;
+  height: 8px;
+  margin-top: 10px;
+  border-radius: 999px;
+  overflow: hidden;
+  display: flex;
+  background: #DFE1E5;
+}
+body[data-yundeng-shell] .yundeng-account-traffic-fill {
+  height: 100%;
+  display: block;
+  transition: width .22s ease;
+}
+body[data-yundeng-shell] .yundeng-account-traffic-fill-used {
+  background: #0066FF;
+}
+body[data-yundeng-shell] .yundeng-account-traffic-fill-remaining {
+  background: #0FC060;
+}
+body[data-yundeng-shell] .yundeng-account-traffic-fill:first-child {
+  border-radius: 999px 0 0 999px;
+}
+body[data-yundeng-shell] .yundeng-account-traffic-fill:last-child {
+  border-radius: 0 999px 999px 0;
+}
+body[data-yundeng-shell] .yundeng-account-traffic-metrics {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0;
+}
+body[data-yundeng-shell] .yundeng-account-traffic-metrics > span {
+  min-width: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  white-space: nowrap;
+}
+body[data-yundeng-shell] .yundeng-account-traffic-metrics em {
+  color: #9DA2AC;
+  font-size: 11px;
+  font-style: normal;
+  line-height: 16px;
+}
+body[data-yundeng-shell] .yundeng-account-traffic-metrics b {
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 18px;
+  white-space: nowrap;
+}
+body[data-yundeng-shell] .yundeng-account-traffic-metric-used b {
+  color: #0066FF;
+}
+body[data-yundeng-shell] .yundeng-account-traffic-metric-remaining {
+  justify-content: flex-end;
+}
+body[data-yundeng-shell] .yundeng-account-traffic-metric-remaining b {
+  color: #0FC060;
+}
+body[data-yundeng-shell] .yundeng-account-traffic-note {
+  min-width: 0;
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #9DA2AC;
+  font-size: 11px;
+  line-height: 16px;
+}
+body[data-yundeng-shell] .yundeng-account-traffic-note svg { width: 12px; height: 12px; flex: none; }
+body[data-yundeng-shell] .yundeng-account-traffic + .yundeng-account-menu {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #E8EAED;
+}
+body[data-yundeng-shell] .yundeng-account-menu {
+  margin-top: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding-top: 0;
+}
+body[data-yundeng-shell] .yundeng-account-menu-item {
+  width: 100%;
+  min-height: 34px;
+  padding: 0 0;
+  border: 0;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  justify-content: flex-start;
+  color: #3A3F4A;
+  background: transparent;
+  cursor: pointer;
+  text-decoration: none;
+}
+body[data-yundeng-shell] .yundeng-account-menu-item:hover { background: #F3F4F6; }
+body[data-yundeng-shell] .yundeng-account-menu-item .menu-label {
+  min-width: 0;
+  flex: 0 1 auto;
+  color: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 18px;
+  text-align: left;
+}
+body[data-yundeng-shell] .yundeng-account-menu-icon {
+  width: 16px;
+  height: 16px;
+  flex: none;
+  color: #6E7685;
+}
+body[data-yundeng-shell] .yundeng-account-menu-item:hover .yundeng-account-menu-icon,
+body[data-yundeng-shell] .yundeng-account-menu-item:hover .yundeng-account-list-chevron {
+  color: #3A3F4A;
+}
+body[data-yundeng-shell] .yundeng-account-menu-item .yundeng-account-list-chevron {
+  margin-left: auto;
+}
+body[data-yundeng-shell] .yundeng-account-menu-logout {
+  margin-top: 10px;
+  border-top: 1px solid #E8EAED;
+  padding-top: 10px;
+}
+body[data-yundeng-shell] .yundeng-account-logout {
+  color: #3A3F4A;
+}
+body[data-yundeng-shell] .yundeng-account-logout:hover {
+  color: #D9001B;
+  background: #FFE8EB;
+}
+body[data-yundeng-shell] .yundeng-account-logout .yundeng-account-menu-icon,
+body[data-yundeng-shell] .yundeng-account-logout .yundeng-account-list-chevron {
+  color: #6E7685;
+}
+body[data-yundeng-shell] .yundeng-assistant-button {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 900;
+  border: 0;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  background: #0066FF;
+  box-shadow: 0 6px 24px rgba(0,0,0,.12);
+  cursor: pointer;
+}
+body[data-yundeng-shell] .yundeng-assistant-button:hover { background: #0052CC; }
+body[data-yundeng-shell] .yundeng-assistant-button svg { width: 20px; height: 20px; }
+body[data-yundeng-shell] .yundeng-assistant-overlay[hidden] { display: none !important; }
+body[data-yundeng-shell] .yundeng-assistant-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: flex;
+  justify-content: flex-end;
+  background: rgba(26,29,36,.28);
+}
+body[data-yundeng-shell] .yundeng-assistant-panel {
+  width: min(800px, 100%);
+  height: 100%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  color: #3A3F4A;
+  background: #fff;
+  box-shadow: -4px 0 24px rgba(0,0,0,.12);
+}
+body[data-yundeng-shell] .yundeng-assistant-header {
+  height: 56px;
+  min-height: 56px;
+  padding: 0 24px;
+  border-bottom: 1px solid #DFE1E5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+body[data-yundeng-shell] .yundeng-assistant-heading { min-width: 0; display: flex; align-items: center; gap: 8px; }
+body[data-yundeng-shell] .yundeng-assistant-heading h2 { margin: 0; color: #1A1D24; font-size: 16px; font-weight: 600; }
+body[data-yundeng-shell] .yundeng-assistant-mark {
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  color: #0066FF;
+  background: #E6F0FF;
+}
+body[data-yundeng-shell] .yundeng-assistant-mark svg { width: 16px; height: 16px; }
+body[data-yundeng-shell] .yundeng-assistant-close {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  color: #6E7685;
+  background: transparent;
+  cursor: pointer;
+}
+body[data-yundeng-shell] .yundeng-assistant-close:hover { color: #3A3F4A; background: #F3F4F6; }
+body[data-yundeng-shell] .yundeng-assistant-close svg { width: 20px; height: 20px; }
+body[data-yundeng-shell] .yundeng-assistant-body { min-height: 0; flex: 1; padding: 24px; overflow: auto; }
+body[data-yundeng-shell] .yundeng-assistant-welcome strong { display: block; color: #1A1D24; font-size: 14px; font-weight: 600; }
+body[data-yundeng-shell] .yundeng-assistant-welcome p { margin: 8px 0 0; color: #6E7685; font-size: 14px; }
+body[data-yundeng-shell] .yundeng-assistant-questions { margin-top: 20px; display: flex; flex-wrap: wrap; gap: 8px; }
+body[data-yundeng-shell] .yundeng-assistant-questions button {
+  min-height: 32px;
+  padding: 5px 12px;
+  border: 1px solid #DFE1E5;
+  border-radius: 4px;
+  color: #3A3F4A;
+  background: #fff;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.5;
+  cursor: pointer;
+}
+body[data-yundeng-shell] .yundeng-assistant-questions button:hover { color: #0066FF; border-color: #0066FF; background: #E6F0FF; }
+body[data-yundeng-shell] .yundeng-assistant-reply { margin-top: 20px; padding: 12px; border: 1px solid #0091D5; border-radius: 4px; color: #0091D5; background: #E4F4FB; font-size: 14px; }
+body[data-yundeng-shell] .yundeng-assistant-reply[hidden] { display: none !important; }
+body[data-yundeng-shell] .yundeng-assistant-form { padding: 16px 24px; border-top: 1px solid #DFE1E5; display: flex; gap: 8px; }
+body[data-yundeng-shell] .yundeng-assistant-form input {
+  width: 100%;
+  min-width: 0;
+  height: 32px;
+  padding: 0 12px;
+  border: 1px solid #DFE1E5;
+  border-radius: 4px;
+  outline: 0;
+  color: #3A3F4A;
+  background: #fff;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.5;
+}
+body[data-yundeng-shell] .yundeng-assistant-form input:focus { border-color: #0066FF; box-shadow: 0 0 0 2px rgba(0,102,255,.12); }
+body[data-yundeng-shell] .yundeng-assistant-form input[aria-invalid="true"] { border-color: #D9001B; box-shadow: 0 0 0 2px #FFE8EB; }
+body[data-yundeng-shell] .yundeng-assistant-form button {
+  min-width: 64px;
+  height: 32px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 4px;
+  color: #fff;
+  background: #0066FF;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.5;
+  font-weight: 500;
+  cursor: pointer;
+}
+body[data-yundeng-shell] .yundeng-assistant-form button:hover { background: #0052CC; }
+body[data-yundeng-shell].yundeng-onboarding-open { overflow: hidden; }
+body[data-yundeng-shell] .yundeng-onboarding-overlay[hidden] { display: none !important; }
+body[data-yundeng-shell] .yundeng-onboarding-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1400;
+  padding: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,.3);
+}
+body[data-yundeng-shell] .yundeng-onboarding-panel {
+  position: relative;
+  width: min(1200px, calc(100vw - 48px));
+  height: min(720px, calc(100dvh - 48px));
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  border-radius: 10px;
+  color: #3A3F4A;
+  background: #fff;
+  box-shadow: 0 10px 36px rgba(0,0,0,.18);
+  animation: yundeng-onboarding-in .16s ease-out;
+}
+body[data-yundeng-shell] .yundeng-onboarding-frame {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+  background: #fff;
+}
+body[data-yundeng-shell] .yundeng-onboarding-loading {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  color: #6E7685;
+  background: #F7F8FA;
+  font-size: 14px;
+}
+body[data-yundeng-shell] .yundeng-onboarding-loading[hidden] { display: none !important; }
+body[data-yundeng-shell] .yundeng-onboarding-loading svg { width: 18px; height: 18px; animation: yundeng-onboarding-spin .8s linear infinite; }
+@keyframes yundeng-onboarding-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes yundeng-onboarding-spin { to { transform: rotate(360deg); } }
+@media (min-width: 768px) and (max-width: 1100px) {
+  body[data-yundeng-shell] .yundeng-onboarding-panel { width: min(960px, calc(100vw - 48px)); height: min(660px, calc(100dvh - 48px)); }
+}
+@media (min-width: 768px) and (max-width: 900px) {
+  body[data-yundeng-shell] .yundeng-onboarding-panel { width: min(760px, calc(100vw - 48px)); height: min(600px, calc(100dvh - 48px)); }
+}
+body[data-yundeng-shell] .yundeng-mobile-menu { display: none; }
+body[data-yundeng-shell] .yundeng-mobile-backdrop {
+  display: none;
+  position: fixed;
+  inset: 140px 0 0;
+  z-index: 40;
+  background: rgba(26,29,36,.28);
+}
+body[data-yundeng-shell] .yundeng-mobile-backdrop[data-open="true"] { display: block; }
+body[data-yundeng-shell] #toastContainer { top: 148px !important; }
+@media (max-width: 767px) {
+  body[data-yundeng-shell] .yundeng-onboarding-overlay { padding: 0; }
+  body[data-yundeng-shell] .yundeng-onboarding-panel { width: 100vw; height: 100vh; height: 100dvh; border-radius: 0; }
+  body[data-yundeng-shell] .yundeng-window-controls { display: none; }
+  body[data-yundeng-shell] .yundeng-browser-tab { min-width: 160px; flex-basis: 200px; }
+  body[data-yundeng-shell] [data-yundeng-topbar] { padding: 0 12px !important; }
+  body[data-yundeng-shell] .yundeng-mobile-menu { display: inline-flex; }
+  body[data-yundeng-shell] .yundeng-account-name,
+  body[data-yundeng-shell] .yundeng-account-chevron { display: none; }
+  body[data-yundeng-shell] #sidebar {
+    position: fixed !important;
+    inset: 140px auto 0 0;
+    z-index: 50;
+    height: calc(100vh - 140px) !important;
+    height: calc(100dvh - 140px) !important;
+    transform: translateX(-100%);
+    box-shadow: 6px 0 24px rgba(0,0,0,.12) !important;
+  }
+  body[data-yundeng-shell] .yundeng-sidebar-toggle { display: none; }
+  body[data-yundeng-shell] #sidebar.yundeng-mobile-open { transform: translateX(0); width: 220px !important; }
+  body[data-yundeng-shell] #sidebar.compact { width: 68px !important; transform: translateX(-100%); }
+  body[data-yundeng-shell] #sidebar.yundeng-mobile-open.compact { width: 220px !important; }
+  body[data-yundeng-shell] #sidebar.yundeng-mobile-open.compact .brand-link,
+  body[data-yundeng-shell] #sidebar.yundeng-mobile-open.compact .menu-label,
+  body[data-yundeng-shell] #sidebar.yundeng-mobile-open.compact .group-chevron,
+  body[data-yundeng-shell] #sidebar.yundeng-mobile-open.compact .yundeng-group-chevron,
+  body[data-yundeng-shell] #sidebar.yundeng-mobile-open.compact .create-label,
+  body[data-yundeng-shell] #sidebar.yundeng-mobile-open.compact .bottom-label,
+  body[data-yundeng-shell] #sidebar.yundeng-mobile-open.compact .nav-label { display: inline !important; }
+  body[data-yundeng-shell] #sidebar.yundeng-mobile-open.compact .yundeng-menu-link,
+  body[data-yundeng-shell] #sidebar.yundeng-mobile-open.compact .yundeng-group-toggle,
+  body[data-yundeng-shell] #sidebar.yundeng-mobile-open.compact .yundeng-bottom-link { justify-content: flex-start !important; padding-inline: 8px !important; }
+  body[data-yundeng-shell] #sidebar.yundeng-mobile-open.compact .yundeng-subnav .yundeng-menu-link { padding-left: 36px !important; }
+  body[data-yundeng-shell] #sidebar.yundeng-mobile-open.compact .submenu,
+  body[data-yundeng-shell] #sidebar.yundeng-mobile-open.compact .yundeng-subnav { display: block !important; }
+}
+@media (max-width: 560px) {
+  body[data-yundeng-shell] .yundeng-history-actions .yundeng-browser-button:not(#yundeng-browser-reload) { display: none; }
+  body[data-yundeng-shell] .yundeng-tab-strip { gap: 4px; }
+  body[data-yundeng-shell] .yundeng-browser-tab { min-width: 140px; flex-basis: 176px; }
+  body[data-yundeng-shell] .yundeng-platform-name { display: none; }
+  body[data-yundeng-shell] .yundeng-assistant-header { padding: 0 16px; }
+  body[data-yundeng-shell] .yundeng-assistant-body { padding: 20px 16px; }
+  body[data-yundeng-shell] .yundeng-assistant-form { padding: 12px 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  body[data-yundeng-shell] .yundeng-onboarding-panel,
+  body[data-yundeng-shell] .yundeng-onboarding-loading svg { animation: none !important; }
+  body[data-yundeng-shell] #sidebar,
+  body[data-yundeng-shell] .yundeng-subnav,
+  body[data-yundeng-shell] .yundeng-group-chevron,
+  body[data-yundeng-shell] .yundeng-sidebar-toggle { transition: none !important; }
+  body[data-yundeng-shell] .yundeng-account-traffic-fill { transition: none !important; }
+  body[data-yundeng-shell] .yundeng-icon-button:active,
+  body[data-yundeng-shell] #collapseBtn:active { transform: none; }
+}
+
+/* ===== 内联自 Prototype/分页器.css ===== */
+/* 通用分页器组件 · 分页器PRD规范
+ * 主色：沿用项目设计系统 #0066FF（与PRD #1677ff等价色阶）
+ * 使用：
+ *  <div class="yd-pagination" data-yd-pager></div>
+ *  实例化 new YDPager(el, options)
+ */
+.yd-pagination{display:flex;justify-content:flex-end;align-items:center;flex-wrap:wrap;gap:12px;font-size:12px;color:#3A3F4A;line-height:1}
+/* 核心分页导航区 */
+.yd-pager-nav{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.yd-pager-btn{min-width:32px;height:32px;padding:0 10px;border:1px solid #DFE1E5;border-radius:4px;background:#fff;color:#3A3F4A;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;user-select:none;font:inherit;transition:all .15s ease;box-sizing:border-box}
+.yd-pager-btn:hover:not(:disabled):not(.is-active){border-color:#0066FF;color:#0066FF;background:#E6F0FF}
+.yd-pager-btn:disabled{cursor:not-allowed;color:#9DA2AC;background:#F0F1F3;border-color:#DFE1E5}
+.yd-pager-btn.is-icon{padding:0 8px}
+.yd-pager-btn.is-active{background:#0066FF;border-color:#0066FF;color:#fff;cursor:default}
+.yd-pager-btn.is-active:hover{background:#0066FF;color:#fff;border-color:#0066FF}
+.yd-pager-ellipsis{min-width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;color:#6E7685;user-select:none}
+/* 每页条数选择区 */
+.yd-pager-size{position:relative}
+.yd-pager-size select{height:32px;padding:0 26px 0 10px;border:1px solid #DFE1E5;border-radius:4px;background:#fff url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236E7685' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>") no-repeat right 8px center;color:#3A3F4A;cursor:pointer;font:inherit;-webkit-appearance:none;appearance:none;outline:none}
+.yd-pager-size select:hover{border-color:#0066FF}
+.yd-pager-size select:focus{border-color:#0066FF;box-shadow:0 0 0 2px rgba(0,102,255,.12)}
+/* 跳转与数据统计区 */
+.yd-pager-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.yd-pager-jump{display:flex;align-items:center;gap:6px;color:#6E7685}
+.yd-pager-jump input{width:56px;height:32px;padding:0 8px;border:1px solid #DFE1E5;border-radius:4px;background:#fff;color:#3A3F4A;text-align:center;font:inherit;outline:none;font-family:'JetBrains Mono',monospace;box-sizing:border-box}
+.yd-pager-jump input:hover{border-color:#0066FF}
+.yd-pager-jump input:focus{border-color:#0066FF;box-shadow:0 0 0 2px rgba(0,102,255,.12)}
+.yd-pager-jump input.is-error{border-color:#D9001B;color:#D9001B}
+.yd-pager-stats{color:#6E7685;margin-left:4px;white-space:nowrap}
+.yd-pager-stats b{font-weight:500;color:#3A3F4A}
+.yd-pager-error-tip{color:#D9001B;min-width:0;transition:all .15s}
+/* 窄屏适配 */
+@media(max-width:720px){
+  .yd-pagination{gap:10px;justify-content:flex-start}
+  .yd-pager-right{order:3;width:100%;justify-content:flex-start}
+  .yd-pager-stats{margin-left:0}
+}
+</style>
+<!-- 独立版不加载 Prototype/公共导航.js：壳层、路由与嵌入适配已在本文件内静态复现。 -->
 </head>
-<body class="bg-page text-ink-body"><script>
-// 直接打开时跳回系统框架
-(function() {
-  try {
-    var up = location.pathname.split('/Prototype/')[0];
-    if (up === location.pathname) { // not in Prototype folder
-      var idx = location.pathname.lastIndexOf('/');
-      up = location.pathname.substring(0, idx);
-    }
-    var target = up + '/index.html?page=billing-invoice';
-    if (window === top) location.replace(target);
-  } catch(e) {}
-})();
-</script>
-<main id="mainContent" class="min-h-screen">
+<body class="bg-page text-ink-body" data-yundeng-embedded="true"><!-- 独立版已移除「直接打开回跳系统框架」逻辑，双击本文件即在本页渲染开票管理。 -->
+<main id="mainContent" class="min-h-screen" data-yundeng-business-root="true" data-yundeng-embed-path="true">
 <div class="page-content"><section id="coinPanel"><div class="coin-summary grid grid-cols-[280px_minmax(0,1fr)] gap-4 mb-4"><div class="card p-5"><div class="text-ink-sub">云币余额</div><div class="mono text-[30px] font-semibold text-ink-title mt-2">¥ 326.80</div><p class="text-[12px] text-ink-sub mt-2">1 元 = 1 云币，可用于购买代理与套餐</p></div><div class="card p-5"><div class="flex gap-2 mb-4"><button class="subtab active" data-coin="records">交易流水</button><button class="subtab" data-coin="recharge">在线充值</button><button class="subtab" data-coin="cdkey">CDKEY 兑换</button></div><div id="coinIntro" class="text-ink-sub">查询账户充值、消费与兑换记录，所有金额均为脱敏演示数据。</div></div></div>
 <div id="recordsView"><div class="card p-5 mb-4"><div class="coin-filter-flow"><label class="coin-filter-item"><span class="coin-filter-label">收支类型：</span><select id="txType" class="field coin-filter-control"><option>全部</option><option>充值</option><option>支出</option><option>兑换</option></select></label><label class="coin-filter-item"><span class="coin-filter-label">交易单号：</span><input id="txNo" class="field coin-filter-control mono" placeholder="请输入交易单号"></label><label class="coin-filter-item"><span class="coin-filter-label">订单号：</span><input id="txOrder" class="field coin-filter-control mono" placeholder="请输入订单号"></label><label class="coin-filter-item"><span class="coin-filter-label">交易日期：</span><input id="txDate" type="date" class="field coin-filter-control mono"></label><div class="coin-filter-actions"><button id="txReset" class="btn btn-default">重置</button><button id="txSearch" class="btn btn-primary">查询</button></div></div></div><div class="card overflow-hidden p-5"><div class="pb-4"><div class="data-list-title"><h2 class="inline-block text-[16px] font-semibold text-ink-title">云币流水</h2><span id="txCount" class="data-list-count" role="status" aria-live="polite"></span></div></div><div class="overflow-x-auto"><table class="w-full"><thead class="bg-line-lighter text-ink-sub"><tr><th class="p-3 text-left">交易类型</th><th class="p-3 text-left">交易时间</th><th class="p-3 text-left">交易单号</th><th class="p-3 text-left">订单号</th><th class="p-3 text-left">项目</th><th class="p-3 text-left">金额</th><th class="p-3 text-left">账户余额</th><th class="p-3 text-left">操作人</th></tr></thead><tbody id="txBody"></tbody></table></div><div id="txPagination" class="pt-5" aria-label="云币流水分页"></div></div></div>
 <div id="rechargeView" class="hidden card p-6"><h2 class="text-[18px] font-semibold text-ink-title mb-6">云币充值</h2><div class="max-w-[640px] space-y-5"><div><label class="block font-medium mb-2">充值金额</label><div class="flex flex-wrap gap-2" id="amountChoices"><button class="btn btn-default active" data-amount="50">¥50</button><button class="btn btn-default" data-amount="500">¥500</button><button class="btn btn-default" data-amount="1000">¥1000</button><button class="btn btn-default" data-amount="5000">¥5000</button><button class="btn btn-default" data-amount="10000">¥10000</button><button class="btn btn-default" data-amount="custom">自定义</button></div><input id="customAmount" class="field w-[240px] mt-3 hidden mono" placeholder="请输入充值金额"></div><label class="block"><span class="block font-medium mb-2">选择优惠券</span><select id="rechargeCoupon" class="field w-[400px]"><option value="0">不使用优惠券</option><option value="5">充值优惠券（减 ¥5）</option></select></label><div><span class="block font-medium mb-2">支付方式</span><div class="flex gap-2" id="payChoices"><button class="btn btn-default active" data-pay="支付宝">支付宝</button><button class="btn btn-default" data-pay="微信">微信</button></div></div><div class="p-4 rounded bg-page flex justify-between items-center"><span>应付金额</span><strong id="payable" class="mono text-[24px] text-danger">¥45.00</strong></div><button id="submitRecharge" class="btn btn-primary">提交支付</button><p class="text-[12px] text-ink-sub">原型仅演示支付前确认，不创建真实订单或发起扣款。</p></div></div>
@@ -453,7 +1681,281 @@
     <div id="orderDetailBody" class="order-drawer-body"></div>
   </aside>
 </div>
-<script src="分页器.js?v=20260814"></script><script>
+<script>
+/* ===== 内联自 Prototype/分页器.js ===== */
+/* 通用分页器组件 JS · 遵循《分页器PRD》规范
+ * 用法：
+ *   <link rel="stylesheet" href="分页器.css">
+ *   <div id="pager"></div>
+ *   <script src="分页器.js"><\/script>
+ *   <script>
+ *     const pager = new YDPager(document.getElementById('pager'), {
+ *       total_count: 12486,
+ *       current_page: 1,
+ *       page_size: 10,
+ *       page_size_options: [10, 20, 50, 100],
+ *       onChange(state){
+ *         console.log('分页变化', state);
+ *       },
+ *       toast(msg){ 自定义toast，可选 }
+ *     });
+ *     // 外部更新总条数：pager.setState({ total_count: 200, current_page: 1 });
+ *   <\/script>
+ */
+(function (global) {
+  const DEFAULT_OPTIONS = {
+    total_count: 0,
+    current_page: 1,
+    page_size: 10,
+    page_size_options: [10, 20, 50, 100]
+  };
+
+  function calc_total_pages(total_count, page_size) {
+    if (!total_count || total_count <= 0) return 1;
+    return Math.max(1, Math.ceil(total_count / page_size));
+  }
+
+  function format_total_label(total_count) {
+    if (total_count > 1000) return '1000+';
+    return String(total_count);
+  }
+
+  /**
+   * 生成页码序列（含省略号 -1 表示）
+   * 规则（PRD 5.1）：
+   *  - 总页数 <=5：全部展示
+   *  - 总页数 >5：根据当前页码显示前几、当前附近、最后一页 + 省略号
+   */
+  function build_page_sequence(current, total) {
+    const seq = [];
+    if (total <= 5) {
+      for (let i = 1; i <= total; i++) seq.push(i);
+      return seq;
+    }
+    // 总页数>5时：总是展示 1、最后一页；展示当前页附近；中间用 -1(省略号) 过渡
+    const push = (v) => { if (seq[seq.length - 1] !== v) seq.push(v); };
+    push(1);
+    const left = Math.max(2, current - 1);
+    const right = Math.min(total - 1, current + 1);
+    if (left > 2) push(-1);
+    for (let i = left; i <= right; i++) push(i);
+    if (right < total - 1) push(-1);
+    push(total);
+    return seq;
+  }
+
+  function is_valid_int(v) {
+    return /^\d+$/.test(String(v));
+  }
+
+  class YDPager {
+    constructor(root, options) {
+      this.root = typeof root === 'string' ? document.querySelector(root) : root;
+      if (!this.root) throw new Error('[YDPager] 挂载根元素不存在');
+      this.options = Object.assign({}, DEFAULT_OPTIONS, options || {});
+      // 规范化
+      this.options.page_size = Math.max(1, parseInt(this.options.page_size) || 10);
+      this.options.current_page = Math.max(1, parseInt(this.options.current_page) || 1);
+      this.options.total_count = Math.max(0, parseInt(this.options.total_count) || 0);
+      this.options.total_pages = calc_total_pages(this.options.total_count, this.options.page_size);
+      if (this.options.current_page > this.options.total_pages) this.options.current_page = this.options.total_pages;
+      this._handlers = {};
+      this._render();
+    }
+
+    /** 外部更新状态 */
+    setState(patch, { silent = false } = {}) {
+      Object.assign(this.options, patch || {});
+      this.options.page_size = Math.max(1, parseInt(this.options.page_size) || 10);
+      this.options.total_count = Math.max(0, parseInt(this.options.total_count) || 0);
+      this.options.total_pages = calc_total_pages(this.options.total_count, this.options.page_size);
+      this.options.current_page = Math.max(1, Math.min(
+        parseInt(this.options.current_page) || 1,
+        this.options.total_pages
+      ));
+      this._render();
+      if (!silent && this.options.onChange) {
+        this.options.onChange(this.getState());
+      }
+    }
+
+    getState() {
+      return {
+        current_page: this.options.current_page,
+        page_size: this.options.page_size,
+        total_count: this.options.total_count,
+        total_pages: this.options.total_pages
+      };
+    }
+
+    destroy() {
+      this.root.innerHTML = '';
+      this._handlers = {};
+    }
+
+    _toast(msg) {
+      if (typeof this.options.toast === 'function') { this.options.toast(msg); return; }
+      // 兜底 toast：与项目现有 toastBox 结构兼容
+      let box = document.getElementById('toastBox');
+      if (!box) {
+        box = document.createElement('div');
+        box.id = 'toastBox';
+        Object.assign(box.style, {
+          position: 'fixed', top: '16px', left: '50%', transform: 'translateX(-50%)',
+          zIndex: 10000, background: '#1A1D24', color: '#fff', padding: '8px 16px',
+          borderRadius: '4px', fontSize: '13px', display: 'none'
+        });
+        document.body.appendChild(box);
+      }
+      box.textContent = msg;
+      box.style.display = 'block';
+      clearTimeout(this._toastT);
+      this._toastT = setTimeout(() => { box.style.display = 'none'; }, 1800);
+    }
+
+    _fireChange() {
+      if (typeof this.options.onChange === 'function') {
+        this.options.onChange(this.getState());
+      }
+    }
+
+    _goToPage(page, { fromJumpInput = false } = {}) {
+      page = parseInt(page);
+      if (!is_valid_int(page) || isNaN(page)) {
+        if (fromJumpInput) this._toast('请输入有效页码');
+        return { ok: false, reason: 'invalid' };
+      }
+      if (page < 1 || page > this.options.total_pages) {
+        if (fromJumpInput) this._toast('页码超出范围');
+        return { ok: false, reason: 'out_of_range' };
+      }
+      if (page === this.options.current_page) return { ok: true };
+      this.options.current_page = page;
+      this._render();
+      this._fireChange();
+      if (fromJumpInput) this._toast('跳转成功');
+      return { ok: true };
+    }
+
+    _onSizeChange(newSize) {
+      newSize = parseInt(newSize);
+      if (newSize === this.options.page_size) return;
+      this.options.page_size = newSize;
+      this.options.total_pages = calc_total_pages(this.options.total_count, this.options.page_size);
+      this.options.current_page = 1; // 切换每页条数时重置到第一页（PRD 5.2.3）
+      this._render();
+      this._fireChange();
+    }
+
+    _render() {
+      // 清理旧事件绑定引用
+      this._handlers = {};
+      const { current_page, page_size, total_count, total_pages } = this.options;
+      const page_seq = build_page_sequence(current_page, total_pages);
+
+      // === 核心分页导航区 ===
+      let nav_html = '<div class="yd-pager-nav">';
+      // 上一页
+      nav_html += `<button type="button" class="yd-pager-btn is-icon" data-act="prev" aria-label="上一页" ${current_page === 1 ? 'disabled' : ''}>` +
+        `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>` +
+        `</button>`;
+      // 页码 + 省略号
+      page_seq.forEach((p) => {
+        if (p === -1) {
+          nav_html += `<span class="yd-pager-ellipsis">···</span>`;
+        } else {
+          const is_active = p === current_page;
+          nav_html += `<button type="button" class="yd-pager-btn ${is_active ? 'is-active' : ''}" data-act="page" data-page="${p}" ${is_active ? 'disabled' : ''}>${p}</button>`;
+        }
+      });
+      // 下一页
+      nav_html += `<button type="button" class="yd-pager-btn is-icon" data-act="next" aria-label="下一页" ${current_page === total_pages ? 'disabled' : ''}>` +
+        `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>` +
+        `</button>`;
+      nav_html += '</div>';
+
+      // === 每页条数选择区 ===
+      let size_html = '<div class="yd-pager-size"><select data-act="size" aria-label="每页显示条数">';
+      (this.options.page_size_options || []).forEach((n) => {
+        size_html += `<option value="${n}" ${n === page_size ? 'selected' : ''}>${n}条/页</option>`;
+      });
+      size_html += '</select></div>';
+
+      // === 跳转与数据统计区 ===
+      const total_label = format_total_label(total_count);
+      // jump error tip: 初始空
+      const right_html = `<div class="yd-pager-right">` +
+        `<div class="yd-pager-jump">` +
+        `<span>跳至</span>` +
+        `<input type="text" inputmode="numeric" data-act="jump" value="1" aria-label="跳转页码">` +
+        `<span>页</span>` +
+        `<span class="yd-pager-error-tip" data-act="jump-err"></span>` +
+        `</div>` +
+        `<div class="yd-pager-stats">共<b>${total_label}</b>条记录 第<b>${current_page}</b>/<b>${total_pages}</b>页</div>` +
+        `</div>`;
+
+      this.root.className = (this.root.className ? this.root.className + ' ' : '') + 'yd-pagination';
+      this.root.setAttribute('data-yd-pager', '');
+      this.root.innerHTML = nav_html + size_html + right_html;
+
+      // 事件绑定
+      this._bind();
+    }
+
+    _bind() {
+      const root = this.root;
+      // 页码按钮（prev/next/page）
+      root.addEventListener('click', this._h_click = (e) => {
+        const btn = e.target.closest('button[data-act]');
+        if (!btn) return;
+        const act = btn.dataset.act;
+        if (act === 'prev') this._goToPage(this.options.current_page - 1);
+        else if (act === 'next') this._goToPage(this.options.current_page + 1);
+        else if (act === 'page') this._goToPage(btn.dataset.page);
+      });
+      // 每页条数
+      const sizeSel = root.querySelector('select[data-act="size"]');
+      if (sizeSel) {
+        sizeSel.addEventListener('change', this._h_size = (e) => {
+          this._onSizeChange(e.target.value);
+        });
+      }
+      // 跳转输入框
+      const jumpInput = root.querySelector('input[data-act="jump"]');
+      const jumpErr = root.querySelector('[data-act="jump-err"]');
+      if (jumpInput) {
+        jumpInput.addEventListener('keydown', this._h_jump_key = (e) => {
+          if (e.key === 'Enter') {
+            const v = (jumpInput.value || '').trim();
+            // 校验
+            let err = '';
+            if (!is_valid_int(v)) err = '请输入有效页码';
+            else {
+              const n = parseInt(v);
+              if (n < 1 || n > this.options.total_pages) err = '页码超出范围';
+            }
+            jumpErr.textContent = err;
+            if (err) {
+              jumpInput.classList.add('is-error');
+              this._toast(err);
+              return;
+            }
+            jumpInput.classList.remove('is-error');
+            const r = this._goToPage(v, { fromJumpInput: true });
+            if (r.ok) { jumpInput.value = '1'; }
+          }
+        });
+        jumpInput.addEventListener('input', this._h_jump_input = () => {
+          jumpInput.classList.remove('is-error');
+          if (jumpErr) jumpErr.textContent = '';
+        });
+      }
+    }
+  }
+
+  global.YDPager = YDPager;
+})(typeof window !== 'undefined' ? window : this);
+</script><script>
 const q=s=>document.querySelector(s),qa=s=>[...document.querySelectorAll(s)];
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function invoiceCents(value){const text=String(value??0).replace(/[¥,]/g,'').trim();if(!/^-?\d+(?:\.\d{1,2})?$/.test(text))throw new Error('金额格式无效');const negative=text.startsWith('-'),[whole,fraction='']=text.replace('-','').split('.');const cents=Number(whole)*100+Number(fraction.padEnd(2,'0'));if(!Number.isSafeInteger(cents))throw new Error('金额超出范围');return negative?-cents:cents;}
