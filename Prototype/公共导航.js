@@ -66,6 +66,7 @@
     '系统框架.html': DEFAULT_ROUTE_KEY,
     '首页.html': DEFAULT_ROUTE_KEY,
     '编辑浏览器.html': 'environment',
+    '环境管理-编辑环境.html': 'environment',
     '商城-云币充值.html': 'store-coin',
     '费用管理-订单管理.html': 'billing-orders',
     '费用管理-云币交易流水.html': 'billing-coin-transactions',
@@ -125,6 +126,7 @@
   const routeItem = requestedItem || allItems.find(item => item.key === DEFAULT_ROUTE_KEY);
   const allowedModuleFiles = new Set(allItems.map(item => item.href).concat(
     '编辑浏览器.html',
+    '环境管理-编辑环境.html',
     '代理购买须知.html',
     '商城-代理.html',
     '商城-套餐.html',
@@ -134,7 +136,9 @@
   ));
   // 业务模块直开统一回到 SystemFrame；仅允许显式嵌入态在当前文档承载业务内容。
   const STANDALONE_FILES = new Set();
-  const requestedModule = searchParams.get('module');
+  // 编辑页采用新文件名；兼容已有的旧 module 书签。
+  const normalizeModuleFile = file => file === '编辑浏览器.html' ? '环境管理-编辑环境.html' : file;
+  const requestedModule = normalizeModuleFile(searchParams.get('module'));
   const requestedModuleItem = allowedModuleFiles.has(requestedModule) ? itemForModule(requestedModule) : null;
   const routedModule = isSystemFrame
     ? (requestedModuleItem?.key === routeItem?.key ? requestedModule : routeItem?.href || '首页.html')
@@ -143,8 +147,8 @@
     ? (routeItem?.key || DEFAULT_ROUTE_KEY)
     : (pageAliases[basename] || allItems.find(item => item.href === basename)?.key || 'index');
   const pageLabel = isSystemFrame
-    ? (routedModule === '编辑浏览器.html' ? '编辑浏览器' : routeItem?.label || '首页')
-    : ({ 'index.html':'原型导航', '系统框架.html':'系统框架', '编辑浏览器.html':'编辑浏览器' })[basename] || allItems.find(item => item.key === pageKey)?.label || document.title.replace(/^云登\s*[·-]?\s*|\s*[-·]\s*云登$/g, '');
+    ? (routedModule === '环境管理-编辑环境.html' ? '编辑环境' : routeItem?.label || '首页')
+    : ({ 'index.html':'原型导航', '系统框架.html':'系统框架', '编辑浏览器.html':'编辑环境', '环境管理-编辑环境.html':'编辑环境' })[basename] || allItems.find(item => item.key === pageKey)?.label || document.title.replace(/^云登\s*[·-]?\s*|\s*[-·]\s*云登$/g, '');
   function reportIndexHostRoute() {
     if (!isIndexHosted || window.parent === window) return;
     window.parent.postMessage({ type: 'yundeng:index-route-state', page: pageKey, search: location.search }, '*');
@@ -155,7 +159,7 @@
 
   function itemForModule(file) {
     if (['首页.html', '系统框架.html', 'index.html'].includes(file)) return allItems.find(item => item.key === DEFAULT_ROUTE_KEY);
-    if (file === '编辑浏览器.html') return allItems.find(item => item.key === 'environment');
+    if (['编辑浏览器.html', '环境管理-编辑环境.html'].includes(file)) return allItems.find(item => item.key === 'environment');
     if (moduleAliases[file]) return allItems.find(item => item.key === moduleAliases[file]);
     return allItems.find(item => item.href === file) || null;
   }
@@ -222,7 +226,7 @@
     const item = allItems.find(candidate => candidate.key === key) || allItems.find(candidate => candidate.key === DEFAULT_ROUTE_KEY);
     // 业务页的品牌入口回到根导航；SystemFrame 内部仍使用 page=home。
     if (!isSystemFrame && !isEmbedded && item.key === DEFAULT_ROUTE_KEY && !options.module) return '../index.html';
-    const moduleFile = allowedModuleFiles.has(options.module) ? options.module : item.href;
+    const moduleFile = allowedModuleFiles.has(options.module) ? normalizeModuleFile(options.module) : item.href;
     const params = new URLSearchParams();
     params.set('page', item.key);
     if (moduleFile !== item.href) params.set('module', moduleFile);
@@ -672,7 +676,7 @@
 
   function createShellSidebar(sidebar) {
     sidebar.className = 'sidebar';
-    sidebar.innerHTML = `<div class="yundeng-create-wrap"><a class="yundeng-create" href="${shellRouteHref('create')}" title="新建浏览器"><i data-lucide="plus" class="w-4"></i><span class="create-label">新建浏览器</span></a></div><nav id="yundeng-primary-nav" aria-label="业务模块"></nav><div class="yundeng-sidebar-bottom"><div class="yundeng-sidebar-divider"></div><a class="yundeng-bottom-link" data-active="${pageKey === 'settings'}" href="${shellRouteHref('settings')}" title="设置"><i data-lucide="settings-2" class="menu-icon"></i><span class="bottom-label">设置</span></a><a class="yundeng-bottom-link" data-active="${pageKey === 'help'}" href="${shellRouteHref('help')}" title="帮助"><i data-lucide="circle-help" class="menu-icon"></i><span class="bottom-label">帮助</span></a></div><button type="button" id="collapseBtn" class="yundeng-sidebar-toggle" title="收起侧栏" aria-label="收起侧栏" aria-expanded="true"><i data-lucide="triangle" class="yundeng-solid-arrow"></i></button>`;
+    sidebar.innerHTML = `<div class="yundeng-create-wrap"><a class="yundeng-create" href="${shellRouteHref('create')}" title="新建环境"><i data-lucide="plus" class="w-4"></i><span class="create-label">新建环境</span></a></div><nav id="yundeng-primary-nav" aria-label="业务模块"></nav><div class="yundeng-sidebar-bottom"><div class="yundeng-sidebar-divider"></div><a class="yundeng-bottom-link" data-active="${pageKey === 'settings'}" href="${shellRouteHref('settings')}" title="设置"><i data-lucide="settings-2" class="menu-icon"></i><span class="bottom-label">设置</span></a><a class="yundeng-bottom-link" data-active="${pageKey === 'help'}" href="${shellRouteHref('help')}" title="帮助"><i data-lucide="circle-help" class="menu-icon"></i><span class="bottom-label">帮助</span></a></div><button type="button" id="collapseBtn" class="yundeng-sidebar-toggle" title="收起侧栏" aria-label="收起侧栏" aria-expanded="true"><i data-lucide="triangle" class="yundeng-solid-arrow"></i></button>`;
   }
 
   function normalizeExistingSidebar(sidebar) {
@@ -1437,10 +1441,10 @@
         const key = normalizeRequestedPage(url.searchParams.get('page')) || DEFAULT_ROUTE_KEY;
         const item = allItems.find(candidate => candidate.key === key);
         if (!item) return null;
-        const moduleParam = url.searchParams.get('module');
+        const moduleParam = normalizeModuleFile(url.searchParams.get('module'));
         const moduleItem = moduleParam ? itemForModule(moduleParam) : null;
         const moduleFile = moduleItem?.key === item.key ? moduleParam : item.href;
-        return { url, key, label: item.label, moduleFile };
+        return { url, key, label: moduleFile === '环境管理-编辑环境.html' ? '编辑环境' : item.label, moduleFile };
       } catch (_) { return null; }
     };
     const applySidebarActiveState = nextKey => {

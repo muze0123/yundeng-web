@@ -569,7 +569,51 @@
 @media(max-width:767px){#batchMode .batch-field{grid-template-columns:1fr;gap:6px}#batchMode .batch-label{justify-content:flex-start;min-height:24px}#batchMode .batch-control{width:100%}#batchMode .batch-os-grid{grid-template-columns:repeat(2,minmax(0,1fr))}#batchMode .segment{display:flex;width:100%}#batchMode .segment button{min-width:0;flex:1}#batchMode .batch-proxy-summary{white-space:normal}#batch-proxyEditor .field-label{justify-content:flex-start}}
 
 </style>
+<style>
+/* 批量导入第二步：复用 design.md 的表格、表单与颜色；重复行取 warning-bg。 */
+#importMode{min-height:100%;width:100%;max-width:none;margin:0}
+.import-workspace{min-height:calc(100vh - 144px)}
+.import-summary-row{display:flex;align-items:center;flex-wrap:wrap;gap:12px}
+.import-summary{display:flex;align-items:flex-start;gap:8px;min-height:40px;padding:10px 12px;background:#E6F0FF;border-radius:4px;line-height:20px}
+.import-summary>svg{flex:none;width:16px;height:16px;margin-top:2px;color:#0066FF}
+.import-toolbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px 20px;margin:24px 0 16px}
+.import-tools{display:flex;align-items:center;flex-wrap:wrap;gap:10px}
+#importMode .import-rule-button{color:#0066FF;border-color:#0066FF}
+#importMode #importFilter{width:112px;color:#6E7685}
+.import-duplicate-legend{display:inline-flex;align-items:center;gap:8px;color:#6E7685;white-space:nowrap}
+.import-duplicate-legend>span{width:14px;height:14px;border:1px solid #DFE1E5;border-radius:50%;background:#FDF2E9}
+.import-search{position:relative;width:320px;max-width:100%;margin-left:auto}
+#importMode .import-search .control{width:100%;padding-right:60px}
+.import-search>button{position:absolute;top:4px;right:4px;width:24px;height:24px;display:flex;align-items:center;justify-content:center;border-radius:4px;color:#6E7685}
+.import-search>button:hover{background:#F3F4F6;color:#0066FF}
+.import-search #clearImportSearch{right:30px}.import-search #clearImportSearch.hidden{display:none}
+.import-table-scroll{overflow:auto;width:100%}
+.import-table{table-layout:fixed;min-width:1480px}
+.import-table th,.import-table td{height:44px;padding:10px 12px}
+.import-table td{background:#fff;overflow:hidden;text-overflow:ellipsis;border-bottom:1px solid #E8EAED}
+.import-table tr.is-duplicate td{background:#FDF2E9}
+.import-table tbody tr:hover td{background:#F3F4F6}
+.import-table .import-validation-col{position:sticky;right:80px;z-index:1;border-left:1px solid #E8EAED;width:160px}
+.import-table .import-action-col{position:sticky;right:0;z-index:1;width:80px}
+.import-table th.import-validation-col,.import-table th.import-action-col{z-index:2;background:#F0F1F3}
+.import-row-status{display:flex;align-items:center;gap:8px;min-width:0}
+.import-row-status svg{width:14px;height:14px;flex:none}.import-row-status span{overflow:hidden;text-overflow:ellipsis}
+/* 标签胶囊形状沿用用户参考图，填充色取 bg-page。 */
+.import-tag{display:inline-flex;align-items:center;max-width:100%;padding:3px 10px;border-radius:999px;background:#F7F8FA;overflow:hidden;text-overflow:ellipsis}
+.is-duplicate .import-tag{background:#fff}
+.import-action-bar{min-height:64px;flex:none;position:relative;z-index:20;display:flex;align-items:center;flex-wrap:wrap;gap:12px;padding:12px 24px;background:#fff;box-shadow:0 -8px 8px -8px rgba(0,0,0,.18)}
+.import-action-bar.hidden{display:none}
+.import-dedupe,.import-dedupe label{display:flex;align-items:center;gap:6px}
+.import-dedupe{position:relative}.import-dedupe label{cursor:pointer}.import-dedupe input{width:14px;height:14px}
+#importDedupeHelp{display:flex;align-items:center;justify-content:center;width:24px;height:24px;color:#9DA2AC}
+#importDedupeTip{display:none;position:absolute;bottom:calc(100% + 12px);left:0;width:300px;max-width:calc(100vw - 48px);padding:12px;background:#fff;border:1px solid #DFE1E5;border-radius:4px;box-shadow:0 6px 24px rgba(0,0,0,.12);line-height:20px;font-size:12px}
+.import-dedupe:has(#importDedupeHelp:hover) #importDedupeTip,.import-dedupe:has(#importDedupeHelp:focus) #importDedupeTip{display:block}
+#uploadZone.is-dragging{background:#E6F0FF;border-color:#0066FF}
+@media(max-width:900px){.import-toolbar{align-items:flex-start}.import-search{width:100%;margin-left:0}.import-action-bar{padding:12px 16px}.import-action-bar #importNextHint{width:100%}}
+</style>
   <link rel="stylesheet" href="公共导航.css?v=20260825a">
+  <link rel="stylesheet" href="分页器.css?v=20260916a">
+  <script src="分页器.js?v=20260916a" data-yundeng-pagination="true"></script>
   <script src="公共导航.js?v=20260916a"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/brands.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/fontawesome.min.css">
@@ -909,12 +953,31 @@
         <form id="batchForm" class="bg-card rounded-lg p-5 md:p-6" novalidate>
 <section class="batch-section"><h2>批量设置</h2><div class="batch-field"><div class="batch-label">创建环境数<i data-lucide="circle-check" class="w-3.5 h-3.5 text-success" aria-hidden="true"></i></div><div class="batch-control"><div class="batch-count-line"><div class="batch-stepper"><button type="button" id="batchCountMinus" aria-label="减少创建数量"><i data-lucide="minus" class="w-3.5"></i></button><input id="batchCount" type="number" min="1" max="6753" value="1" aria-label="创建环境数"><button type="button" id="batchCountPlus" aria-label="增加创建数量"><i data-lucide="plus" class="w-3.5"></i></button></div><span>当前套餐最多还可创建 <b class="mono text-primary">6753</b> 个环境，如需创建更多请<a href="../index.html?page=store&amp;module=%E5%95%86%E5%9F%8E-%E5%A5%97%E9%A4%90.html&amp;moduleSearch=tab%3Dplan" class="text-primary">升级套餐</a>额度</span></div><p id="batchCountError" class="batch-error hidden">创建数量须为 1–6753 的整数</p></div></div></section><section class="batch-section"><h2>代理配置</h2><div class="batch-field"><div class="batch-label"><span class="text-danger">*</span>代理信息<i data-lucide="badge-alert" class="w-3.5 h-3.5 text-danger" aria-hidden="true"></i></div><div class="batch-control"><div class="batch-proxy-summary"><span>已选择 <b id="proxyCoverage" class="mono text-primary">0</b> 个代理</span><span>分配环境数/创建环境数（<span id="coverageText" class="mono text-danger">0/1</span>）</span><button type="button" id="batchProxy" class="btn btn-secondary text-primary border-primary"><i data-lucide="shuffle" class="w-4"></i>自动分配代理</button></div><div class="batch-proxy-actions"><button type="button" id="batchAddOwnedProxy" class="btn btn-secondary text-primary border-primary">添加自有代理</button><button type="button" id="batchSelectProxy" class="btn btn-secondary text-primary">选择已有代理</button></div><div id="batchSelectedProxies" class="hidden"></div><p id="coverageError" class="batch-error hidden">代理覆盖不足，请先分配代理</p></div></div></section><section class="batch-section"><h2>账号配置</h2><div class="batch-field"><div class="batch-label">选择平台<i data-lucide="badge-alert" class="w-3.5 h-3.5 text-danger" aria-hidden="true"></i></div><div class="batch-control"><select id="batchPlatform" class="control w-full" aria-label="选择平台"><option value="">请选择您的平台</option><option>TikTok Shop</option><option>Amazon</option><option>Shopee</option><option>Shopify</option><option>Facebook</option><option>Google Ads</option></select></div></div><div class="batch-field"><div class="batch-label">打开网址<i data-lucide="circle-check" class="w-3.5 h-3.5 text-success" aria-hidden="true"></i></div><div class="batch-control"><textarea id="batchUrls" class="control w-full" rows="3" aria-label="打开网址" placeholder="请输入网址（每行一个网址）&#10;www.google.com&#10;www.baidu.com"></textarea></div></div></section><section class="batch-section"><h2>基础设置</h2><div class="batch-field"><div class="batch-label"><span class="text-danger">*</span>名称<i data-lucide="circle-check" class="w-3.5 h-3.5 text-success" aria-hidden="true"></i></div><div class="batch-control"><div class="relative"><input id="batchName" class="control w-full pr-16" value="云登浏览器" maxlength="100" aria-label="批量环境名称"><span id="batchNameCount" class="batch-input-count mono">5/100</span></div><p id="batchNameError" class="batch-error hidden">请输入 1–100 字的环境名称</p></div></div><!-- 浏览器内核：沿用操作系统控件的尺寸与设计 token -->
 <div class="batch-field"><div class="batch-label">浏览器内核<i data-lucide="badge-alert" class="w-3.5 h-3.5 text-danger" aria-hidden="true"></i></div><div class="batch-control"><div class="batch-os-grid"><div class="batch-os-option"><i data-lucide="chrome" class="w-4 h-4" aria-hidden="true"></i><select id="batchChromiumKernel" aria-label="Chromium 浏览器内核"></select></div><div class="batch-os-option"><i data-lucide="flame" class="w-4 h-4" aria-hidden="true"></i><select id="batchFirefoxKernel" aria-label="Firefox 浏览器内核"></select></div></div></div></div><div class="batch-field"><div class="batch-label">操作系统<i data-lucide="badge-alert" class="w-3.5 h-3.5 text-danger" aria-hidden="true"></i></div><div class="batch-control"><div id="batchOSChoices" class="batch-os-grid"></div><p id="batchOSError" class="batch-error hidden">请至少选择一种操作系统</p></div></div><div class="batch-field"><div class="batch-label">UA 版本<i data-lucide="badge-alert" class="w-3.5 h-3.5 text-danger" aria-hidden="true"></i></div><div class="batch-control"><details id="batchUAVersions" class="batch-version-picker"><summary class="control"><span id="batchUAVersionValue">146</span><i data-lucide="chevron-down" class="w-4"></i></summary><div id="batchUAVersionOptions" class="batch-version-options"></div></details><p id="batchUAError" class="batch-error hidden">请至少选择一个 UA 版本</p></div></div><div class="batch-field"><div class="batch-label">分组<i data-lucide="circle-check" class="w-3.5 h-3.5 text-success" aria-hidden="true"></i></div><div class="batch-control"><div class="batch-group-line"><select id="batchGroup" class="control" aria-label="分组"><option>默认分组</option><option>跨境电商</option><option>短视频运营</option><option>测试环境</option></select><div class="batch-tag-select"><i data-lucide="tag" class="w-4 text-primary"></i><select id="batchTag" class="control" aria-label="标签"><option value="">请选择</option><option>重要</option><option>测试</option><option>备用</option><option>投放</option></select></div></div></div></div></section><section class="batch-section"><h2>指纹设置</h2><div id="batchFingerprintFields"></div></section><section class="batch-section"><h2>偏好设置</h2><div id="batchPreferenceFields"></div></section></form></section>
-      <section id="importMode" role="tabpanel" aria-labelledby="tab-import" tabindex="0" data-mode-panel="import" class="hidden max-w-[1000px] mx-auto" hidden>
-        <div class="bg-card rounded-lg p-6"><div class="flex items-center justify-center mb-8" aria-label="导入进度"><div class="step text-primary font-semibold"><span class="mono mr-1">1.</span>上传导入文件</div><span class="w-24 h-px bg-line mx-3"></span><div id="step2" class="step text-ink-muted"><span class="mono mr-1">2.</span>数据本地校验</div><span class="w-24 h-px bg-line mx-3"></span><div id="step3" class="step text-ink-muted"><span class="mono mr-1">3.</span>完成导入</div></div>
-          <div id="uploadZone" class="border border-dashed border-line rounded-lg p-12 text-center"><i data-lucide="upload-cloud" class="w-10 h-10 text-primary mx-auto mb-3"></i><h3 class="text-[16px] font-semibold text-ink-title">将文件拖到此处，或点击上传</h3><p class="text-ink-sub mt-2">仅支持 xls、xlsx、csv，文件不超过 10MB，每次不超过 300 条</p><div class="mt-4"><button id="pickFile" class="btn btn-primary">选择文件</button><button data-toast="环境导入模板已开始下载" class="btn btn-default ml-2">下载环境导入模板</button></div><input id="fileInput" type="file" accept=".xls,.xlsx,.csv" class="hidden"></div>
-          <div id="fileResult" class="hidden p-4 rounded bg-page"><div class="flex justify-between"><span><i data-lucide="file-spreadsheet" class="w-4 inline text-success"></i> <b id="fileName"></b>　<span class="text-ink-muted">128 KB</span></span><button id="clearFile" class="text-danger">清空文件</button></div><div class="grid grid-cols-3 gap-3 mt-4"><div class="p-3 bg-card rounded"><p class="text-ink-sub">总行数</p><b class="mono text-[18px]">12</b></div><div class="p-3 bg-card rounded"><p class="text-ink-sub">有效数据</p><b class="mono text-[18px] text-success">12</b></div><div class="p-3 bg-card rounded"><p class="text-ink-sub">错误数据</p><b class="mono text-[18px]">0</b></div></div></div>
+      <section id="importMode" role="tabpanel" aria-labelledby="tab-import" tabindex="0" data-mode-panel="import" class="hidden w-full max-w-none mx-0" hidden>
+        <div class="import-workspace bg-card rounded-lg p-5 md:p-6">
+          <div id="importUploadStep">
+          <div class="flex items-center justify-center mb-8" aria-label="导入进度"><div class="step text-primary font-semibold"><span class="mono mr-1">1.</span>上传导入文件</div><span class="w-24 h-px bg-line mx-3"></span><div class="step text-ink-muted"><span class="mono mr-1">2.</span>数据本地校验</div><span class="w-24 h-px bg-line mx-3"></span><div class="step text-ink-muted"><span class="mono mr-1">3.</span>完成导入</div></div>
+          <div id="uploadZone" class="border border-dashed border-line rounded-lg p-12 text-center"><i data-lucide="upload-cloud" class="w-10 h-10 text-primary mx-auto mb-3"></i><h3 class="text-[16px] font-semibold text-ink-title">将文件拖到此处，或点击上传</h3><p class="text-ink-sub mt-2">仅支持 xls、xlsx、csv，文件不超过 10MB，每次不超过 300 条</p><div class="mt-4 flex flex-wrap justify-center gap-3"><button type="button" id="pickFile" class="btn btn-primary">选择文件</button><button type="button" id="downloadImportTemplate" class="btn btn-secondary">下载环境导入模板</button></div></div>
+          <p id="importFileError" class="hidden text-danger text-[12px] mt-3" role="alert"></p>
           <!-- 导入须知 -->
           <div class="mt-6 text-ink-muted"><h3 class="font-semibold text-ink-sub">导入须知</h3><ol class="list-decimal pl-4 mt-2 space-y-1 text-[12px] leading-relaxed"><li>若<span class="text-warning">多个环境使用相同代理IP可能导致账号关联</span>，请您留意各账号平台的政策，以避免风险。</li><li>对一些敏感度高的平台账号，需注意：环境IP的时区、UA、Cookies最好与之前一致，以减少触发风控的概率。<a href="../index.html?page=help" target="_top" class="ml-2 text-primary hover:underline">查看帮助</a></li><li>仅支持后缀名为xls、xlsx、csv格式，文件大小限10M以内，每次导入条数不超过300条</li></ol></div>
+          </div>
+          <input id="fileInput" type="file" accept=".xls,.xlsx,.csv" class="hidden">
+          <!-- 第二步：按参考图展示校验结果，汇总、筛选和分页均由同一数据驱动。 -->
+          <div id="fileResult" class="hidden" aria-label="第二步：数据本地校验">
+            <div class="import-summary-row"><p id="importSummary" class="import-summary" role="status" aria-live="polite"></p><button type="button" id="downloadImportErrors" class="btn btn-secondary"><i data-lucide="download" class="w-4"></i>下载失败记录</button></div>
+            <p id="importFileMeta" class="text-[11px] text-ink-muted mt-2"></p>
+            <div class="import-toolbar">
+              <div class="import-tools"><button type="button" id="editImportRules" class="btn btn-secondary import-rule-button" aria-haspopup="dialog">修改数据重复规则</button><select id="importFilter" class="control" aria-label="筛选导入数据"><option value="all">全部数据</option><option value="valid">校验通过</option><option value="invalid">校验失败</option><option value="duplicate">重复数据</option></select><span class="import-duplicate-legend"><span aria-hidden="true"></span>黄色为重复数据</span></div>
+              <div class="import-search"><input id="importSearch" class="control" placeholder="搜索环境名称、账号或 IP" aria-label="搜索导入数据"><button type="button" id="clearImportSearch" class="hidden" aria-label="清空导入搜索"><i data-lucide="x" class="w-4"></i></button><button type="button" id="searchImportRows" aria-label="搜索导入数据"><i data-lucide="search" class="w-4"></i></button></div>
+            </div>
+            <div class="import-table-scroll scrollbar" tabindex="0" role="region" aria-label="导入数据预览，可横向滚动">
+              <table class="data-table import-table"><colgroup><col style="width:140px"><col style="width:90px"><col style="width:180px"><col style="width:180px"><col style="width:150px"><col style="width:180px"><col style="width:80px"><col style="width:120px"><col style="width:100px"><col style="width:160px"><col style="width:80px"></colgroup><thead><tr><th scope="col">环境名称</th><th scope="col">分组</th><th scope="col">代理信息</th><th scope="col">账号信息</th><th scope="col">2FA</th><th scope="col">打开网址</th><th scope="col">标签</th><th scope="col">Cookie</th><th scope="col">内核版本</th><th scope="col" class="import-validation-col">校验结果</th><th scope="col" class="import-action-col">操作</th></tr></thead><tbody id="importRows"></tbody></table>
+              <p id="importEmpty" class="hidden py-12 text-center text-ink-muted">没有符合条件的数据，请调整筛选或搜索条件。</p>
+            </div>
+            <div id="importPagination" class="pt-5" aria-label="导入数据分页"></div>
+          </div>
+          <div id="importComplete" class="hidden py-16 text-center"><i data-lucide="circle-check" class="w-12 h-12 mx-auto mb-4 text-success"></i><h2 class="text-[18px] font-semibold text-ink-title">完成导入</h2><p id="importCompleteSummary" class="mt-3 text-ink-sub" role="status"></p><div class="flex gap-3 justify-center mt-6"><button type="button" id="importAgain" class="btn btn-secondary">继续导入</button><button type="button" id="importViewEnvironments" class="btn btn-primary">查看环境</button></div></div>
         </div>
       </section>
       <section id="migrateMode" role="tabpanel" aria-labelledby="tab-migrate" tabindex="0" data-mode-panel="migrate" class="hidden max-w-[1000px] mx-auto" hidden>
@@ -924,11 +987,20 @@
         </div>
       </section>
 </main>
+    <!-- 导入校验的操作栏留在主内容滚动区域之外，避免遮挡表格。 -->
+    <footer id="importActionBar" class="import-action-bar hidden" aria-label="导入操作">
+      <button type="button" id="importNext" class="btn btn-primary">下一步</button><button type="button" id="clearFile" class="btn btn-secondary">重新上传</button>
+      <div class="import-dedupe"><label><input id="importDedupe" type="checkbox" class="accent-primary">仅保存去重后数据</label><button type="button" id="importDedupeHelp" aria-label="查看去重说明" aria-describedby="importDedupeTip"><i data-lucide="info" class="w-3.5 h-3.5"></i></button><div id="importDedupeTip" role="tooltip">勾选后，系统将检查当前导入数据的重复项，只保留第一次出现的数据（不与库内数据比对）。</div></div><span id="importNextHint" class="text-[12px] text-ink-sub" aria-live="polite"></span>
+    </footer>
     <footer id="actionBar" class="h-16 bg-card shadow-[0_-8px_8px_-8px_rgba(0,0,0,.18)] px-4 md:px-6 flex items-center justify-between shrink-0 z-20"><span id="footerStatus" class="text-[12px] text-ink-muted">创建前请确认代理与指纹配置一致</span><div class="flex gap-3"><span id="dirtyBadge" class="hidden sr-only">有未提交配置</span><button id="cancelBtn" class="btn btn-default">取消</button><button id="createNextBtn" class="btn btn-default">确定并新建下一条</button><button id="submitBtn" class="btn btn-primary">确定</button></div></footer>
 </div>
   <div id="dialogOverlay" class="hidden fixed inset-0 z-[1200] bg-black/30 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="dialogTitle"><div id="dialogPanel" class="modal-in w-[600px] max-w-[92vw] h-[250px] bg-card rounded-lg shadow-[0_6px_24px_rgba(0,0,0,.12)] flex flex-col relative"><button id="dialogClose" class="absolute top-3 right-4 w-8 h-8 flex items-center justify-center text-ink-muted hover:text-ink-body" aria-label="关闭"><i data-lucide="x" class="w-5 h-5"></i></button><div class="flex-1 flex items-start px-6 pt-10"><span id="dialogIcon" class="w-8 h-8 rounded bg-warning-bg text-warning flex items-center justify-center mr-3 mt-0.5"><i data-lucide="triangle-alert" class="w-4 h-4"></i></span><div><h2 id="dialogTitle" class="text-[16px] font-semibold text-ink-title"></h2><p id="dialogDesc" class="text-[14px] text-ink-sub mt-1.5"></p></div></div><div class="px-6 pb-5 flex justify-end gap-3"><button id="dialogCancel" class="btn btn-secondary">继续编辑</button><button id="dialogConfirm" class="btn btn-primary">确定</button></div></div></div>
   <div id="toastContainer" class="fixed top-4 left-1/2 -translate-x-1/2 z-[2000] flex flex-col gap-2 pointer-events-none" aria-live="polite"></div>
   <div id="proxyHelpPopover" class="field-help-popover hidden fixed z-[1300] bg-card border border-line rounded-lg popover p-4" role="tooltip"><div id="fieldHelpContent" class="text-[12px] text-ink-sub leading-relaxed"></div></div>
+<!-- 重复规则编辑只作用于当前导入文件，取消不修改已应用规则。 -->
+<div id="importRulesDialog" class="hidden fixed inset-0 z-[1200] bg-black/30 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="importRulesTitle">
+  <section class="bg-card rounded-lg shadow-[0_6px_24px_rgba(0,0,0,.12)] w-[760px] max-w-[92vw] flex flex-col"><header class="h-14 px-6 border-b border-line flex items-center justify-between"><h2 id="importRulesTitle" class="text-[16px] font-semibold text-ink-title">修改数据重复规则</h2><button type="button" data-close-import-rules aria-label="关闭重复规则" class="w-8 h-8 rounded hover:bg-hover flex items-center justify-center"><i data-lucide="x" class="w-5"></i></button></header><div class="px-6 py-8"><p class="text-ink-sub mb-5">所选字段全部相同时判定为重复，仅比较当前文件内的数据，保留第一次出现的记录。</p><div id="importRuleFields" class="flex flex-wrap gap-5"></div><p id="importRulesError" class="hidden text-danger text-[12px] mt-4" role="alert">请至少选择一个判重字段</p></div><footer class="px-6 py-4 border-t border-line flex justify-end gap-3"><button type="button" data-close-import-rules class="btn btn-secondary">取消</button><button type="button" id="saveImportRules" class="btn btn-primary">确定</button></footer></section>
+</div>
 <!-- 批量代理弹窗：编辑浏览器同款，独立于单个添加草稿 -->
 <div id="batchProxyDialogs">                <div id="batch-proxyEditor" class="hidden fixed inset-0 z-[1100] bg-black/30 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="batch-proxyDialogTitle">
                   <div class="modal-in proxy-dialog-panel bg-card rounded-lg shadow-[0_6px_24px_rgba(0,0,0,.12)] flex flex-col">
@@ -1755,7 +1827,7 @@
 
 // ===== 创建模式与提交：复用编辑配置，保持新建语义 =====
 let mode='single',creating=false;
-function setMode(next){mode=next;$$('[data-mode]').forEach(x=>{const active=x.dataset.mode===mode;x.classList.toggle('active',active);x.setAttribute('aria-selected',String(active));x.tabIndex=active?0:-1});$$('[data-mode-panel]').forEach(x=>{const active=x.dataset.modePanel===mode;x.classList.toggle('hidden',!active);x.hidden=!active});const formMode=['single','batch'].includes(mode);$('#actionBar').classList.toggle('hidden',!formMode);$('#createNextBtn').classList.toggle('hidden',mode!=='single');$('#submitBtn').textContent=mode==='batch'?'批量创建':'确定';if(parent!==window)parent.postMessage({type:'yundeng:module-footer-state',height:formMode?64:0},'*')}
+function setMode(next){mode=next;$$('[data-mode]').forEach(x=>{const active=x.dataset.mode===mode;x.classList.toggle('active',active);x.setAttribute('aria-selected',String(active));x.tabIndex=active?0:-1});$$('[data-mode-panel]').forEach(x=>{const active=x.dataset.modePanel===mode;x.classList.toggle('hidden',!active);x.hidden=!active});const formMode=['single','batch'].includes(mode);$('#actionBar').classList.toggle('hidden',!formMode);$('#createNextBtn').classList.toggle('hidden',mode!=='single');$('#submitBtn').textContent=mode==='batch'?'批量创建':'确定';syncImportFooter()}
 function closeOverlays(){hideFieldHelp();$('#globalPluginMenu').classList.add('hidden');$('#pluginGroupPanel').classList.add('hidden');$('#globalPluginMenuBtn').setAttribute('aria-expanded','false');$('#pluginGroupTrigger').setAttribute('aria-expanded','false')}
 // 插件下拉沿用编辑页组件，补齐展开与关闭入口。
 $('#pluginGroupTrigger').onclick=()=>{const open=$('#pluginGroupPanel').classList.contains('hidden');closeOverlays();$('#pluginGroupPanel').classList.toggle('hidden',!open);$('#pluginGroupTrigger').setAttribute('aria-expanded',String(open))};
@@ -1807,11 +1879,158 @@ $('#cancelBtn').onclick=()=>{const go=navigateToEnvironment;if(state.dirty)openD
 window.yundengPrepareNavigation=()=>{state.dirty=false};
 window.addEventListener('beforeunload',event=>{if(state.dirty){event.preventDefault();event.returnValue=''}});
 
-$('#pickFile').onclick=()=>$('#fileInput').click();$('#fileInput').onchange=e=>{const f=e.target.files[0];if(!f)return;const ext=f.name.split('.').pop().toLowerCase();if(!['xls','xlsx','csv'].includes(ext)||f.size>10*1024*1024)return showToast('文件格式不支持或超过 10MB','danger');$('#uploadZone').classList.add('hidden');$('#fileResult').classList.remove('hidden');$('#fileName').textContent=f.name;$('#step2').className='step text-primary font-semibold';showToast('本地校验通过','success')};$('#clearFile').onclick=()=>{$('#fileInput').value='';$('#uploadZone').classList.remove('hidden');$('#fileResult').classList.add('hidden');$('#step2').className='step text-ink-muted'};
+// ===== 批量导入：上传 → 校验预览 → 确认导入 =====
+// CSV 在本地读取；Excel 保留原型 Mock 解析，明确标记示例数据，未接入生产导入接口。
+const importFields=[['name','环境名称'],['group','分组'],['proxy','代理信息'],['account','账号信息'],['twoFactor','2FA'],['url','打开网址'],['tag','标签'],['cookie','Cookie'],['kernel','内核版本']];
+const importDraft={stage:'upload',rows:[],file:null,mock:false,page:1,size:10,query:'',filter:'all',rules:['name','account'],dedupe:false,busy:false};
+let importPager=null,importRulesFocus=null;
+function syncImportFooter(){
+  $('#importActionBar').classList.toggle('hidden',mode!=='import'||importDraft.stage!=='review');
+  requestAnimationFrame(()=>{const footer=mode==='import'?$('#importActionBar'):$('#actionBar');if(parent!==window)parent.postMessage({type:'yundeng:module-footer-state',height:footer.getBoundingClientRect().height},'*')});
+}
+new ResizeObserver(syncImportFooter).observe($('#importActionBar'));
+function showImportStage(stage){
+  importDraft.stage=stage;
+  $('#importUploadStep').classList.toggle('hidden',stage!=='upload');
+  $('#fileResult').classList.toggle('hidden',stage!=='review');
+  $('#importComplete').classList.toggle('hidden',stage!=='complete');
+  syncImportFooter();$('#mainContent').scrollTop=0;
+}
+function importSampleRows(){
+  return Array.from({length:12},(_,index)=>{const number=String(index===1?1:index+1).padStart(2,'0');return {
+    id:index+1,name:`洛杉矶-US-${number}`,group:index>7?'跨境电商':'默认分组',proxy:index%3===2?'':`http://198.51.100.${20+index}:8000`,
+    account:`电商-亚马逊后台-美国：seller${number}***@example.com`,twoFactor:'DEMO-2FA-REDACTED',url:'https://sellercentral.amazon.com',tag:index%2?'美国站':'重要',cookie:'[{"name":"session","value":"demo-redacted"}]',kernel:'Chromium146'
+  }});
+}
+function parseImportCSV(text){
+  const records=[];let record=[],cell='',quoted=false;
+  text=text.replace(/^\uFEFF/,'');
+  for(let index=0;index<text.length;index++){
+    const char=text[index];
+    if(char==='"'){if(quoted&&text[index+1]==='"'){cell+='"';index++}else quoted=!quoted}
+    else if(char===','&&!quoted){record.push(cell);cell=''}
+    else if((char==='\n'||char==='\r')&&!quoted){record.push(cell);if(record.some(value=>value.trim()))records.push(record);record=[];cell='';if(char==='\r'&&text[index+1]==='\n')index++}
+    else cell+=char;
+  }
+  if(quoted)throw new Error('CSV 引号未闭合，请检查文件格式后重新上传。');
+  record.push(cell);if(record.some(value=>value.trim()))records.push(record);
+  if(records.length<2)throw new Error('文件没有可读取的数据，请使用环境导入模板填写后上传。');
+  const headers=records.shift().map(value=>value.trim());
+  if(!headers.includes('环境名称'))throw new Error('缺少“环境名称”列，请使用环境导入模板。');
+  if(records.length>300)throw new Error('单次最多导入 300 条，请拆分文件后重新上传。');
+  return records.map((values,index)=>Object.fromEntries([['id',index+1],...importFields.map(([key,label])=>[key,(values[headers.indexOf(label)]||'').trim()])]));
+}
+function validateImportRows(){
+  const seen=new Set();
+  importDraft.rows.forEach(row=>{
+    const errors=[];
+    if(!row.name)errors.push('环境名称未填');else if(row.name.length>100)errors.push('环境名称超过100字');
+    if(!row.proxy)errors.push('代理信息未填');
+    else if(!['本地网络','本机网络','直连'].includes(row.proxy)){
+      try{const proxy=new URL(row.proxy.includes('://')?row.proxy:`http://${row.proxy}`);if(!['http:','https:','socks5:','ssh:'].includes(proxy.protocol)||!proxy.hostname)throw new Error()}catch{errors.push('代理格式不正确')}
+    }
+    if(row.url&&row.url.split(/\s+/).some(url=>{try{return !['http:','https:'].includes(new URL(url).protocol)}catch{return true}}))errors.push('打开网址格式不正确');
+    if(row.cookie){try{const cookies=JSON.parse(row.cookie);if(!Array.isArray(cookies))throw new Error()}catch{errors.push('Cookie 格式不正确')}}
+    const values=importDraft.rules.map(key=>row[key].trim()),key=JSON.stringify(values);
+    row.duplicate=values.some(Boolean)&&seen.has(key);if(values.some(Boolean))seen.add(key);
+    row.errors=errors;
+  });
+}
+function importCandidates(){return importDraft.rows.filter(row=>!row.errors.length&&(!importDraft.dedupe||!row.duplicate))}
+function renderImportPreview(){
+  validateImportRows();
+  const rows=importDraft.rows,failed=rows.filter(row=>row.errors.length),valid=rows.length-failed.length,candidates=importCandidates();
+  let summary=`已读取 ${rows.length} 条数据，${valid} 条校验通过，${failed.length} 条校验失败。`;
+  summary+=failed.length?(valid?' 请下载失败记录修改后重新上传，或删除失败记录后继续。':' 暂无可导入数据，请下载失败记录修改后重新上传。'):(rows.length?' 请确认数据后点击下一步。':' 请重新上传文件。');
+  $('#importSummary').innerHTML=`<i data-lucide="info" aria-hidden="true"></i><span>${escapeHtml(summary)}</span>`;
+  $('#downloadImportErrors').disabled=failed.length===0;
+  $('#importFileMeta').textContent=importDraft.file?`${importDraft.file.name} · ${(importDraft.file.size/1024).toFixed(1)} KB${importDraft.mock?' · Excel 原型示例数据':''}`:'';
+  const keywords=importDraft.query.toLowerCase().trim();
+  const filtered=rows.filter(row=>(importDraft.filter==='all'||importDraft.filter==='valid'&&!row.errors.length||importDraft.filter==='invalid'&&row.errors.length||importDraft.filter==='duplicate'&&row.duplicate)&&(!keywords||[row.name,row.group,row.proxy,row.account,row.tag,row.kernel].join(' ').toLowerCase().includes(keywords)));
+  importDraft.page=Math.min(importDraft.page,Math.max(1,Math.ceil(filtered.length/importDraft.size)));
+  const visible=filtered.slice((importDraft.page-1)*importDraft.size,importDraft.page*importDraft.size);
+  $('#importRows').innerHTML=visible.map(row=>{
+    const proxy=row.proxy.replace(/(\/\/)[^/@]+@/,'$1***@');
+    const cells=[row.name,row.group||'默认分组',proxy,row.account,row.twoFactor?'••••••••':'',row.url,row.tag,row.cookie?'已填写 · ••••••':'',row.kernel||'Chromium146'];
+    return `<tr class="${row.duplicate?'is-duplicate':''}" data-import-row="${row.id}">${cells.map((value,index)=>`<td title="${escapeHtml(value||'—')}${index===0&&row.duplicate?'（重复数据）':''}" class="${[2,4,5,8].includes(index)?'mono':''}">${index===6&&value?`<span class="import-tag">${escapeHtml(value)}</span>`:escapeHtml(value||'—')}</td>`).join('')}<td class="import-validation-col" title="${escapeHtml(row.errors.join('；')||'格式正确')}"><div class="import-row-status"><i data-lucide="${row.errors.length?'circle-x':'circle-check'}" class="${row.errors.length?'text-danger':'text-success'}"></i><span>${escapeHtml(row.errors[0]||'格式正确')}</span></div></td><td class="import-action-col"><button type="button" class="text-danger hover:underline" data-delete-import="${row.id}" aria-label="删除第 ${row.id} 条环境 ${escapeHtml(row.name)}">删除</button></td></tr>`;
+  }).join('');
+  $('#importEmpty').classList.toggle('hidden',visible.length>0);
+  $('#clearImportSearch').classList.toggle('hidden',!importDraft.query);
+  const pagerState={total_count:filtered.length,current_page:importDraft.page,page_size:importDraft.size};
+  if(!importPager)importPager=new YDPager($('#importPagination'),{...pagerState,page_size_options:[10,20,50],onChange:value=>{importDraft.page=value.current_page;importDraft.size=value.page_size;renderImportPreview()},toast:message=>showToast(message,'warning')});
+  else importPager.setState(pagerState,{silent:true});
+  $('#importNext').disabled=importDraft.busy||failed.length>0||candidates.length===0;
+  $('#importNextHint').textContent=failed.length?'请处理全部校验失败记录后继续':importDraft.dedupe?`去重后将导入 ${candidates.length} 条数据`:'';
+  lucide.createIcons();syncImportFooter();
+}
+async function loadImportFile(file){
+  if(!file||importDraft.busy)return;
+  const ext=file.name.split('.').pop().toLowerCase();
+  const error=message=>{$('#importFileError').textContent=message;$('#importFileError').classList.remove('hidden');showToast(message,'danger')};
+  if(!['csv','xls','xlsx'].includes(ext))return error('文件格式不支持，请上传 xls、xlsx 或 csv 文件。');
+  if(file.size>10*1024*1024)return error('文件超过 10MB，请缩小文件后重新上传。');
+  if(!file.size)return error('文件为空，请填写数据后重新上传。');
+  importDraft.busy=true;$('#pickFile').disabled=true;$('#pickFile').textContent='读取中…';$$('[data-mode]').forEach(button=>button.disabled=true);
+  try{
+    let rows;
+    if(ext==='csv'){const buffer=await file.arrayBuffer();let text=new TextDecoder('utf-8').decode(buffer);if(text.includes('\uFFFD'))text=new TextDecoder('gb18030').decode(buffer);rows=parseImportCSV(text)}
+    else rows=importSampleRows();
+    Object.assign(importDraft,{rows,file,mock:ext!=='csv',page:1,size:10,query:'',filter:'all',dedupe:false});
+    $('#importSearch').value='';$('#importFilter').value='all';$('#importDedupe').checked=false;$('#importFileError').classList.add('hidden');
+    importDraft.busy=false;renderImportPreview();showImportStage('review');markDirty();
+    requestAnimationFrame(()=>$('#editImportRules').focus({preventScroll:true}));
+  }catch(cause){error(cause.message||'文件读取失败，请重新上传。')}
+  finally{importDraft.busy=false;$('#pickFile').disabled=false;$('#pickFile').textContent='选择文件';$('#fileInput').value='';$$('[data-mode]').forEach(button=>button.disabled=false)}
+}
+function resetImportFile(){
+  if(importDraft.busy)return;
+  Object.assign(importDraft,{rows:[],file:null,stage:'upload',page:1,query:'',filter:'all',dedupe:false});
+  $('#fileInput').value='';$('#importFileError').classList.add('hidden');showImportStage('upload');$('#pickFile').focus({preventScroll:true});
+}
+function downloadImportCSV(filename,records){
+  // 使用带 BOM 的 CSV，公式前缀按文本导出，避免失败报告在电子表格中执行公式。
+  const cell=value=>'"'+String(value??'').replace(/^[=+@\-]/,"'$&").replace(/"/g,'""')+'"';
+  const blob=new Blob(['\uFEFF'+records.map(row=>row.map(cell).join(',')).join('\r\n')],{type:'text/csv;charset=utf-8;'});
+  const url=URL.createObjectURL(blob),link=document.createElement('a');link.href=url;link.download=filename;link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+$('#pickFile').onclick=()=>$('#fileInput').click();$('#fileInput').onchange=event=>loadImportFile(event.target.files[0]);
+$('#uploadZone').addEventListener('click',event=>{if(!event.target.closest('button'))$('#fileInput').click()});
+['dragenter','dragover'].forEach(type=>$('#uploadZone').addEventListener(type,event=>{event.preventDefault();$('#uploadZone').classList.add('is-dragging')}));
+$('#uploadZone').addEventListener('dragleave',()=>$('#uploadZone').classList.remove('is-dragging'));
+$('#uploadZone').addEventListener('drop',event=>{event.preventDefault();$('#uploadZone').classList.remove('is-dragging');if(event.dataTransfer.files.length!==1){showToast('请每次上传一个文件','warning');return}loadImportFile(event.dataTransfer.files[0])});
+$('#clearFile').onclick=resetImportFile;$('#importAgain').onclick=resetImportFile;$('#importViewEnvironments').onclick=navigateToEnvironment;
+$('#downloadImportTemplate').onclick=()=>downloadImportCSV('环境导入模板.csv',[importFields.map(([,label])=>label),['洛杉矶-US-01','默认分组','http://198.51.100.20:8000','Amazon / seller***@example.com','','https://sellercentral.amazon.com','美国站','','Chromium146']]);
+$('#downloadImportErrors').onclick=()=>downloadImportCSV('环境导入失败记录.csv',[[...importFields.map(([,label])=>label),'原始行号','校验结果'],...importDraft.rows.filter(row=>row.errors.length).map(row=>[...importFields.map(([key])=>row[key]),row.id+1,row.errors.join('；')])]);
+$('#importSearch').oninput=()=>{importDraft.query=$('#importSearch').value;importDraft.page=1;renderImportPreview()};
+$('#searchImportRows').onclick=()=>{importDraft.query=$('#importSearch').value;importDraft.page=1;renderImportPreview()};
+$('#clearImportSearch').onclick=()=>{$('#importSearch').value='';$('#importSearch').oninput();$('#importSearch').focus()};
+$('#importFilter').onchange=()=>{importDraft.filter=$('#importFilter').value;importDraft.page=1;renderImportPreview()};
+$('#importDedupe').onchange=()=>{importDraft.dedupe=$('#importDedupe').checked;renderImportPreview();markDirty()};
+$('#importRows').onclick=event=>{const button=event.target.closest('[data-delete-import]');if(!button)return;importDraft.rows=importDraft.rows.filter(row=>row.id!==Number(button.dataset.deleteImport));renderImportPreview();markDirty()};
+function closeImportRules(){
+  $('#importRulesDialog').classList.add('hidden');importRulesFocus?.focus?.({preventScroll:true});importRulesFocus=null;
+}
+$('#editImportRules').onclick=()=>{
+  importRulesFocus=document.activeElement;
+  $('#importRuleFields').innerHTML=importFields.filter(([key])=>['name','proxy','account','group'].includes(key)).map(([key,label])=>`<label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" value="${key}" class="accent-primary" ${importDraft.rules.includes(key)?'checked':''}>${label}</label>`).join('');
+  $('#importRulesError').classList.add('hidden');$('#importRulesDialog').classList.remove('hidden');$('#importRuleFields input').focus();
+};
+$$('[data-close-import-rules]').forEach(button=>button.onclick=closeImportRules);
+$('#importRulesDialog').onclick=event=>{if(event.target===$('#importRulesDialog'))closeImportRules()};
+$('#saveImportRules').onclick=()=>{const rules=$$('#importRuleFields input:checked').map(input=>input.value);if(!rules.length){$('#importRulesError').classList.remove('hidden');return}importDraft.rules=rules;importDraft.page=1;closeImportRules();renderImportPreview();markDirty()};
+$('#importNext').onclick=()=>{
+  if(importDraft.busy)return;
+  validateImportRows();if(importDraft.rows.some(row=>row.errors.length)||!importCandidates().length)return;
+  const count=importCandidates().length,skipped=importDraft.rows.length-count;
+  openDialog({title:'确认导入环境',desc:`本次将导入 ${count} 个环境${skipped?`，跳过 ${skipped} 条重复数据`:''}，请确认代理与账号信息正确。`,confirm:'确认导入',action:()=>{
+    importDraft.busy=true;$('#importNext').textContent='导入中…';$('#importNext').disabled=true;$('#clearFile').disabled=true;$('#importDedupe').disabled=true;$('#fileResult').inert=true;$$('[data-mode]').forEach(button=>button.disabled=true);
+    setTimeout(()=>{importDraft.busy=false;$('#importNext').textContent='下一步';$('#clearFile').disabled=false;$('#importDedupe').disabled=false;$('#fileResult').inert=false;$$('[data-mode]').forEach(button=>button.disabled=false);$('#importCompleteSummary').textContent=`已完成 ${count} 个环境的导入演示${skipped?`，已跳过 ${skipped} 条重复数据`:''}。`;showImportStage('complete');$('#importViewEnvironments').focus({preventScroll:true})},600);
+  }});
+};
 let countdownTimer;$('#generateLink').onclick=()=>{if(!$('#migrateName').value.trim()||!$('#migratePlatform').value)return showToast('请填写名称并选择迁移平台','warning');$('#linkResult').classList.remove('hidden');clearInterval(countdownTimer);let left=24*3600-1;countdownTimer=setInterval(()=>{left--;const h=String(Math.floor(left/3600)).padStart(2,'0'),m=String(Math.floor(left%3600/60)).padStart(2,'0'),s=String(left%60).padStart(2,'0');$('#countdown').textContent=`${h}:${m}:${s}`;if(left<=0)clearInterval(countdownTimer)},1000);showToast('迁移链接已生成','success')};$('#copyLink').onclick=async()=>{try{await navigator.clipboard.writeText($('#migrationLink').value);showToast('链接已复制','success')}catch{showToast('请手动复制链接','warning')}};
 
 // 业务弹层的关闭与键盘焦点，以及系统框架助手入口避让。
-const creationDialogs=[['dialogOverlay',closeDialog],['ownedProxyDialog',closeOwnedProxyDialog],['apiProxyDialog',closeApiProxyDialog],['accountFormDialog',closeAccountFormDialog],['accountSelectDialog',()=>closeAccountSelectDialog()],['proxyEditor',closeProxy]];
+const creationDialogs=[['dialogOverlay',closeDialog],['importRulesDialog',closeImportRules],['ownedProxyDialog',closeOwnedProxyDialog],['apiProxyDialog',closeApiProxyDialog],['accountFormDialog',closeAccountFormDialog],['accountSelectDialog',()=>closeAccountSelectDialog()],['proxyEditor',closeProxy]];
 document.addEventListener('keydown',event=>{
   const dialog=creationDialogs.find(([id])=>!$('#'+id).classList.contains('hidden'));if(!dialog)return;
   if(event.key==='Escape'){event.preventDefault();dialog[1]();return}
