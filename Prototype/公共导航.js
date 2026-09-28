@@ -42,7 +42,7 @@
     { key: 'recycle', label: '回收站', icon: 'trash-2', href: '回收站.html' }
   ];
   const EXTRA = [
-    { key: 'create', label: '新建浏览器', icon: 'circle-plus', href: '新建浏览器.html' },
+    { key: 'create', label: '新建环境', icon: 'circle-plus', href: '新建浏览器.html' },
     { key: 'settings', label: '设置', icon: 'settings-2', href: '设置.html' },
     { key: 'help', label: '帮助', icon: 'circle-help', href: '帮助.html' }
   ];

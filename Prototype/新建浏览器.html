@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>云登 · 新建浏览器</title>
+  <title>云登 · 新建环境</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
@@ -628,7 +628,7 @@
         <section id="routeOutlet" aria-live="polite"><div class="edit-page">
           <!-- 页面主配置 -->
           <section class="page-identity" aria-labelledby="pageTitle">
-            <h1 id="pageTitle" class="sr-only">新建浏览器</h1><span id="fingerprintSource" class="sr-only">系统已生成默认指纹</span><div class="identity-guide"><div class="identity-guide-item"><span class="identity-guide-icon safe"><i data-lucide="check" class="w-3 h-3"></i></span><span>可安全修改项，可根据需要随意修改</span></div><div class="identity-guide-item"><span class="identity-guide-icon risk"><i data-lucide="triangle-alert" class="w-3 h-3"></i></span><span>风险项，建议非专业人士不要修改</span></div><div class="identity-guide-item"><span class="identity-guide-required">*</span><span>必填项，请确保信息准确</span></div></div>
+            <h1 id="pageTitle" class="sr-only">新建环境</h1><span id="fingerprintSource" class="sr-only">系统已生成默认指纹</span><div class="identity-guide"><div class="identity-guide-item"><span class="identity-guide-icon safe"><i data-lucide="check" class="w-3 h-3"></i></span><span>可安全修改项，可根据需要随意修改</span></div><div class="identity-guide-item"><span class="identity-guide-icon risk"><i data-lucide="triangle-alert" class="w-3 h-3"></i></span><span>风险项，建议非专业人士不要修改</span></div><div class="identity-guide-item"><span class="identity-guide-required">*</span><span>必填项，请确保信息准确</span></div></div>
           </section>
           <section class="bg-transparent" aria-label="浏览器配置内容">
             <div class="workspace-grid grid grid-cols-[minmax(0,1fr)_292px] gap-4 items-start">
@@ -1869,7 +1869,7 @@ function submitCreate(again=false){
   setTimeout(()=>{
     creating=false;state.dirty=false;$('#dirtyBadge').classList.add('hidden');
     $('#submitBtn').disabled=false;$('#createNextBtn').disabled=false;$('#cancelBtn').disabled=false;$$('[data-mode]').forEach(button=>button.disabled=false);setMode(creatingMode);
-    showToast(creatingMode==='batch'?'批量创建成功':'新建浏览器成功','success');
+    showToast(creatingMode==='batch'?'批量创建成功':'新建环境成功','success');
     if(again){resetNextBrowser();showToast('已保留公共配置，可继续新建','info')}
     else navigateToEnvironment();
   },800);
