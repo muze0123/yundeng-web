@@ -1,0 +1,3867 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>云登 · 角色管理</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap"
+    />
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: {
+                DEFAULT: "#0066FF",
+                hover: "#0052CC",
+                active: "#0047B3",
+                bg: "#E6F0FF",
+              },
+              ink: {
+                title: "#1A1D24",
+                body: "#3A3F4A",
+                sub: "#6E7685",
+                muted: "#9DA2AC",
+              },
+              line: {
+                DEFAULT: "#DFE1E5",
+                light: "#E8EAED",
+                lighter: "#F0F1F3",
+              },
+              page: "#F7F8FA",
+              card: "#FFFFFF",
+              hover: "#F3F4F6",
+              "block-hover": "#F0F1F3",
+              price: "#FE5416",
+              success: { DEFAULT: "#0FC060", bg: "#E7F9F0" },
+              warning: { DEFAULT: "#E7772D", bg: "#FDF2E9" },
+              danger: { DEFAULT: "#D9001B", bg: "#FFE8EB" },
+              info: { DEFAULT: "#0091D5", bg: "#E4F4FB" },
+            },
+            borderRadius: { DEFAULT: "4px", md: "6px", lg: "8px" },
+            fontFamily: {
+              sans: [
+                "-apple-system",
+                "BlinkMacSystemFont",
+                "PingFang SC",
+                "Hiragino Sans GB",
+                "Microsoft YaHei",
+                "Helvetica Neue",
+                "Helvetica",
+                "Arial",
+                "sans-serif",
+              ],
+              mono: ["JetBrains Mono", "monospace"],
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      /* 布局、颜色和尺寸取自 design.md §2–5；业务树缩进取 20px 间距梯度。 */
+      :root {
+        --primary: #0066ff;
+        --primary-hover: #0052cc;
+        --primary-bg: #e6f0ff;
+        --title: #1a1d24;
+        --body: #3a3f4a;
+        --sub: #6e7685;
+        --muted: #9da2ac;
+        --line: #dfe1e5;
+        --light: #e8eaed;
+        --lighter: #f0f1f3;
+        --page: #f7f8fa;
+        --card: #ffffff;
+        --hover: #f3f4f6;
+        --danger: #d9001b;
+        --danger-bg: #ffe8eb;
+        --success: #0fc060;
+        --warning: #e7772d;
+        --warning-bg: #fdf2e9;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font:
+          13px/1.5 -apple-system,
+          BlinkMacSystemFont,
+          "PingFang SC",
+          "Microsoft YaHei",
+          sans-serif;
+        color: var(--body);
+        background: var(--page);
+      }
+      button,
+      input,
+      select,
+      textarea {
+        font: inherit;
+      }
+      button {
+        cursor: pointer;
+      }
+      button:disabled {
+        cursor: not-allowed;
+        opacity: 0.45;
+      }
+      input,
+      textarea {
+        caret-color: var(--primary);
+      }
+      input[type="checkbox"],
+      input[type="radio"] {
+        accent-color: var(--primary);
+      }
+      ::selection {
+        background: var(--primary-bg);
+        color: var(--primary);
+      }
+      :focus-visible {
+        outline: 2px solid var(--primary);
+        outline-offset: 2px;
+      }
+      svg {
+        width: 16px;
+        height: 16px;
+        flex-shrink: 0;
+      }
+      h2,
+      h3,
+      p {
+        margin: 0;
+      }
+      h2 {
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--title);
+      }
+      h3 {
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--title);
+      }
+      a {
+        color: var(--primary);
+        text-underline-offset: 3px;
+      }
+      [hidden] {
+        display: none !important;
+      }
+      .mono {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 12px;
+        font-variant-numeric: tabular-nums;
+      }
+      .muted {
+        color: var(--sub);
+      }
+      .small {
+        font-size: 12px;
+      }
+      .actions {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .spaced {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+      .btn {
+        height: 32px;
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        background: var(--card);
+        color: var(--body);
+        padding: 0 12px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        white-space: nowrap;
+      }
+      .btn:hover:not(:disabled) {
+        border-color: var(--primary);
+        color: var(--primary);
+      }
+      .btn.primary {
+        background: var(--primary);
+        border-color: var(--primary);
+        color: var(--card);
+      }
+      .btn.primary:hover {
+        background: var(--primary-hover);
+      }
+      .btn.danger {
+        background: var(--danger);
+        border-color: var(--danger);
+        color: var(--card);
+      }
+      .icon-btn {
+        width: 32px;
+        height: 32px;
+        padding: 0;
+        border: 0;
+        border-radius: 4px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: transparent;
+        color: var(--sub);
+      }
+      .icon-btn:hover {
+        background: var(--hover);
+        color: var(--body);
+      }
+      .link {
+        border: 0;
+        background: transparent;
+        color: var(--primary);
+        padding: 0;
+        white-space: nowrap;
+      }
+      .link:hover {
+        text-decoration: underline;
+        text-underline-offset: 3px;
+      }
+      .link.danger {
+        color: var(--danger);
+      }
+      .row-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        white-space: nowrap;
+      }
+      .field {
+        height: 32px;
+        width: 100%;
+        padding: 0 10px;
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        background: var(--card);
+        color: var(--body);
+        min-width: 0;
+      }
+      .field:focus {
+        outline: 0;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 2px var(--primary-bg);
+      }
+      textarea.field {
+        height: 88px;
+        padding: 8px 10px;
+        resize: vertical;
+      }
+      .field[aria-invalid="true"] {
+        border-color: var(--danger);
+      }
+      .error {
+        color: var(--danger);
+        font-size: 12px;
+        margin-top: 4px;
+        min-height: 0;
+      }
+      .required {
+        color: var(--danger);
+        margin-right: 4px;
+      }
+      .workspace {
+        background: var(--card);
+        border-radius: 8px;
+        padding: 24px;
+        min-height: 100%;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+      }
+      .team-summary {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 16px;
+        padding-bottom: 20px;
+        margin-bottom: 20px;
+        border-bottom: 1px solid var(--light);
+      }
+      .team-summary h2 {
+        margin-right: 4px;
+      }
+      .toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px 16px;
+        flex-wrap: wrap;
+        margin-bottom: 16px;
+      }
+      .filter-btn {
+        position: relative;
+      }
+      .filter-btn.active {
+        border-color: var(--primary);
+        color: var(--primary);
+      }
+      .filter-count {
+        position: absolute;
+        right: -8px;
+        top: -8px;
+        min-width: 16px;
+        height: 16px;
+        border-radius: 8px;
+        background: var(--danger);
+        color: var(--card);
+        font:
+          600 11px/16px "JetBrains Mono",
+          monospace;
+      }
+      /* 筛选抽屉「创建时间」时间筛选器下拉框（design.md §5.4.4 日期范围规则 + 设计系统双月范围选择器）：
+         触发器占位为「开始时间 ~ 结束时间」，面板贴抽屉内容宽度在字段下方展开，不被 480px 抽屉裁切。 */
+      .role-date-control {
+        position: relative;
+        display: block;
+        width: 100%;
+        min-width: 0;
+      }
+      .role-date-trigger {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        width: 100%;
+        height: 32px;
+        padding: 0 10px 0 12px;
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        background: var(--card);
+        color: var(--muted);
+        text-align: left;
+      }
+      .role-date-trigger:hover {
+        border-color: var(--primary);
+      }
+      .role-date-trigger:focus-visible,
+      .role-date-trigger[aria-expanded="true"] {
+        outline: 0;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 2px var(--primary-bg);
+      }
+      .role-date-trigger[aria-invalid="true"] {
+        border-color: var(--danger);
+        box-shadow: 0 0 0 2px var(--danger-bg);
+      }
+      .role-date-values {
+        display: flex;
+        align-items: center;
+        min-width: 0;
+        overflow: hidden;
+        white-space: nowrap;
+      }
+      .role-date-value {
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .role-date-value.is-selected {
+        color: var(--body);
+        font-family: "JetBrains Mono", monospace;
+        font-variant-numeric: tabular-nums;
+      }
+      .role-date-sep {
+        flex: none;
+        margin: 0 10px;
+        color: var(--muted);
+      }
+      .role-date-icon {
+        flex: none;
+        display: inline-flex;
+        color: var(--muted);
+      }
+      .role-date-panel {
+        position: relative;
+        width: 100%;
+        margin-top: 8px;
+        padding: 12px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--card);
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.12);
+      }
+      .role-calendar-months {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+      .role-calendar-month {
+        min-width: 0;
+      }
+      .role-calendar-month + .role-calendar-month {
+        padding-left: 12px;
+        border-left: 1px solid var(--light);
+      }
+      .role-calendar-head {
+        display: grid;
+        grid-template-columns: 52px minmax(0, 1fr) 52px;
+        align-items: center;
+        margin-bottom: 4px;
+      }
+      .role-calendar-nav-group {
+        display: flex;
+        align-items: center;
+        gap: 2px;
+      }
+      .role-calendar-nav,
+      .role-calendar-spacer {
+        width: 24px;
+        height: 24px;
+      }
+      .role-calendar-nav {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        border: 0;
+        border-radius: 4px;
+        background: transparent;
+        color: var(--sub);
+      }
+      .role-calendar-nav:hover {
+        background: var(--hover);
+        color: var(--primary);
+      }
+      .role-calendar-nav svg {
+        width: 14px;
+        height: 14px;
+      }
+      .role-calendar-spacer {
+        display: block;
+      }
+      .role-calendar-title {
+        margin: 0;
+        color: var(--body);
+        font-size: 13px;
+        font-weight: 500;
+        line-height: 24px;
+        text-align: center;
+        white-space: nowrap;
+      }
+      .role-calendar-week,
+      .role-calendar-grid {
+        display: grid;
+        grid-template-columns: repeat(7, minmax(0, 1fr));
+        gap: 2px;
+        text-align: center;
+      }
+      .role-calendar-week {
+        margin-bottom: 2px;
+        color: var(--muted);
+        font-size: 11px;
+      }
+      .role-calendar-day {
+        height: 26px;
+        padding: 0;
+        border: 0;
+        border-radius: 4px;
+        background: var(--card);
+        color: var(--body);
+        font:
+          12px "JetBrains Mono",
+          monospace;
+      }
+      .role-calendar-day:hover {
+        background: var(--hover);
+        color: var(--primary);
+      }
+      /* 跨月弱化文字沿用 design.md §5.5 记录的 #C7CAD1 梯度值。 */
+      .role-calendar-day.is-other {
+        color: #c7cad1;
+      }
+      .role-calendar-day.is-range {
+        background: var(--primary-bg);
+        border-radius: 0;
+      }
+      .role-calendar-day.is-start,
+      .role-calendar-day.is-end {
+        background: var(--primary);
+        color: var(--card);
+        font-weight: 600;
+      }
+      .role-calendar-day.is-start:not(.is-end) {
+        border-radius: 4px 0 0 4px;
+      }
+      .role-calendar-day.is-end:not(.is-start) {
+        border-radius: 0 4px 4px 0;
+      }
+      .role-calendar-day.is-start.is-end {
+        border-radius: 4px;
+      }
+      .role-calendar-foot {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-top: 10px;
+        padding-top: 10px;
+        border-top: 1px solid var(--light);
+      }
+      .role-calendar-value {
+        min-width: 0;
+        overflow: hidden;
+        color: var(--sub);
+        font:
+          12px "JetBrains Mono",
+          monospace;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .role-calendar-actions {
+        display: flex;
+        flex: none;
+        gap: 8px;
+      }
+      @media (max-width: 520px) {
+        .role-calendar-months {
+          grid-template-columns: 1fr;
+        }
+        .role-calendar-month + .role-calendar-month {
+          padding-top: 12px;
+          padding-left: 0;
+          border-top: 1px solid var(--light);
+          border-left: 0;
+        }
+      }
+      /* 角色列表：单区块数据表；固定表格布局保证长文本列可省略、整体横向滚动。
+         列宽合计 1452px（176+200+240+140+160+88+152+76+220），与表头 width 保持一致。 */
+      .role-table {
+        min-width: 1452px;
+        table-layout: fixed;
+      }
+      /* 列表整行拖拽排序（交互标准见 design.md §5.14）：仅可拖拽行给抓取光标，
+         落点用渐变插入线反馈（避免 border 造成行高抖动），非法落点用 danger 浅底提示。 */
+      .data-table tr.draggable-row {
+        cursor: grab;
+      }
+      .data-table tr.draggable-row:active {
+        cursor: grabbing;
+      }
+      .data-table tr.dragging {
+        opacity: 0.4;
+      }
+      .data-table tr.drop-before td {
+        background-image: linear-gradient(
+          to bottom,
+          var(--primary) 0 2px,
+          transparent 2px
+        );
+      }
+      .data-table tr.drop-after td {
+        background-image: linear-gradient(
+          to top,
+          var(--primary) 0 2px,
+          transparent 2px
+        );
+      }
+      .data-table tbody tr.drop-invalid,
+      .data-table tbody tr.drop-invalid:hover {
+        background: var(--danger-bg);
+      }
+      .role-name {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        min-width: 0;
+        font-weight: 500;
+        color: var(--title);
+      }
+      .role-name > .text {
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .role-table tbody tr.role-off .role-name {
+        color: var(--sub);
+        font-weight: 400;
+      }
+      .badge.primary {
+        color: var(--primary);
+        background: var(--primary-bg);
+      }
+      .cell-link {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        max-width: 100%;
+        min-width: 0;
+        border: 0;
+        background: transparent;
+        padding: 0;
+        font: inherit;
+        color: inherit;
+        text-align: left;
+      }
+      .cell-link:hover {
+        color: var(--primary);
+      }
+      .cell-link > .text {
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .cell-link .avatar {
+        width: 24px;
+        height: 24px;
+        font-size: 11px;
+      }
+      .cell-more {
+        flex-shrink: 0;
+        color: var(--primary);
+      }
+      .perm-cell {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-width: 0;
+      }
+      .perm-cell > .text {
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .perm-cell .link {
+        flex-shrink: 0;
+      }
+      .perm-detail-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+      /* 功能权限明细：统计文本紧贴角色名称，不再用 space-between 推至弹窗右侧。 */
+      .perm-detail-head.detail-inline {
+        justify-content: flex-start;
+      }
+      .perm-detail-head h3 {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      /* 菜单功能列：父级菜单用次级色、末级菜单用正文色，层级以 “>” 连接，保持单行可换行不溢出。 */
+      .perm-path {
+        display: inline-flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 6px;
+        min-width: 0;
+      }
+      .perm-path > span {
+        white-space: nowrap;
+      }
+      .perm-path > .parent {
+        color: var(--sub);
+      }
+      .perm-path > .sep {
+        color: var(--muted);
+      }
+      .perm-path > .leaf {
+        color: var(--body);
+        font-weight: 500;
+      }
+      .all-perm {
+        color: var(--primary);
+      }
+      .tree-row {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        min-height: 36px;
+        border-radius: 4px;
+        padding-right: 4px;
+      }
+      .tree-row:hover {
+        background: var(--hover);
+      }
+      .tree-row.active {
+        background: var(--primary-bg);
+        color: var(--primary);
+      }
+      .tree-row .tree-label {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        text-align: left;
+        border: 0;
+        background: transparent;
+        padding: 6px 0;
+        color: inherit;
+      }
+      .tree-label span:first-child {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .tree-row .icon-btn {
+        width: 24px;
+        height: 24px;
+        flex-shrink: 0;
+      }
+      .tree-row .node-more {
+        opacity: 0;
+      }
+      .tree-row:hover .node-more,
+      .tree-row:focus-within .node-more {
+        opacity: 1;
+      }
+      .table-scroll {
+        width: 100%;
+        overflow-x: auto;
+      }
+      .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+      }
+      .data-table th {
+        text-align: left;
+        font-weight: 600;
+        font-size: 12px;
+        color: var(--sub);
+        padding: 9px 12px;
+        background: var(--lighter);
+        border-bottom: 1px solid var(--line);
+        white-space: nowrap;
+      }
+      .data-table td {
+        text-align: left;
+        padding: 9px 12px;
+        height: 48px;
+        border-bottom: 1px solid var(--lighter);
+        white-space: nowrap;
+      }
+      .data-table tbody tr:hover {
+        background: var(--hover);
+      }
+      .data-table tr.selected {
+        background: var(--primary-bg);
+      }
+      .member-table {
+        min-width: 1150px;
+      }
+      .member-cell {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .avatar {
+        width: 28px;
+        height: 28px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: var(--primary-bg);
+        color: var(--primary);
+        position: relative;
+        font-size: 12px;
+        flex-shrink: 0;
+      }
+      .avatar .owner {
+        position: absolute;
+        right: -4px;
+        top: -4px;
+        width: 12px;
+        height: 12px;
+        color: var(--warning);
+        background: var(--card);
+        border-radius: 50%;
+      }
+      .toggle {
+        position: relative;
+        width: 32px;
+        height: 18px;
+        background: var(--line);
+        border: 0;
+        border-radius: 16px;
+        padding: 0;
+      }
+      .toggle::after {
+        content: "";
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        left: 2px;
+        top: 2px;
+        background: var(--card);
+        border-radius: 50%;
+        transition: transform 0.15s;
+      }
+      .toggle[aria-checked="true"] {
+        background: var(--primary);
+      }
+      .toggle[aria-checked="true"]::after {
+        transform: translateX(14px);
+      }
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        border-radius: 4px;
+        padding: 2px 8px;
+        font-size: 12px;
+        background: var(--page);
+        color: var(--sub);
+      }
+      .badge.success {
+        color: var(--success);
+        background: #e7f9f0;
+      }
+      .badge.warning {
+        color: var(--warning);
+        background: #fdf2e9;
+      }
+      .badge.danger {
+        color: var(--danger);
+        background: #ffe8eb;
+      }
+      .pager {
+        padding-top: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        flex-wrap: wrap;
+        gap: 16px;
+        font-size: 12px;
+      }
+      .page-nav {
+        display: flex;
+        gap: 4px;
+      }
+      .pg-btn {
+        height: 30px;
+        min-width: 30px;
+        border: 1px solid var(--line);
+        background: var(--card);
+        border-radius: 4px;
+      }
+      .pg-btn.current {
+        color: var(--card);
+        background: var(--primary);
+        border-color: var(--primary);
+      }
+      .pager select {
+        height: 30px;
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        background: var(--card);
+      }
+      .jump {
+        width: 44px;
+        height: 30px;
+        text-align: center;
+        border: 1px solid var(--line);
+        border-radius: 4px;
+      }
+      .empty {
+        padding: 56px 16px;
+        text-align: center;
+        color: var(--sub);
+      }
+      .empty svg {
+        display: block;
+        width: 32px;
+        height: 32px;
+        margin: 0 auto 12px;
+        color: var(--muted);
+      }
+      .role-desc {
+        display: block;
+        max-width: 200px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        color: var(--sub);
+      }
+      .role-empty {
+        color: var(--muted);
+      }
+      dialog.overlay {
+        padding: 0;
+        border: 0;
+        border-radius: 8px;
+        background: var(--card);
+        color: var(--body);
+        width: 760px;
+        max-width: 92vw;
+        max-height: 90dvh;
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.12);
+      }
+      dialog.overlay::backdrop {
+        background: rgba(0, 0, 0, 0.3);
+      }
+      dialog.overlay[open] {
+        display: flex;
+        flex-direction: column;
+      }
+      dialog.drawer {
+        margin: 0 0 0 auto;
+        top: 0;
+        right: 0;
+        height: 100dvh;
+        max-height: 100dvh;
+        max-width: 100vw;
+        width: 800px;
+        border-radius: 0;
+      }
+      dialog.filter-drawer {
+        width: 480px;
+      }
+      /* 弹窗/抽屉三段结构（design.md §5.6 Modal、§5.7 Drawer）：标题栏 56px + 内容区 + 底部操作栏 64px，
+         三段左右内边距统一 24px，底部按钮组居右、间距 12px。 */
+      .dialog-head {
+        padding: 0 24px;
+        height: 56px;
+        min-height: 56px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        border-bottom: 1px solid var(--light);
+      }
+      .dialog-body {
+        padding: 24px;
+        overflow-y: auto;
+        min-height: 0;
+        flex: 1;
+      }
+      /* 详情/业务抽屉内容区按 design.md §5.7「标准业务详情 Drawer」：page 底色 + 16px 内边距；
+         内边距由各分区卡片自行提供，因此不沿用弹窗的 24px。
+         筛选抽屉按 §5.7 首条必须保持白底，故用 :not(.filter-drawer) 排除。 */
+      dialog.drawer:not(.filter-drawer) .dialog-body {
+        padding: 16px;
+        background: var(--page);
+      }
+      .dialog-foot {
+        height: 64px;
+        min-height: 64px;
+        border-top: 1px solid var(--light);
+        padding: 0 24px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 12px;
+      }
+      .form {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+      .form-row {
+        display: grid;
+        grid-template-columns: 96px minmax(0, 400px);
+        gap: 6px 12px;
+        justify-content: center;
+        align-items: start;
+      }
+      .form-row > label {
+        padding-top: 6px;
+        text-align: right;
+      }
+      .form-row .field-wrap {
+        min-width: 0;
+      }
+      .filter-drawer .form-row {
+        display: block;
+      }
+      .filter-drawer .form-row > label {
+        display: block;
+        text-align: left;
+        padding: 0;
+        margin-bottom: 6px;
+      }
+      /* 字符计数器（design.md §5.9 全局适用）：数字以浮层形式落在控件内部 ——
+         单行输入框贴右侧并垂直居中，多行文本域贴右下角；容器为控件预留内边距避免与内容重叠。 */
+      .counter-wrap {
+        position: relative;
+        display: block;
+      }
+      .counter-wrap > input.field {
+        padding-right: 48px;
+      }
+      .counter-wrap > textarea.field {
+        padding-right: 12px;
+        padding-bottom: 24px;
+      }
+      .counter {
+        position: absolute;
+        right: 10px;
+        bottom: 8px;
+        color: var(--muted);
+        font-size: 12px;
+        pointer-events: none;
+      }
+      .counter-wrap > input.field + .counter {
+        top: 50%;
+        bottom: auto;
+        transform: translateY(-50%);
+      }
+      /* 抽屉内分区卡片（design.md §5.7）：白底、8px 圆角、16px 内边距、无外描边，分区之间 16px 间距。 */
+      .drawer-section {
+        background: var(--card);
+        border-radius: 8px;
+        padding: 16px;
+        margin-bottom: 16px;
+      }
+      .drawer-section:last-child {
+        margin-bottom: 0;
+      }
+      .drawer-section > h3 {
+        margin: 0 0 16px;
+      }
+      .choice-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        max-height: 240px;
+        overflow: auto;
+      }
+      .check-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-height: 32px;
+      }
+      .picker {
+        position: relative;
+        border: 1px solid var(--line);
+        border-radius: 4px;
+      }
+      .picker > summary {
+        list-style: none;
+        min-height: 30px;
+        padding: 5px 10px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+      }
+      .picker > summary::-webkit-details-marker {
+        display: none;
+      }
+      .picker-content {
+        border-top: 1px solid var(--light);
+        padding: 8px;
+        max-height: 260px;
+        overflow: auto;
+      }
+      .picker-content > .field {
+        margin-bottom: 8px;
+      }
+      .picker-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      .picker-row:hover {
+        background: var(--hover);
+      }
+      .chips {
+        display: flex;
+        gap: 4px;
+        flex-wrap: wrap;
+      }
+      .chip {
+        background: var(--primary-bg);
+        color: var(--primary);
+        border-radius: 4px;
+        padding: 2px 6px;
+        font-size: 12px;
+        display: inline-flex;
+        gap: 4px;
+        align-items: center;
+      }
+      .chip button {
+        border: 0;
+        background: transparent;
+        color: inherit;
+        padding: 0;
+        display: flex;
+      }
+      .chip svg {
+        width: 12px;
+        height: 12px;
+      }
+      .notice {
+        padding: 12px;
+        background: var(--page);
+        border-radius: 4px;
+        color: var(--sub);
+        margin-bottom: 16px;
+      }
+      .notice.warning {
+        color: var(--warning);
+        background: #fdf2e9;
+      }
+      .toast {
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 20000;
+        max-width: calc(100% - 32px);
+        padding: 10px 16px;
+        border-radius: 4px;
+        background: var(--title);
+        color: var(--card);
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.12);
+      }
+      .permission-node {
+        border-bottom: 1px solid var(--lighter);
+        padding: 6px 0;
+      }
+      /* 二级及以下权限节点不再单独画分割线，避免与其父级分割线叠成双线 */
+      .permission-sub {
+        border-bottom: 0;
+      }
+      .permission-head {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-height: 32px;
+      }
+      .permission-ops {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px 20px;
+        padding: 4px 0 8px 32px;
+      }
+      /* 选择成员弹窗（design.md §5.6 通用 Modal 的业务特例，参照 §5.7.2：左右双栏树形
+         选择器需要更宽的弹窗，故宽度放宽至 900px；8px 圆角、56px 标题栏、64px 底部操作栏
+         与遮罩规格仍沿用通用 Modal。内部为左栏「检索 + 部门/成员树」、右栏「已选清单」，
+         32px 行高、block-hover 行 hover 底色、20px 层级缩进梯度均按参考稿实测值；
+         左栏「组织树」区块固定 500px，右栏「已选清单」自适应填满剩余宽度。 */
+      dialog.overlay.member-picker-dialog {
+        width: 900px;
+      }
+      .member-picker-dialog .dialog-body {
+        flex: none;
+        height: min(480px, 60dvh);
+        padding: 0;
+        overflow: hidden;
+        display: flex;
+      }
+      /* 未勾选成员时「确定」置灰不可点（design.md §5.1 禁用：底色 / 文字置灰） */
+      .member-picker-dialog .dialog-foot .btn.primary:disabled {
+        background: var(--muted);
+        border-color: var(--muted);
+        color: var(--card);
+        opacity: 1;
+      }
+      .mp-picker {
+        display: flex;
+        width: 100%;
+        min-width: 0;
+      }
+      /* 左栏：检索框 + 部门 / 成员树（固定 500px，窄屏改为上下两栏时可压缩） */
+      .mp-tree {
+        flex: none;
+        width: 500px;
+        min-width: 0;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+        padding: 12px 12px 0;
+      }
+      .mp-search {
+        position: relative;
+        flex: none;
+      }
+      .mp-search svg {
+        position: absolute;
+        left: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--muted);
+        pointer-events: none;
+      }
+      .mp-search .field {
+        padding-left: 32px;
+      }
+      .mp-search input[type="search"]::-webkit-search-cancel-button {
+        display: none;
+      }
+      .mp-tree-body {
+        flex: 1;
+        min-height: 0;
+        margin-top: 12px;
+        padding: 8px 0 12px;
+        overflow-y: auto;
+      }
+      /* 树行：32px 行高；margin 承载层级缩进，hover 底色只覆盖行自身宽度 */
+      .mp-row {
+        --mp-indent: 0px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        height: 32px;
+        margin-left: var(--mp-indent);
+        padding: 0 12px 0 8px;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      .mp-row:hover {
+        background: var(--lighter);
+      }
+      /* 展开箭头：实心三角（同 design.md §5.13 折叠把手的实心三角用法），展开时朝下 */
+      .mp-caret {
+        width: 8px;
+        height: 8px;
+        flex: none;
+        padding: 0;
+        border: 0;
+        background: transparent;
+        display: inline-flex;
+        align-items: center;
+        justify-content: flex-start;
+      }
+      .mp-caret::before {
+        content: "";
+        width: 0;
+        height: 0;
+        border-left: 3.5px solid transparent;
+        border-right: 3.5px solid transparent;
+        border-top: 5px solid var(--muted);
+        transform: rotate(-90deg);
+      }
+      .mp-caret[aria-expanded="true"]::before {
+        transform: none;
+      }
+      .mp-row input[type="checkbox"] {
+        width: 14px;
+        height: 14px;
+        margin: 0;
+        flex: none;
+      }
+      .mp-name {
+        margin-left: 0;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      /* 成员行无展开箭头：用固定左内边距顶出箭头占位，使复选框落在所属部门名称右侧 12px
+         （= 行左内边距 8 + 箭头槽 8 + 间距 8 + 复选框 14 + 间距 8 + 12，参考稿实测值） */
+      .mp-member {
+        padding-left: 58px;
+      }
+      /* 无部门成员（未分配部门）不再使用分组标题，整行与「一级部门」同层：
+         --mp-indent 与一级部门一致（renderMemberChooser 传入 level=1），左内边距取一级部门行的
+         箭头槽位（行左内边距 8 + 箭头槽 8 + 间距 8 = 24px），使复选框、名称分别与一级部门行同列。 */
+      .mp-member-flat {
+        padding-left: 24px;
+      }
+      /* 成员默认人员图标：Lucide 无实心人形图标，按参考稿使用内联实心 SVG
+         （与系统框架页内联图标同法），16×16px、颜色取 design.md primary 语义色 */
+      .mp-avatar {
+        flex: none;
+        width: 16px;
+        height: 16px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary);
+      }
+      .mp-avatar svg {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+      .mp-tag {
+        margin-left: 8px;
+        font-size: 12px;
+        color: var(--sub);
+      }
+      /* 右栏：已选清单（自适应填满左栏剩余宽度） */
+      .mp-chosen {
+        flex: 1 1 auto;
+        min-width: 260px;
+        display: flex;
+        flex-direction: column;
+        border-left: 1px solid var(--light);
+      }
+      .mp-chosen-head {
+        height: 44px;
+        flex: none;
+        padding: 0 12px;
+        border-bottom: 1px solid var(--light);
+      }
+      .mp-chosen-head h3 {
+        font-size: 13px;
+        font-weight: 400;
+        color: var(--body);
+      }
+      .mp-count-num {
+        color: var(--primary);
+      }
+      .mp-chosen-body {
+        flex: 1;
+        min-height: 0;
+        padding: 4px 12px 12px;
+        overflow-y: auto;
+      }
+      .mp-empty {
+        padding-top: 48px;
+        text-align: center;
+        color: var(--muted);
+      }
+      .mp-chosen-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        height: 32px;
+        padding: 0 2px 0 6px;
+        border-radius: 4px;
+      }
+      .mp-chosen-item:hover {
+        background: var(--lighter);
+      }
+      .mp-chosen-item .icon-btn {
+        width: 24px;
+        height: 24px;
+      }
+      .mp-chosen-name {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-width: 0;
+      }
+      .mp-chosen-text {
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .dropdown {
+        position: relative;
+      }
+      .dropdown > summary {
+        list-style: none;
+      }
+      .dropdown > summary::-webkit-details-marker {
+        display: none;
+      }
+      .menu {
+        position: absolute;
+        top: 36px;
+        left: 0;
+        z-index: 20;
+        min-width: 160px;
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        padding: 4px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      }
+      .menu button {
+        display: block;
+        border: 0;
+        border-radius: 4px;
+        background: transparent;
+        width: 100%;
+        text-align: left;
+        padding: 8px 12px;
+        color: var(--body);
+      }
+      .menu button:hover {
+        background: var(--hover);
+      }
+      .import-upload {
+        padding: 32px;
+        text-align: center;
+        border: 1px dashed var(--line);
+        border-radius: 8px;
+        margin: 16px 0;
+      }
+      .import-upload.dragover {
+        border-color: var(--primary);
+        background: var(--primary-bg);
+      }
+      .wrap {
+        white-space: normal !important;
+        overflow-wrap: anywhere;
+      }
+      @media (max-width: 1000px) {
+        .workspace {
+          padding: 20px;
+        }
+      }
+      /* 选择成员弹窗固定 900px 宽，视口不足以容纳双栏（<920px）时改为上下两栏，
+         竖分隔线同步改为横分隔线（AGENTS.md §九 平板适配） */
+      @media (max-width: 920px) {
+        .mp-picker {
+          flex-direction: column;
+        }
+        .member-picker-dialog .dialog-body {
+          height: min(520px, 68dvh);
+        }
+        .mp-tree {
+          width: auto;
+          flex: 1 1 auto;
+        }
+        .mp-chosen {
+          flex: 0 1 42%;
+          min-width: 0;
+          min-height: 0;
+          border-left: 0;
+          border-top: 1px solid var(--light);
+        }
+      }
+      @media (max-width: 720px) {
+        .workspace {
+          padding: 16px;
+        }
+        .toolbar {
+          align-items: stretch;
+        }
+        .form-row {
+          grid-template-columns: 1fr;
+        }
+        .form-row > label {
+          text-align: left;
+          padding: 0;
+        }
+        .dialog-body {
+          padding: 20px;
+        }
+        .team-summary {
+          gap: 8px 12px;
+        }
+        .tabs {
+          gap: 16px;
+          overflow-x: auto;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          scroll-behavior: auto !important;
+          transition: none !important;
+        }
+      }
+      /* CDN 的基础样式异步注入；明确业务标题选择器，保持 design.md 的 16px/600 层级。 */
+      .workspace h2,
+      .overlay h2,
+      .workspace h3,
+      .overlay h3 {
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--title);
+      }
+      /* 宽成员表格固定操作列，滚动时仍可编辑和删除。 */
+      .member-table th:last-child,
+      .member-table td:last-child {
+        position: sticky;
+        right: 0;
+        min-width: 96px;
+        border-left: 1px solid var(--light);
+        background: var(--card);
+      }
+      .member-table th:last-child {
+        background: var(--lighter);
+      }
+      .member-table tbody tr:hover td:last-child {
+        background: var(--hover);
+      }
+      .member-table tr.selected td:last-child {
+        background: var(--primary-bg);
+      }
+      /* 宽角色表格固定操作列，横向滚动时仍可配置成员、编辑、复制与删除。 */
+      .role-table th:last-child,
+      .role-table td:last-child {
+        position: sticky;
+        right: 0;
+        min-width: 216px;
+        border-left: 1px solid var(--light);
+        background: var(--card);
+      }
+      .role-table th:last-child {
+        background: var(--lighter);
+      }
+      .role-table tbody tr:hover td:last-child {
+        background: var(--hover);
+      }
+      /* ---------- 删除成员 / 角色 / 部门二次确认弹窗 ----------
+         视觉按 design.md §5.8「信息提示弹窗 Dialog」实现，与 §5.6 Modal 区分：
+         容器 600×250（max-width 92vw）、圆角 8px、阴影 0 8px 32px rgba(0,0,0,.12)；
+         右上角为纯文本 × 关闭（20px、ink-muted、top 14 / right 18），不使用 Lucide 图标；
+         内容区 flex:1 垂直居中、左右内边距 24px；ICO 为 20px 圆形浅底 + 语义色图形，
+         删除属「操作确认」→ confirm 类型（? / warning 色，§5.8 明文规定删除确认用 confirm）；
+         标题 16px/600 ink-title，说明 14px ink-sub、行高 1.6、与标题间距 6px；
+         底部按钮区右对齐、间距 12px、padding 0 24px 20px、无分割线；
+         确定按钮用 danger 红底强调破坏性操作。宽度用 dialog.overlay.confirm-dialog
+         提升特异性，覆盖 §5.6 Modal 的 760px 通用宽度。 */
+      dialog.overlay.confirm-dialog {
+        width: 600px;
+        height: 250px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+      }
+      /* 关闭 ×：§5.8 规定为纯文本 ×（非 Lucide 图标），颜色取 ink-muted。 */
+      .confirm-dialog-close {
+        position: absolute;
+        top: 14px;
+        right: 18px;
+        z-index: 1;
+        padding: 0;
+        border: 0;
+        background: transparent;
+        font-size: 20px;
+        line-height: 1;
+        color: var(--muted);
+        cursor: pointer;
+      }
+      .confirm-dialog-close:hover,
+      .confirm-dialog-close:focus-visible {
+        color: var(--body);
+      }
+      .confirm-dialog-body {
+        flex: 1;
+        min-height: 0;
+        display: flex;
+        align-items: center;
+        padding: 0 24px;
+      }
+      .confirm-dialog-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        width: 100%;
+      }
+      /* ICO：§5.8 圆形 20×20，底色取 warning 浅底（#FDF2E9）、图形取 warning 语义色，
+         与标题首行顶部对齐（margin-top 2px），字号 11px/700。 */
+      .confirm-dialog-icon {
+        flex: 0 0 20px;
+        width: 20px;
+        height: 20px;
+        margin-top: 2px;
+        border-radius: 50%;
+        background: var(--warning-bg);
+        color: var(--warning);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        font-weight: 700;
+        line-height: 1;
+      }
+      .confirm-dialog-title {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--title);
+      }
+      /* 说明文字：§5.8 副标题 14px ink-sub、行高 1.6、与标题间距 6px。 */
+      .confirm-dialog-desc {
+        margin: 6px 0 0;
+        font-size: 14px;
+        line-height: 1.6;
+        color: var(--sub);
+      }
+      .confirm-dialog-foot {
+        padding: 0 24px 20px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 12px;
+      }
+      /* 弹窗按钮沿用 §5.8 的 Dialog 按钮规格：13px/500、左右内边距 20px，
+         高度仍取 32px 与页面 .btn 保持一致。 */
+      .confirm-dialog-foot .btn {
+        padding: 0 20px;
+        font-size: 13px;
+        font-weight: 500;
+      }
+    </style>
+    <link rel="stylesheet" href="公共导航.css?v=20261008a" />
+    <script src="公共导航.js?v=20261008a"></script>
+  </head>
+  <body>
+    <!-- 业务工作区：唯一系统框架由公共导航承载 -->
+    <main id="mainContent">
+      <div class="page-content">
+        <section class="workspace" id="workspace" aria-label="角色管理">
+          <p class="muted" role="status">正在加载团队数据…</p>
+        </section>
+      </div>
+    </main>
+    <!-- 模块内表单、筛选和确认弹层 -->
+    <dialog class="overlay" id="businessDialog" aria-labelledby="dialogTitle">
+      <header class="dialog-head">
+        <h2 id="dialogTitle"></h2>
+        <button id="dialogClose" class="icon-btn" aria-label="关闭">
+          <i data-lucide="x"></i>
+        </button>
+      </header>
+      <div id="dialogBody" class="dialog-body"></div>
+      <footer class="dialog-foot">
+        <button class="btn" id="dialogCancel">取消</button
+        ><button class="btn primary" id="dialogSave">确定</button>
+      </footer>
+    </dialog>
+    <dialog
+      class="overlay confirm-dialog"
+      id="confirmDialog"
+      aria-labelledby="confirmTitle"
+      aria-describedby="confirmBody"
+    >
+      <button
+        type="button"
+        class="confirm-dialog-close"
+        id="confirmClose"
+        aria-label="关闭"
+      >
+        ×
+      </button>
+      <div class="confirm-dialog-body">
+        <div class="confirm-dialog-row">
+          <span class="confirm-dialog-icon" aria-hidden="true">?</span>
+          <div>
+            <h2 class="confirm-dialog-title" id="confirmTitle"></h2>
+            <p class="confirm-dialog-desc" id="confirmBody"></p>
+          </div>
+        </div>
+      </div>
+      <footer class="confirm-dialog-foot">
+        <button class="btn" id="confirmCancel">取消</button
+        ><button class="btn danger" id="confirmSave">确定</button>
+      </footer>
+    </dialog>
+    <script>
+      const PAGE = "roles";
+      ("use strict");
+      // 内联团队数据与业务工具；五个模块通过 SystemFrame 保存同一份本地演示数据。
+      const $ = (s, root = document) => root.querySelector(s);
+      const $$ = (s, root = document) => [...root.querySelectorAll(s)];
+      const esc = (value) =>
+        String(value ?? "").replace(
+          /[&<>"']/g,
+          (c) =>
+            ({
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              '"': "&quot;",
+              "'": "&#39;",
+            })[c],
+        );
+      const icon = (name) => `<i data-lucide="${name}" aria-hidden="true"></i>`;
+      // 默认人员图标：实心人形，Lucide 无对应实心图标，按参考稿内联 SVG（与系统框架内联图标同法）
+      const personIcon = () =>
+        `<span class="mp-avatar" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" focusable="false"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4Zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4Z"/></svg></span>`;
+      const icons = () => window.lucide?.createIcons();
+      const button = (label, action, id = "", kind = "") =>
+        `<button type="button" class="btn ${kind}" data-action="${action}" data-id="${esc(id)}">${esc(label)}</button>`;
+      const link = (label, action, id = "", danger = false) =>
+        `<button type="button" class="link${danger ? " danger" : ""}" data-action="${action}" data-id="${esc(id)}">${esc(label)}</button>`;
+      const empty = (text) =>
+        `<div class="empty">${icon("inbox")}<p>${esc(text)}</p></div>`;
+      const dateTime = () => new Date().toLocaleString("sv-SE");
+      const uid = (prefix) =>
+        prefix +
+        "-" +
+        Date.now().toString(36) +
+        "-" +
+        Math.random().toString(36).slice(2, 7);
+      const maskPhone = (phone) =>
+        String(phone).replace(/^(\d{3})\d{4}(\d{4})$/, "$1****$2");
+      // 已选人数上限 1000 与勾选逻辑一致；数量用 primary 强调，其余为正文色。
+      const selectedLabel = (n) =>
+        `已选 (<span class="picker-count-num">${n}</span>/1000)`;
+      const badge = (status) =>
+        `<span class="badge ${["启用", "已允许", "已通过"].includes(status) ? "success" : ["禁用", "已拒绝", "不通过"].includes(status) ? "danger" : "warning"}">${esc(status)}</span>`;
+      const permissionGroups = [
+        {
+          name: "环境管理",
+          children: [
+            { name: "新建环境", ops: ["查看", "单个创建", "批量创建", "导入"] },
+            {
+              name: "环境列表",
+              ops: ["查看", "启动", "编辑", "删除", "分配", "导出"],
+            },
+          ],
+        },
+        {
+          name: "代理管理",
+          ops: ["查看", "添加", "编辑", "删除", "检测", "授权"],
+        },
+        {
+          name: "费用管理",
+          children: [
+            { name: "云币交易流水", ops: ["查看", "导出"] },
+            { name: "订单管理", ops: ["查看", "支付", "取消", "导出"] },
+            { name: "开票管理", ops: ["查看", "申请开票", "管理抬头"] },
+            { name: "优惠券", ops: ["查看"] },
+          ],
+        },
+        {
+          name: "团队管理",
+          children: [
+            {
+              name: "成员管理",
+              ops: [
+                "查看",
+                "添加",
+                "邀请",
+                "编辑",
+                "删除",
+                "导入",
+                "导出",
+                "调岗",
+              ],
+            },
+            { name: "部门管理", ops: ["查看", "添加", "编辑", "删除"] },
+            {
+              name: "角色管理",
+              ops: ["查看", "添加", "编辑", "删除", "配置成员"],
+            },
+            { name: "成员申请", ops: ["查看", "审批"] },
+            { name: "登录请求", ops: ["查看", "审批"] },
+          ],
+        },
+        ...[
+          "商城",
+          "账号管理",
+          "分享转移",
+          "日志管理",
+          "账号设置",
+          "安全策略",
+          "插件管理",
+          "API",
+          "RPA",
+          "回收站",
+        ].map((name) => ({
+          name,
+          ops: name === "日志管理" ? ["查看", "导出"] : ["查看", "管理"],
+        })),
+      ];
+      function permissionLeaves(nodes = permissionGroups, path = "") {
+        return nodes.flatMap((n) =>
+          n.children
+            ? permissionLeaves(n.children, path + n.name + "/")
+            : n.ops.map((op) => path + n.name + "/" + op),
+        );
+      }
+      const allPermissions = permissionLeaves();
+      const seedDepartments = [
+        { id: "d0", name: "云登运营团队", parent: null, leaders: ["m1"] },
+        { id: "d1", name: "默认部门", parent: "d0", leaders: ["m1"] },
+        { id: "d2", name: "跨境运营", parent: "d0", leaders: ["m2"] },
+        { id: "d3", name: "北美运营组", parent: "d2", leaders: ["m3"] },
+        { id: "d4", name: "欧洲运营组", parent: "d2", leaders: ["m4"] },
+        { id: "d5", name: "内容增长", parent: "d0", leaders: ["m5"] },
+        { id: "d6", name: "内容策划组", parent: "d5", leaders: ["m6"] },
+        { id: "d7", name: "客户成功", parent: "d0", leaders: ["m7"] },
+        { id: "d8", name: "财务部", parent: "d0", leaders: ["m8"] },
+      ];
+      // 角色：首条为系统角色（置顶只读），其余为自定义角色；覆盖启用/停用与 0 成员等状态。
+      // 权限以“菜单/子菜单/操作”的完整键存储，与 permissionGroups 的叶子定义保持一致。
+      const roleSeeds = [
+        {
+          name: "超级管理员",
+          scope: "全部数据",
+          system: true,
+          enabled: true,
+          note: "系统自动生成，拥有全部功能权限",
+          creator: "系统",
+          created: "2026-06-12 09:00:00",
+          permissions: () => [...allPermissions],
+        },
+        {
+          name: "经理",
+          scope: "全部数据",
+          enabled: true,
+          note: "负责团队日常运营与业务数据查看",
+          creator: "张小登",
+          created: "2026-06-12 09:20:00",
+          permissions: () => allPermissions.filter((p) => !p.startsWith("账号设置/")),
+        },
+        {
+          name: "财务",
+          scope: "本部门及下级部门",
+          enabled: true,
+          note: "维护订单、开票与费用相关信息",
+          creator: "张小登",
+          created: "2026-06-12 09:35:00",
+          permissions: () =>
+            allPermissions.filter(
+              (p) =>
+                p.startsWith("费用管理/") ||
+                p === "团队管理/成员管理/查看" ||
+                p === "日志管理/查看",
+            ),
+        },
+        {
+          name: "环境配置员",
+          scope: "本部门及下级部门",
+          enabled: true,
+          note: "创建和维护环境与代理配置",
+          creator: "张小登",
+          created: "2026-06-15 10:05:00",
+          permissions: () =>
+            allPermissions.filter(
+              (p) => p.startsWith("环境管理/")
+                || p.startsWith("代理管理/"),
+            ),
+        },
+        {
+          name: "环境操作员",
+          scope: "仅本人",
+          enabled: true,
+          note: "仅操作已授权的浏览器环境",
+          creator: "张小登",
+          created: "2026-06-15 10:20:00",
+          permissions: () =>
+            allPermissions.filter(
+              (p) =>
+                p.startsWith("环境管理/环境列表/") &&
+                (p.endsWith("/查看") || p.endsWith("/启动")),
+            ),
+        },
+        {
+          name: "内容审核员",
+          scope: "仅本人",
+          enabled: true,
+          note: "审核账号资料与内容素材",
+          creator: "张小登",
+          created: "2026-06-18 14:30:00",
+          permissions: () =>
+            allPermissions.filter(
+              (p) =>
+                p.startsWith("账号管理/") ||
+                p === "环境管理/环境列表/查看",
+            ),
+        },
+        {
+          name: "客户支持",
+          scope: "本部门",
+          enabled: true,
+          note: "处理客户协作与分享转移事项",
+          creator: "张小登",
+          created: "2026-06-18 14:45:00",
+          permissions: () =>
+            allPermissions.filter(
+              (p) =>
+                p.startsWith("分享转移/") ||
+                p === "回收站/查看" ||
+                p === "环境管理/环境列表/查看",
+            ),
+        },
+        {
+          name: "临时协作者",
+          scope: "仅本人",
+          enabled: false,
+          note: "短期项目协作，任务结束后已停用",
+          creator: "张小登",
+          created: "2026-07-02 11:10:00",
+          permissions: () =>
+            allPermissions.filter(
+              (p) =>
+                p === "环境管理/环境列表/查看" ||
+                p === "环境管理/环境列表/启动",
+            ),
+        },
+        {
+          name: "代理采购员",
+          scope: "本部门及下级部门",
+          enabled: true,
+          note: "负责代理采购、检测与授权分配",
+          creator: "王蕾",
+          created: "2026-07-20 15:20:00",
+          permissions: () =>
+            allPermissions.filter(
+              (p) => p.startsWith("代理管理/") && !p.endsWith("/删除"),
+            ),
+        },
+        {
+          name: "数据分析师",
+          scope: "全部数据",
+          enabled: true,
+          note: "查看环境与费用数据并导出报表",
+          creator: "王蕾",
+          created: "2026-08-05 09:40:00",
+          permissions: () =>
+            allPermissions.filter((p) =>
+              [
+                "环境管理/环境列表/查看",
+                "环境管理/环境列表/导出",
+                "费用管理/云币交易流水/查看",
+                "费用管理/云币交易流水/导出",
+                "费用管理/订单管理/查看",
+              ].includes(p),
+            ),
+        },
+        {
+          name: "部门管理员",
+          scope: "本部门及下级部门",
+          enabled: true,
+          note: "维护本部门成员、部门与角色配置",
+          creator: "张小登",
+          created: "2026-08-12 16:05:00",
+          permissions: () =>
+            allPermissions.filter((p) =>
+              [
+                "团队管理/成员管理/查看",
+                "团队管理/成员管理/编辑",
+                "团队管理/成员管理/导出",
+                "团队管理/部门管理/查看",
+                "团队管理/部门管理/编辑",
+                "团队管理/角色管理/查看",
+                "团队管理/角色管理/配置成员",
+              ].includes(p),
+            ),
+        },
+        {
+          name: "内容编辑",
+          scope: "仅本人",
+          enabled: true,
+          note: "维护内容资料与插件素材",
+          creator: "李运营",
+          created: "2026-08-26 10:15:00",
+          permissions: () =>
+            allPermissions.filter(
+              (p) => p === "账号管理/查看" || p === "插件管理/查看",
+            ),
+        },
+        {
+          name: "外部审计",
+          scope: "仅本人",
+          enabled: true,
+          note: "只读查看日志与订单记录，暂未分配成员",
+          creator: "张小登",
+          created: "2026-09-03 13:50:00",
+          permissions: () =>
+            allPermissions.filter((p) =>
+              [
+                "日志管理/查看",
+                "日志管理/导出",
+                "费用管理/订单管理/查看",
+              ].includes(p),
+            ),
+        },
+        {
+          name: "试用观察员",
+          scope: "仅本人",
+          enabled: false,
+          note: "试用期只读账号，试用结束后已停用",
+          creator: "张小登",
+          created: "2026-09-16 17:25:00",
+          permissions: () =>
+            allPermissions.filter((p) => p === "环境管理/环境列表/查看"),
+        },
+      ];
+      const seedRoles = roleSeeds.map(({ permissions, ...role }, i) => ({
+        id: "r" + i,
+        ...role,
+        permissions: permissions(),
+      }));
+      // 成员与角色的对应关系；保证角色列表覆盖 0、1、2、3、5 人等不同成员规模。
+      const memberRoleSeeds = [
+        ["r0"],
+        ["r1", "r4", "r10"],
+        ["r1", "r3"],
+        ["r3", "r8"],
+        ["r5", "r11"],
+        ["r5", "r11"],
+        ["r6", "r4"],
+        ["r2"],
+        ["r4", "r9"],
+        ["r4", "r13"],
+        ["r3", "r8"],
+        ["r4"],
+        ["r7"],
+        ["r11", "r5"],
+        ["r6"],
+        ["r6", "r10"],
+      ];
+      const seedMembers = [
+        "张小登",
+        "李运营",
+        "王蕾",
+        "陈凯",
+        "周内容",
+        "孙悦",
+        "郑客服",
+        "林财务",
+        "赵明",
+        "吴晨",
+        "郑岩",
+        "冯欣",
+        "褚宁",
+        "卫晴",
+        "蒋越",
+        "杨支持",
+      ].map((name, i) => ({
+        id: "m" + (i + 1),
+        name,
+        phone: "1990000" + String(1000 + i),
+        dept: ["d1", "d2", "d3", "d4", "d5", "d6", "d7", "d8"][i % 8],
+        roles: [...memberRoleSeeds[i]],
+        enabled: i !== 9 && i !== 13,
+        joined: "2026-08-" + String(i + 1).padStart(2, "0"),
+        entry: i % 4 === 0 ? "" : "2026-07-01",
+        updated: "2026-09-28 09:30:00",
+        note: "",
+        owner: i === 0,
+      }));
+      const seed = {
+        version: 1,
+        departments: seedDepartments,
+        roles: seedRoles,
+        members: seedMembers,
+        applications: Object.values({
+          待审批: [
+            {
+              time: "2026-08-14 08:16",
+              name: "黄云",
+              contact: "193****6028",
+              status: "待审批",
+            },
+          ],
+          已通过: [
+            {
+              time: "2026-08-10 13:42",
+              name: "林可",
+              contact: "156****7731",
+              status: "已通过",
+            },
+            {
+              time: "2026-08-08 09:25",
+              name: "何川",
+              contact: "180****1146",
+              status: "已通过",
+            },
+          ],
+          不通过: [
+            {
+              time: "2026-07-28 15:37",
+              name: "曹宁",
+              contact: "133****8021",
+              status: "不通过",
+            },
+          ],
+        })
+          .flat()
+          .map((a, i) => ({ ...a, id: "a" + i })),
+        logins: [
+          {
+            user: "177****0832",
+            name: "李宁",
+            device: "DEV-8F2A-9012",
+            mac: "A4:83:E7:2B:1C:09",
+            network: "192.168.8.18",
+            time: "2026-08-14 09:36",
+            status: "待处理",
+          },
+          {
+            user: "193****0832",
+            name: "周敏",
+            device: "DEV-72BD-3418",
+            mac: "34:6F:24:10:5D:A2",
+            network: "192.168.8.21",
+            time: "2026-08-14 08:52",
+            status: "待处理",
+          },
+          {
+            user: "186****2719",
+            name: "王蕾",
+            device: "DEV-C18E-2204",
+            mac: "58:11:22:9A:76:03",
+            network: "10.10.2.16",
+            time: "2026-08-13 18:21",
+            status: "已允许",
+          },
+          {
+            user: "155****6280",
+            name: "陈凯",
+            device: "DEV-390F-7712",
+            mac: "B0:41:6A:18:2C:7E",
+            network: "192.168.3.42",
+            time: "2026-08-13 16:08",
+            status: "已拒绝",
+          },
+          {
+            user: "133****9051",
+            name: "赵明",
+            device: "DEV-68CE-1209",
+            mac: "80:7D:3A:66:20:14",
+            network: "172.16.0.31",
+            time: "2026-08-13 13:44",
+            status: "已允许",
+          },
+          {
+            user: "188****4421",
+            name: "孙悦",
+            device: "DEV-A026-5517",
+            mac: "44:8A:5B:01:77:C0",
+            network: "192.168.1.64",
+            time: "2026-08-12 20:17",
+            status: "已拒绝",
+          },
+          {
+            user: "159****3708",
+            name: "周岚",
+            device: "DEV-F77D-0083",
+            mac: "9C:2F:9D:03:6A:21",
+            network: "10.2.8.17",
+            time: "2026-08-12 15:30",
+            status: "已允许",
+          },
+          {
+            user: "137****1196",
+            name: "吴晨",
+            device: "DEV-110C-8390",
+            mac: "20:4E:7F:88:13:2A",
+            network: "192.168.8.76",
+            time: "2026-08-11 11:26",
+            status: "待处理",
+          },
+          {
+            user: "181****5602",
+            name: "郑岩",
+            device: "DEV-42AE-7621",
+            mac: "E8:31:CD:4A:20:9B",
+            network: "172.16.4.22",
+            time: "2026-08-10 17:48",
+            status: "已允许",
+          },
+          {
+            user: "136****7741",
+            name: "冯欣",
+            device: "DEV-B8A1-3007",
+            mac: "68:39:22:AB:70:14",
+            network: "192.168.6.33",
+            time: "2026-08-09 09:14",
+            status: "已拒绝",
+          },
+          {
+            user: "189****2285",
+            name: "褚宁",
+            device: "DEV-5E20-9174",
+            mac: "18:7A:93:4D:2A:60",
+            network: "10.8.3.19",
+            time: "2026-08-08 14:32",
+            status: "已允许",
+          },
+          {
+            user: "158****3914",
+            name: "卫晴",
+            device: "DEV-90C4-2268",
+            mac: "7C:8B:CA:14:39:22",
+            network: "192.168.2.58",
+            time: "2026-08-07 19:05",
+            status: "待处理",
+          },
+          {
+            user: "187****6033",
+            name: "蒋越",
+            device: "DEV-76A9-4301",
+            mac: "38:21:10:FA:82:64",
+            network: "172.18.0.12",
+            time: "2026-08-06 10:42",
+            status: "已允许",
+          },
+          {
+            user: "132****8470",
+            name: "沈安",
+            device: "DEV-E305-1182",
+            mac: "50:11:92:6A:8C:07",
+            network: "192.168.9.15",
+            time: "2026-08-05 08:18",
+            status: "已拒绝",
+          },
+        ].map((r, i) => ({ ...r, id: "l" + i })),
+        inviteVersion: 1,
+      };
+      let data = structuredClone(seed);
+      let ui = {
+        keyword: "",
+        page: 1,
+        size: 10,
+        dept: "d0",
+        applicationStatus: "待审批",
+        filters: {},
+        selected: [],
+      };
+      try {
+        ui = {
+          ...ui,
+          ...JSON.parse(
+            sessionStorage.getItem("yunlogin-team-ui-" + PAGE) || "{}",
+          ),
+        };
+      } catch {}
+      let expanded = new Set(seedDepartments.map((d) => d.id));
+      let loaded = false;
+      const STORAGE = "yunlogin-team-prototype-v1";
+      function remember() {
+        try {
+          sessionStorage.setItem(
+            "yunlogin-team-ui-" + PAGE,
+            JSON.stringify(ui),
+          );
+        } catch {}
+      }
+      function readLocal() {
+        try {
+          return JSON.parse(localStorage.getItem(STORAGE) || "null");
+        } catch {
+          return null;
+        }
+      }
+      function saveData() {
+        if (window.parent !== window)
+          window.parent.postMessage(
+            { type: "yundeng:team-store-set", value: data },
+            "*",
+          );
+        else {
+          try {
+            localStorage.setItem(STORAGE, JSON.stringify(data));
+          } catch {
+            toast("本次修改仅在当前页面保留");
+          }
+        }
+      }
+      function commit(message) {
+        saveData();
+        remember();
+        render();
+        if (message) toast(message);
+      }
+      // 兼容浏览器中已存在的旧版演示数据：按 seed 顺序重建角色列表、补齐新增角色及其成员，
+      // 并补齐缺失的“数据权限”字段；同名角色保留用户改过的内容。
+      function syncSeed(source) {
+        const local = new Map(source.roles.map((r) => [r.id, r]));
+        const merged = seedRoles.map((preset) => {
+          const hit = local.get(preset.id);
+          if (!hit) return preset;
+          local.delete(preset.id);
+          // 旧演示数据没有“数据权限”时回退到预设值，避免列表与抽屉出现空值。
+          return { ...preset, ...hit, scope: hit.scope || preset.scope };
+        });
+        return {
+          ...source,
+          roles: [...merged, ...local.values()],
+          members: source.members.map((m) => {
+            const preset = memberRoleSeeds[Number(m.id.slice(1)) - 1] || [];
+            const missing = preset.filter(
+              (id) => !source.roles.some((r) => r.id === id) && !m.roles.includes(id),
+            );
+            return missing.length
+              ? { ...m, roles: [...m.roles, ...missing] }
+              : m;
+          }),
+        };
+      }
+      function initData(value) {
+        if (loaded) return;
+        loaded = true;
+        data =
+          value?.version === 1 && Array.isArray(value.members)
+            ? syncSeed(value)
+            : structuredClone(seed);
+        render();
+      }
+      window.addEventListener("message", (event) => {
+        if (event.source !== window.parent) return;
+        if (event.data?.type === "yundeng:team-store") {
+          initData(event.data.value);
+        }
+        if (event.data?.type === "yundeng:team-store-error")
+          toast("本地存储不可用，当前修改在本次会话内保留");
+      });
+      function start() {
+        if (window.parent !== window) {
+          window.parent.postMessage({ type: "yundeng:team-store-get" }, "*");
+          setTimeout(() => initData(readLocal()), 1500);
+        } else initData(readLocal());
+      }
+      function deptBy(id) {
+        return data.departments.find((d) => d.id === id);
+      }
+      function roleBy(id) {
+        return data.roles.find((r) => r.id === id);
+      }
+      function memberBy(id) {
+        return data.members.find((m) => m.id === id);
+      }
+      function descendants(id) {
+        let ids = [id];
+        for (const d of data.departments.filter((d) => d.parent === id))
+          ids.push(...descendants(d.id));
+        return ids;
+      }
+      function deptCount(id) {
+        const ids = descendants(id);
+        return data.members.filter((m) => ids.includes(m.dept)).length;
+      }
+      function flatDepartments(parent = null, level = 0) {
+        return data.departments
+          .filter((d) => d.parent === parent)
+          .flatMap((d) => [
+            { ...d, level },
+            ...flatDepartments(d.id, level + 1),
+          ]);
+      }
+      function matches(text, query = ui.keyword) {
+        const parts = query
+          .trim()
+          .toLowerCase()
+          .split("，")
+          .map((s) => s.trim())
+          .filter(Boolean);
+        return (
+          !parts.length ||
+          parts.some((p) => String(text).toLowerCase().includes(p))
+        );
+      }
+      function memberSearch(m) {
+        return [
+          m.name,
+          maskPhone(m.phone),
+          m.phone,
+          deptBy(m.dept)?.name,
+          m.roles.map((id) => roleBy(id)?.name).join(" "),
+        ].join(" ");
+      }
+      function memberCell(m) {
+        return `<div class="member-cell"><span class="avatar">${esc(m.name.slice(-2))}${m.owner ? '<i data-lucide="crown" class="owner" aria-label="主账号"></i>' : ""}</span><span>${esc(m.name)}${m.owner ? '<span class="muted small">（主账号）</span>' : ""}</span></div>`;
+      }
+      // 条件角标只统计偏离默认值的已提交条件（design.md §5.4.3），创建时间范围按一个条件计。
+      function filterCount() {
+        const f = ui.filters || {};
+        let n = 0;
+        if (f.scope) n += 1;
+        if (f.status) n += 1;
+        if (f.start || f.end) n += 1;
+        return n;
+      }
+      function searchBar(withFilter = true) {
+        const n = filterCount();
+        return `<div class="order-search-filter-group"><div id="roleSearchBox" class="order-global-search" role="search"></div>${withFilter ? `<button class="btn filter-btn ${n ? "active" : ""}" data-action="filters" aria-haspopup="dialog" aria-expanded="false" aria-controls="businessDialog">${icon("list-filter")}筛选${n ? `<span class="filter-count">${n}</span>` : ""}</button>` : ""}</div>`;
+      }
+      // design.md §5.4.2：页面只声明搜索容器、可检索字段与重绘回调，结构 / 样式 / 交互全部来自公共层 YDSearchBox。
+      function roleSearchValues(role) {
+        return {
+          name: [role.name],
+          members: roleMemberList(role).map((m) => m.name),
+          permission: [permissionSummary(role)],
+          note: [role.note || "—"],
+          creator: [role.creator],
+        };
+      }
+      let roleSearchBox = null;
+      function initRoleSearchBox() {
+        roleSearchBox =
+          window.YDSearchBox?.init("#roleSearchBox", {
+            label: "角色管理",
+            inputId: "keyword",
+            value: ui.keyword || "",
+            scopes: [
+              { key: "all", label: "全局搜索" },
+              { key: "name", label: "角色名称" },
+              { key: "members", label: "成员" },
+              { key: "permission", label: "功能权限" },
+              { key: "note", label: "角色描述" },
+              { key: "creator", label: "创建人" },
+            ],
+            values: roleSearchValues,
+            onChange: (instance) => {
+              ui.keyword = instance.value();
+              ui.page = 1;
+              ui.selected = [];
+              remember();
+              renderResults();
+            },
+          }) || null;
+      }
+      function pager(total) {
+        const pages = Math.max(1, Math.ceil(total / ui.size));
+        ui.page = Math.min(Math.max(1, ui.page), pages);
+        return `<nav class="pager" aria-label="分页"><div class="page-nav"><button class="pg-btn" data-action="page" data-id="${ui.page - 1}" aria-label="上一页" ${ui.page === 1 ? "disabled" : ""}>${icon("chevron-left")}</button>${Array.from(
+          { length: pages },
+          (_, i) => i + 1,
+        )
+          .filter(
+            (n) =>
+              pages <= 7 ||
+              n === 1 ||
+              n === pages ||
+              Math.abs(n - ui.page) <= 1,
+          )
+          .map(
+            (n, i, a) =>
+              (i && n - a[i - 1] > 1 ? '<span class="muted">…</span>' : "") +
+              `<button class="pg-btn ${ui.page === n ? "current" : ""}" data-action="page" data-id="${n}" ${ui.page === n ? 'aria-current="page"' : ""}>${n}</button>`,
+          )
+          .join(
+            "",
+          )}<button class="pg-btn" data-action="page" data-id="${ui.page + 1}" aria-label="下一页" ${ui.page === pages ? "disabled" : ""}>${icon("chevron-right")}</button></div><select id="pageSize" aria-label="每页条数">${[10, 20, 50].map((n) => `<option value="${n}" ${ui.size === n ? "selected" : ""}>${n} 条/页</option>`).join("")}</select><label>跳至 <input class="jump" id="jumpPage" type="number" min="1" max="${pages}" value="1" aria-label="跳转页码"> 页</label><span class="muted">共 <span class="mono">${total}</span> 条记录　第 ${ui.page}/${pages} 页</span></nav>`;
+      }
+      function sliceRows(rows) {
+        ui.page = Math.min(
+          Math.max(1, ui.page),
+          Math.max(1, Math.ceil(rows.length / ui.size)),
+        );
+        return rows.slice((ui.page - 1) * ui.size, ui.page * ui.size);
+      }
+      function toast(message) {
+        let el = $("#teamToast");
+        if (!el) {
+          el = document.createElement("div");
+          el.id = "teamToast";
+          el.className = "toast";
+          el.setAttribute("role", "status");
+          document.body.append(el);
+        }
+        const host = $("#confirmDialog").open
+          ? $("#confirmDialog")
+          : $("#businessDialog").open
+            ? $("#businessDialog")
+            : document.body;
+        host.append(el);
+        el.textContent = message;
+        el.hidden = false;
+        clearTimeout(toast.timer);
+        toast.timer = setTimeout(() => (el.hidden = true), 3500);
+      }
+      function formRow(label, id, control, required = false) {
+        return `<div class="form-row"><label for="${id}">${required ? '<span class="required">*</span>' : ""}${label}：</label><div class="field-wrap">${control}<p class="error" id="${id}Error" role="alert"></p></div></div>`;
+      }
+      function field(id, value = "", extra = "") {
+        return `<input id="${id}" class="field" value="${esc(value)}" ${extra}>`;
+      }
+      function select(id, options, value = "") {
+        return `<select id="${id}" class="field">${options
+          .map((o) => {
+            const [v, l] = Array.isArray(o) ? o : [o, o];
+            return `<option value="${esc(v)}" ${v === value ? "selected" : ""}>${esc(l)}</option>`;
+          })
+          .join("")}</select>`;
+      }
+      function error(id, message) {
+        const el = $("#" + id);
+        el?.setAttribute("aria-invalid", message ? "true" : "false");
+        const text = $("#" + id + "Error");
+        if (text) text.textContent = message;
+        if (message) el?.focus();
+        return !message;
+      }
+      // 字符计数器（design.md §5.9）：数字渲染在控件内部，靠 withCounter 提供定位容器。
+      function countField(id, max) {
+        return `<span class="counter" data-count-for="${id}"><span>0</span>/${max}</span>`;
+      }
+      // 计数器浮层容器：单行输入框贴右侧居中，多行文本域贴右下角。
+      function withCounter(control, id, max) {
+        return `<span class="counter-wrap">${control}${countField(id, max)}</span>`;
+      }
+      function updateCounters() {
+        $$("[data-count-for]").forEach((el) => {
+          $("span", el).textContent = (
+            $("#" + el.dataset.countFor)?.value || ""
+          ).length;
+        });
+      }
+      let dialogConfirm = null,
+        returnFocus = null,
+        dialogFilterMode = false;
+      // 业务抽屉统一在模块视口内展开（design.md §5.7「标准业务详情 Drawer」）：
+      // 不请求 SystemFrame 提升模块视口，打开抽屉时左侧菜单栏与顶部导航栏保持可见。
+      let dialogToken = 0;
+      function openDialog(
+        title,
+        body,
+        onSave = null,
+        {
+          drawer = false,
+          filter = false,
+          confirm = "确定",
+          cancel = "取消",
+          dialogClass = "",
+        } = {},
+      ) {
+        const dialog = $("#businessDialog");
+        if (dialog.open) dialog.close();
+        returnFocus = document.activeElement;
+        dialogFilterMode = filter;
+        dialog.className =
+          "overlay" +
+          (drawer ? " drawer" : "") +
+          (filter ? " filter-drawer" : "") +
+          (dialogClass ? " " + dialogClass : "");
+        $("#dialogTitle").textContent = title;
+        $("#dialogBody").innerHTML = body;
+        $("#dialogSave").textContent = confirm;
+        // design.md §5.4.4：筛选抽屉底部固定为“重置 + 确认提交”，重置只作用于当前草稿。
+        $("#dialogCancel").textContent = filter ? "重置" : cancel;
+        $("#dialogSave").hidden = !onSave;
+        $("#dialogSave").disabled = false;
+        dialogConfirm = onSave;
+        const token = ++dialogToken;
+        // 抽屉只覆盖模块视口、不提升到整页，遮罩因此不覆盖系统框架的菜单栏与顶部导航栏；
+        // 统一在下一帧打开弹层，避免首帧高度与遮罩范围跳变。
+        const present = () => {
+          if (token !== dialogToken) return;
+          dialog.showModal();
+          $("#mainContent").style.overflow = "hidden";
+          icons();
+          updateCounters();
+          requestAnimationFrame(() => {
+            (
+              $("input,select,textarea,button", $("#dialogBody")) ||
+              $("#dialogClose")
+            ).focus();
+          });
+        };
+        if (drawer) requestAnimationFrame(present);
+        else present();
+      }
+      function closeDialog() {
+        const d = $("#businessDialog");
+        dialogToken += 1;
+        if (d.open) d.close();
+        $("#dialogBody").innerHTML = "";
+        $("#mainContent").style.overflow = "";
+        $$("[data-action=filters]").forEach((e) =>
+          e.setAttribute("aria-expanded", "false"),
+        );
+        returnFocus?.focus();
+        dialogConfirm = null;
+        dialogFilterMode = false;
+      }
+      // design.md §5.4.4：重置仅清空抽屉内的当前草稿并保持抽屉打开，不写入已提交条件。
+      function resetFilterDraft() {
+        $$("#dialogBody input,#dialogBody select,#dialogBody textarea").forEach(
+          (el) => {
+            if (el.type === "checkbox" || el.type === "radio")
+              el.checked = el.defaultChecked;
+            else if (el.tagName === "SELECT") {
+              el.value = "";
+              if (el.selectedIndex === -1) el.selectedIndex = 0;
+            } else el.value = "";
+          },
+        );
+        $$("#dialogBody [aria-invalid]").forEach((el) =>
+          el.setAttribute("aria-invalid", "false"),
+        );
+        $$("#dialogBody .error").forEach((el) => (el.textContent = ""));
+        updateCounters();
+        roleDateResetDraft();
+      }
+      function confirmAction(title, description, callback) {
+        const d = $("#confirmDialog");
+        $("#confirmTitle").textContent = title;
+        $("#confirmBody").textContent = description;
+        $("#confirmSave").onclick = () => {
+          d.close();
+          callback();
+        };
+        d.showModal();
+        $("#confirmCancel").focus();
+      }
+      const dialogObserver = new MutationObserver(() => {
+        if (window.parent !== window)
+          window.parent.postMessage(
+            { type: "yundeng:team-overlay", open: !!$("dialog[open]") },
+            "*",
+          );
+      });
+      ["businessDialog", "confirmDialog"].forEach((id) =>
+        dialogObserver.observe($("#" + id), {
+          attributes: true,
+          attributeFilter: ["open"],
+        }),
+      );
+      $("#dialogClose").onclick = closeDialog;
+      $("#dialogCancel").onclick = () => {
+        if (dialogFilterMode) resetFilterDraft();
+        else closeDialog();
+      };
+      $("#dialogSave").onclick = async () => {
+        if (!dialogConfirm) return;
+        const fn = dialogConfirm;
+        $("#dialogSave").disabled = true;
+        try {
+          const result = await fn();
+          if (result !== false && dialogConfirm === fn) closeDialog();
+        } finally {
+          $("#dialogSave").disabled = false;
+        }
+      };
+      $("#businessDialog").addEventListener("cancel", (e) => {
+        e.preventDefault();
+        // 时间筛选器面板展开时 Escape 先收起面板；面板收起后关闭抽屉并丢弃本次草稿（design.md §5.4.4）。
+        if (roleDatePanelOpen()) {
+          roleDateClose(false);
+          return;
+        }
+        closeDialog();
+      });
+      $("#businessDialog").addEventListener("click", (e) => {
+        if (e.target === $("#businessDialog")) {
+          const r = e.target.getBoundingClientRect();
+          if (
+            e.clientX < r.left ||
+            e.clientX > r.right ||
+            e.clientY < r.top ||
+            e.clientY > r.bottom
+          )
+            closeDialog();
+        }
+      });
+      $("#confirmCancel").onclick = () => $("#confirmDialog").close();
+      $("#confirmClose").onclick = () => $("#confirmDialog").close();
+      $("#confirmDialog").addEventListener("click", (e) => {
+        if (e.target === $("#confirmDialog")) {
+          const r = e.target.getBoundingClientRect();
+          if (
+            e.clientX < r.left ||
+            e.clientX > r.right ||
+            e.clientY < r.top ||
+            e.clientY > r.bottom
+          )
+            e.target.close();
+        }
+      });
+      async function copyText(text) {
+        try {
+          await navigator.clipboard.writeText(text);
+          toast("复制成功");
+        } catch {
+          const t = document.createElement("textarea");
+          t.value = text;
+          ($("#businessDialog").open ? $("#dialogBody") : document.body).append(
+            t,
+          );
+          t.select();
+          const ok = document.execCommand("copy");
+          t.remove();
+          toast(ok ? "复制成功" : "复制失败，请手动复制");
+        }
+      }
+      function download(name, content, type = "text/csv;charset=utf-8") {
+        const url = URL.createObjectURL(new Blob([content], { type }));
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = name;
+        document.body.append(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+      }
+      // 树形单选与成员多选均在表单内展开，长列表自行滚动，不越出弹层。
+      function deptPicker(id, value = "d0", exclude = []) {
+        const d = deptBy(value);
+        return `<details class="picker" id="${id}Picker"><summary><span id="${id}Label">${esc(d?.name || "请选择部门")}</span>${icon("chevron-down")}</summary><div class="picker-content"><input class="field picker-search" placeholder="搜索部门" aria-label="搜索部门"><div>${flatDepartments()
+          .filter((d) => !exclude.includes(d.id))
+          .map(
+            (d) =>
+              `<label class="picker-row" data-search="${esc(d.name)}" style="padding-left:${8 + d.level * 20}px"><input type="radio" name="${id}" value="${d.id}" ${value === d.id ? "checked" : ""} data-dept-picker="${id}" data-label="${esc(d.name)}">${icon(d.parent ? "folder" : "building-2")}${esc(d.name)}</label>`,
+          )
+          .join(
+            "",
+          )}</div></div></details><input type="hidden" id="${id}" value="${esc(value)}">`;
+      }
+      function multiPicker(id, items, values = []) {
+        return `<details class="picker" id="${id}Picker"><summary><span class="chips" id="${id}Label">${values.length ? values.map((v) => `<span class="chip">${esc(items.find((i) => i.id === v)?.name || v)}</span>`).join("") : "请选择"} </span>${icon("chevron-down")}</summary><div class="picker-content"><input class="field picker-search" placeholder="输入关键词搜索" aria-label="搜索选项">${items.map((i) => `<label class="picker-row" data-search="${esc(i.name)}"><input type="checkbox" name="${id}" value="${i.id}" data-multi-picker="${id}" data-label="${esc(i.name)}" ${values.includes(i.id) ? "checked" : ""}>${esc(i.name)}</label>`).join("")}</div></details>`;
+      }
+      const checkedValues = (name) =>
+        $$(`input[name="${name}"]:checked`).map((e) => e.value);
+      function departmentEditor(id = null, parent = "d0") {
+        const original = id ? deptBy(id) : null;
+        const root = original?.parent === null;
+        const excluded = id ? descendants(id) : [];
+        openDialog(
+          id ? "编辑部门" : "添加部门",
+          `<form class="form" onsubmit="return false">${formRow("部门名称", "deptName", withCounter(field("deptName", original?.name || "", 'maxlength="20" placeholder="请输入部门名称"'), "deptName", 20), true)}${!root ? formRow("上级部门", "deptParent", deptPicker("deptParent", original?.parent || parent, excluded), true) : ""}${formRow("负责人", "deptLeaders", multiPicker("deptLeaders", data.members, original?.leaders || []))}</form>`,
+          () => {
+            const name = $("#deptName").value.trim();
+            if (
+              !error(
+                "deptName",
+                !name
+                  ? "请输入部门名称"
+                  : data.departments.some((d) => d.id !== id && d.name === name)
+                    ? "部门名称已存在"
+                    : "",
+              )
+            )
+              return false;
+            const parentId = root ? null : $("#deptParent").value;
+            if (!root && (!deptBy(parentId) || excluded.includes(parentId))) {
+              error("deptParent", "请选择有效上级部门");
+              return false;
+            }
+            const item = {
+              id: id || uid("d"),
+              name,
+              parent: parentId,
+              leaders: checkedValues("deptLeaders"),
+            };
+            if (id) Object.assign(original, item);
+            else data.departments.push(item);
+            expanded.add(parentId);
+            expanded.add(item.id);
+            commit(id ? "部门已更新" : "部门已添加");
+          },
+        );
+      }
+      function deleteDepartment(id) {
+        const d = deptBy(id);
+        if (!d || d.parent === null) return;
+        const ids = descendants(id);
+        const count = deptCount(id);
+        confirmAction(
+          "确认删除该部门吗？",
+          `将删除“${d.name}”及其 ${ids.length - 1} 个子部门，${count} 名成员将解除部门关联，成员账号保留。`,
+          () => {
+            data.departments = data.departments.filter(
+              (d) => !ids.includes(d.id),
+            );
+            data.members.forEach((m) => {
+              if (ids.includes(m.dept)) {
+                m.dept = "";
+                m.updated = dateTime();
+              }
+            });
+            if (ids.includes(ui.dept)) ui.dept = "d0";
+            commit("部门已删除");
+          },
+        );
+      }
+      function departmentMenu(id) {
+        const d = deptBy(id);
+        openDialog(
+          d.name,
+          `<div class="form">${button("添加子部门", "dept-add-child", id)}${button("编辑部门", "dept-edit", id)}${d.parent !== null ? button("删除部门", "dept-delete", id, "danger") : ""}</div>`,
+        );
+      }
+      function treeRows(query = "", parent = null, level = 0) {
+        return data.departments
+          .filter((d) => d.parent === parent)
+          .map((d) => {
+            const children = data.departments.filter((c) => c.parent === d.id);
+            const visible =
+              !query ||
+              descendants(d.id).some((id) => matches(deptBy(id)?.name, query));
+            if (!visible) return "";
+            return `<div class="tree-row ${ui.dept === d.id ? "active" : ""}" style="padding-left:${level * 20}px">${children.length ? `<button class="icon-btn" data-action="tree-expand" data-id="${d.id}" aria-label="${expanded.has(d.id) ? "收起" : "展开"}${esc(d.name)}" aria-expanded="${expanded.has(d.id)}">${icon(expanded.has(d.id) || query ? "chevron-down" : "chevron-right")}</button>` : '<span style="width:24px;flex-shrink:0"></span>'}<button class="tree-label" data-action="dept-select" data-id="${d.id}" title="${esc(d.name)}"><span>${esc(d.name)}</span><span class="muted small mono">${deptCount(d.id)}</span></button><button class="icon-btn node-more" data-action="dept-menu" data-id="${d.id}" aria-label="管理${esc(d.name)}">${icon("ellipsis")}</button></div>${expanded.has(d.id) || query ? treeRows(query, d.id, level + 1) : ""}`;
+          })
+          .join("");
+      }
+      /* ===== 角色筛选「创建时间」时间筛选器下拉框（design.md §5.4.4 + 设计系统双月范围选择器）=====
+         触发器展示「开始时间 ~ 结束时间」，点击后在字段下方展开双月面板（月内导航 + 清空/取消/确定）。
+         草稿只保存在面板内，点「确定」才写入隐藏域 #filterStart / #filterEnd，取消或点击面板外丢弃草稿。 */
+      const roleDate = {
+        view: new Date(),
+        draftStart: "",
+        draftEnd: "",
+        active: "start",
+        invalid: false,
+      };
+      const roleWeekdays = ["一", "二", "三", "四", "五", "六", "日"];
+      const roleDatePad = (value) => String(value).padStart(2, "0");
+      const roleDateKey = (date) =>
+        `${date.getFullYear()}-${roleDatePad(date.getMonth() + 1)}-${roleDatePad(date.getDate())}`;
+      const roleDateParse = (value) => {
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(value || "")) return null;
+        const [year, month, day] = value.split("-").map(Number);
+        const date = new Date(year, month - 1, day);
+        return date.getFullYear() === year &&
+          date.getMonth() === month - 1 &&
+          date.getDate() === day
+          ? date
+          : null;
+      };
+      const roleMonthTitle = (date) =>
+        `${date.getFullYear()}年${date.getMonth() + 1}月`;
+      const roleDatePanel = () => $("#filterDatePanel");
+      const roleDatePanelOpen = () =>
+        Boolean(roleDatePanel() && !roleDatePanel().classList.contains("hidden"));
+      // 单月骨架：月内导航（左侧「上一年/上个月」、右侧「下个月/下一年」），周行与 6×7 网格由渲染填充。
+      function roleCalendarMonth(side) {
+        const first = side === "first";
+        const prevNav = `<div class="role-calendar-nav-group"><button type="button" class="role-calendar-nav" data-role-date="prev-year" aria-label="上一年" title="上一年">${icon("chevrons-left")}</button><button type="button" class="role-calendar-nav" data-role-date="prev-month" aria-label="上个月" title="上个月">${icon("chevron-left")}</button></div>`;
+        const nextNav = `<div class="role-calendar-nav-group"><button type="button" class="role-calendar-nav" data-role-date="next-month" aria-label="下个月" title="下个月">${icon("chevron-right")}</button><button type="button" class="role-calendar-nav" data-role-date="next-year" aria-label="下一年" title="下一年">${icon("chevrons-right")}</button></div>`;
+        const spacer = '<span class="role-calendar-spacer" aria-hidden="true"></span>';
+        return `<section class="role-calendar-month"><div class="role-calendar-head">${first ? prevNav : spacer}<h3 class="role-calendar-title"></h3>${first ? spacer : nextNav}</div><div class="role-calendar-week"></div><div class="role-calendar-grid"></div></section>`;
+      }
+      // 抽屉内的字段结构：隐藏域保存已确认值，触发器与面板负责展示与选择（表单行仍由 formRow 提供标签与错误位）。
+      function roleDateControlHTML(start = "", end = "") {
+        return `<div class="role-date-control" id="filterDateControl"><button type="button" class="role-date-trigger" id="filterDateTrigger" aria-haspopup="dialog" aria-expanded="false" aria-controls="filterDatePanel" aria-label="选择创建时间范围"><span class="role-date-values"><span class="role-date-value${start ? " is-selected" : ""}" id="filterStartDisplay">${esc(start || "开始时间")}</span><span class="role-date-sep" aria-hidden="true">~</span><span class="role-date-value${end ? " is-selected" : ""}" id="filterEndDisplay">${esc(end || "结束时间")}</span></span><span class="role-date-icon">${icon("calendar-days")}</span></button><input type="hidden" id="filterStart" value="${esc(start)}"><input type="hidden" id="filterEnd" value="${esc(end)}"><div class="role-date-panel hidden" id="filterDatePanel" role="dialog" aria-label="创建时间范围选择"><div class="role-calendar-months">${roleCalendarMonth("first")}${roleCalendarMonth("second")}</div><div class="role-calendar-foot"><span class="role-calendar-value" id="filterDateValue">未设置 至 未设置</span><span class="role-calendar-actions"><button type="button" class="btn" data-role-date="clear">清空</button><button type="button" class="btn" data-role-date="cancel">取消</button><button type="button" class="btn primary" data-role-date="confirm">确定</button></span></div></div></div>`;
+      }
+      function roleDateSyncTrigger() {
+        const start = $("#filterStart")?.value || "";
+        const end = $("#filterEnd")?.value || "";
+        const trigger = $("#filterDateTrigger");
+        const startNode = $("#filterStartDisplay");
+        const endNode = $("#filterEndDisplay");
+        if (startNode) {
+          startNode.textContent = start || "开始时间";
+          startNode.classList.toggle("is-selected", Boolean(start));
+        }
+        if (endNode) {
+          endNode.textContent = end || "结束时间";
+          endNode.classList.toggle("is-selected", Boolean(end));
+        }
+        trigger?.setAttribute(
+          "aria-label",
+          start || end
+            ? `创建时间范围：${start || "未设置"} 至 ${end || "未设置"}`
+            : "选择创建时间范围",
+        );
+      }
+      // design.md §5.4.4：开始时间晚于结束时间时在字段下方显示 danger 错误并阻止提交。
+      function roleDateError(message) {
+        error("filterEnd", message);
+        const trigger = $("#filterDateTrigger");
+        trigger?.setAttribute("aria-invalid", message ? "true" : "false");
+        if (message) trigger?.focus();
+      }
+      function roleDateRenderMonth(section, month) {
+        if (!section) return;
+        const title = $(".role-calendar-title", section);
+        const week = $(".role-calendar-week", section);
+        const grid = $(".role-calendar-grid", section);
+        const first = new Date(month.getFullYear(), month.getMonth(), 1);
+        const offset = (first.getDay() + 6) % 7;
+        title.textContent = roleMonthTitle(month);
+        week.innerHTML = roleWeekdays
+          .map((day) => `<span>${day}</span>`)
+          .join("");
+        grid.innerHTML = Array.from({ length: 42 }, (_, index) => {
+          const day = new Date(
+            month.getFullYear(),
+            month.getMonth(),
+            index - offset + 1,
+          );
+          const key = roleDateKey(day);
+          const isStart = key === roleDate.draftStart;
+          const isEnd = key === roleDate.draftEnd;
+          const inRange = Boolean(
+            !roleDate.invalid &&
+              roleDate.draftStart &&
+              roleDate.draftEnd &&
+              key >= roleDate.draftStart &&
+              key <= roleDate.draftEnd,
+          );
+          const other = day.getMonth() !== month.getMonth();
+          return `<button type="button" class="role-calendar-day${other ? " is-other" : ""}${inRange ? " is-range" : ""}${isStart ? " is-start" : ""}${isEnd ? " is-end" : ""}" data-role-date-day="${key}" aria-label="${key}">${day.getDate()}</button>`;
+        }).join("");
+      }
+      function roleDateRender() {
+        const panel = roleDatePanel();
+        if (!panel) return;
+        const sections = $$(".role-calendar-month", panel);
+        roleDateRenderMonth(sections[0], roleDate.view);
+        roleDateRenderMonth(
+          sections[1],
+          new Date(roleDate.view.getFullYear(), roleDate.view.getMonth() + 1, 1),
+        );
+        $("#filterDateValue").textContent =
+          `${roleDate.draftStart || "未设置"} 至 ${roleDate.draftEnd || "未设置"}`;
+        roleDateError(roleDate.invalid ? "结束时间不能早于开始时间" : "");
+        roleDateSyncTrigger();
+        icons();
+      }
+      function roleDateViewTarget() {
+        const base = roleDateParse(roleDate.draftStart || roleDate.draftEnd);
+        return base
+          ? new Date(base.getFullYear(), base.getMonth(), 1)
+          : new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+      }
+      // 面板打开时复制隐藏域草稿，把视图月份定位到已选月份。
+      function roleDateOpen() {
+        const panel = roleDatePanel();
+        if (!panel) return;
+        roleDate.draftStart = $("#filterStart")?.value || "";
+        roleDate.draftEnd = $("#filterEnd")?.value || "";
+        roleDate.active =
+          roleDate.draftStart && roleDate.draftEnd
+            ? "start"
+            : roleDate.draftStart
+              ? "end"
+              : "start";
+        roleDate.invalid = false;
+        roleDate.view = roleDateViewTarget();
+        panel.classList.remove("hidden");
+        $("#filterDateTrigger")?.setAttribute("aria-expanded", "true");
+        roleDateRender();
+        requestAnimationFrame(() => panel.scrollIntoView?.({ block: "nearest" }));
+      }
+      // 收起面板：commit=true 先校验并写回隐藏域，逆序草稿返回 false 以阻止提交。
+      function roleDateClose(commit) {
+        const panel = roleDatePanel();
+        if (!panel) return true;
+        if (commit) {
+          if (
+            roleDate.draftStart &&
+            roleDate.draftEnd &&
+            roleDate.draftStart > roleDate.draftEnd
+          ) {
+            roleDate.invalid = true;
+            roleDateRender();
+            return false;
+          }
+          roleDate.invalid = false;
+          $("#filterStart").value = roleDate.draftStart || "";
+          $("#filterEnd").value = roleDate.draftEnd || "";
+        } else {
+          roleDate.draftStart = $("#filterStart")?.value || "";
+          roleDate.draftEnd = $("#filterEnd")?.value || "";
+          roleDate.invalid = false;
+        }
+        panel.classList.add("hidden");
+        $("#filterDateTrigger")?.setAttribute("aria-expanded", "false");
+        roleDateError("");
+        roleDateSyncTrigger();
+        return true;
+      }
+      // 抽屉「重置」：只清空当前草稿（触发器回到占位文案、面板收起），不写入已提交条件。
+      function roleDateResetDraft() {
+        const panel = roleDatePanel();
+        if (!panel) return;
+        roleDate.draftStart = "";
+        roleDate.draftEnd = "";
+        roleDate.active = "start";
+        roleDate.invalid = false;
+        panel.classList.add("hidden");
+        $("#filterDateTrigger")?.setAttribute("aria-expanded", "false");
+        roleDateRender();
+      }
+      // 抽屉打开时按已提交条件回填视图月份与触发器文案，不恢复未提交草稿。
+      function roleDateInit() {
+        if (!roleDatePanel()) return;
+        roleDate.draftStart = $("#filterStart")?.value || "";
+        roleDate.draftEnd = $("#filterEnd")?.value || "";
+        roleDate.active = "start";
+        roleDate.invalid = false;
+        roleDate.view = roleDateViewTarget();
+        roleDateRender();
+      }
+      // 面板内点选：第一次落开始时间，第二次落结束时间；逆序时保留草稿并提示。
+      function roleDatePick(key) {
+        if (roleDate.active === "start" || !roleDate.draftStart) {
+          roleDate.draftStart = key;
+          roleDate.draftEnd = "";
+          roleDate.active = "end";
+          roleDate.invalid = false;
+        } else {
+          roleDate.draftEnd = key;
+          roleDate.active = "start";
+          roleDate.invalid = roleDate.draftStart > key;
+        }
+        roleDateRender();
+      }
+      function roleDateShift(direction) {
+        const year = roleDate.view.getFullYear();
+        const month = roleDate.view.getMonth();
+        roleDate.view =
+          direction === "prev-year"
+            ? new Date(year - 1, month, 1)
+            : direction === "next-year"
+              ? new Date(year + 1, month, 1)
+              : direction === "prev-month"
+                ? new Date(year, month - 1, 1)
+                : new Date(year, month + 1, 1);
+        roleDateRender();
+      }
+      // 抽屉内容每次重建，触发器与面板统一用事件委托绑定，避免重复监听。
+      document.addEventListener("click", (e) => {
+        const control = $("#filterDateControl");
+        if (!control) return;
+        const action = e.target.closest("[data-role-date]");
+        if (action) {
+          const kind = action.dataset.roleDate;
+          if (kind === "clear") {
+            roleDate.draftStart = "";
+            roleDate.draftEnd = "";
+            roleDate.active = "start";
+            roleDate.invalid = false;
+            roleDateRender();
+          } else if (kind === "cancel") roleDateClose(false);
+          else if (kind === "confirm") roleDateClose(true);
+          else roleDateShift(kind);
+          return;
+        }
+        const day = e.target.closest("[data-role-date-day]");
+        if (day) {
+          roleDatePick(day.dataset.roleDateDay);
+          return;
+        }
+        if (e.target.closest("#filterDateTrigger")) {
+          if (roleDatePanelOpen()) roleDateClose(false);
+          else roleDateOpen();
+          return;
+        }
+        // 点击面板与触发器之外的任意位置收起面板（面板不得越出抽屉内容层）；
+        // 底部「重置」「确认提交」由抽屉自身逻辑接管草稿，此处不抢先丢弃。
+        if (
+          roleDatePanelOpen() &&
+          !control.contains(e.target) &&
+          !e.target.closest(".dialog-foot")
+        )
+          roleDateClose(false);
+      });
+      function openFilters() {
+        let body = "";
+        if (PAGE === "members") {
+          body =
+            formRow(
+              "角色",
+              "filterRole",
+              select(
+                "filterRole",
+                [["", "全部角色"], ...data.roles.map((r) => [r.id, r.name])],
+                ui.filters.role || "",
+              ),
+            ) +
+            formRow(
+              "成员状态",
+              "filterStatus",
+              select(
+                "filterStatus",
+                [
+                  ["", "全部状态"],
+                  ["enabled", "启用"],
+                  ["disabled", "禁用"],
+                ],
+                ui.filters.status || "",
+              ),
+            );
+        } else if (PAGE === "logins") {
+          body =
+            formRow(
+              "开始日期",
+              "filterStart",
+              field("filterStart", ui.filters.start || "", 'type="date"'),
+            ) +
+            formRow(
+              "结束日期",
+              "filterEnd",
+              field("filterEnd", ui.filters.end || "", 'type="date"'),
+            ) +
+            formRow(
+              "审批状态",
+              "filterStatus",
+              select(
+                "filterStatus",
+                [["", "全部状态"], "待处理", "已允许", "已拒绝"],
+                ui.filters.status || "",
+              ),
+            );
+        } else if (PAGE === "roles") {
+          // 角色筛选条件（数据权限 / 状态 / 创建时间），创建时间使用开始/结束时间筛选器下拉框。
+          body =
+            formRow(
+              "数据权限",
+              "filterScope",
+              select(
+                "filterScope",
+                [
+                  ["", "全部数据权限"],
+                  "全部数据",
+                  "本部门及下级部门",
+                  "本部门",
+                  "仅本人",
+                ],
+                ui.filters.scope || "",
+              ),
+            ) +
+            formRow(
+              "状态",
+              "filterStatus",
+              select(
+                "filterStatus",
+                [
+                  ["", "全部状态"],
+                  ["enabled", "启用"],
+                  ["disabled", "禁用"],
+                ],
+                ui.filters.status || "",
+              ),
+            ) +
+            formRow(
+              "创建时间",
+              "filterEnd",
+              roleDateControlHTML(ui.filters.start || "", ui.filters.end || ""),
+            );
+        }
+        openDialog(
+          PAGE === "roles" ? "筛选角色" : "筛选",
+          `<form class="form" onsubmit="return false">${body}</form>`,
+          () => {
+            if (PAGE === "members")
+              ui.filters = {
+                role: $("#filterRole").value,
+                status: $("#filterStatus").value,
+              };
+            else if (PAGE === "roles") {
+              // 面板仍展开时先按草稿确认，逆序草稿会阻止提交并给出错误（design.md §5.4.4）。
+              if (roleDatePanelOpen() && !roleDateClose(true)) return false;
+              const start = $("#filterStart").value,
+                end = $("#filterEnd").value;
+              if (start && end && start > end) {
+                roleDateError("结束时间不能早于开始时间");
+                return false;
+              }
+              ui.filters = {
+                scope: $("#filterScope").value,
+                status: $("#filterStatus").value,
+                start,
+                end,
+              };
+            } else {
+              const start = $("#filterStart").value,
+                end = $("#filterEnd").value;
+              if (start && end && start > end) {
+                error("filterEnd", "结束日期不能早于开始日期");
+                return false;
+              }
+              ui.filters = { start, end, status: $("#filterStatus").value };
+            }
+            ui.page = 1;
+            ui.selected = [];
+            remember();
+            render();
+          },
+          { drawer: true, filter: true, confirm: "确认提交" },
+        );
+        if (PAGE === "roles") roleDateInit();
+        $$("[data-action=filters]").forEach((e) =>
+          e.setAttribute("aria-expanded", "true"),
+        );
+      }
+      document.addEventListener("input", (e) => {
+        if (e.target.classList.contains("picker-search"))
+          $$("[data-search]", e.target.parentElement).forEach(
+            (row) =>
+              (row.hidden = !matches(row.dataset.search, e.target.value)),
+          );
+        if (e.target.id === "deptSearch") {
+          const tree = $("#departmentTree");
+          tree.innerHTML = treeRows(e.target.value);
+          icons();
+        }
+        updateCounters();
+      });
+      document.addEventListener("change", (e) => {
+        if (e.target.id === "pageSize") {
+          ui.size = Number(e.target.value);
+          ui.page = 1;
+          ui.selected = [];
+          remember();
+          renderResults();
+        }
+        if (e.target.dataset.deptPicker) {
+          const id = e.target.dataset.deptPicker;
+          $("#" + id).value = e.target.value;
+          $("#" + id + "Label").textContent = e.target.dataset.label;
+          $("#" + id + "Picker").open = false;
+        }
+        if (e.target.dataset.multiPicker) {
+          const id = e.target.dataset.multiPicker;
+          $("#" + id + "Label").innerHTML =
+            $$(`input[name="${id}"]:checked`)
+              .map((i) => `<span class="chip">${esc(i.dataset.label)}</span>`)
+              .join("") || "请选择";
+        }
+      });
+      document.addEventListener("keydown", (e) => {
+        if (e.target.id === "jumpPage" && e.key === "Enter") {
+          ui.page = Math.max(1, Number(e.target.value) || 1);
+          remember();
+          renderResults();
+        }
+        const tab = e.target.closest("[role=tab]");
+        if (tab && ["ArrowLeft", "ArrowRight", "Home", "End"].includes(e.key)) {
+          e.preventDefault();
+          const tabs = $$("[role=tab]", tab.parentElement);
+          let index = tabs.indexOf(tab);
+          index =
+            e.key === "Home"
+              ? 0
+              : e.key === "End"
+                ? tabs.length - 1
+                : (index + (e.key === "ArrowRight" ? 1 : -1) + tabs.length) %
+                  tabs.length;
+          tabs[index].click();
+          $$("[role=tab]", document)
+            .find((t) => t.dataset.id === tabs[index].dataset.id)
+            ?.focus();
+        }
+      });
+      document.addEventListener("click", (e) => {
+        const target = e.target.closest("[data-action]");
+        if (!target) return;
+        const { action, id } = target.dataset;
+        if (action === "page") {
+          ui.page = Number(id);
+          ui.selected = [];
+          remember();
+          renderResults();
+        }
+        if (action === "filters") openFilters();
+        if (action === "reset-filter-draft") resetFilterDraft();
+        if (action === "dept-add") departmentEditor();
+        if (action === "dept-add-child") {
+          closeDialog();
+          departmentEditor(null, id);
+        }
+        if (action === "dept-edit") {
+          closeDialog();
+          departmentEditor(id);
+        }
+        if (action === "dept-delete") deleteDepartment(id);
+        if (action === "dept-menu") departmentMenu(id);
+        if (action === "tree-expand") {
+          expanded.has(id) ? expanded.delete(id) : expanded.add(id);
+          renderTree();
+        }
+        if (action === "dept-select") {
+          ui.dept = id;
+          ui.page = 1;
+          ui.selected = [];
+          remember();
+          render();
+        }
+      });
+
+      // 角色管理：单区块列表（工具栏 + 数据表 + 分页），含成员/权限明细弹窗与拖拽排序。
+      let dragSrc = null,
+        chosenRoleId = null,
+        permissionDraft = new Set(),
+        permissionExpanded = new Set(),
+        memberDraft = new Set(),
+        memberTreeExpanded = new Set(["d0"]);
+      function roleMemberList(role) {
+        return data.members.filter((m) => m.roles.includes(role.id));
+      }
+      function roleSearchText(role) {
+        return [
+          role.name,
+          role.note,
+          role.creator,
+          permissionSummary(role),
+          roleMemberList(role)
+            .map((m) => m.name)
+            .join(" "),
+        ].join(" ");
+      }
+      // 搜索与筛选抽屉条件取交集（design.md §5.4.2 / §5.4.5）：搜索命中后再按已提交筛选条件过滤。
+      function roleRows() {
+        const f = ui.filters || {};
+        return data.roles
+          .filter((r) => window.YDSearchBox.matches("#roleSearchBox", r))
+          .filter((r) => {
+            if (f.scope && (r.scope || "") !== f.scope) return false;
+            if (f.status === "enabled" && !r.enabled) return false;
+            if (f.status === "disabled" && r.enabled) return false;
+            const created = (r.created || "").slice(0, 10);
+            if (f.start && created < f.start) return false;
+            if (f.end && created > f.end) return false;
+            return true;
+          });
+      }
+      // 成员列：成员总数 + 前两位成员名称 + 剩余人数，点击查看成员明细。
+      function memberSummary(role) {
+        const list = roleMemberList(role);
+        if (!list.length) return '<span class="role-empty">暂无成员</span>';
+        const rest = list.length - 2;
+        return `<button type="button" class="cell-link" data-action="role-members" data-id="${role.id}" aria-label="查看${esc(role.name)}的成员明细">共 <span class="mono">${list.length}</span> 人：<span class="text">${esc(list.slice(0, 2).map((m) => m.name).join("、"))}</span>${rest > 0 ? `<span class="cell-more">+${rest}</span>` : ""}</button>`;
+      }
+      // 功能权限列：按菜单聚合为单行摘要，菜单下权限全选时显示“所有权限”。
+      function permissionSummary(role) {
+        const groups = permissionGroups
+          .map((group) => {
+            const leaves = permissionLeaves([group]),
+              picked = leaves.filter((k) => role.permissions.includes(k));
+            if (!picked.length) return "";
+            return picked.length === leaves.length
+              ? `${group.name}（所有权限）`
+              : `${group.name}（${picked
+                  .map((k) =>
+                    k.slice(group.name.length + 1).replaceAll("/", " · "),
+                  )
+                  .join("、")}）`;
+          })
+          .filter(Boolean);
+        return groups.join("、") || "—";
+      }
+      function roleRow(role) {
+        const summary = permissionSummary(role),
+          movable = !role.system,
+          rowClass = [role.enabled ? "" : "role-off", movable ? "draggable-row" : ""]
+            .filter(Boolean)
+            .join(" ");
+        // 整行拖拽排序：非系统角色可拖（拖拽源为整行），系统角色固定置顶不参与拖拽。
+        const dragAttr = movable
+          ? ' draggable="true" title="拖拽调整角色顺序"'
+          : "";
+        return `<tr data-role-row="${role.id}" class="${rowClass}"${dragAttr}><td><span class="role-name"><span class="text" title="${esc(role.name)}">${esc(role.name)}</span>${role.system ? '<span class="badge primary">系统</span>' : ""}</span></td><td>${memberSummary(role)}</td><td><div class="perm-cell"><span class="text" title="${esc(summary)}">${esc(summary)}</span><button type="button" class="link" data-action="role-permissions" data-id="${role.id}">查看明细</button></div></td><td>${esc(role.scope || "—")}</td><td><span class="role-desc" title="${esc(role.note || "")}">${esc(role.note || "—")}</span></td><td>${esc(role.creator)}</td><td class="mono">${esc(role.created)}</td><td><button type="button" class="toggle" role="switch" aria-label="${esc(role.name)}的启用状态" aria-checked="${role.enabled}" data-action="role-status" data-id="${role.id}" ${role.system ? 'disabled title="系统角色状态固定为启用"' : ""}></button></td><td><div class="row-actions">${link("配置成员", "role-members-config", role.id)}${role.system ? "" : link("编辑", "role-edit", role.id) + link("复制", "role-copy", role.id) + link("删除", "role-delete", role.id, true)}</div></td></tr>`;
+      }
+      function renderTable() {
+        const rows = roleRows(),
+          pageRows = sliceRows(rows);
+        $("#results").innerHTML = `<div class="table-scroll"><table class="data-table role-table"><thead><tr><th style="width:176px">角色名称</th><th style="width:200px">成员</th><th style="width:240px">功能权限</th><th style="width:140px">数据权限</th><th style="width:160px">角色描述</th><th style="width:88px">创建人</th><th style="width:152px">创建时间</th><th style="width:76px">状态</th><th style="width:220px">操作</th></tr></thead><tbody>${pageRows.length ? pageRows.map(roleRow).join("") : `<tr><td colspan="9">${empty(ui.keyword ? "未搜索到相关角色" : "暂无角色")}</td></tr>`}</tbody></table></div>${pager(rows.length)}`;
+        icons();
+      }
+      function render() {
+        $("#workspace").innerHTML = `<div class="toolbar"><div class="actions"><button type="button" class="btn primary" data-action="role-add">新增角色</button></div>${searchBar()}</div><div id="results"></div>`;
+        initRoleSearchBox();
+        renderTable();
+      }
+      function renderResults() {
+        renderTable();
+      }
+      function renderTree() {}
+      // 成员明细：只读展示该角色下的全部成员；成员名称不带头像，手机号按原始值展示便于核对。
+      function openRoleMembers(id) {
+        const role = roleBy(id);
+        if (!role) return;
+        const list = roleMemberList(role);
+        openDialog(
+          "角色成员",
+          `<div class="perm-detail-head detail-inline"><h3>${esc(role.name)}${role.system ? '<span class="badge primary">系统</span>' : ""}</h3><span class="muted small">共 <span class="mono">${list.length}</span> 人</span></div><div class="table-scroll">${list.length ? `<table class="data-table" style="min-width:560px;table-layout:fixed"><thead><tr><th style="width:160px">成员名称</th><th style="width:130px">手机号</th><th>所在部门</th><th style="width:96px">状态</th></tr></thead><tbody>${list.map((m) => `<tr><td>${esc(m.name)}${m.owner ? '<span class="muted small">（主账号）</span>' : ""}</td><td class="mono">${esc(m.phone)}</td><td>${esc(deptBy(m.dept)?.name || "未分配部门")}</td><td>${badge(m.enabled ? "启用" : "禁用")}</td></tr>`).join("")}</tbody></table>` : empty("该角色暂无成员")}</div>`,
+          null,
+          { cancel: "关闭" },
+        );
+      }
+      // 权限键统一为“菜单/子菜单/操作”，取末段即操作功能名称。
+      function permissionOps(keys) {
+        return keys.map((k) => k.slice(k.lastIndexOf("/") + 1)).join("、");
+      }
+      // 菜单功能列：菜单页面按层级呈现，如「费用管理>订单管理」。
+      function permissionPath(parts) {
+        return `<span class="perm-path">${parts
+          .map((part, i) => {
+            const last = i === parts.length - 1;
+            return `${i ? '<span class="sep">&gt;</span>' : ""}<span class="${last ? "leaf" : "parent"}">${esc(part)}</span>`;
+          })
+          .join("")}</span>`;
+      }
+      function permissionRow(parts, ops, allGranted) {
+        return `<tr><td>${permissionPath(parts)}</td><td class="wrap">${allGranted ? '<span class="all-perm">所有权限</span>' : esc(ops)}</td></tr>`;
+      }
+      // 功能权限明细：菜单功能列展示菜单页面（父级>子级），权限列展示该菜单下的操作功能；
+      // 整个菜单页面（含其子页面）权限全选时收敛为一行“所有权限”，部分授权以“、”隔开。
+      function openRolePermissions(id) {
+        const role = roleBy(id);
+        if (!role) return;
+        const rows = [];
+        let granted = 0;
+        permissionGroups.forEach((group) => {
+          const leaves = permissionLeaves([group]),
+            picked = leaves.filter((k) => role.permissions.includes(k));
+          if (!picked.length) return;
+          granted += picked.length;
+          // 整块菜单全部授权：合并为一行，不再逐个子菜单展开。
+          if (picked.length === leaves.length) {
+            rows.push(permissionRow([group.name], "", true));
+            return;
+          }
+          // 无子菜单的单层菜单：权限即该菜单自身的操作功能。
+          if (!group.children) {
+            rows.push(permissionRow([group.name], permissionOps(picked), false));
+            return;
+          }
+          // 含子菜单：按子菜单逐行展开，仅列出已授权菜单页面。
+          group.children.forEach((child) => {
+            const childLeaves = permissionLeaves([child], group.name + "/"),
+              childPicked = childLeaves.filter((k) => picked.includes(k));
+            if (!childPicked.length) return;
+            rows.push(
+              permissionRow(
+                [group.name, child.name],
+                permissionOps(childPicked),
+                childPicked.length === childLeaves.length,
+              ),
+            );
+          });
+        });
+        openDialog(
+          "功能权限明细",
+          `<div class="perm-detail-head detail-inline"><h3>${esc(role.name)}${role.system ? '<span class="badge primary">系统</span>' : ""}</h3><span class="muted small">共 <span class="mono">${rows.length}</span> 个菜单 / <span class="mono">${granted}</span> 项权限</span></div><div class="table-scroll">${rows.length ? `<table class="data-table" style="min-width:640px;table-layout:fixed"><thead><tr><th style="width:220px">菜单功能</th><th>权限</th></tr></thead><tbody>${rows.join("")}</tbody></table>` : empty("该角色暂无功能权限")}</div>`,
+          null,
+          { cancel: "关闭" },
+        );
+      }
+      function deleteRole(id) {
+        const role = roleBy(id);
+        if (!role || role.system) return;
+        const count = roleMemberList(role).length;
+        if (count) {
+          openDialog(
+            "无法删除",
+            `<p>角色「${esc(role.name)}」下仍有 ${count} 名成员，请先在「配置成员」中移除成员后再删除。</p>`,
+            null,
+            { cancel: "我知道了" },
+          );
+          return;
+        }
+        confirmAction(
+          "确认删除该角色吗？",
+          `删除后，角色「${role.name}」的功能权限配置将不可恢复。`,
+          () => {
+            data.roles = data.roles.filter((r) => r.id !== id);
+            commit("角色已删除");
+          },
+        );
+      }
+      // 复制角色：打开「复制角色」抽屉，字段与新增角色一致，仅角色名称默认带“… - 副本”，
+      // 保存后生成新的自定义角色（插入在源角色之后）。
+      function copyRole(id) {
+        roleEditor(id, "copy");
+      }
+      function renderPermissionTree() {
+        const walk = (nodes, path = "", level = 0) =>
+          nodes
+            .map((n) => {
+              const key = path + n.name,
+                leaves = permissionLeaves([n], path),
+                count = leaves.filter((k) => permissionDraft.has(k)).length,
+                open = permissionExpanded.has(key);
+              return `<div class="permission-node${level ? " permission-sub" : ""}" style="padding-left:${level ? 20 : 0}px"><div class="permission-head"><button type="button" class="icon-btn" data-action="permission-expand" data-id="${esc(key)}" aria-label="${open ? "收起" : "展开"}${esc(n.name)}" aria-expanded="${open}">${icon(open ? "chevron-down" : "chevron-right")}</button><label class="check-row"><input type="checkbox" data-permission-group="${esc(key)}" data-leaves="${esc(JSON.stringify(leaves))}" ${count === leaves.length ? "checked" : ""} data-partial="${count > 0 && count < leaves.length}">${esc(n.name)}</label></div>${open ? (n.children ? walk(n.children, key + "/", level + 1) : `<div class="permission-ops">${n.ops.map((op) => `<label class="check-row"><input type="checkbox" data-permission="${esc(key + "/" + op)}" ${permissionDraft.has(key + "/" + op) ? "checked" : ""}>${esc(op)}</label>`).join("")}</div>`) : ""}</div>`;
+            })
+            .join("");
+        $("#permissionTree").innerHTML = walk(permissionGroups);
+        $$("[data-partial=true]").forEach((el) => (el.indeterminate = true));
+        const all = $("#permissionAll");
+        all.checked = permissionDraft.size === allPermissions.length;
+        all.indeterminate =
+          permissionDraft.size > 0 &&
+          permissionDraft.size < allPermissions.length;
+        icons();
+      }
+      // mode：add 新增 / edit 编辑 / copy 复制；缺省时按是否传入 id 推断为新增或编辑。
+      function roleEditor(id = null, mode = id ? "edit" : "add") {
+        const source = id ? roleBy(id) : null;
+        if (source?.system) return;
+        if (mode !== "add" && !source) return;
+        const copying = mode === "copy" && !!source;
+        const editing = !!source && !copying;
+        // 复制模式：默认名称取“… - 副本”并自动避让重名，其余字段全部预填源角色。
+        let initialName = source?.name || "";
+        if (copying) {
+          initialName = `${source.name} - 副本`;
+          let n = 1;
+          while (data.roles.some((r) => r.name === initialName))
+            initialName = `${source.name} - 副本${++n}`;
+        }
+        permissionDraft = new Set(source?.permissions || []);
+        permissionExpanded = new Set();
+        openDialog(
+          copying ? "复制角色" : editing ? "编辑角色" : "新增角色",
+          `<form onsubmit="return false"><section class="drawer-section"><h3>角色信息</h3><div class="form">${formRow("角色名称", "roleName", withCounter(field("roleName", initialName, 'maxlength="20" placeholder="请输入角色名称"'), "roleName", 20), true)}${formRow("角色状态", "roleEnabled", `<div class="actions" style="min-height:32px"><label><input type="radio" name="roleEnabled" value="yes" ${source?.enabled !== false ? "checked" : ""}> 启用</label><label><input type="radio" name="roleEnabled" value="no" ${source?.enabled === false ? "checked" : ""}> 禁用</label></div>`, true)}${formRow("角色描述", "roleNote", withCounter(`<textarea id="roleNote" class="field" maxlength="100" placeholder="请填写角色用途">${esc(source?.note || "")}</textarea>`, "roleNote", 100))}</div></section><section class="drawer-section"><h3>数据权限</h3><div class="form">${formRow("数据权限", "roleScope", select("roleScope", [["", "请选择"], "全部数据", "本部门及下级部门", "本部门", "仅本人"], source?.scope || ""), true)}</div></section><section class="drawer-section"><h3>功能权限</h3><div class="spaced"><button type="button" class="link" data-action="permission-expand-all">全部展开 / 收起</button><label class="check-row"><input id="permissionAll" type="checkbox">所有权限</label></div><div id="permissionTree"></div></section></form>`,
+          () => {
+            const name = $("#roleName").value.trim(),
+              scope = $("#roleScope").value;
+            // 重名校验：编辑时排除自身，复制/新增均按全新角色校验。
+            const dupId = editing ? source.id : null;
+            let valid = error(
+              "roleName",
+              !name
+                ? "请输入角色名称"
+                : data.roles.some((r) => r.id !== dupId && r.name === name)
+                  ? "角色名称已存在"
+                  : "",
+            );
+            valid = error("roleScope", !scope ? "请选择数据权限" : "") && valid;
+            if (!valid) return false;
+            const next = {
+              id: editing ? source.id : uid("r"),
+              name,
+              scope,
+              enabled: $("input[name=roleEnabled]:checked").value === "yes",
+              note: $("#roleNote").value.trim(),
+              creator: editing ? source.creator : "张小登",
+              created: editing ? source.created : dateTime(),
+              permissions: [...permissionDraft],
+            };
+            if (editing) {
+              Object.assign(source, next);
+              commit("角色已更新");
+            } else if (copying) {
+              // 副本插入在源角色之后，并把当前页定位到副本所在页。
+              data.roles.splice(
+                data.roles.findIndex((r) => r.id === source.id) + 1,
+                0,
+                next,
+              );
+              ui.page =
+                Math.floor(
+                  data.roles.findIndex((r) => r.id === next.id) / ui.size,
+                ) + 1;
+              ui.selected = [];
+              commit(`已复制为「${name}」`);
+            } else {
+              data.roles.splice(1, 0, next);
+              ui.page = 1;
+              commit("角色已创建");
+            }
+          },
+          { drawer: true, confirm: "保存" },
+        );
+        renderPermissionTree();
+      }
+      function allPermissionNodes(nodes = permissionGroups, path = "") {
+        return nodes.flatMap((n) => [
+          path + n.name,
+          ...(n.children
+            ? allPermissionNodes(n.children, path + n.name + "/")
+            : []),
+        ]);
+      }
+      // 配置成员：同一弹窗内完成加入与移出，保存时按差异写回角色成员关系。
+      function configureRoleMembers(id) {
+        const role = roleBy(id);
+        if (!role) return;
+        chosenRoleId = id;
+        memberDraft = new Set(roleMemberList(role).map((m) => m.id));
+        // 默认展开根节点与一级部门，进入弹窗即可直接勾选成员。
+        memberTreeExpanded = new Set(
+          data.departments
+            .filter((d) => !d.parent || d.parent === "d0")
+            .map((d) => d.id),
+        );
+        openDialog(
+          "选择成员",
+          `<div class="mp-picker"><section class="mp-tree" aria-label="部门与成员"><div class="mp-search">${icon("search")}<input id="chooseMemberSearch" class="field" type="search" placeholder="请输入部门名称/成员名称/手机号搜索" aria-label="搜索部门名称、成员名称或手机号"></div><div id="chooseMemberTree" class="mp-tree-body"></div></section><section class="mp-chosen" aria-label="已选成员"><header class="mp-chosen-head spaced"><h3 id="selectedCount">${selectedLabel(0)}</h3><button type="button" class="link" data-action="clear-member-draft">清空</button></header><div id="chosenMembers" class="mp-chosen-body"></div></section></div>`,
+          () => {
+            const current = roleMemberList(role).map((m) => m.id),
+              added = [...memberDraft].filter((x) => !current.includes(x)),
+              removed = current.filter((x) => !memberDraft.has(x));
+            if (!added.length && !removed.length) {
+              toast("成员配置未发生变化");
+              return true;
+            }
+            const blocked = removed.filter(
+              (x) => (memberBy(x)?.roles.length || 0) <= 1,
+            );
+            if (blocked.length) {
+              toast(
+                `${blocked.map((x) => memberBy(x)?.name).join("、")} 至少需要保留一个角色`,
+              );
+              return false;
+            }
+            added.forEach((x) => {
+              const m = memberBy(x);
+              if (m && !m.roles.includes(role.id)) {
+                m.roles.push(role.id);
+                m.updated = dateTime();
+              }
+            });
+            removed.forEach((x) => {
+              const m = memberBy(x);
+              if (m) {
+                m.roles = m.roles.filter((r) => r !== role.id);
+                m.updated = dateTime();
+              }
+            });
+            const changes = [];
+            if (added.length) changes.push(`新增 ${added.length} 人`);
+            if (removed.length) changes.push(`移除 ${removed.length} 人`);
+            commit(`成员配置已更新（${changes.join("、")}）`);
+          },
+          { confirm: "确定", dialogClass: "member-picker-dialog" },
+        );
+        renderMemberChooser();
+      }
+      function renderMemberChooser() {
+        const q = $("#chooseMemberSearch").value,
+          role = roleBy(chosenRoleId);
+        if (!role) return;
+        const locked = (m) => !!m.owner && !!role.system;
+        // 成员行：无展开箭头，复选框与所属部门名称左对齐；层级缩进由 --mp-indent 承担。
+        // flat 变体用于「无部门」成员：整行与一级部门同层，复选框 / 名称与一级部门行同列。
+        const memberRow = (m, level, flat = false) =>
+          `<label class="mp-row mp-member${flat ? " mp-member-flat" : ""}" style="--mp-indent:${level * 20}px"><input type="checkbox" data-choose-member="${m.id}" ${locked(m) ? "disabled" : ""} ${memberDraft.has(m.id) ? "checked" : ""}>${personIcon()}<span class="mp-name">${esc(m.name)}</span>${locked(m) ? '<span class="mp-tag">主账号</span>' : ""}</label>`;
+        const walk = (parent = null, level = 0) =>
+          data.departments
+            .filter((d) => d.parent === parent)
+            .map((d) => {
+              const ids = descendants(d.id),
+                all = data.members.filter((m) => ids.includes(m.dept)),
+                eligible = all.filter((m) => !locked(m)),
+                count = all.filter((m) => memberDraft.has(m.id)).length,
+                deptMatch = q && matches(d.name, q);
+              if (
+                q &&
+                !deptMatch &&
+                !all.some((m) => matches(memberSearch(m), q)) &&
+                !ids.some((id) => matches(deptBy(id)?.name, q))
+              )
+                return "";
+              const open = memberTreeExpanded.has(d.id) || q;
+              return `<div class="mp-node"><div class="mp-row mp-dept" style="--mp-indent:${level * 20}px"><button type="button" class="mp-caret" data-action="choose-expand" data-id="${d.id}" aria-label="${open ? "收起" : "展开"}${esc(d.name)}" aria-expanded="${!!open}"></button><input type="checkbox" aria-label="选择${esc(d.name)}的全部成员" data-choose-dept="${d.id}" ${!eligible.length ? "disabled" : ""} ${eligible.length && count === eligible.length ? "checked" : ""} data-partial="${count > 0 && count < eligible.length}"><span class="mp-name">${esc(d.name)}</span></div>${
+                open
+                  ? data.members
+                      .filter(
+                        (m) =>
+                          m.dept === d.id &&
+                          (!q || deptMatch || matches(memberSearch(m), q)),
+                      )
+                      .map((m) => memberRow(m, level))
+                      .join("") + walk(d.id, level + 1)
+                  : ""
+              }</div>`;
+            })
+            .join("");
+        const unassigned = data.members.filter(
+          (m) => !m.dept && matches(memberSearch(m), q),
+        );
+        // 无部门成员不另起「未分配部门」分组标题，直接与一级部门同层展示（缩进同一级部门）。
+        $("#chooseMemberTree").innerHTML =
+          walk() + unassigned.map((m) => memberRow(m, 1, true)).join("");
+        if (!$("#chooseMemberTree").textContent.trim())
+          $("#chooseMemberTree").innerHTML = empty("未搜索到相关结果");
+        $$("#chooseMemberTree [data-partial=true]").forEach(
+          (e) => (e.indeterminate = true),
+        );
+        $("#selectedCount").innerHTML = selectedLabel(memberDraft.size);
+        $("#chosenMembers").innerHTML =
+          [...memberDraft]
+            .map((id) => {
+              const m = memberBy(id);
+              return `<div class="mp-chosen-item"><span class="mp-chosen-name">${personIcon()}<span class="mp-chosen-text">${esc(m?.name || "")}</span></span>${m && locked(m) ? '<span class="mp-tag">主账号</span>' : `<button type="button" class="icon-btn" data-action="unchoose-member" data-id="${id}" aria-label="取消选择${esc(m?.name || "")}">${icon("x")}</button>`}</div>`;
+            })
+            .join("") ||
+          '<p class="mp-empty">暂未选择成员</p>';
+        // 未勾选任何成员时「确定」置灰不可点（对应参考稿的 0/1000 禁用态）。
+        $("#dialogSave").disabled = memberDraft.size === 0;
+        icons();
+      }
+      // 拖拽排序：系统角色固定置顶，其余角色可拖到任意位置，但不可越过系统角色。
+      function reorderRole(id, targetId, after) {
+        if (!id || !targetId || id === targetId) return;
+        const from = data.roles.findIndex((r) => r.id === id);
+        if (from < 0 || data.roles[from].system) return;
+        const moved = data.roles.splice(from, 1)[0];
+        let to = data.roles.findIndex((r) => r.id === targetId);
+        const first = data.roles.findIndex((r) => r.system),
+          limit = first < 0 ? 0 : first + 1;
+        if (to < 0) {
+          data.roles.splice(from, 0, moved);
+          return;
+        }
+        if (!data.roles[to].system && after) to += 1;
+        to = Math.max(limit, Math.min(to, data.roles.length));
+        data.roles.splice(to, 0, moved);
+        saveData();
+        renderTable();
+        toast("角色顺序已更新");
+      }
+      // 落点是否合法：系统角色固定置顶，不允许拖到其上方（其下方仍是合法落点）。
+      function dropAllowed(target, after) {
+        return !(target.system && !after);
+      }
+      function clearDropMarks() {
+        $$("[data-role-row]").forEach((row) =>
+          row.classList.remove("drop-before", "drop-after", "drop-invalid"),
+        );
+      }
+      document.addEventListener("dragstart", (e) => {
+        const row = e.target.closest?.("tr[data-role-row]");
+        // 行内按钮/链接/开关上按下时不启动拖拽，避免遮挡点击；系统角色行不可拖拽。
+        if (
+          !row?.classList.contains("draggable-row") ||
+          e.target.closest("button,a,input")
+        ) {
+          e.preventDefault();
+          return;
+        }
+        dragSrc = row.dataset.roleRow;
+        row.classList.add("dragging");
+        e.dataTransfer.effectAllowed = "move";
+        e.dataTransfer.setData("text/plain", dragSrc);
+      });
+      document.addEventListener("dragover", (e) => {
+        if (!dragSrc) return;
+        const row = e.target.closest?.("tr[data-role-row]");
+        clearDropMarks();
+        if (!row) return;
+        const target = roleBy(row.dataset.roleRow);
+        if (!target || target.id === dragSrc) return;
+        // 落点按行的上下半区判定：上半区插入到该行之前，下半区插入到该行之后。
+        const rect = row.getBoundingClientRect(),
+          after = e.clientY >= rect.top + rect.height / 2;
+        if (!dropAllowed(target, after)) {
+          row.classList.add("drop-invalid");
+          return;
+        }
+        e.preventDefault();
+        e.dataTransfer.dropEffect = "move";
+        row.classList.add(after ? "drop-after" : "drop-before");
+      });
+      document.addEventListener("drop", (e) => {
+        if (!dragSrc) return;
+        const row = e.target.closest?.("tr[data-role-row]"),
+          from = dragSrc;
+        // 排序会重建表格行，因此在此处先重置拖拽状态，避免 dragend 丢失后残留。
+        dragSrc = null;
+        clearDropMarks();
+        if (!row) return;
+        const target = roleBy(row.dataset.roleRow);
+        if (!target || target.id === from) return;
+        const rect = row.getBoundingClientRect(),
+          after = e.clientY >= rect.top + rect.height / 2;
+        if (!dropAllowed(target, after)) {
+          toast("系统角色固定置顶，不可拖到其上方");
+          return;
+        }
+        e.preventDefault();
+        reorderRole(from, target.id, after);
+      });
+      document.addEventListener("dragend", () => {
+        dragSrc = null;
+        clearDropMarks();
+        $$("[data-role-row].dragging").forEach((row) =>
+          row.classList.remove("dragging"),
+        );
+      });
+      document.addEventListener("input", (e) => {
+        if (e.target.id === "chooseMemberSearch") renderMemberChooser();
+      });
+      document.addEventListener("change", (e) => {
+        const t = e.target;
+        if (t.id === "permissionAll") {
+          permissionDraft = t.checked ? new Set(allPermissions) : new Set();
+          renderPermissionTree();
+        }
+        if (t.dataset.permissionGroup) {
+          JSON.parse(t.dataset.leaves).forEach((k) =>
+            t.checked ? permissionDraft.add(k) : permissionDraft.delete(k),
+          );
+          renderPermissionTree();
+        }
+        if (t.dataset.permission) {
+          const k = t.dataset.permission;
+          if (t.checked) permissionDraft.add(k);
+          else permissionDraft.delete(k);
+          const path = k.slice(0, k.lastIndexOf("/") + 1);
+          if (
+            [...permissionDraft].some(
+              (p) => p.startsWith(path) && p !== path + "查看",
+            )
+          )
+            permissionDraft.add(path + "查看");
+          renderPermissionTree();
+        }
+        if (t.dataset.chooseMember) {
+          if (t.checked && memberDraft.size >= 1000) {
+            toast("最多选择 1000 名成员");
+            t.checked = false;
+            return;
+          }
+          t.checked
+            ? memberDraft.add(t.dataset.chooseMember)
+            : memberDraft.delete(t.dataset.chooseMember);
+          renderMemberChooser();
+        }
+        if (t.dataset.chooseDept) {
+          const role = roleBy(chosenRoleId),
+            ids = descendants(t.dataset.chooseDept),
+            members = data.members.filter(
+              (m) => ids.includes(m.dept) && !(m.owner && role?.system),
+            );
+          if (
+            t.checked &&
+            new Set([...memberDraft, ...members.map((m) => m.id)]).size > 1000
+          ) {
+            toast("最多选择 1000 名成员");
+            renderMemberChooser();
+            return;
+          }
+          members.forEach((m) =>
+            t.checked ? memberDraft.add(m.id) : memberDraft.delete(m.id),
+          );
+          renderMemberChooser();
+        }
+      });
+      document.addEventListener("click", (e) => {
+        const t = e.target.closest("[data-action]");
+        if (!t) return;
+        const { action, id } = t.dataset;
+        if (action === "role-add") roleEditor(null, "add");
+        if (action === "role-edit") roleEditor(id);
+        if (action === "role-copy") copyRole(id);
+        if (action === "role-delete") deleteRole(id);
+        if (action === "role-members") openRoleMembers(id);
+        if (action === "role-permissions") openRolePermissions(id);
+        if (action === "role-members-config") configureRoleMembers(id);
+        if (action === "role-status") {
+          const role = roleBy(id);
+          if (!role || role.system) return;
+          role.enabled = t.getAttribute("aria-checked") !== "true";
+          t.setAttribute("aria-checked", String(role.enabled));
+          // 状态切换给出 toast 反馈，文案只说明结果：已启用 / 已停用「角色名」。
+          commit(
+            role.enabled
+              ? `已启用「${role.name}」`
+              : `已停用「${role.name}」`,
+          );
+        }
+        if (action === "permission-expand") {
+          permissionExpanded.has(id)
+            ? permissionExpanded.delete(id)
+            : permissionExpanded.add(id);
+          renderPermissionTree();
+        }
+        if (action === "permission-expand-all") {
+          permissionExpanded = permissionExpanded.size
+            ? new Set()
+            : new Set(allPermissionNodes());
+          renderPermissionTree();
+        }
+        if (action === "choose-expand") {
+          memberTreeExpanded.has(id)
+            ? memberTreeExpanded.delete(id)
+            : memberTreeExpanded.add(id);
+          renderMemberChooser();
+        }
+        if (action === "unchoose-member") {
+          memberDraft.delete(id);
+          renderMemberChooser();
+        }
+        if (action === "clear-member-draft") {
+          const role = roleBy(chosenRoleId);
+          memberDraft = new Set(
+            role
+              ? roleMemberList(role)
+                  .filter((m) => m.owner && role.system)
+                  .map((m) => m.id)
+              : [],
+          );
+          renderMemberChooser();
+        }
+      });
+
+      start();
+    </script>
+  </body>
+</html>

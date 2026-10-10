@@ -70,9 +70,9 @@
 
 ### 4.1 SystemFrame 与模块运行模式（强制）
 
-- `系统框架.html` 是唯一顶层运行外壳（SystemFrame），独占 BrowserChrome、TopBar、Sidebar、全局智能助手、全局 Toast / Popover / Dialog / Drawer 和；
+- `系统框架.html` 是唯一顶层运行外壳（SystemFrame），独占 TopBar、Sidebar、全局智能助手、全局 Toast / Popover / Dialog / Drawer 与全局标注；
 - 除 `index.html`、`设计系统.html`、`登录.html` 外，所有后台业务文件都作为 Router Outlet 的 iframe 子文档加载，公开地址为 `index.html?page=<key>`，由索引宿主承载唯一 SystemFrame；
-- 业务模块只负责业务内容、业务弹层、业务 Mock 数据与业务内容，不得再次创建 BrowserChrome、TopBar、Sidebar、全局助手或全局弹层；
+- 业务模块只负责业务内容、业务弹层、业务 Mock 数据与业务内容，不得再次创建 TopBar、Sidebar、全局助手或全局弹层；
 - `公共导航.js` 在顶层 SystemFrame 中负责壳层和路由；检测到页面处于 iframe 嵌入模式时，只保留模块所需的公共样式、图标、分页等增强，不得调用壳层创建逻辑或生成任何全局壳层节点；
 - 所有后台业务模块必须在 `</head>` 前按“`公共导航.css` 在前、`公共导航.js` 在后”的顺序直接引用同一缓存版本；公共脚本完成直开跳转或嵌入适配后再显示页面，不得把公共资源移回 `<body>` 底部造成旧壳闪现；
 - 业务文件被顶层直接打开时，必须将自身映射为 `<key>` 并跳转到根 `../index.html?page=<key>`；处于目标 SystemFrame iframe 内时不得再次跳转；
@@ -229,7 +229,7 @@ annotations_removed = { 1:{...}, 2:{...}, 3:{...}, 4:{...} }
 - ❌ 自造色值/字号/圆角，偏离 design.md
 - ❌ 引入 Vue/React/jQuery 或未列出的库（Chart.js 及必要时 ECharts CDN 除外，见第二节）
 - ❌ 依赖公共层白名单以外的本地 CSS/JS/图片，或复制公共实现形成页面分叉
-- ❌ 在业务 iframe 内再次创建 BrowserChrome、TopBar、Sidebar、全局助手、全局弹层或嵌套 SystemFrame
+- ❌ 在业务 iframe 内再次创建 TopBar、Sidebar、全局助手、全局弹层或嵌套 SystemFrame
 - ❌ 后台模块直接跳转另一业务 `.html`，绕过 `index.html?page=<key>`
 - ❌ 用 emoji 代替图标
 - ❌ 静态堆数据（不用 mock data 驱动）

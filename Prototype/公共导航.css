@@ -13,7 +13,7 @@ body[data-yundeng-system-frame="true"] .yundeng-router-outlet { width: 100%; hei
 body[data-yundeng-system-frame="true"] .yundeng-module-frame { width: 100%; height: 100%; min-width: 0; min-height: 0; display: block; border: 0; background: #F7F8FA; }
 body[data-yundeng-system-frame="true"] .yundeng-route-loading { position: absolute; inset: 0; z-index: 2; display: flex; align-items: center; justify-content: center; gap: 8px; color: #6E7685; background: #F7F8FA; font-size: 13px; }
 body[data-yundeng-system-frame="true"] .yundeng-route-loading[hidden] { display: none !important; }
-body[data-yundeng-system-frame="true"] .yundeng-route-loading[data-state="loading"] svg { width: 18px; height: 18px; animation: yundeng-browser-spin .8s linear infinite; }
+body[data-yundeng-system-frame="true"] .yundeng-route-loading[data-state="loading"] svg { width: 18px; height: 18px; animation: yundeng-shell-spin .8s linear infinite; }
 body[data-yundeng-system-frame="true"] .yundeng-route-loading[data-state="error"] { flex-direction: column; gap: 12px; text-align: center; color: #3A3F4A; }
 body[data-yundeng-system-frame="true"] .yundeng-route-loading[data-state="error"] > svg { width: 28px; height: 28px; color: #D9001B; }
 body[data-yundeng-system-frame="true"] .yundeng-route-loading[data-state="error"] div { display: flex; flex-direction: column; gap: 4px; }
@@ -36,85 +36,8 @@ body[data-yundeng-embedded="true"] #mainContent > .page-content > section#coupon
 body[data-yundeng-embedded="true"] #mainContent > .page-content > section#ordersPanel > .card:first-child { flex: 1 1 auto; min-height: 0; }
 body[data-yundeng-embedded="true"] #annoToggle { display: none !important; }
 
-body[data-yundeng-shell] .yundeng-browser-frame { box-sizing: border-box; height: 84px; min-height: 84px; margin: 0; flex: 0 0 84px; display: flex; flex-direction: column; gap: 0; padding-bottom: 0; position: relative; z-index: 100; color: #3A3F4A; background: #F0F1F3; }
-body[data-yundeng-shell] .yundeng-tab-strip { box-sizing: border-box; height: 32px; min-height: 32px; flex: 0 0 32px; padding: 2px 8px 0; display: flex; align-items: flex-end; gap: 8px; background: #E6F0FF; }
-body[data-yundeng-shell] .yundeng-window-controls { width: 52px; height: 30px; display: flex; align-items: center; gap: 6px; flex: none; }
-body[data-yundeng-shell] .yundeng-window-controls span { width: 10px; height: 10px; border-radius: 50%; display: block; }
-body[data-yundeng-shell] .yundeng-window-controls .is-danger { background: #D9001B; }
-body[data-yundeng-shell] .yundeng-window-controls .is-warning { background: #E7772D; }
-body[data-yundeng-shell] .yundeng-window-controls .is-success { background: #0FC060; }
-body[data-yundeng-shell] .yundeng-tab-cluster { min-width: 0; height: 30px; flex: 1; display: flex; align-items: flex-end; gap: 4px; overflow: hidden; }
-body[data-yundeng-shell] .yundeng-browser-tabs { min-width: 0; width: auto; max-width: calc(100% - 32px); height: 30px; flex: 0 1 auto; display: flex; align-items: flex-end; gap: 4px; overflow-x: auto; overflow-y: hidden; scrollbar-width: none; }
-body[data-yundeng-shell] .yundeng-browser-tabs::-webkit-scrollbar { display: none; }
-body[data-yundeng-shell] .yundeng-browser-tab { min-width: 160px; max-width: 240px; height: 28px; padding: 0 6px 0 10px; flex: 0 1 240px; display: flex; align-items: center; gap: 8px; border-radius: 8px 8px 0 0; color: #6E7685; background: #F7F8FA; cursor: pointer; user-select: none; }
-body[data-yundeng-shell] .yundeng-browser-tab:hover { background: #F3F4F6; }
-body[data-yundeng-shell] .yundeng-browser-tab[data-active="true"] { color: #1A1D24; background: #fff; }
-body[data-yundeng-shell] .yundeng-browser-tab-mark { width: 18px; height: 18px; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; flex: none; color: #fff; background: #0066FF; font-size: 10px; font-weight: 700; }
-body[data-yundeng-shell] .yundeng-browser-tab-title { min-width: 0; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; }
-body[data-yundeng-shell] .yundeng-close-tab { width: 22px; height: 22px; padding: 0; border: 0; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; flex: none; color: #9DA2AC; background: transparent; cursor: pointer; opacity: 0; }
-body[data-yundeng-shell] .yundeng-browser-tab:hover .yundeng-close-tab,
-body[data-yundeng-shell] .yundeng-browser-tab[data-active="true"] .yundeng-close-tab,
-body[data-yundeng-shell] .yundeng-close-tab:focus-visible { opacity: 1; }
-body[data-yundeng-shell] .yundeng-close-tab:hover { color: #3A3F4A; background: #F3F4F6; }
-body[data-yundeng-shell] .yundeng-close-tab svg { width: 14px; height: 14px; }
-body[data-yundeng-shell] .yundeng-browser-toolbar { box-sizing: border-box; height: 52px; min-height: 52px; flex: 0 0 52px; margin: 0; padding: 1px 8px 2px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #F0F1F3; background: #fff; }
-body[data-yundeng-shell] .yundeng-history-actions,
-body[data-yundeng-shell] .yundeng-browser-actions { display: flex; align-items: center; gap: 4px; flex: none; position: relative; }
-body[data-yundeng-shell] .yundeng-browser-button { width: 28px; height: 28px; padding: 0; border: 0; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; flex: none; color: #6E7685; background: transparent; cursor: pointer; }
-body[data-yundeng-shell] .yundeng-browser-button:hover { color: #3A3F4A; background: #F3F4F6; }
-body[data-yundeng-shell] .yundeng-browser-button:disabled { color: #C7CAD1; background: transparent; cursor: default; }
-body[data-yundeng-shell] .yundeng-browser-button svg { width: 16px; height: 16px; }
-body[data-yundeng-shell] .yundeng-new-tab { margin-bottom: 0; }
-body[data-yundeng-shell] .yundeng-address-form { min-width: 160px; height: 32px; padding: 0 4px 0 12px; flex: 1; display: flex; align-items: center; gap: 8px; border: 1px solid #E8EAED; border-radius: 9999px; background: #F7F8FA; }
-body[data-yundeng-shell] .yundeng-address-form:focus-within { border-color: #0066FF; box-shadow: 0 0 0 2px rgba(0,102,255,.12); background: #fff; }
-body[data-yundeng-shell] .yundeng-address-form[data-invalid="true"] { border-color: #D9001B; box-shadow: 0 0 0 2px #FFE8EB; }
-body[data-yundeng-shell] .yundeng-address-form svg { width: 14px; height: 14px; flex: none; color: #9DA2AC; }
-body[data-yundeng-shell] .yundeng-address-form input { min-width: 0; width: auto; height: 28px; padding: 0; flex: 1; border: 0; outline: 0; color: #3A3F4A; background: transparent; font: 12px/1.5 'JetBrains Mono', monospace; }
-body[data-yundeng-shell] .yundeng-bookmark-button { width: 24px; height: 24px; padding: 0; position: relative; flex: none; border: 0; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; color: #6E7685; background: transparent; cursor: pointer; }
-body[data-yundeng-shell] .yundeng-bookmark-button:hover { color: #3A3F4A; background: #E8EAED; }
-body[data-yundeng-shell] .yundeng-bookmark-button[data-bookmarked="true"] { color: #0066FF; }
-body[data-yundeng-shell] .yundeng-bookmark-button[data-bookmarked="true"] svg { fill: currentColor; }
-body[data-yundeng-shell] .yundeng-bookmark-button svg { width: 16px; height: 16px; }
-body[data-yundeng-shell] .yundeng-bookmark-button::after { content: attr(data-yundeng-tooltip); position: absolute; left: 50%; top: calc(100% + 8px); z-index: 1400; width: max-content; max-width: 180px; padding: 5px 8px; border-radius: 4px; color: #FFFFFF; background: #1A1D24; font: 12px/1.4 var(--font-sans); white-space: nowrap; opacity: 0; pointer-events: none; transform: translate(-50%, -2px); transition: opacity .15s ease, transform .15s ease; }
-body[data-yundeng-shell] .yundeng-bookmark-button:hover::after,
-body[data-yundeng-shell] .yundeng-bookmark-button:focus-visible::after { opacity: 1; transform: translate(-50%, 0); }
-body[data-yundeng-shell] .yundeng-browser-panel { box-sizing: border-box; position: absolute; top: calc(100% + 12px); right: 0; z-index: 1300; width: 320px; padding: 0; overflow: hidden; border: 1px solid #DFE1E5; border-radius: 8px; color: #3A3F4A; background: #fff; box-shadow: 0 6px 24px rgba(0,0,0,.12); }
-body[data-yundeng-shell] .yundeng-browser-panel.hidden { display: none; }
-body[data-yundeng-shell] .yundeng-browser-panel strong { color: #1A1D24; font-size: 13px; }
-body[data-yundeng-shell] .yundeng-panel-header { min-height: 44px; padding: 0 10px 0 14px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #E8EAED; }
-body[data-yundeng-shell] .yundeng-panel-header strong { padding: 0; font-size: 14px; }
-body[data-yundeng-shell] .yundeng-panel-close { width: 28px !important; height: 28px !important; min-height: 28px !important; padding: 0 !important; justify-content: center !important; border-radius: 4px !important; }
-body[data-yundeng-shell] .yundeng-panel-copy { padding: 12px 14px 8px; }
-body[data-yundeng-shell] .yundeng-panel-copy strong { display: block; margin-bottom: 4px; font-size: 12px; }
-body[data-yundeng-shell] .yundeng-panel-copy p { margin: 0; padding: 0; color: #6E7685; font-size: 12px; line-height: 1.6; }
-body[data-yundeng-shell] .yundeng-extension-row { min-height: 48px; margin: 0 8px 8px; padding: 6px 4px 6px 8px; display: flex; align-items: center; gap: 8px; border-radius: 4px; background: #F7F8FA; }
-body[data-yundeng-shell] .yundeng-extension-icon { width: 28px; height: 28px; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; flex: none; color: #0066FF; background: #E6F0FF; }
-body[data-yundeng-shell] .yundeng-extension-icon svg { width: 16px; height: 16px; }
-body[data-yundeng-shell] .yundeng-extension-name { min-width: 0; flex: 1; overflow: hidden; color: #3A3F4A; font-size: 13px; text-overflow: ellipsis; white-space: nowrap; }
-body[data-yundeng-shell] .yundeng-panel-icon-button { width: 28px !important; height: 28px !important; min-height: 28px !important; padding: 0 !important; justify-content: center !important; flex: none; }
-body[data-yundeng-shell] .yundeng-panel-icon-button[data-pinned="true"] { color: #0066FF; background: #E6F0FF; }
-body[data-yundeng-shell] .yundeng-extension-more-menu { margin: 0 8px 8px; padding: 4px; border: 1px solid #DFE1E5; border-radius: 4px; background: #FFFFFF; box-shadow: 0 4px 12px rgba(0,0,0,.12); }
-body[data-yundeng-shell] .yundeng-extension-more-menu[hidden] { display: none; }
-body[data-yundeng-shell] .yundeng-panel-footer { min-height: 40px !important; padding: 0 14px !important; border-top: 1px solid #E8EAED; border-radius: 0 !important; }
-body[data-yundeng-shell] .yundeng-download-panel { width: 300px; }
-body[data-yundeng-shell] .yundeng-download-empty { padding: 20px 14px 24px; text-align: center; }
-body[data-yundeng-shell] .yundeng-download-empty svg { width: 24px; height: 24px; margin: 0 auto 8px; color: #9DA2AC; }
-body[data-yundeng-shell] .yundeng-download-empty p { margin: 0; padding: 0; color: #9DA2AC; font-size: 12px; }
-body[data-yundeng-shell] .yundeng-more-panel { width: 260px; padding: 4px 0; }
-body[data-yundeng-shell] .yundeng-browser-panel button { width: 100%; min-height: 32px; padding: 0 14px; border: 0; border-radius: 0; display: flex; align-items: center; gap: 10px; color: #3A3F4A; background: transparent; font: 13px/1.5 inherit; cursor: pointer; text-align: left; }
-body[data-yundeng-shell] .yundeng-browser-panel button:hover { background: #F3F4F6; }
-body[data-yundeng-shell] .yundeng-browser-panel button svg { width: 16px; height: 16px; color: #6E7685; }
-body[data-yundeng-shell] .yundeng-more-item span:first-of-type { min-width: 0; flex: 1; }
-body[data-yundeng-shell] .yundeng-more-shortcut { margin-left: auto; color: #6E7685; font: 12px/1.5 'JetBrains Mono', monospace; white-space: nowrap; }
-body[data-yundeng-shell] .yundeng-more-chevron { margin-left: auto; width: 14px !important; height: 14px !important; }
-body[data-yundeng-shell] .yundeng-more-divider { height: 1px; margin: 4px 0; background: #E8EAED; }
-body[data-yundeng-shell] .yundeng-zoom-row { min-height: 40px; padding: 0 8px; display: flex; align-items: center; gap: 4px; }
-body[data-yundeng-shell] .yundeng-zoom-row > span { min-width: 46px; color: #3A3F4A; font: 12px/1.5 'JetBrains Mono', monospace; text-align: center; }
-body[data-yundeng-shell] .yundeng-zoom-row button { width: 32px; min-height: 32px; padding: 0; justify-content: center; }
-body[data-yundeng-shell] .yundeng-zoom-row button:last-child { margin-left: auto; }
 body[data-yundeng-shell] .yundeng-sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
-body[data-yundeng-shell] .is-spinning svg { animation: yundeng-browser-spin .45s linear; }
-@keyframes yundeng-browser-spin { to { transform: rotate(360deg); } }
+@keyframes yundeng-shell-spin { to { transform: rotate(360deg); } }
 body[data-yundeng-shell] #sidebar {
   width: 220px !important;
   flex: 0 0 220px !important;
@@ -174,6 +97,20 @@ body[data-yundeng-shell] #sidebar.compact .yundeng-bottom-link {
 }
 body[data-yundeng-shell] #sidebar.compact .submenu,
 body[data-yundeng-shell] #sidebar.compact .yundeng-subnav { display: none !important; }
+/* 紧凑态：二级菜单整体隐藏，待处理角标吸附在一级图标右上角 */
+body[data-yundeng-shell] #sidebar.compact .yundeng-group-toggle,
+body[data-yundeng-shell] #sidebar.compact .yundeng-menu-link { position: relative; }
+body[data-yundeng-shell] #sidebar.compact .yundeng-menu-badge {
+  display: inline-flex !important;
+  position: absolute;
+  top: 1px;
+  right: 2px;
+  margin-left: 0;
+  min-width: 15px;
+  height: 15px;
+  padding: 0 4px;
+  font-size: 10px;
+}
 body[data-yundeng-shell] #sidebar.compact .yundeng-group-toggle[data-active="true"] { color: #0066FF; background: #E6F0FF; }
 body[data-yundeng-shell] [data-yundeng-topbar] {
   height: 56px !important;
@@ -298,6 +235,24 @@ body[data-yundeng-shell] .yundeng-group-toggle > .menu-icon {
   flex: 0 0 16px;
 }
 body[data-yundeng-shell] .yundeng-menu-link:hover { background: #F3F4F6; }
+/* 左侧菜单待处理角标：形态沿用 design.md §5.4.3 条件角标（danger 底、白字、11px/600 JetBrains Mono、最小 16×16、8px 圆角）。 */
+body[data-yundeng-shell] .yundeng-menu-badge {
+  margin-left: auto;
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 5px;
+  border-radius: 8px;
+  background: #D9001B;
+  color: #fff;
+  font: 600 11px/1 "JetBrains Mono", monospace;
+  font-variant-numeric: tabular-nums;
+}
+/* 分组展开后由二级菜单承载同一角标，分组头不再重复显示 */
+body[data-yundeng-shell] .yundeng-group-toggle[aria-expanded="true"] .yundeng-menu-badge { display: none; }
 body[data-yundeng-shell] .yundeng-menu-link[data-active="true"] {
   color: #0066FF !important;
   background: #E6F0FF !important;
@@ -328,6 +283,9 @@ body[data-yundeng-shell] .yundeng-group-toggle {
   background: transparent;
   text-align: left;
 }
+/* 一级分组：标签占满剩余空间，使展开/收起箭头（以及可能出现的待处理角标）始终贴右侧，
+   与其它一级菜单箭头保持对齐（等同 系统框架.html 内联 renderNav 的 menu-label flex-1）。 */
+body[data-yundeng-shell] .yundeng-group-toggle > .menu-label { flex: 1 1 auto; min-width: 0; }
 body[data-yundeng-shell] .yundeng-group-toggle:hover { background: #F3F4F6; }
 body[data-yundeng-shell] .yundeng-group-toggle[data-active="true"] { color: #0066FF; font-weight: 600; }
 body[data-yundeng-shell] .yundeng-subnav {
@@ -1028,27 +986,25 @@ body[data-yundeng-shell] .yundeng-mobile-menu { display: none; }
 body[data-yundeng-shell] .yundeng-mobile-backdrop {
   display: none;
   position: fixed;
-  inset: 140px 0 0;
+  inset: 56px 0 0;
   z-index: 40;
   background: rgba(26,29,36,.28);
 }
 body[data-yundeng-shell] .yundeng-mobile-backdrop[data-open="true"] { display: block; }
-body[data-yundeng-shell] #toastContainer { top: 148px !important; }
+body[data-yundeng-shell] #toastContainer { top: 64px !important; }
 @media (max-width: 767px) {
   body[data-yundeng-shell] .yundeng-onboarding-overlay { padding: 0; }
   body[data-yundeng-shell] .yundeng-onboarding-panel { width: 100vw; height: 100vh; height: 100dvh; border-radius: 0; }
-  body[data-yundeng-shell] .yundeng-window-controls { display: none; }
-  body[data-yundeng-shell] .yundeng-browser-tab { min-width: 160px; flex-basis: 200px; }
   body[data-yundeng-shell] [data-yundeng-topbar] { padding: 0 12px !important; }
   body[data-yundeng-shell] .yundeng-mobile-menu { display: inline-flex; }
   body[data-yundeng-shell] .yundeng-account-name,
   body[data-yundeng-shell] .yundeng-account-chevron { display: none; }
   body[data-yundeng-shell] #sidebar {
     position: fixed !important;
-    inset: 140px auto 0 0;
+    inset: 56px auto 0 0;
     z-index: 50;
-    height: calc(100vh - 140px) !important;
-    height: calc(100dvh - 140px) !important;
+    height: calc(100vh - 56px) !important;
+    height: calc(100dvh - 56px) !important;
     transform: translateX(-100%);
     box-shadow: 6px 0 24px rgba(0,0,0,.12) !important;
   }
@@ -1071,9 +1027,6 @@ body[data-yundeng-shell] #toastContainer { top: 148px !important; }
   body[data-yundeng-shell] #sidebar.yundeng-mobile-open.compact .yundeng-subnav { display: block !important; }
 }
 @media (max-width: 560px) {
-  body[data-yundeng-shell] .yundeng-history-actions .yundeng-browser-button:not(#yundeng-browser-reload) { display: none; }
-  body[data-yundeng-shell] .yundeng-tab-strip { gap: 4px; }
-  body[data-yundeng-shell] .yundeng-browser-tab { min-width: 140px; flex-basis: 176px; }
   body[data-yundeng-shell] .yundeng-platform-name { display: none; }
   body[data-yundeng-shell] .yundeng-assistant-header { padding: 0 16px; }
   body[data-yundeng-shell] .yundeng-assistant-body { padding: 20px 16px; }
@@ -1089,4 +1042,37 @@ body[data-yundeng-shell] #toastContainer { top: 148px !important; }
   body[data-yundeng-shell] .yundeng-account-traffic-fill { transition: none !important; }
   body[data-yundeng-shell] .yundeng-icon-button:active,
   body[data-yundeng-shell] #collapseBtn:active { transform: none; }
+}
+
+/* =====================================================================
+   列表工具栏搜索组件（design.md 5.4.2 统一标准的唯一实现）
+   页面只声明 .order-global-search 容器与可检索字段，行为由
+   YDSearchBox（公共导航.js）绑定；禁止在页面内复制这段样式或逻辑。
+   ===================================================================== */
+.order-search-filter-group { display: flex; align-items: center; justify-content: flex-end; gap: 20px; min-width: 0; flex: 0 1 500px; margin-left: auto; }
+.order-global-search { position: relative; width: 320px; max-width: 100%; flex: 0 1 320px; z-index: 120; }
+.order-global-search .field { width: 100%; padding-left: 10px; padding-right: 58px; }
+/* design.md 5.4.2：前缀宽度随字段名长度自适应，输入框左内边距跟随组件写入的 --yd-search-prefix-width。 */
+.order-global-search.has-committed-scope .field { padding-left: calc(var(--yd-search-prefix-width, 114px) + 8px); }
+.order-global-search.is-open .field { border-color: #0066FF; box-shadow: 0 0 0 2px #E6F0FF; }
+.order-global-search input[type="search"]::-webkit-search-cancel-button { display: none; }
+.order-search-scope-prefix { position: absolute; left: 1px; top: 1px; z-index: 2; box-sizing: border-box; width: auto; min-width: 114px; max-width: calc(100% - 58px); height: 30px; padding: 0 8px; border-right: 1px solid #E8EAED; border-radius: 3px 0 0 3px; display: inline-flex; align-items: center; overflow: hidden; background: #F3F4F6; color: #6E7685; font-size: 14px; text-overflow: ellipsis; white-space: nowrap; pointer-events: none; }
+.order-search-submit { position: absolute; right: 4px; top: 4px; z-index: 3; width: 24px; height: 24px; padding: 0; border: 0; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; background: transparent; color: #9DA2AC; cursor: pointer; outline: none; }
+.order-search-submit:hover { background: #F3F4F6; color: #3A3F4A; }
+.order-search-submit:focus-visible { color: #3A3F4A; outline: 2px solid #0066FF; outline-offset: 1px; }
+.order-search-icon { width: 16px; height: 16px; pointer-events: none; }
+.order-search-clear { position: absolute; right: 30px; top: 4px; z-index: 3; width: 24px; height: 24px; padding: 0; border: 0; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; background: transparent; color: #9DA2AC; cursor: pointer; outline: none; }
+.order-search-clear:hover, .order-search-clear:focus-visible { background: #F3F4F6; color: #3A3F4A; }
+.order-search-scope-menu { position: absolute; left: 0; right: 0; top: 36px; z-index: 1200; max-height: 368px; overflow-y: auto; padding: 4px; border: 1px solid #DFE1E5; border-radius: 8px; background: #fff; box-shadow: 0 6px 24px rgba(0,0,0,.12); }
+.order-search-scope-option { width: 100%; min-width: 0; height: 36px; padding: 0 10px; border: 0; border-radius: 4px; display: flex; align-items: center; gap: 8px; background: #fff; color: #3A3F4A; text-align: left; cursor: pointer; }
+.order-search-scope-option:hover, .order-search-scope-option.is-active { background: #E6F0FF; }
+.order-search-scope-radio { position: relative; width: 14px; height: 14px; flex: 0 0 14px; border: 1px solid #9DA2AC; border-radius: 50%; background: #fff; }
+.order-search-scope-option[aria-selected="true"] .order-search-scope-radio { border-color: #0066FF; }
+.order-search-scope-option[aria-selected="true"] .order-search-scope-radio::after { content: ''; position: absolute; inset: 3px; border-radius: 50%; background: #0066FF; }
+.order-search-scope-label { flex: 0 0 auto; font-weight: 500; white-space: nowrap; }
+.order-search-scope-relation { flex: 0 0 auto; color: #6E7685; white-space: nowrap; }
+.order-search-scope-query { min-width: 0; overflow: hidden; color: #0066FF; text-overflow: ellipsis; white-space: nowrap; }
+@media (max-width: 900px) {
+  .order-search-filter-group { width: 100%; flex: 0 0 100%; margin-left: 0; justify-content: flex-start; }
+  .order-global-search { width: auto; flex: 1 1 auto; min-width: 0; }
 }

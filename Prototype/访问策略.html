@@ -11,10 +11,10 @@
       primary:{DEFAULT:'#0066FF',hover:'#0052CC',active:'#0047B3',bg:'#E6F0FF'},
       ink:{title:'#1A1D24',body:'#3A3F4A',sub:'#6E7685',muted:'#9DA2AC'},
       line:{DEFAULT:'#DFE1E5',light:'#E8EAED',lighter:'#F0F1F3'},
-      page:'#F7F8FA',card:'#FFFFFF',hover:'#F3F4F6',
+      page:'#F7F8FA',card:'#FFFFFF',hover:'#F3F4F6','block-hover':'#F0F1F3',price:'#FE5416',
       success:{DEFAULT:'#0FC060',bg:'#E7F9F0'},warning:{DEFAULT:'#E7772D',bg:'#FDF2E9'},
       danger:{DEFAULT:'#D9001B',bg:'#FFE8EB'},info:{DEFAULT:'#0091D5',bg:'#E4F4FB'}
-    }, fontFamily:{ sans:["-apple-system","BlinkMacSystemFont","PingFang SC","Hiragino Sans GB","Microsoft YaHei","Helvetica Neue","Helvetica","Arial","sans-serif"], mono:["JetBrains Mono","monospace"] }, borderRadius:{ DEFAULT:'4px', lg:'8px' } } } };
+    }, fontFamily:{ sans:["-apple-system","BlinkMacSystemFont","PingFang SC","Hiragino Sans GB","Microsoft YaHei","Helvetica Neue","Helvetica","Arial","sans-serif"], mono:["JetBrains Mono","monospace"] }, borderRadius:{ DEFAULT:'4px', md:'6px', lg:'8px' } } } };
   </script>
   <style>
     *{box-sizing:border-box}
@@ -137,24 +137,66 @@
     @media(max-width:720px){.toolbar-search-filter{flex:1 1 100%;gap:12px}.toolbar-search{flex:1;width:auto}.filter-button{flex:0 0 auto}}
     @media(max-width:640px){.page-shell{padding:0 10px 14px}.data-surface,.form-surface{padding:16px 12px}.modal-overlay{padding:8px}.modal-header{padding:0 16px}.modal-body{padding:16px}.modal-footer{padding:12px 16px}.member-layout{grid-template-columns:1fr}.member-pane{height:250px}.member-tree{height:158px}.selected-box{height:180px}.modal-panel.wide{width:100%}.pagination{justify-content:flex-start}.form-heading h1{font-size:19px}.filter-drawer{width:100%}}
     @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+    /* 访问策略列表：沿用 design.md 的颜色、32px 控件、8px 区块圆角和间距梯度。 */
+    [hidden]{display:none!important}
+    #listView{padding-top:0;min-height:100%;display:flex;flex-direction:column}
+    #listView .data-surface{flex:1;padding:20px;min-width:0}
+    .policy-toolbar{gap:12px 16px}.toolbar-search-filter{margin-bottom:0;flex-basis:auto}
+    .btn{font-size:14px}.btn svg{width:16px;height:16px;flex-shrink:0}
+    .help-button{width:24px;height:32px;display:inline-flex;align-items:center;justify-content:center;border:0;background:transparent;color:#6E7685;border-radius:4px;flex-shrink:0}
+    .help-button:hover,.help-button[aria-expanded="true"]{background:#F3F4F6;color:#0066FF}.help-button svg{width:16px;height:16px}
+    .policy-classification{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;border-bottom:1px solid #E8EAED;margin-bottom:8px}
+    #policyTabs{display:flex;gap:4px;overflow-x:auto;max-width:100%}
+    .policy-tab{height:40px;padding:0 16px;border:0;border-bottom:2px solid transparent;background:transparent;color:#6E7685;font-size:14px;white-space:nowrap}
+    .policy-tab:hover{background:#F3F4F6}.policy-tab[aria-selected="true"]{color:#0066FF;border-bottom-color:#0066FF;font-weight:500}
+    .policy-priority{margin:0 0 8px;font-size:12px;color:#6E7685}
+    .strategy-table{min-width:1320px;table-layout:fixed}.strategy-table th{font-weight:400}.strategy-table td{height:52px}
+    .strategy-table .select-cell{width:40px}.strategy-table .name-cell{width:200px}.strategy-table .desc-cell{width:220px;color:#3A3F4A}.strategy-table .member-cell{width:180px}.strategy-table .account-cell{width:160px}.strategy-table .scope-cell{width:160px}.strategy-table .period-cell{width:140px}.strategy-table .status-cell{width:120px}.strategy-table .action-cell{width:160px}
+    .cell-text{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    input[type="checkbox"]{accent-color:#0066FF;width:16px;height:16px;vertical-align:middle;cursor:pointer}
+    .strategy-table tr.is-selected{background:#E6F0FF}.status-control{display:flex;gap:8px;align-items:center;font-size:12px;color:#6E7685}
+    .switch{flex-shrink:0;width:40px;height:22px;border-radius:11px;background:#C7CAD1;transition:background-color .2s}.switch::after{top:2px;left:2px;width:18px;height:18px;transition:transform .2s}.switch[aria-checked="true"]::after{transform:translateX(18px)}.table-actions{gap:12px}.btn-link:disabled{color:#9DA2AC;text-decoration:none}
+    .batch-bar{display:flex;align-items:center;flex-wrap:wrap;gap:12px;padding:8px 12px;margin-bottom:8px;background:#E6F0FF;border-radius:4px;font-size:13px}.batch-bar b{font-weight:500}
+    .list-feedback{margin:0 0 8px;padding:8px 12px;background:#E4F4FB;color:#3A3F4A;border-radius:4px;font-size:13px}
+    #confirmDeleteButton{background:#D9001B}#confirmDeleteButton:hover{background:#D9001B;opacity:.9}#listPagination{padding-top:20px}.pagination svg{width:16px;height:16px}
+    .rules-popover{position:fixed;width:400px;max-width:calc(100vw - 32px);max-height:calc(100dvh - 32px);overflow-y:auto;z-index:1000;background:#fff;padding:20px;border-radius:8px;box-shadow:0 6px 24px rgba(0,0,0,.12);color:#3A3F4A;font-size:14px;line-height:1.6}
+    .rules-popover h2{font-size:16px;font-weight:600;color:#1A1D24;margin:0 0 12px}.rules-popover ul{padding-left:20px;margin:0 0 12px;list-style:disc}.rules-popover li+li{margin-top:6px}
+    .rules-example{background:#F7F8FA;padding:12px;border-radius:4px}.rules-example h3{font-size:14px;font-weight:500;margin:0 0 6px}.rules-example p{margin:0 0 12px}.rules-example p:last-child{margin-bottom:0}.rules-result{color:#1A1D24}
+    :focus-visible{outline:2px solid #0066FF;outline-offset:2px}::selection{background:#E6F0FF;color:#1A1D24}input{caret-color:#0066FF}input[type="search"]::-webkit-search-cancel-button{display:none}
+    .data-wrap{scrollbar-color:#DFE1E5 #F7F8FA}.filter-drawer-body input{min-width:0}
+    @media(min-width:768px){#listView .data-surface{padding:24px}}
+    @media(max-width:1000px){.toolbar-search-filter{flex:1 1 100%;gap:12px}.toolbar-search{flex:1;width:auto}.policy-priority{flex-basis:100%}}
   </style>
-  <link rel="stylesheet" href="公共导航.css?v=20260825a">
-  <script src="公共导航.js?v=20260916a"></script>
+  <link rel="stylesheet" href="公共导航.css?v=20261008a">
+  <script src="公共导航.js?v=20261008a"></script>
 </head>
 <body>
   <main id="mainContent" class="page-shell" tabindex="-1">
     <section id="listView" class="view" aria-labelledby="listTitle">
       <div class="data-surface">
-        <div class="policy-toolbar"><h1 id="listTitle">访问策略</h1><button id="newPolicyButton" class="btn btn-primary" type="button" data-anno="1"><i data-lucide="plus" aria-hidden="true"></i>新增访问策略</button></div>
-        <div class="toolbar-search-filter" data-anno="2"><div class="toolbar-search"><input id="keywordFilter" type="search" placeholder="搜索策略名称、说明、成员或账号" autocomplete="off"><button id="searchSubmit" class="search-submit" type="button" aria-label="搜索"><i data-lucide="search" aria-hidden="true"></i></button><button id="searchClear" class="search-clear" type="button" aria-label="清空搜索" hidden><i data-lucide="x" aria-hidden="true"></i></button></div><button id="filterButton" class="btn btn-default filter-button" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="filterDrawer"><i data-lucide="list-filter" aria-hidden="true"></i><span>筛选</span><span id="filterCount" class="filter-count" hidden>0</span></button></div>
-        <div class="data-wrap" data-anno="3">
+        <!-- 列表工具栏：页面操作、关键词、筛选与规则说明 -->
+        <h1 id="listTitle" class="sr-only">访问策略设置</h1>
+        <div class="policy-toolbar">
+          <button id="newPolicyButton" class="btn btn-primary" type="button" data-anno="1"><i data-lucide="plus" aria-hidden="true"></i>新增策略</button>
+          <div class="toolbar-search-filter">
+            <div class="toolbar-search"><input id="keywordFilter" type="search" aria-label="搜索策略名称或描述，多个关键词用中文逗号分隔" placeholder="请输入关键词，多个用中文逗号分隔" autocomplete="off" data-anno="2"><button id="searchSubmit" class="search-submit" type="button" aria-label="搜索"><i data-lucide="search" aria-hidden="true"></i></button><button id="searchClear" class="search-clear" type="button" aria-label="清空搜索" hidden><i data-lucide="x" aria-hidden="true"></i></button></div>
+            <button id="filterButton" class="btn btn-default filter-button" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="filterDrawer" data-anno="3"><i data-lucide="list-filter" aria-hidden="true"></i><span>筛选</span><span id="filterCount" class="filter-count" hidden>0</span></button>
+            <button id="rulesButton" class="help-button" type="button" aria-label="生效规则说明" aria-expanded="false" aria-controls="rulesPopover" data-anno="4"><i data-lucide="circle-help" aria-hidden="true"></i></button>
+          </div>
+        </div>
+        <!-- 分类与批量操作 -->
+        <div class="policy-classification"><nav id="policyTabs" data-anno="5" role="tablist" aria-label="策略类型"></nav><p class="policy-priority">访问策略优先级：访问特例 &gt; 白名单 &gt; 黑名单</p></div>
+        <div id="batchBar" class="batch-bar" hidden><span>已选择 <b id="selectedCount" class="mono">0</b> 条</span><button type="button" class="btn btn-default" data-batch="enable">批量启用</button><button type="button" class="btn btn-default" data-batch="disable">批量停用</button><button id="clearSelection" type="button" class="btn-link">取消选择</button><span class="text-ink-sub">仅选择当前页</span></div>
+        <p id="listFeedback" class="list-feedback" role="status" aria-live="polite" hidden></p>
+        <div class="data-wrap" id="policyPanel" role="tabpanel" aria-labelledby="tab-black">
           <table class="strategy-table" aria-label="访问策略列表">
-            <thead><tr><th class="name-cell">策略名称</th><th class="desc-cell">策略说明</th><th class="mode-cell">策略模式</th><th class="account-cell">配置账号</th><th class="member-cell">配置成员</th><th class="web-cell">配置网页</th><th class="time-cell">创建时间</th><th class="status-cell">启用状态</th><th class="action-cell">操作</th></tr></thead>
+            <thead><tr><th class="select-cell"><input id="selectPage" type="checkbox" aria-label="选择当前页全部策略"></th><th class="name-cell">策略名称</th><th class="desc-cell">策略描述</th><th class="member-cell">生效成员</th><th class="account-cell">生效账号</th><th class="scope-cell">生效范围</th><th class="period-cell">生效时段</th><th class="status-cell">状态</th><th class="action-cell">操作</th></tr></thead>
             <tbody id="strategyRows"></tbody>
           </table>
           <div id="tableEmpty" hidden class="py-16 text-center"><i data-lucide="file-search" class="mx-auto mb-3 h-8 w-8 text-ink-muted" aria-hidden="true"></i><p class="m-0 text-[14px] font-medium text-ink-title">暂无匹配的访问策略</p><p class="mt-2 text-[12px] text-ink-sub">请调整搜索条件或重置筛选。</p></div>
         </div>
-        <div id="listPagination" class="pagination" data-anno="4" aria-label="访问策略分页"></div>
+        <div id="listPagination" class="pagination" data-anno="6" aria-label="访问策略分页"></div>
       </div>
     </section>
 
@@ -162,12 +204,12 @@
       <aside id="filterDrawer" class="filter-drawer" role="dialog" aria-modal="true" aria-labelledby="filterDrawerTitle">
         <header class="filter-drawer-header"><h2 id="filterDrawerTitle">筛选</h2><button id="filterDrawerClose" class="filter-drawer-close" type="button" aria-label="关闭筛选"><i data-lucide="x" aria-hidden="true"></i></button></header>
         <form id="drawerFilterForm" class="filter-drawer-body">
-          <div class="drawer-field"><label for="drawerMode">策略模式：</label><div class="control select-control"><select id="drawerMode"><option value="">全部模式</option><option value="黑名单">黑名单</option><option value="白名单">白名单</option></select><i data-lucide="chevron-down" aria-hidden="true"></i></div></div>
+          <div class="drawer-field"><label for="drawerMode">策略模式：</label><div class="control select-control"><select id="drawerMode"><option value="">全部模式</option><option value="黑名单">黑名单</option><option value="白名单">白名单</option><option value="访问特例">访问特例</option></select><i data-lucide="chevron-down" aria-hidden="true"></i></div></div>
           <div class="drawer-field"><label for="drawerStatus">启用状态：</label><div class="control select-control"><select id="drawerStatus"><option value="">全部状态</option><option value="enabled">已启用</option><option value="disabled">未启用</option></select><i data-lucide="chevron-down" aria-hidden="true"></i></div></div>
-          <div class="drawer-field"><label for="drawerCreatedFrom">创建时间：</label><div class="control date-range"><input id="drawerCreatedFrom" type="text" placeholder="开始时间" inputmode="numeric" autocomplete="off"><span class="date-sep">至</span><input id="drawerCreatedTo" type="text" placeholder="结束时间" inputmode="numeric" autocomplete="off"></div></div>
+          <div class="drawer-field"><label for="drawerCreatedFrom">创建时间：</label><div class="control date-range"><input id="drawerCreatedFrom" type="date" placeholder="开始时间" inputmode="numeric" autocomplete="off"><span class="date-sep">至</span><input id="drawerCreatedTo" type="date" placeholder="结束时间" inputmode="numeric" autocomplete="off"></div></div>
           <p id="drawerFilterError" class="drawer-filter-error" hidden></p>
         </form>
-        <footer class="filter-drawer-footer"><button id="filterDrawerCancel" class="btn btn-default" type="button">取消</button><button id="filterDrawerSubmit" class="btn btn-primary" type="button">确认提交</button></footer>
+        <footer class="filter-drawer-footer"><button id="filterDrawerReset" class="btn btn-default" type="button">重置</button><button id="filterDrawerSubmit" class="btn btn-primary" type="button">确认提交</button></footer>
       </aside>
     </div>
 
@@ -178,7 +220,7 @@
             <button id="backToListButton" class="back-button" type="button" aria-label="返回访问策略列表"><i data-lucide="chevron-left" aria-hidden="true"></i></button>
             <div><h1 id="createTitle">新增访问策略</h1><p class="title-support">配置策略对象、访问模式和网页规则，保存后立即生效</p></div>
           </div>
-          <button id="savePolicyButton" class="btn btn-primary" type="button" data-anno="5">保存并立即生效</button>
+          <button id="savePolicyButton" class="btn btn-primary" type="button">保存并立即生效</button>
         </div>
 
         <form id="policyForm" novalidate>
@@ -224,11 +266,32 @@
 
   <div id="webModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="webModalTitle" hidden><section class="modal-panel" role="document"><header class="modal-header"><h2 id="webModalTitle">添加网页</h2><button class="modal-close" type="button" data-close-modal="webModal" aria-label="关闭添加网页"><i data-lucide="x" aria-hidden="true"></i></button></header><div class="modal-body"><div class="capture-tip mb-4"><i data-lucide="scan-line" aria-hidden="true"></i><span>支持手动录入网址或从指纹浏览器当前页面采集。采集结果先保存为资源草稿，不会直接发布策略。</span></div><div class="web-form-grid"><div class="full"><label class="field-label" for="webDescription"><span class="required">*</span>网页说明</label><input id="webDescription" class="form-control" maxlength="60" placeholder="例如：Amazon 订单页面"></div><div class="full"><label class="field-label" for="webUrl"><span class="required">*</span>网址</label><input id="webUrl" class="form-control url-input" maxlength="500" placeholder="https://seller.example.com/orders/*"></div><div><label class="field-label" for="webBlock">是否禁止访问</label><label class="check-line"><input id="webBlock" type="checkbox">禁止访问</label></div><div><label class="field-label" for="webLog">访问行为记录</label><label class="check-line"><input id="webLog" type="checkbox" checked>记录访问行为</label></div><div class="full"><label class="check-line"><input id="useQueryParams" type="checkbox">保留完整查询参数（默认忽略敏感参数）</label></div><p id="webError" class="full hidden m-0 text-[12px] text-danger">请填写网页说明和有效的网址</p></div></div><footer class="modal-footer"><button class="btn btn-default" type="button" data-close-modal="webModal">取消</button><button id="saveWebButton" class="btn btn-primary" type="button">保存网页</button></footer></section></div>
 
-  <div id="deleteModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="deleteModalTitle" hidden><section class="modal-panel small" role="document"><header class="modal-header"><h2 id="deleteModalTitle">删除访问策略</h2><button class="modal-close" type="button" data-close-modal="deleteModal" aria-label="关闭删除确认"><i data-lucide="x" aria-hidden="true"></i></button></header><div class="modal-body"><p class="m-0 text-[14px] leading-6 text-ink-body">确定删除当前访问策略吗？删除后策略将停止生效，历史访问日志仍会保留。</p></div><footer class="modal-footer"><button class="btn btn-default" type="button" data-close-modal="deleteModal">取消</button><button id="confirmDeleteButton" class="btn btn-primary" type="button">确定删除</button></footer></section></div>
+  <div id="deleteModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="deleteModalTitle" hidden><section class="modal-panel small" role="document"><header class="modal-header"><h2 id="deleteModalTitle">删除访问策略</h2><button class="modal-close" type="button" data-close-modal="deleteModal" aria-label="关闭删除确认"><i data-lucide="x" aria-hidden="true"></i></button></header><div class="modal-body"><p id="deletePolicyName" class="mb-3 font-medium text-ink-title"></p><p class="m-0 text-[14px] leading-6 text-ink-body">确定删除当前访问策略吗？删除后策略将停止生效，历史访问日志仍会保留。</p></div><footer class="modal-footer"><button class="btn btn-default" type="button" data-close-modal="deleteModal">取消</button><button id="confirmDeleteButton" class="btn btn-primary" type="button">确定删除</button></footer></section></div>
 
-  <button id="annoToggle" class="annotation-toggle" type="button" aria-label="查看页面说明"><i data-lucide="message-circle-more" aria-hidden="true"></i><span>页面说明</span></button>
+  <button hidden id="annoToggle" class="annotation-toggle" type="button" aria-label="查看页面说明"><i data-lucide="message-circle-more" aria-hidden="true"></i><span>页面说明</span></button>
   <div id="annoPopup" class="annotation-popup" role="dialog" aria-modal="true" aria-labelledby="annoTitle" hidden><section class="annotation-card"><h2 id="annoTitle">访问策略</h2><p>用于配置成员在指定账号环境中的网页访问范围。列表、策略表单和选择弹窗均按截图中的业务结构还原。</p><button id="closeAnno" class="btn btn-primary" type="button">关闭</button></section></div>
-  <div id="toastHost" class="toast-host" role="status" aria-live="polite"></div>
+  <!-- 业务规则说明浮层，不创建全局弹层 -->
+  <aside id="rulesPopover" class="rules-popover" aria-labelledby="rulesTitle" hidden>
+    <h2 id="rulesTitle">生效规则说明</h2>
+    <ul>
+      <li>所有启用的访问规则，执行叠加生效</li>
+      <li>若存在规则冲突时，按「限制访问」/「不可操作」/「记录行为」规则生效，如：</li>
+    </ul>
+    <div class="rules-example">
+      <h3>案例1：</h3>
+      <ul>
+        <li>规则A：<br>「网址A」允许访问</li>
+        <li>规则B：<br>「网址A」限制访问</li>
+        <li class="rules-result">实际生效规则：<br>限制访问「网址A」</li>
+      </ul>
+      <h3>案例2：</h3>
+      <ul>
+        <li>规则A：<br>「网址A」允许访问且记录行为</li>
+        <li>规则B：<br>「网址A」允许访问且不记录行为</li>
+        <li class="rules-result">实际生效规则：<br>「网址A」允许访问且记录行为</li>
+      </ul>
+    </div>
+  </aside>
 
   <script>
     'use strict';
@@ -258,6 +321,11 @@
       {id:'P-023',name:'大促权限保护',description:'大促期间收紧账号权限页面访问',mode:'黑名单',account:'指定 2 个账号',member:'指定 4 名成员',web:'3 个网页',created:'2026-08-07 14:02',enabled:false},
       {id:'P-024',name:'财务报表访问白名单',description:'财务人员仅访问财务数据与结算页面',mode:'白名单',account:'指定 2 个账号',member:'指定 2 名成员',web:'2 个网页',created:'2026-08-07 10:38',enabled:true}
     ];
+    // 内联模拟数据：覆盖预置策略、访问特例、永久与定时生效。
+    strategies.forEach((item,index)=>{item.period=index%5===2?'每日 09:00–18:00':'永久生效';});
+    Object.assign(strategies[0],{name:'亚马逊自动二步验证策略',description:'系统预设，不可删除；保护账号二步验证设置',member:'除 BOSS 外所有成员',account:'指定账号：AMZ-US-***8',preset:true});
+    Object.assign(strategies[9],{mode:'访问特例',name:'财务结算临时访问',description:'财务核对结算期间的访问特例'});
+    Object.assign(strategies[23],{mode:'访问特例',name:'店长账号维护特例',description:'允许指定店长维护账号设置',enabled:false});
     const members = [{id:'m1',name:'屈',department:'默认部门',selected:true},{id:'m2',name:'陈小云',department:'一部',selected:false},{id:'m3',name:'李明',department:'一部',selected:false},{id:'m4',name:'王芳',department:'运营组',selected:false},{id:'m5',name:'林晓',department:'运营组',selected:false}];
     const accounts = [{id:'a1',name:'ymx',platform:'亚马逊前台 - 美国',account:'lsors@qq.com'},{id:'a2',name:'yyy',platform:'亚马逊前台 - 美国',account:'lsors@qq.com'},{id:'a3',name:'亚马逊前台',platform:'亚马逊前台 - 美国',account:'lsors@qq.com'},{id:'a4',name:'ymxqt',platform:'亚马逊前台 - 美国',account:'lsors@qq.com'},{id:'a5',name:'ymxht',platform:'亚马逊后台 - 美国',account:'1351231232123'},{id:'a6',name:'英国店铺',platform:'亚马逊后台 - 英国',account:'seller@example.com'}];
     const defaultRules = [
@@ -268,16 +336,40 @@
       {id:'r5',description:'TikTok Shop 网页 5',url:'https://seller.tiktok.com',block:false,log:false},
       {id:'r6',description:'Amazon 订单页面 6',url:'https://sellercentral.amazon.com',block:false,log:true}
     ];
-    const state = {page:1,pageSize:10,filters:{keyword:'',mode:'',status:'',createdFrom:'',createdTo:''},view:'list',editingId:null,policyMode:'黑名单',rules:defaultRules.map(rule=>({...rule})),selectedMembers:new Set(['m1']),selectedAccounts:new Set(),deleteId:null,accountPage:1,accountPageSize:5};
+    const state = {tab:'黑名单',selected:new Set(),visibleIds:[],page:1,pageSize:10,filters:{keyword:'',mode:'',status:'',createdFrom:'',createdTo:''},view:'list',editingId:null,policyMode:'黑名单',rules:defaultRules.map(rule=>({...rule})),selectedMembers:new Set(['m1']),selectedAccounts:new Set(),deleteId:null,accountPage:1,accountPageSize:5};
     const $ = id => document.getElementById(id);
     const $$ = selector => Array.from(document.querySelectorAll(selector));
     const escapeHtml = value => String(value).replace(/[&<>'"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'})[char]);
-    function toast(message, tone='info'){const meta={success:{icon:'circle-check',className:'toast-success'},warning:{icon:'triangle-alert',className:'toast-warning'},danger:{icon:'circle-x',className:'toast-danger'},info:{icon:'info',className:'toast-info'}}[tone]||{icon:'info',className:'toast-info'};const node=document.createElement('div');node.className=`toast ${meta.className}`;node.setAttribute('role',tone==='danger'?'alert':'status');node.innerHTML=`<i data-lucide="${meta.icon}" aria-hidden="true"></i><span>${escapeHtml(message)}</span>`;$('toastHost').appendChild(node);renderIcons();setTimeout(()=>node.remove(),2400)}
+    let feedbackTimer;
+    function toast(message){clearTimeout(feedbackTimer);$('listFeedback').textContent=message;$('listFeedback').hidden=false;feedbackTimer=setTimeout(()=>$('listFeedback').hidden=true,4000)}
     function renderIcons(){window.lucide?.createIcons?.()}
-    function renderList(){const keyword=state.filters.keyword.toLowerCase();const from=state.filters.createdFrom;const to=state.filters.createdTo;const filtered=strategies.filter(item=>{const searchable=[item.name,item.description,item.account,item.member,item.mode].join(' ').toLowerCase();const created=item.created.slice(0,10);return (!keyword||searchable.includes(keyword))&&(!state.filters.mode||item.mode===state.filters.mode)&&(!state.filters.status||(state.filters.status==='enabled'?item.enabled:!item.enabled))&&(!from||created>=from)&&(!to||created<=to)});const pages=Math.max(1,Math.ceil(filtered.length/state.pageSize));state.page=Math.min(state.page,pages);const pageRows=filtered.slice((state.page-1)*state.pageSize,state.page*state.pageSize);$('strategyRows').innerHTML=pageRows.map(item=>`<tr><td class="name-cell">${escapeHtml(item.name)}</td><td class="desc-cell">${escapeHtml(item.description)}</td><td><span class="mode-badge ${item.mode==='黑名单'?'mode-black':'mode-white'}">${item.mode}</span></td><td>${escapeHtml(item.account)}</td><td>${escapeHtml(item.member)}</td><td>${escapeHtml(item.web)}</td><td class="mono text-[12px]">${item.created}</td><td><button class="switch" type="button" role="switch" aria-checked="${item.enabled}" aria-label="${escapeHtml(item.name)}启用状态" data-toggle-id="${item.id}"></button></td><td><div class="table-actions"><button class="btn-link" type="button" data-edit-id="${item.id}">编辑</button><button class="btn-link btn-danger-link" type="button" data-delete-id="${item.id}">删除</button></div></td></tr>`).join('');$('tableEmpty').hidden=pageRows.length>0;renderPagination(filtered.length,pages);renderIcons()}
+    // 查询顺序：关键词与抽屉条件 → 分类 → 分页；勾选仅限当前页。
+    function renderList(){
+      const terms=state.filters.keyword.toLowerCase().split('，').map(v=>v.trim()).filter(Boolean);
+      const filtered=strategies.filter(item=>{
+        const text=[item.name,item.description].join(' ').toLowerCase();const date=item.created.slice(0,10);
+        return (!terms.length||terms.some(term=>text.includes(term)))&&(!state.filters.mode||item.mode===state.filters.mode)&&(!state.filters.status||(state.filters.status==='enabled'?item.enabled:!item.enabled))&&(!state.filters.createdFrom||date>=state.filters.createdFrom)&&(!state.filters.createdTo||date<=state.filters.createdTo);
+      });
+      const types=[['黑名单','black'],['白名单','white'],['访问特例','exception'],['全部','all']];
+      $('policyTabs').innerHTML=types.map(([type,key])=>`<button type="button" id="tab-${key}" class="policy-tab" role="tab" aria-selected="${state.tab===type}" tabindex="${state.tab===type?0:-1}" aria-controls="policyPanel" data-tab="${type}">${type}（<span class="mono">${type==='全部'?filtered.length:filtered.filter(item=>item.mode===type).length}</span>）</button>`).join('');
+      $('policyPanel').setAttribute('aria-labelledby',`tab-${types.find(([type])=>type===state.tab)[1]}`);
+      const rows=filtered.filter(item=>state.tab==='全部'||item.mode===state.tab);
+      const pages=Math.max(1,Math.ceil(rows.length/state.pageSize));state.page=Math.min(state.page,pages);
+      const current=rows.slice((state.page-1)*state.pageSize,state.page*state.pageSize);state.visibleIds=current.map(item=>item.id);
+      state.selected=new Set([...state.selected].filter(id=>state.visibleIds.includes(id)));
+      const cell=(value,cls='')=>`<td class="${cls}"><span class="cell-text" title="${escapeHtml(value)}">${escapeHtml(value)}</span></td>`;
+      $('strategyRows').innerHTML=current.map(item=>`<tr class="${state.selected.has(item.id)?'is-selected':''}"><td><input type="checkbox" data-select-id="${item.id}" aria-label="选择${escapeHtml(item.name)}" ${state.selected.has(item.id)?'checked':''}></td>${cell(item.name,'name-cell')}${cell(item.description,'desc-cell')}${cell(item.member)}${cell(item.account)}${cell('指定网页 · '+item.mode)}${cell(item.period||'永久生效')}<td><div class="status-control"><button class="switch" type="button" role="switch" aria-checked="${item.enabled}" aria-label="${escapeHtml(item.name)}启用状态" data-toggle-id="${item.id}"></button><span>${item.enabled?'已启用':'已停用'}</span></div></td><td><div class="table-actions"><button class="btn-link" type="button" data-edit-id="${item.id}">编辑</button><button class="btn-link" type="button" data-copy-id="${item.id}">复制</button><button class="btn-link btn-danger-link" type="button" data-delete-id="${item.id}" ${item.preset?'disabled title="系统预置策略不可删除"':''}>删除</button></div></td></tr>`).join('');
+      $('tableEmpty').hidden=current.length>0;syncSelection();renderPagination(rows.length,pages);renderIcons();
+    }
+    function syncSelection(){
+      $('selectedCount').textContent=state.selected.size;$('batchBar').hidden=!state.selected.size;
+      $('selectPage').checked=state.visibleIds.length>0&&state.selected.size===state.visibleIds.length;
+      $('selectPage').indeterminate=state.selected.size>0&&state.selected.size<state.visibleIds.length;$('selectPage').disabled=!state.visibleIds.length;
+      document.querySelectorAll('[data-select-id]').forEach(input=>{input.checked=state.selected.has(input.dataset.selectId);input.closest('tr').classList.toggle('is-selected',input.checked)});
+    }
     function renderPagination(total,pages){const numbers=[];for(let i=1;i<=pages;i++){if(pages>7&&i>2&&i<pages-1&&Math.abs(i-state.page)>1){if(numbers[numbers.length-1]!=='...')numbers.push('...')}else numbers.push(i)}$('listPagination').innerHTML=`<span>共 ${total} 条</span><label class="page-size-wrap"><span class="sr-only">每页条数</span><select id="pageSizeSelect" class="page-size"><option value="10" ${state.pageSize===10?'selected':''}>10条/页</option><option value="20" ${state.pageSize===20?'selected':''}>20条/页</option></select><i data-lucide="chevron-down" aria-hidden="true"></i></label><div class="page-number-list"><button class="page-button" type="button" data-page="${state.page-1}" ${state.page===1?'disabled':''} aria-label="上一页"><i data-lucide="chevron-left"></i></button>${numbers.map(number=>number==='...' ? '<span class="px-1 text-ink-muted">...</span>' : `<button class="page-button ${number===state.page?'active':''}" type="button" data-page="${number}" ${number===state.page?'aria-current="page"':''}>${number}</button>`).join('')}<button class="page-button" type="button" data-page="${state.page+1}" ${state.page===pages?'disabled':''} aria-label="下一页"><i data-lucide="chevron-right"></i></button></div><label class="page-jump">前往<input id="jumpPage" type="text" value="${state.page}" inputmode="numeric" aria-label="跳转页码">页</label>`;renderIcons();$$('[data-page]').forEach(button=>button.addEventListener('click',()=>{if(button.disabled)return;state.page=Number(button.dataset.page);renderList()}));$('pageSizeSelect').addEventListener('change',event=>{state.pageSize=Number(event.target.value);state.page=1;renderList()});$('jumpPage').addEventListener('keydown',event=>{if(event.key!=='Enter')return;const page=Number(event.target.value);if(!Number.isInteger(page)||page<1||page>pages){event.target.value=String(state.page);toast(`请输入 1-${pages} 之间的页码`,'warning');return}state.page=page;renderList()})}
     function updateListFilters(){const createdFrom=$('createdFrom').value.trim();const createdTo=$('createdTo').value.trim();const datePattern=/^\d{4}-\d{2}-\d{2}$/;let error='';if(createdFrom&&!datePattern.test(createdFrom))error='开始时间请使用 YYYY-MM-DD 格式';else if(createdTo&&!datePattern.test(createdTo))error='结束时间请使用 YYYY-MM-DD 格式';else if(createdFrom&&createdTo&&createdFrom>createdTo)error='开始时间不能晚于结束时间';$('filterError').textContent=error;$('filterError').hidden=!error;if(error){toast(error,'warning');return}state.filters.keyword=$('keywordFilter').value.trim();state.filters.mode=$('modeFilter').value;state.filters.status=$('statusFilter').value;state.filters.createdFrom=createdFrom;state.filters.createdTo=createdTo;state.page=1;renderList()}
-    function showCreate(id=null){state.view='create';state.editingId=id;state.policyMode=id?strategies.find(item=>item.id===id)?.mode||'黑名单':'黑名单';state.rules=id?defaultRules.map(rule=>({...rule})):defaultRules.map(rule=>({...rule}));$('listView').hidden=true;$('createView').hidden=false;$('createTitle').textContent=id?'编辑访问策略':'新增访问策略';$('policyName').value=id?strategies.find(item=>item.id===id)?.name||'':'';$('policyDescription').value=id?strategies.find(item=>item.id===id)?.description||'':'';updateCounts();renderPolicyMode();renderRules();history.pushState({view:'create'},'',`?embedded=1&view=create${id?`&id=${encodeURIComponent(id)}`:''}`);$('createView').querySelector('input')?.focus();renderIcons()}
+    function showCreate(id=null){toast(id?'编辑页面待补充':'新增页面待补充');return; /* 旧版表单保留，待新设计接入。 */state.view='create';state.editingId=id;state.policyMode=id?strategies.find(item=>item.id===id)?.mode||'黑名单':'黑名单';state.rules=id?defaultRules.map(rule=>({...rule})):defaultRules.map(rule=>({...rule}));$('listView').hidden=true;$('createView').hidden=false;$('createTitle').textContent=id?'编辑访问策略':'新增访问策略';$('policyName').value=id?strategies.find(item=>item.id===id)?.name||'':'';$('policyDescription').value=id?strategies.find(item=>item.id===id)?.description||'':'';updateCounts();renderPolicyMode();renderRules();history.pushState({view:'create'},'',`?embedded=1&view=create${id?`&id=${encodeURIComponent(id)}`:''}`);$('createView').querySelector('input')?.focus();renderIcons()}
     function showList(push=true){state.view='list';$('createView').hidden=true;$('listView').hidden=false;if(push)history.pushState({view:'list'},'', '?embedded=1');renderList();$('newPolicyButton').focus()}
     function updateCounts(){$('policyNameCount').textContent=`${$('policyName').value.length} / 24`;$('policyDescriptionCount').textContent=`${$('policyDescription').value.length} / 200`}
     function renderPolicyMode(){$$('[data-policy-mode]').forEach(card=>card.classList.toggle('selected',card.dataset.policyMode===state.policyMode))}
@@ -303,12 +395,58 @@
     function commitFilterDrawer(){
       const from=$('drawerCreatedFrom').value.trim();const to=$('drawerCreatedTo').value.trim();const datePattern=/^\d{4}-\d{2}-\d{2}$/;let error='';if(from&&!datePattern.test(from))error='开始时间请使用 YYYY-MM-DD 格式';else if(to&&!datePattern.test(to))error='结束时间请使用 YYYY-MM-DD 格式';else if(from&&to&&from>to)error='开始时间不能晚于结束时间';$('drawerFilterError').textContent=error;$('drawerFilterError').hidden=!error;if(error)return;state.filters.mode=$('drawerMode').value;state.filters.status=$('drawerStatus').value;state.filters.createdFrom=from;state.filters.createdTo=to;state.page=1;syncFilterBadge();closeFilterDrawer();renderList()
     }
-    function initEvents(){
-      $('newPolicyButton').addEventListener('click',()=>showCreate());$('searchSubmit').addEventListener('click',applySearch);$('keywordFilter').addEventListener('input',()=>{$('searchClear').hidden=!$('keywordFilter').value;applySearch()});$('keywordFilter').addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();applySearch()}});$('searchClear').addEventListener('click',()=>{$('keywordFilter').value='';applySearch();$('keywordFilter').focus()});$('filterButton').addEventListener('click',openFilterDrawer);$('filterDrawerClose').addEventListener('click',closeFilterDrawer);$('filterDrawerCancel').addEventListener('click',closeFilterDrawer);$('filterDrawerSubmit').addEventListener('click',commitFilterDrawer);$('drawerFilterForm').addEventListener('submit',event=>{event.preventDefault();commitFilterDrawer()});$('filterDrawerOverlay').addEventListener('click',event=>{if(event.target===$('filterDrawerOverlay'))closeFilterDrawer()});$('backToListButton').addEventListener('click',()=>showList());$('savePolicyButton').addEventListener('click',validateAndSave);$('policyName').addEventListener('input',updateCounts);$('policyDescription').addEventListener('input',updateCounts);$$('[data-policy-mode]').forEach(card=>card.addEventListener('click',()=>{state.policyMode=card.dataset.policyMode;renderPolicyMode()}));$('addWebButton').addEventListener('click',()=>openModal('webModal'));$('saveWebButton').addEventListener('click',saveWeb);$('memberSelectButton').addEventListener('click',()=>{renderMemberTree();openModal('memberModal')});$('accountSelectButton').addEventListener('click',()=>{renderAccounts();openModal('accountModal')});$('memberSearch').addEventListener('input',renderMemberTree);$('accountSearch').addEventListener('input',()=>{state.accountPage=1;renderAccounts()});$('selectAllMembers').addEventListener('change',event=>{members.forEach(member=>event.target.checked?state.selectedMembers.add(member.id):state.selectedMembers.delete(member.id));renderMemberTree()});$('clearMembers').addEventListener('click',()=>{state.selectedMembers.clear();renderMemberTree()});$('confirmMembers').addEventListener('click',()=>{const custom=document.querySelector('input[name="memberScope"][value="custom"]').checked;$('memberSelectButton').textContent=custom?`已选择 ${state.selectedMembers.size} 名成员`:'已选择全部成员';closeModal('memberModal');toast('成员范围已更新','success')});$('selectAllAccounts').addEventListener('change',event=>{const keyword=$('accountSearch').value.trim().toLowerCase();accounts.filter(item=>`${item.name}${item.platform}${item.account}`.toLowerCase().includes(keyword)).slice((state.accountPage-1)*state.accountPageSize,state.accountPage*state.accountPageSize).forEach(item=>event.target.checked?state.selectedAccounts.add(item.id):state.selectedAccounts.delete(item.id));renderAccounts()});$('confirmAccounts').addEventListener('click',()=>{const custom=document.querySelector('input[name="accountScope"][value="custom"]').checked;$('accountSelectButton').textContent=custom?`已选择 ${state.selectedAccounts.size} 个账号`:'已选择全部账号';closeModal('accountModal');toast('账号范围已更新','success')});$('refreshAccounts').addEventListener('click',()=>{renderAccounts();toast('账号列表已刷新','success')});$('saveWebButton').addEventListener('keydown',event=>{if(event.key==='Enter')saveWeb()});$$('[data-close-modal]').forEach(button=>button.addEventListener('click',()=>closeModal(button.dataset.closeModal)));$$('.modal-overlay').forEach(overlay=>overlay.addEventListener('click',event=>{if(event.target===overlay)closeModal(overlay.id)}));$('confirmDeleteButton').addEventListener('click',()=>{if(!state.deleteId)return;const index=strategies.findIndex(item=>item.id===state.deleteId);if(index>=0)strategies.splice(index,1);closeModal('deleteModal');state.deleteId=null;renderList();toast('访问策略已删除','success')});$('annoToggle').addEventListener('click',()=>{$('annoPopup').hidden=false;$('closeAnno').focus()});$('closeAnno').addEventListener('click',()=>{$('annoPopup').hidden=true;$('annoToggle').focus()});$('annoPopup').addEventListener('click',event=>{if(event.target===$('annoPopup')){$('annoPopup').hidden=true;$('annoToggle').focus()}});document.addEventListener('keydown',event=>{if(event.key==='Escape'){if(!$('annoPopup').hidden){$('annoPopup').hidden=true;$('annoToggle').focus();return}$$('.modal-overlay').forEach(overlay=>{if(!overlay.hidden)closeModal(overlay.id)})}});$('strategyRows').addEventListener('click',event=>{const toggle=event.target.closest('[data-toggle-id]');if(toggle){const item=strategies.find(item=>item.id===toggle.dataset.toggleId);if(item){item.enabled=!item.enabled;toggle.setAttribute('aria-checked',String(item.enabled));toast(item.enabled?'策略已启用':'策略已停用',item.enabled?'success':'warning')}return}const edit=event.target.closest('[data-edit-id]');if(edit){showCreate(edit.dataset.editId);return}const del=event.target.closest('[data-delete-id]');if(del){state.deleteId=del.dataset.deleteId;openModal('deleteModal')}});$('ruleRows').addEventListener('click',event=>{const del=event.target.closest('[data-rule-delete]');if(!del)return;state.rules=state.rules.filter(rule=>rule.id!==del.dataset.ruleDelete);renderRules()});$$('input[name="memberScope"]').forEach(input=>input.addEventListener('change',()=>{$$('input[name="memberScope"]').forEach(item=>item.closest('.radio-option')?.classList.toggle('is-selected',item.checked));if(input.value==='custom'){$('memberSelectButton').textContent=`已选择 ${state.selectedMembers.size} 名成员`}}));$$('input[name="accountScope"]').forEach(input=>input.addEventListener('change',()=>{$$('input[name="accountScope"]').forEach(item=>item.closest('.radio-option')?.classList.toggle('is-selected',item.checked));if(input.value==='custom'){$('accountSelectButton').textContent=`已选择 ${state.selectedAccounts.size} 个账号`}}));window.addEventListener('popstate',()=>{location.hash==='#create'||new URLSearchParams(location.search).get('view')==='create'?showCreate(null):showList(false)});
-      document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!$('filterDrawerOverlay').hidden){closeFilterDrawer();return}if(event.key==='Escape'){if(!$('annoPopup').hidden){$('annoPopup').hidden=true;$('annoToggle').focus();return}$$('.modal-overlay').forEach(overlay=>{if(!overlay.hidden)closeModal(overlay.id)})}});syncFilterBadge();
+    // 列表事件与业务浮层；新增、编辑暂不进入旧版表单。
+    let dialogTrigger=null;
+    function setDialogOpen(id,open){
+      $(id).hidden=!open;document.body.style.overflow=open?'hidden':'';$('listView').inert=open;
+      if(open){dialogTrigger=document.activeElement;$(id).querySelector('button,input,select')?.focus()}
+      else{(dialogTrigger?.isConnected?dialogTrigger:$('newPolicyButton')).focus()}
     }
-    const annotations_removed={1:{title:'新增访问策略',desc:['触发：点击数据区右上角新增访问策略','响应：打开新增策略表单','规则：保存前校验策略名称和网页规则']},2:{title:'搜索与筛选',desc:['触发：输入关键词或点击筛选','响应：关键词即时搜索，结构化条件在抽屉确认后生效','规则：筛选条件与搜索结果取交集']},3:{title:'策略列表',desc:['触发：页面加载、搜索或筛选条件变化','响应：展示策略名称、说明、模式、对象、网页和状态','规则：列表由内联 mock data 驱动']},4:{title:'策略分页',desc:['触发：点击页码、每页条数或跳页输入','响应：切换当前列表页','规则：跳页必须在有效页码范围内']},5:{title:'保存访问策略',desc:['触发：点击保存并立即生效','响应：创建或更新访问策略并返回列表','规则：策略名称和至少一条网页规则为必填']}};
-    function boot(){if(new URLSearchParams(location.search).get('view')==='create'||location.hash==='#create')showCreate(null);else{renderList();updateCounts()}initEvents();renderIcons()}
+    function toggleRules(open){
+      $('rulesPopover').hidden=!open;$('rulesButton').setAttribute('aria-expanded',String(open));
+      if(open){const box=$('rulesButton').getBoundingClientRect();const panel=$('rulesPopover');panel.style.left=Math.max(16,Math.min(box.right-panel.offsetWidth,innerWidth-panel.offsetWidth-16))+'px';panel.style.top=Math.max(16,Math.min(box.bottom+8,innerHeight-panel.offsetHeight-16))+'px'}
+    }
+    function initEvents(){
+      $('newPolicyButton').onclick=()=>showCreate();
+      $('keywordFilter').oninput=applySearch;$('searchSubmit').onclick=applySearch;
+      $('keywordFilter').onkeydown=event=>{if(event.key==='Enter'){event.preventDefault();applySearch()}};
+      $('searchClear').onclick=()=>{$('keywordFilter').value='';applySearch();$('keywordFilter').focus()};
+      $('filterButton').onclick=()=>{toggleRules(false);openFilterDrawer();document.body.style.overflow='hidden';$('listView').inert=true};
+      const closeFilter=()=>{closeFilterDrawer();document.body.style.overflow='';$('listView').inert=false;$('filterButton').focus()};
+      $('filterDrawerClose').onclick=closeFilter;
+      /* design.md §5.4.4：底部「重置」仅清空当前草稿，不提交、不关闭抽屉 */
+      $('filterDrawerReset').onclick=()=>{$('drawerMode').selectedIndex=0;$('drawerStatus').selectedIndex=0;$('drawerCreatedFrom').value='';$('drawerCreatedTo').value='';$('drawerFilterError').hidden=true;$('drawerFilterError').textContent='';document.querySelectorAll('#drawerFilterForm [aria-invalid="true"]').forEach(el=>el.removeAttribute('aria-invalid'));$('drawerMode').focus()};
+      $('filterDrawerSubmit').onclick=()=>{commitFilterDrawer();if($('filterDrawerOverlay').hidden)closeFilter()};
+      $('drawerFilterForm').onsubmit=e=>{e.preventDefault();$('filterDrawerSubmit').click()};
+      $('filterDrawerOverlay').onclick=e=>{if(e.target===$('filterDrawerOverlay'))closeFilter()};
+      $('policyTabs').onclick=e=>{const tab=e.target.closest('[data-tab]');if(!tab)return;state.tab=tab.dataset.tab;state.page=1;state.selected.clear();renderList();document.querySelector('[data-tab="'+state.tab+'"]').focus()};
+      $('policyTabs').onkeydown=e=>{const keys=['ArrowLeft','ArrowRight','Home','End'];if(!keys.includes(e.key))return;e.preventDefault();const tabs=[...$('policyTabs').children];let i=tabs.indexOf(document.activeElement);i=e.key==='Home'?0:e.key==='End'?tabs.length-1:(i+(e.key==='ArrowRight'?1:-1)+tabs.length)%tabs.length;tabs[i].click()};
+      $('selectPage').onchange=e=>{state.selected=new Set(e.target.checked?state.visibleIds:[]);syncSelection()};
+      $('clearSelection').onclick=()=>{state.selected.clear();syncSelection();$('selectPage').focus()};
+      $('batchBar').onclick=e=>{const action=e.target.closest('[data-batch]');if(!action)return;const count=state.selected.size;strategies.forEach(item=>{if(state.selected.has(item.id))item.enabled=action.dataset.batch==='enable'});state.selected.clear();renderList();toast(`已${action.dataset.batch==='enable'?'启用':'停用'} ${count} 条策略`);$('selectPage').focus()};
+      $('strategyRows').onchange=e=>{const id=e.target.dataset.selectId;if(!id)return;e.target.checked?state.selected.add(id):state.selected.delete(id);syncSelection()};
+      $('strategyRows').onclick=e=>{
+        const button=e.target.closest('button');if(!button||button.disabled)return;
+        if(button.dataset.editId){showCreate(button.dataset.editId);return}
+        const id=button.dataset.toggleId||button.dataset.copyId||button.dataset.deleteId;const item=strategies.find(row=>row.id===id);if(!item)return;
+        if(button.dataset.toggleId){item.enabled=!item.enabled;renderList();document.querySelector(`[data-toggle-id="${id}"]`)?.focus();toast(item.enabled?'策略已启用':'策略已停用')}
+        if(button.dataset.copyId){let name=item.name+'（副本）';let n=2;while(strategies.some(row=>row.name===name))name=item.name+`（副本 ${n++}）`;strategies.unshift({...item,id:'P-'+Date.now()+'-'+n,name,preset:false,enabled:false,created:new Date().toISOString().slice(0,16).replace('T',' ')});state.filters={keyword:'',mode:'',status:'',createdFrom:'',createdTo:''};$('keywordFilter').value='';$('searchClear').hidden=true;state.tab=item.mode;state.page=1;state.selected.clear();syncFilterBadge();renderList();toast('已复制为停用副本：'+name);$('newPolicyButton').focus()}
+        if(button.dataset.deleteId&&!item.preset){state.deleteId=id;$('deletePolicyName').textContent=item.name;setDialogOpen('deleteModal',true)}
+      };
+      $('confirmDeleteButton').onclick=()=>{const index=strategies.findIndex(row=>row.id===state.deleteId);if(index>=0&&!strategies[index].preset){state.selected.delete(state.deleteId);strategies.splice(index,1);renderList();toast('访问策略已删除，历史日志保留')}state.deleteId=null;setDialogOpen('deleteModal',false)};
+      $('deleteModal').onclick=e=>{if(e.target===$('deleteModal')||e.target.closest('[data-close-modal]'))setDialogOpen('deleteModal',false)};
+      $('rulesButton').onclick=()=>toggleRules($('rulesPopover').hidden);
+      document.addEventListener('click',e=>{if(!e.target.closest('#rulesButton,#rulesPopover'))toggleRules(false)});
+      window.addEventListener('resize',()=>toggleRules(false));window.addEventListener('scroll',()=>toggleRules(false),true);
+      document.addEventListener('keydown',e=>{
+        const active=!$('filterDrawerOverlay').hidden?$('filterDrawerOverlay'):!$('deleteModal').hidden?$('deleteModal'):null;
+        if(e.key==='Escape'){if(active?.id==='filterDrawerOverlay')closeFilter();else if(active)setDialogOpen(active.id,false);else if(!$('rulesPopover').hidden){toggleRules(false);$('rulesButton').focus()}}
+        if(e.key==='Tab'&&active){const items=[...active.querySelectorAll('button:not(:disabled),input,select')].filter(el=>el.getClientRects().length);const first=items[0],last=items.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}}
+      });
+      syncFilterBadge();
+    }
+    const annotations_removed={1:{title:'新增策略',desc:['新增页面待补充']},2:{title:'搜索策略',desc:['按名称或描述搜索；中文逗号分隔的关键词取并集']},3:{title:'筛选',desc:['抽屉内为草稿；重置仅清空草稿，确认提交后生效']},4:{title:'生效规则',desc:['类型优先级：访问特例 > 白名单 > 黑名单','同类型冲突按限制访问、不可操作、记录行为优先']},5:{title:'策略分类',desc:['切换分类后回到第一页并清空勾选']},6:{title:'分页',desc:['每页条数与页码作用于筛选结果']}};
+    function boot(){renderList();initEvents();renderIcons()}
     boot();
   </script>
 </body>

@@ -513,7 +513,7 @@ body[data-yundeng-system-frame="true"] .yundeng-router-outlet { width: 100%; hei
 body[data-yundeng-system-frame="true"] .yundeng-module-frame { width: 100%; height: 100%; min-width: 0; min-height: 0; display: block; border: 0; background: #F7F8FA; }
 body[data-yundeng-system-frame="true"] .yundeng-route-loading { position: absolute; inset: 0; z-index: 2; display: flex; align-items: center; justify-content: center; gap: 8px; color: #6E7685; background: #F7F8FA; font-size: 13px; }
 body[data-yundeng-system-frame="true"] .yundeng-route-loading[hidden] { display: none !important; }
-body[data-yundeng-system-frame="true"] .yundeng-route-loading[data-state="loading"] svg { width: 18px; height: 18px; animation: yundeng-browser-spin .8s linear infinite; }
+body[data-yundeng-system-frame="true"] .yundeng-route-loading[data-state="loading"] svg { width: 18px; height: 18px; animation: yundeng-shell-spin .8s linear infinite; }
 body[data-yundeng-system-frame="true"] .yundeng-route-loading[data-state="error"] { flex-direction: column; gap: 12px; text-align: center; color: #3A3F4A; }
 body[data-yundeng-system-frame="true"] .yundeng-route-loading[data-state="error"] > svg { width: 28px; height: 28px; color: #D9001B; }
 body[data-yundeng-system-frame="true"] .yundeng-route-loading[data-state="error"] div { display: flex; flex-direction: column; gap: 4px; }
@@ -536,85 +536,8 @@ body[data-yundeng-embedded="true"] #mainContent > .page-content > section#coupon
 body[data-yundeng-embedded="true"] #mainContent > .page-content > section#ordersPanel > .card:first-child { flex: 1 1 auto; min-height: 0; }
 body[data-yundeng-embedded="true"] #annoToggle { display: none !important; }
 
-body[data-yundeng-shell] .yundeng-browser-frame { box-sizing: border-box; height: 84px; min-height: 84px; margin: 0; flex: 0 0 84px; display: flex; flex-direction: column; gap: 0; padding-bottom: 0; position: relative; z-index: 100; color: #3A3F4A; background: #F0F1F3; }
-body[data-yundeng-shell] .yundeng-tab-strip { box-sizing: border-box; height: 32px; min-height: 32px; flex: 0 0 32px; padding: 2px 8px 0; display: flex; align-items: flex-end; gap: 8px; background: #E6F0FF; }
-body[data-yundeng-shell] .yundeng-window-controls { width: 52px; height: 30px; display: flex; align-items: center; gap: 6px; flex: none; }
-body[data-yundeng-shell] .yundeng-window-controls span { width: 10px; height: 10px; border-radius: 50%; display: block; }
-body[data-yundeng-shell] .yundeng-window-controls .is-danger { background: #D9001B; }
-body[data-yundeng-shell] .yundeng-window-controls .is-warning { background: #E7772D; }
-body[data-yundeng-shell] .yundeng-window-controls .is-success { background: #0FC060; }
-body[data-yundeng-shell] .yundeng-tab-cluster { min-width: 0; height: 30px; flex: 1; display: flex; align-items: flex-end; gap: 4px; overflow: hidden; }
-body[data-yundeng-shell] .yundeng-browser-tabs { min-width: 0; width: auto; max-width: calc(100% - 32px); height: 30px; flex: 0 1 auto; display: flex; align-items: flex-end; gap: 4px; overflow-x: auto; overflow-y: hidden; scrollbar-width: none; }
-body[data-yundeng-shell] .yundeng-browser-tabs::-webkit-scrollbar { display: none; }
-body[data-yundeng-shell] .yundeng-browser-tab { min-width: 160px; max-width: 240px; height: 28px; padding: 0 6px 0 10px; flex: 0 1 240px; display: flex; align-items: center; gap: 8px; border-radius: 8px 8px 0 0; color: #6E7685; background: #F7F8FA; cursor: pointer; user-select: none; }
-body[data-yundeng-shell] .yundeng-browser-tab:hover { background: #F3F4F6; }
-body[data-yundeng-shell] .yundeng-browser-tab[data-active="true"] { color: #1A1D24; background: #fff; }
-body[data-yundeng-shell] .yundeng-browser-tab-mark { width: 18px; height: 18px; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; flex: none; color: #fff; background: #0066FF; font-size: 10px; font-weight: 700; }
-body[data-yundeng-shell] .yundeng-browser-tab-title { min-width: 0; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; }
-body[data-yundeng-shell] .yundeng-close-tab { width: 22px; height: 22px; padding: 0; border: 0; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; flex: none; color: #9DA2AC; background: transparent; cursor: pointer; opacity: 0; }
-body[data-yundeng-shell] .yundeng-browser-tab:hover .yundeng-close-tab,
-body[data-yundeng-shell] .yundeng-browser-tab[data-active="true"] .yundeng-close-tab,
-body[data-yundeng-shell] .yundeng-close-tab:focus-visible { opacity: 1; }
-body[data-yundeng-shell] .yundeng-close-tab:hover { color: #3A3F4A; background: #F3F4F6; }
-body[data-yundeng-shell] .yundeng-close-tab svg { width: 14px; height: 14px; }
-body[data-yundeng-shell] .yundeng-browser-toolbar { box-sizing: border-box; height: 52px; min-height: 52px; flex: 0 0 52px; margin: 0; padding: 1px 8px 2px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #F0F1F3; background: #fff; }
-body[data-yundeng-shell] .yundeng-history-actions,
-body[data-yundeng-shell] .yundeng-browser-actions { display: flex; align-items: center; gap: 4px; flex: none; position: relative; }
-body[data-yundeng-shell] .yundeng-browser-button { width: 28px; height: 28px; padding: 0; border: 0; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; flex: none; color: #6E7685; background: transparent; cursor: pointer; }
-body[data-yundeng-shell] .yundeng-browser-button:hover { color: #3A3F4A; background: #F3F4F6; }
-body[data-yundeng-shell] .yundeng-browser-button:disabled { color: #C7CAD1; background: transparent; cursor: default; }
-body[data-yundeng-shell] .yundeng-browser-button svg { width: 16px; height: 16px; }
-body[data-yundeng-shell] .yundeng-new-tab { margin-bottom: 0; }
-body[data-yundeng-shell] .yundeng-address-form { min-width: 160px; height: 32px; padding: 0 4px 0 12px; flex: 1; display: flex; align-items: center; gap: 8px; border: 1px solid #E8EAED; border-radius: 9999px; background: #F7F8FA; }
-body[data-yundeng-shell] .yundeng-address-form:focus-within { border-color: #0066FF; box-shadow: 0 0 0 2px rgba(0,102,255,.12); background: #fff; }
-body[data-yundeng-shell] .yundeng-address-form[data-invalid="true"] { border-color: #D9001B; box-shadow: 0 0 0 2px #FFE8EB; }
-body[data-yundeng-shell] .yundeng-address-form svg { width: 14px; height: 14px; flex: none; color: #9DA2AC; }
-body[data-yundeng-shell] .yundeng-address-form input { min-width: 0; width: auto; height: 28px; padding: 0; flex: 1; border: 0; outline: 0; color: #3A3F4A; background: transparent; font: 12px/1.5 'JetBrains Mono', monospace; }
-body[data-yundeng-shell] .yundeng-bookmark-button { width: 24px; height: 24px; padding: 0; position: relative; flex: none; border: 0; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; color: #6E7685; background: transparent; cursor: pointer; }
-body[data-yundeng-shell] .yundeng-bookmark-button:hover { color: #3A3F4A; background: #E8EAED; }
-body[data-yundeng-shell] .yundeng-bookmark-button[data-bookmarked="true"] { color: #0066FF; }
-body[data-yundeng-shell] .yundeng-bookmark-button[data-bookmarked="true"] svg { fill: currentColor; }
-body[data-yundeng-shell] .yundeng-bookmark-button svg { width: 16px; height: 16px; }
-body[data-yundeng-shell] .yundeng-bookmark-button::after { content: attr(data-yundeng-tooltip); position: absolute; left: 50%; top: calc(100% + 8px); z-index: 1400; width: max-content; max-width: 180px; padding: 5px 8px; border-radius: 4px; color: #FFFFFF; background: #1A1D24; font: 12px/1.4 var(--font-sans); white-space: nowrap; opacity: 0; pointer-events: none; transform: translate(-50%, -2px); transition: opacity .15s ease, transform .15s ease; }
-body[data-yundeng-shell] .yundeng-bookmark-button:hover::after,
-body[data-yundeng-shell] .yundeng-bookmark-button:focus-visible::after { opacity: 1; transform: translate(-50%, 0); }
-body[data-yundeng-shell] .yundeng-browser-panel { box-sizing: border-box; position: absolute; top: calc(100% + 12px); right: 0; z-index: 1300; width: 320px; padding: 0; overflow: hidden; border: 1px solid #DFE1E5; border-radius: 8px; color: #3A3F4A; background: #fff; box-shadow: 0 6px 24px rgba(0,0,0,.12); }
-body[data-yundeng-shell] .yundeng-browser-panel.hidden { display: none; }
-body[data-yundeng-shell] .yundeng-browser-panel strong { color: #1A1D24; font-size: 13px; }
-body[data-yundeng-shell] .yundeng-panel-header { min-height: 44px; padding: 0 10px 0 14px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #E8EAED; }
-body[data-yundeng-shell] .yundeng-panel-header strong { padding: 0; font-size: 14px; }
-body[data-yundeng-shell] .yundeng-panel-close { width: 28px !important; height: 28px !important; min-height: 28px !important; padding: 0 !important; justify-content: center !important; border-radius: 4px !important; }
-body[data-yundeng-shell] .yundeng-panel-copy { padding: 12px 14px 8px; }
-body[data-yundeng-shell] .yundeng-panel-copy strong { display: block; margin-bottom: 4px; font-size: 12px; }
-body[data-yundeng-shell] .yundeng-panel-copy p { margin: 0; padding: 0; color: #6E7685; font-size: 12px; line-height: 1.6; }
-body[data-yundeng-shell] .yundeng-extension-row { min-height: 48px; margin: 0 8px 8px; padding: 6px 4px 6px 8px; display: flex; align-items: center; gap: 8px; border-radius: 4px; background: #F7F8FA; }
-body[data-yundeng-shell] .yundeng-extension-icon { width: 28px; height: 28px; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; flex: none; color: #0066FF; background: #E6F0FF; }
-body[data-yundeng-shell] .yundeng-extension-icon svg { width: 16px; height: 16px; }
-body[data-yundeng-shell] .yundeng-extension-name { min-width: 0; flex: 1; overflow: hidden; color: #3A3F4A; font-size: 13px; text-overflow: ellipsis; white-space: nowrap; }
-body[data-yundeng-shell] .yundeng-panel-icon-button { width: 28px !important; height: 28px !important; min-height: 28px !important; padding: 0 !important; justify-content: center !important; flex: none; }
-body[data-yundeng-shell] .yundeng-panel-icon-button[data-pinned="true"] { color: #0066FF; background: #E6F0FF; }
-body[data-yundeng-shell] .yundeng-extension-more-menu { margin: 0 8px 8px; padding: 4px; border: 1px solid #DFE1E5; border-radius: 4px; background: #FFFFFF; box-shadow: 0 4px 12px rgba(0,0,0,.12); }
-body[data-yundeng-shell] .yundeng-extension-more-menu[hidden] { display: none; }
-body[data-yundeng-shell] .yundeng-panel-footer { min-height: 40px !important; padding: 0 14px !important; border-top: 1px solid #E8EAED; border-radius: 0 !important; }
-body[data-yundeng-shell] .yundeng-download-panel { width: 300px; }
-body[data-yundeng-shell] .yundeng-download-empty { padding: 20px 14px 24px; text-align: center; }
-body[data-yundeng-shell] .yundeng-download-empty svg { width: 24px; height: 24px; margin: 0 auto 8px; color: #9DA2AC; }
-body[data-yundeng-shell] .yundeng-download-empty p { margin: 0; padding: 0; color: #9DA2AC; font-size: 12px; }
-body[data-yundeng-shell] .yundeng-more-panel { width: 260px; padding: 4px 0; }
-body[data-yundeng-shell] .yundeng-browser-panel button { width: 100%; min-height: 32px; padding: 0 14px; border: 0; border-radius: 0; display: flex; align-items: center; gap: 10px; color: #3A3F4A; background: transparent; font: 13px/1.5 inherit; cursor: pointer; text-align: left; }
-body[data-yundeng-shell] .yundeng-browser-panel button:hover { background: #F3F4F6; }
-body[data-yundeng-shell] .yundeng-browser-panel button svg { width: 16px; height: 16px; color: #6E7685; }
-body[data-yundeng-shell] .yundeng-more-item span:first-of-type { min-width: 0; flex: 1; }
-body[data-yundeng-shell] .yundeng-more-shortcut { margin-left: auto; color: #6E7685; font: 12px/1.5 'JetBrains Mono', monospace; white-space: nowrap; }
-body[data-yundeng-shell] .yundeng-more-chevron { margin-left: auto; width: 14px !important; height: 14px !important; }
-body[data-yundeng-shell] .yundeng-more-divider { height: 1px; margin: 4px 0; background: #E8EAED; }
-body[data-yundeng-shell] .yundeng-zoom-row { min-height: 40px; padding: 0 8px; display: flex; align-items: center; gap: 4px; }
-body[data-yundeng-shell] .yundeng-zoom-row > span { min-width: 46px; color: #3A3F4A; font: 12px/1.5 'JetBrains Mono', monospace; text-align: center; }
-body[data-yundeng-shell] .yundeng-zoom-row button { width: 32px; min-height: 32px; padding: 0; justify-content: center; }
-body[data-yundeng-shell] .yundeng-zoom-row button:last-child { margin-left: auto; }
 body[data-yundeng-shell] .yundeng-sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
-body[data-yundeng-shell] .is-spinning svg { animation: yundeng-browser-spin .45s linear; }
-@keyframes yundeng-browser-spin { to { transform: rotate(360deg); } }
+@keyframes yundeng-shell-spin { to { transform: rotate(360deg); } }
 body[data-yundeng-shell] #sidebar {
   width: 220px !important;
   flex: 0 0 220px !important;
@@ -1528,27 +1451,25 @@ body[data-yundeng-shell] .yundeng-mobile-menu { display: none; }
 body[data-yundeng-shell] .yundeng-mobile-backdrop {
   display: none;
   position: fixed;
-  inset: 140px 0 0;
+  inset: 56px 0 0;
   z-index: 40;
   background: rgba(26,29,36,.28);
 }
 body[data-yundeng-shell] .yundeng-mobile-backdrop[data-open="true"] { display: block; }
-body[data-yundeng-shell] #toastContainer { top: 148px !important; }
+body[data-yundeng-shell] #toastContainer { top: 64px !important; }
 @media (max-width: 767px) {
   body[data-yundeng-shell] .yundeng-onboarding-overlay { padding: 0; }
   body[data-yundeng-shell] .yundeng-onboarding-panel { width: 100vw; height: 100vh; height: 100dvh; border-radius: 0; }
-  body[data-yundeng-shell] .yundeng-window-controls { display: none; }
-  body[data-yundeng-shell] .yundeng-browser-tab { min-width: 160px; flex-basis: 200px; }
   body[data-yundeng-shell] [data-yundeng-topbar] { padding: 0 12px !important; }
   body[data-yundeng-shell] .yundeng-mobile-menu { display: inline-flex; }
   body[data-yundeng-shell] .yundeng-account-name,
   body[data-yundeng-shell] .yundeng-account-chevron { display: none; }
   body[data-yundeng-shell] #sidebar {
     position: fixed !important;
-    inset: 140px auto 0 0;
+    inset: 56px auto 0 0;
     z-index: 50;
-    height: calc(100vh - 140px) !important;
-    height: calc(100dvh - 140px) !important;
+    height: calc(100vh - 56px) !important;
+    height: calc(100dvh - 56px) !important;
     transform: translateX(-100%);
     box-shadow: 6px 0 24px rgba(0,0,0,.12) !important;
   }
@@ -1571,9 +1492,6 @@ body[data-yundeng-shell] #toastContainer { top: 148px !important; }
   body[data-yundeng-shell] #sidebar.yundeng-mobile-open.compact .yundeng-subnav { display: block !important; }
 }
 @media (max-width: 560px) {
-  body[data-yundeng-shell] .yundeng-history-actions .yundeng-browser-button:not(#yundeng-browser-reload) { display: none; }
-  body[data-yundeng-shell] .yundeng-tab-strip { gap: 4px; }
-  body[data-yundeng-shell] .yundeng-browser-tab { min-width: 140px; flex-basis: 176px; }
   body[data-yundeng-shell] .yundeng-platform-name { display: none; }
   body[data-yundeng-shell] .yundeng-assistant-header { padding: 0 16px; }
   body[data-yundeng-shell] .yundeng-assistant-body { padding: 20px 16px; }
@@ -1660,12 +1578,12 @@ body[data-yundeng-shell] #toastContainer { top: 148px !important; }
     <div class="overflow-x-auto"><table class="w-full min-w-[1180px]"><thead class="bg-line-lighter text-ink-sub"><tr><th class="p-3 text-left">订单号</th><th class="p-3 text-left">订单类型</th><th class="p-3 text-left">商品名称</th><th class="p-3 text-left">订单金额</th><th class="p-3 text-left">应付金额</th><th class="p-3 text-left">支付方式</th><th class="p-3 text-left">支付时间</th><th class="p-3 text-left">是否可申请</th><th class="p-3 text-left">创建人</th><th class="p-3 text-left">创建时间</th><th class="p-3 text-left">操作</th></tr></thead><tbody id="orderBody"></tbody></table></div>
     <div id="orderPagination" class="pt-5" aria-label="订单列表分页"></div>
   </div>
-  <!-- 高级筛选抽屉：取消时丢弃草稿，确认提交后才作用于列表。 -->
+  <!-- 高级筛选抽屉：重置仅清空草稿并保持打开，确认提交后才作用于列表（design.md §5.4.4）。 -->
   <div id="orderFilterDrawer" class="modal-bg order-filter-drawer-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="orderFilterHeading" aria-hidden="true">
     <aside id="orderFilterPanel" class="order-filter-drawer-panel outline-none" tabindex="-1">
       <header class="order-filter-drawer-header"><h2 id="orderFilterHeading" class="text-[16px] font-semibold text-ink-title">筛选订单</h2><button id="orderFilterClose" type="button" class="w-8 h-8 rounded text-ink-muted hover:bg-hover hover:text-ink-body flex items-center justify-center" aria-label="关闭筛选订单"><i data-lucide="x" class="w-5 h-5" aria-hidden="true"></i></button></header>
       <div class="order-filter-drawer-body"><div class="filter-flow"><label class="filter-item"><span class="filter-label">订单号</span><input id="orderKeyword" class="field mono" placeholder="请输入订单号"></label><label class="filter-item"><span class="filter-label">订单类型</span><select id="orderType" class="field"><option>全部</option><option>代理订单</option><option>续费代理</option><option>充值订单</option><option>套餐订单</option><option>续费套餐</option><option>兑换订单</option><option>代理商充值</option><option>云浏览器订单</option><option>云浏览器续费</option></select></label><label class="filter-item"><span class="filter-label">订单状态</span><select id="orderStatus" class="field"><option>全部</option><option>创建中</option><option>处理中</option><option>已完成</option><option>已关闭</option><option>已退款</option><option>部分退款</option><option>开通中</option><option>异常</option><option>待支付</option></select></label><label class="filter-item"><span class="filter-label">是否可申请</span><select id="orderCanApply" class="field"><option>全部</option><option>可申请</option><option>不可申请</option></select></label><label class="filter-item"><span class="filter-label">支付方式</span><select id="orderPay" class="field"><option>全部</option><option>云币</option><option>支付宝</option><option>微信</option><option>银联</option><option>其他法币渠道</option></select></label><label class="filter-item"><span class="filter-label">创建人</span><input id="orderCreatorSearch" class="field" placeholder="输入或选择创建人"></label><div class="filter-item"><span id="orderDateLabel" class="filter-label">创建时间</span><span class="date-range"><input id="orderStartDate" type="text" class="field mono" placeholder="开始时间"><span class="date-sep">至</span><input id="orderEndDate" type="text" class="field mono" placeholder="结束时间"></span><p id="orderDateError" class="hidden text-danger text-[12px] mt-1" role="alert">开始时间不能晚于结束时间</p></div></div></div>
-      <footer class="order-filter-drawer-footer"><button id="orderFilterCancel" type="button" class="btn btn-default">取消</button><button id="orderFilterSubmit" type="button" class="btn btn-primary">确认提交</button></footer>
+      <footer class="order-filter-drawer-footer"><button id="orderFilterCancel" type="button" class="btn btn-default">重置</button><button id="orderFilterSubmit" type="button" class="btn btn-primary">确认提交</button></footer>
     </aside>
   </div>
 </section>
@@ -2012,10 +1930,6 @@ const invoiceReasonConfig={
   "label": "该订单使用云币支付，不支持开票",
   "action": "无；法币充值云币的充值订单可按充值金额开票，云币消费订单不可开票，避免同一法币资金重复开票"
  },
- "COMPOSITE_PAYMENT_UNSUPPORTED": {
-  "label": "组合支付订单暂不支持自助开票",
-  "action": "提示联系平台支持，由后台人工处置；客户端不创建工单"
- },
  "ZERO_FIAT_AMOUNT": {
   "label": "该订单没有可开票的法币实付金额",
   "action": "无；赠送、优惠全额抵扣或零元订单不可开票"
@@ -2086,11 +2000,11 @@ invoiceReasonConfig.RED_CONFIRMATION={label:'红冲处理中',action:'第三方�
 const invoiceReasonLabels=Object.fromEntries(Object.entries(invoiceReasonConfig).map(([code,item])=>[code,item.label]));
 const invoiceOrderStatusByReason={ORDER_CANCELLED:'已关闭',PAYMENT_PENDING:'待支付',PAYMENT_FAILED:'异常',FULFILLMENT_PENDING:'开通中',FULFILLMENT_FAILED:'异常',REFUND_PROCESSING:'处理中',FULLY_REFUNDED:'已退款'};
 // 独立资格样例不关联开票记录，避免不同场景互相覆盖；每种规范原因均可查看。
-const invoiceIneligibleExamples=["NO_PERMISSION", "ORDER_BEFORE_INVOICE_RELEASE", "ORDER_TYPE_NOT_ELIGIBLE", "ORDER_CANCELLED", "PAYMENT_PENDING", "PAYMENT_FAILED", "PAYMENT_NOT_ELIGIBLE", "COMPOSITE_PAYMENT_UNSUPPORTED", "ZERO_FIAT_AMOUNT", "FULFILLMENT_PENDING", "FULFILLMENT_FAILED", "REFUND_PROCESSING", "FULLY_REFUNDED", "NO_BALANCE", "RESERVED", "TEAM_RESERVED", "TEAM_INVOICED", "SELF_SERVICE_EXPIRED", "SELLER_CONFIG_MISSING", "TAX_CONFIG_MISSING"];
+const invoiceIneligibleExamples=["NO_PERMISSION", "ORDER_BEFORE_INVOICE_RELEASE", "ORDER_TYPE_NOT_ELIGIBLE", "ORDER_CANCELLED", "PAYMENT_PENDING", "PAYMENT_FAILED", "PAYMENT_NOT_ELIGIBLE", "ZERO_FIAT_AMOUNT", "FULFILLMENT_PENDING", "FULFILLMENT_FAILED", "REFUND_PROCESSING", "FULLY_REFUNDED", "NO_BALANCE", "RESERVED", "TEAM_RESERVED", "TEAM_INVOICED", "SELF_SERVICE_EXPIRED", "SELLER_CONFIG_MISSING", "TAX_CONFIG_MISSING"];
 invoiceIneligibleExamples.forEach((reason,index)=>{
  const day=String(28-Math.floor(index/6)).padStart(2,'0'),minute=String(index%60).padStart(2,'0');
  const unpaid=['PAYMENT_PENDING','PAYMENT_FAILED','ORDER_CANCELLED'].includes(reason);
- invoiceOrders.push({no:'YL202608'+day+'09'+minute+'90'+String(index).padStart(2,'0'),type:'套餐订单',name:reason==='ORDER_TYPE_NOT_ELIGIBLE'?'活动赠送套餐':reason==='ZERO_FIAT_AMOUNT'?'优惠全额抵扣套餐':'环境套餐 · 30 天',seller:'云登云服务',pay:reason==='PAYMENT_NOT_ELIGIBLE'?'云币':reason==='COMPOSITE_PAYMENT_UNSUPPORTED'?'支付宝 + 云币':'支付宝',amount:reason==='ZERO_FIAT_AMOUNT'?0:99,state:'不可申请',payTime:unpaid?'-':reason==='SELF_SERVICE_EXPIRED'?'2025-07-01 09:00':'2026-08-'+day+' 09:'+minute,reason,detail:invoiceReasonConfig[reason].label,orderStatus:invoiceOrderStatusByReason[reason]||'已完成'});
+ invoiceOrders.push({no:'YL202608'+day+'09'+minute+'90'+String(index).padStart(2,'0'),type:'套餐订单',name:reason==='ORDER_TYPE_NOT_ELIGIBLE'?'活动赠送套餐':reason==='ZERO_FIAT_AMOUNT'?'优惠全额抵扣套餐':'环境套餐 · 30 天',seller:'云登云服务',pay:reason==='PAYMENT_NOT_ELIGIBLE'?'云币':'支付宝',amount:reason==='ZERO_FIAT_AMOUNT'?0:99,state:'不可申请',payTime:unpaid?'-':reason==='SELF_SERVICE_EXPIRED'?'2025-07-01 09:00':'2026-08-'+day+' 09:'+minute,reason,detail:invoiceReasonConfig[reason].label,orderStatus:invoiceOrderStatusByReason[reason]||'已完成'});
 });
 // 以订单创建时点相对于开票功能发布时间的服务端判定为准，不以支付时间或本机版本推断。
 // 发布时间未确定：Mock 用布尔资格标记演示；生产须由服务端生成并在提交时复核。
@@ -2251,7 +2165,7 @@ if(titleDrawer&&titlePanel){
   titleFilterDrawer.setAttribute('role','dialog');
   titleFilterDrawer.setAttribute('aria-modal','true');
   titleFilterDrawer.setAttribute('aria-labelledby','invoiceTitleFilterHeading');
-  titleFilterDrawer.innerHTML='<aside id="invoiceTitleFilterPanel" class="order-filter-drawer-panel invoice-filter-drawer-panel" tabindex="-1"><header class="order-filter-drawer-header"><h2 id="invoiceTitleFilterHeading" class="text-[16px] font-semibold text-ink-title">筛选常用抬头</h2><button id="invoiceTitleFilterClose" type="button" class="w-8 h-8 rounded text-ink-muted hover:bg-hover hover:text-ink-body flex items-center justify-center" aria-label="关闭筛选常用抬头"><i data-lucide="x" class="w-5 h-5" aria-hidden="true"></i></button></header><div class="order-filter-drawer-body invoice-filter-drawer-body"><div class="invoice-filter-flow"><label class="invoice-filter-item"><span class="invoice-filter-label">抬头类型：</span><select id="invoiceTitleTypeFilter" class="field invoice-filter-control"><option value="全部">全部类型</option><option value="企业">企业</option><option value="个人或事业单位">个人或事业单位</option></select></label><label class="invoice-filter-item"><span class="invoice-filter-label">发票类型：</span><select id="invoiceTitleInvoiceTypeFilter" class="field invoice-filter-control"><option value="全部">全部</option><option value="数电普通发票">数电普通发票</option><option value="数电专用发票">数电专用发票</option></select></label><label class="invoice-filter-item"><span class="invoice-filter-label">是否启用：</span><select id="invoiceTitleStatusFilter" class="field invoice-filter-control"><option value="全部">全部</option><option value="启用">启用</option><option value="停用">停用</option></select></label></div></div><footer class="order-filter-drawer-footer"><button id="invoiceTitleFilterCancel" type="button" class="btn btn-default">取消</button><button id="invoiceTitleFilterSubmit" type="button" class="btn btn-primary">确认提交</button></footer></aside>';
+  titleFilterDrawer.innerHTML='<aside id="invoiceTitleFilterPanel" class="order-filter-drawer-panel invoice-filter-drawer-panel" tabindex="-1"><header class="order-filter-drawer-header"><h2 id="invoiceTitleFilterHeading" class="text-[16px] font-semibold text-ink-title">筛选常用抬头</h2><button id="invoiceTitleFilterClose" type="button" class="w-8 h-8 rounded text-ink-muted hover:bg-hover hover:text-ink-body flex items-center justify-center" aria-label="关闭筛选常用抬头"><i data-lucide="x" class="w-5 h-5" aria-hidden="true"></i></button></header><div class="order-filter-drawer-body invoice-filter-drawer-body"><div class="invoice-filter-flow"><label class="invoice-filter-item"><span class="invoice-filter-label">抬头类型：</span><select id="invoiceTitleTypeFilter" class="field invoice-filter-control"><option value="全部">全部类型</option><option value="企业">企业</option><option value="个人或事业单位">个人或事业单位</option></select></label><label class="invoice-filter-item"><span class="invoice-filter-label">发票类型：</span><select id="invoiceTitleInvoiceTypeFilter" class="field invoice-filter-control"><option value="全部">全部</option><option value="数电普通发票">数电普通发票</option><option value="数电专用发票">数电专用发票</option></select></label><label class="invoice-filter-item"><span class="invoice-filter-label">是否启用：</span><select id="invoiceTitleStatusFilter" class="field invoice-filter-control"><option value="全部">全部</option><option value="启用">启用</option><option value="停用">停用</option></select></label></div></div><footer class="order-filter-drawer-footer"><button id="invoiceTitleFilterCancel" type="button" class="btn btn-default">重置</button><button id="invoiceTitleFilterSubmit" type="button" class="btn btn-primary">确认提交</button></footer></aside>';
   panel.appendChild(titleFilterDrawer);
   lucide.createIcons();
 }
@@ -2267,7 +2181,7 @@ function invoiceSearchToolbar(kind,inputId,filterButtonId,filterCountId){
 function invoiceFilterDrawer(kind,title,flow,submitButton){
  const prefix=kind==='orders'?'invoiceOrder':'invoiceRecord',drawer=document.createElement('div');
  drawer.id=prefix+'FilterDrawer';drawer.className='modal-bg order-filter-drawer-overlay hidden';drawer.setAttribute('role','dialog');drawer.setAttribute('aria-modal','true');drawer.setAttribute('aria-labelledby',prefix+'FilterTitle');drawer.setAttribute('aria-hidden','true');
- drawer.innerHTML='<aside id="'+prefix+'FilterPanel" class="order-filter-drawer-panel invoice-filter-drawer-panel" tabindex="-1"><header class="order-filter-drawer-header"><h2 id="'+prefix+'FilterTitle" class="text-[16px] font-semibold text-ink-title">'+title+'</h2><button id="'+prefix+'FilterClose" type="button" class="w-8 h-8 rounded text-ink-muted hover:bg-hover hover:text-ink-body flex items-center justify-center" aria-label="关闭'+title+'"><i data-lucide="x" class="w-5 h-5" aria-hidden="true"></i></button></header><div id="'+prefix+'FilterBody" class="order-filter-drawer-body invoice-filter-drawer-body"></div><footer class="order-filter-drawer-footer"><button id="'+prefix+'FilterCancel" type="button" class="btn btn-default">取消</button></footer></aside>';
+ drawer.innerHTML='<aside id="'+prefix+'FilterPanel" class="order-filter-drawer-panel invoice-filter-drawer-panel" tabindex="-1"><header class="order-filter-drawer-header"><h2 id="'+prefix+'FilterTitle" class="text-[16px] font-semibold text-ink-title">'+title+'</h2><button id="'+prefix+'FilterClose" type="button" class="w-8 h-8 rounded text-ink-muted hover:bg-hover hover:text-ink-body flex items-center justify-center" aria-label="关闭'+title+'"><i data-lucide="x" class="w-5 h-5" aria-hidden="true"></i></button></header><div id="'+prefix+'FilterBody" class="order-filter-drawer-body invoice-filter-drawer-body"></div><footer class="order-filter-drawer-footer"><button id="'+prefix+'FilterCancel" type="button" class="btn btn-default">重置</button></footer></aside>';
  drawer.querySelector('#'+prefix+'FilterBody').appendChild(flow);submitButton.textContent='确认提交';submitButton.type='button';drawer.querySelector('footer').appendChild(submitButton);panel.appendChild(drawer);return drawer;
 }
 function upgradeInvoiceListLayout(){
@@ -2397,7 +2311,10 @@ function openInvoiceFilterDrawer(kind){const prefix=kind==='orders'?'invoiceOrde
 function closeInvoiceFilterDrawer(kind,commit=false){const prefix=kind==='orders'?'invoiceOrder':'invoiceRecord',drawer=q('#'+prefix+'FilterDrawer');if(!drawer||drawer.classList.contains('hidden'))return;if(kind==='orders')closeInvoiceQualificationDatePicker(false);else closeInvoiceRecordDatePicker(false);if(!commit)(kind==='orders'?writeInvoiceOrderFilters():writeInvoiceRecordFilters());drawer.classList.add('hidden');drawer.setAttribute('aria-hidden','true');q('#'+prefix+'FilterBtn').setAttribute('aria-expanded','false');setInvoiceFilterSurfaceInert(kind,false);document.body.style.overflow='';setShellControlsVisible(true);invoiceFilterLastFocus?.focus?.();invoiceFilterLastFocus=null}
 function submitInvoiceOrderFilters(){if(!invoiceDateRangeAllowed(q('#invoiceQualificationStartDate').value,q('#invoiceQualificationEndDate').value))return toast('只能选择今天及之前的日期','warning');const draft=readInvoiceOrderFilters();if(invoiceQualificationCalendarState.invalid)return toast('开始支付时间不能晚于结束支付时间','danger');inv.scope='eligible';inv.filter=draft;updateInvoiceFilterButton('orders');closeInvoiceFilterDrawer('orders',true);renderInvoiceOrders(true)}
 function submitInvoiceRecordFilters(){if(!invoiceDateRangeAllowed(q('#invoiceRecordStartDate').value,q('#invoiceRecordEndDate').value))return toast('只能选择今天及之前的日期','warning');const draft=readInvoiceRecordFilters();if(invoiceRecordDateState.invalid)return toast('开始申请时间不能晚于结束申请时间','danger');invoiceRecordFilter=draft;updateInvoiceFilterButton('records');closeInvoiceFilterDrawer('records',true);renderInvoiceRecords(true)}
-function setupInvoiceFilterDrawers(){['orders','records'].forEach(kind=>{const prefix=kind==='orders'?'invoiceOrder':'invoiceRecord',drawer=q('#'+prefix+'FilterDrawer'),panel=q('#'+prefix+'FilterPanel');q('#'+prefix+'FilterBtn').onclick=()=>openInvoiceFilterDrawer(kind);q('#'+prefix+'FilterClose').onclick=()=>closeInvoiceFilterDrawer(kind,false);q('#'+prefix+'FilterCancel').onclick=()=>closeInvoiceFilterDrawer(kind,false);drawer.onclick=event=>{if(event.target===drawer)closeInvoiceFilterDrawer(kind,false)};drawer.addEventListener('keydown',event=>{if(event.key==='Escape'){const picker=q(kind==='orders'?'#invoiceQualificationDatePicker':'#invoiceRecordDatePicker');if(!picker?.classList.contains('hidden'))return;event.preventDefault();closeInvoiceFilterDrawer(kind,false)}else if(event.key==='Tab')trapFocus(event,panel)},true)});q('#invoiceSearch').onclick=submitInvoiceOrderFilters;q('#invoiceRecordSearch').onclick=submitInvoiceRecordFilters;updateInvoiceFilterButton('orders');updateInvoiceFilterButton('records')}
+function resetInvoiceFilterDraft(kind){/* design.md §5.4.4：底部「重置」仅清空当前草稿，不提交、不关闭抽屉 */
+  if(kind==='orders'){closeInvoiceQualificationDatePicker(false);writeInvoiceOrderFilters({type:'全部',pay:'全部',apply:'全部',startDate:'',endDate:''})}
+  else{closeInvoiceRecordDatePicker(false);writeInvoiceRecordFilters({status:'全部',type:'全部',startDate:'',endDate:''})}}
+function setupInvoiceFilterDrawers(){['orders','records'].forEach(kind=>{const prefix=kind==='orders'?'invoiceOrder':'invoiceRecord',drawer=q('#'+prefix+'FilterDrawer'),panel=q('#'+prefix+'FilterPanel');q('#'+prefix+'FilterBtn').onclick=()=>openInvoiceFilterDrawer(kind);q('#'+prefix+'FilterClose').onclick=()=>closeInvoiceFilterDrawer(kind,false);q('#'+prefix+'FilterCancel').onclick=()=>resetInvoiceFilterDraft(kind);drawer.onclick=event=>{if(event.target===drawer)closeInvoiceFilterDrawer(kind,false)};drawer.addEventListener('keydown',event=>{if(event.key==='Escape'){const picker=q(kind==='orders'?'#invoiceQualificationDatePicker':'#invoiceRecordDatePicker');if(!picker?.classList.contains('hidden'))return;event.preventDefault();closeInvoiceFilterDrawer(kind,false)}else if(event.key==='Tab')trapFocus(event,panel)},true)});q('#invoiceSearch').onclick=submitInvoiceOrderFilters;q('#invoiceRecordSearch').onclick=submitInvoiceRecordFilters;updateInvoiceFilterButton('orders');updateInvoiceFilterButton('records')}
 function openInvoiceConfirmation({title,context,message,confirmText,onConfirm,trigger}){invoiceConfirmLastFocus=trigger||document.activeElement;invoiceConfirmAction=onConfirm;q('#invoiceConfirmHeading').textContent=title;q('#invoiceConfirmContext').textContent=context||'';q('#invoiceConfirmContext').classList.toggle('hidden',!context);q('#invoiceConfirmMessage').textContent=message;q('#invoiceConfirmSubmit').textContent=confirmText||'确认';q('#invoiceConfirmModal').classList.remove('hidden');requestAnimationFrame(()=>q('#invoiceConfirmPanel').focus());lucide.createIcons()}
 function closeInvoiceConfirmation(restoreFocus=true){if(q('#invoiceConfirmModal').classList.contains('hidden'))return;q('#invoiceConfirmModal').classList.add('hidden');const focusTarget=invoiceConfirmLastFocus;invoiceConfirmLastFocus=null;invoiceConfirmAction=null;if(restoreFocus)focusTarget?.focus?.()}
 function submitInvoiceConfirmation(){const action=invoiceConfirmAction;closeInvoiceConfirmation(false);action?.()}
@@ -2529,7 +2446,7 @@ function validateInvoice(requireConfirm=true){
  return true;
 }
 // 原因说明只显示一次，下方保留订单信息。
-const invoiceReasonMessages={"NO_PERMISSION": "当前账号无权申请该订单发票，请联系团队管理员。", "SELF_SERVICE_EXPIRED": "已超过 12 个月自助开票期限，请联系平台支持。", "SELLER_CONFIG_MISSING": "销售主体开票配置缺失，请联系平台客服。", "TAX_CONFIG_MISSING": "商品开票内容或税务映射缺失，请联系平台客服。", "COMPOSITE_PAYMENT_UNSUPPORTED": "组合支付订单暂不支持自助开票，请联系平台支持。"};
+const invoiceReasonMessages={"NO_PERMISSION": "当前账号无权申请该订单发票，请联系团队管理员。", "SELF_SERVICE_EXPIRED": "已超过 12 个月自助开票期限，请联系平台支持。", "SELLER_CONFIG_MISSING": "销售主体开票配置缺失，请联系平台客服。", "TAX_CONFIG_MISSING": "商品开票内容或税务映射缺失，请联系平台客服。"};
 function showInvoiceReason(no){
  const order=invoiceOrders.find(item=>item.no===no);if(!order)return;
  invoiceReasonLastFocus=document.activeElement;
@@ -2733,13 +2650,14 @@ if(titleTypeFilter)titleTypeFilter.value=invoiceTitleFilter.type;
 if(titleInvoiceTypeFilter)titleInvoiceTypeFilter.value=invoiceTitleFilter.invoiceType;
 if(titleStatusFilter)titleStatusFilter.value=invoiceTitleFilter.status;
 function updateTitleFilterCount(){const count=Number(invoiceTitleFilter.type!=='全部')+Number(invoiceTitleFilter.invoiceType!=='全部')+Number(invoiceTitleFilter.status!=='全部');const node=q('#invoiceTitleFilterCount');node.textContent=count;node.classList.toggle('hidden',!count);q('#invoiceTitleFilterBtn')?.classList.toggle('has-active-filters',Boolean(count));}
+function resetTitleFilterDraft(){/* design.md §5.4.4：底部「重置」仅清空当前草稿，不提交、不关闭抽屉 */if(titleTypeFilter)titleTypeFilter.value='全部';if(titleInvoiceTypeFilter)titleInvoiceTypeFilter.value='全部';if(titleStatusFilter)titleStatusFilter.value='全部'}
 function openTitleFilter(){if(titleTypeFilter)titleTypeFilter.value=invoiceTitleFilter.type;if(titleInvoiceTypeFilter)titleInvoiceTypeFilter.value=invoiceTitleFilter.invoiceType;if(titleStatusFilter)titleStatusFilter.value=invoiceTitleFilter.status;titleFilterDrawer?.classList.remove('hidden');q('#invoiceTitleFilterBtn')?.setAttribute('aria-expanded','true');q('#invoiceTitleFilterPanel')?.focus();}
 function closeTitleFilter(commit){if(!commit){if(titleTypeFilter)titleTypeFilter.value=invoiceTitleFilter.type;if(titleInvoiceTypeFilter)titleInvoiceTypeFilter.value=invoiceTitleFilter.invoiceType;if(titleStatusFilter)titleStatusFilter.value=invoiceTitleFilter.status;}titleFilterDrawer?.classList.add('hidden');q('#invoiceTitleFilterBtn')?.setAttribute('aria-expanded','false');}
 q('#invoiceTitleSearch')?.addEventListener('click',()=>{invoiceTitleFilter.keyword=titleKeywordInput?.value||'';saveInvoicePageState();renderInvoiceTitles();});
 q('#invoiceTitleClear')?.addEventListener('click',()=>{if(titleKeywordInput)titleKeywordInput.value='';invoiceTitleFilter.keyword='';q('#invoiceTitleClear')?.classList.add('hidden');renderInvoiceTitles();titleKeywordInput?.focus();});
 q('#invoiceTitleFilterBtn')?.addEventListener('click',openTitleFilter);
 q('#invoiceTitleFilterClose')?.addEventListener('click',()=>closeTitleFilter(false));
-q('#invoiceTitleFilterCancel')?.addEventListener('click',()=>closeTitleFilter(false));
+q('#invoiceTitleFilterCancel')?.addEventListener('click',resetTitleFilterDraft);
 q('#invoiceTitleFilterDrawer')?.addEventListener('click',event=>{if(event.target===titleFilterDrawer)closeTitleFilter(false);});
 q('#invoiceTitleFilterSubmit')?.addEventListener('click',()=>{invoiceTitleFilter.type=titleTypeFilter?.value||'全部';invoiceTitleFilter.invoiceType=titleInvoiceTypeFilter?.value||'全部';invoiceTitleFilter.status=titleStatusFilter?.value||'全部';closeTitleFilter(true);updateTitleFilterCount();saveInvoicePageState();renderInvoiceTitles();});
 updateTitleFilterCount();
@@ -2874,6 +2792,7 @@ function syncOrderSearchScopePrefix(){const prefix=$('#orderSearchScopePrefix'),
 function renderOrderSearchScopes(){const search=$('#orderGlobalSearch'),menu=$('#orderSearchScopeMenu');if(!search||!menu)return;const query=search.value.trim();menu.innerHTML=orderSearchScopes.map((scope,index)=>'<button id="orderSearchScopeOption'+index+'" type="button" class="order-search-scope-option '+(index===orderSearchScopeActiveIndex?'is-active':'')+'" role="option" tabindex="-1" aria-selected="'+String(scope.key===orderSearchScopeKey)+'" data-order-search-scope="'+scope.key+'" data-order-search-index="'+index+'" aria-label="'+esc(scope.label+'，包含 '+query)+'"><span class="order-search-scope-radio" aria-hidden="true"></span><span class="order-search-scope-label">'+esc(scope.label)+'</span><span class="order-search-scope-relation">包含</span><span class="order-search-scope-query">'+esc(query)+'</span></button>').join('');if(!menu.classList.contains('hidden')){search.setAttribute('aria-activedescendant','orderSearchScopeOption'+orderSearchScopeActiveIndex);menu.querySelector('.is-active')?.scrollIntoView({block:'nearest'})}}
 function setOrderSearchScopeOpen(open){const search=$('#orderGlobalSearch'),container=search?.closest('.order-global-search'),menu=$('#orderSearchScopeMenu'),shouldOpen=Boolean(open&&search?.value.trim());if(!search||!container||!menu)return;container.classList.toggle('is-open',shouldOpen);menu.classList.toggle('hidden',!shouldOpen);search.setAttribute('aria-expanded',String(shouldOpen));if(shouldOpen){renderOrderSearchScopes();search.setAttribute('aria-activedescendant','orderSearchScopeOption'+orderSearchScopeActiveIndex)}else search.removeAttribute('aria-activedescendant')}
 function selectOrderSearchScope(index){const scope=orderSearchScopes[index],search=$('#orderGlobalSearch');if(!scope||!search)return;orderSearchScopeKey=scope.key;orderSearchScopeActiveIndex=index;orderSearchScopeCommitted=true;search.setAttribute('aria-label','订单列表，'+scope.label);syncOrderSearchScopePrefix();renderOrders();setOrderSearchScopeOpen(false);search.focus()}
+function resetOrderFilterDraft(){/* design.md §5.4.4：底部「重置」仅清空当前草稿，不提交、不关闭抽屉 */closeOrderDatePicker(false);setCreatorOpen(false);writeOrderFilterControls({orderNo:'',type:'全部',status:'全部',pay:'全部',creator:'',startDate:'',endDate:''});$('#orderDateError')?.classList.add('hidden')}
 function openOrderFilterDrawer(){const drawer=$('#orderFilterDrawer'),card=$('#ordersPanel .order-management-card');if(!drawer)return;orderFilterLastFocus=document.activeElement;writeOrderFilterControls(appliedOrderFilters);drawer.classList.remove('hidden');drawer.setAttribute('aria-hidden','false');$('#orderFilterBtn').setAttribute('aria-expanded','true');if(card)card.inert=true;document.body.style.overflow='hidden';setOrderShellControlsVisible(false);requestAnimationFrame(()=>$('#orderKeyword')?.focus())}
 function closeOrderFilterDrawer(commit=false){const drawer=$('#orderFilterDrawer'),card=$('#ordersPanel .order-management-card');if(!drawer||drawer.classList.contains('hidden'))return;closeOrderDatePicker(false);setCreatorOpen(false);if(!commit)writeOrderFilterControls(appliedOrderFilters);drawer.classList.add('hidden');drawer.setAttribute('aria-hidden','true');$('#orderFilterBtn').setAttribute('aria-expanded','false');if(card)card.inert=false;document.body.style.overflow='';setOrderShellControlsVisible(true);orderFilterLastFocus?.focus?.();orderFilterLastFocus=null}
 function submitOrderFilters(){const creator=$('#orderCreatorSearch'),typedCreator=creator?.value.trim()||'',selectedCreator=creator?.dataset.selectedCreator||'',draft=readOrderFilterControls();if(typedCreator&&!selectedCreator){creator.setAttribute('aria-invalid','true');setCreatorOpen(true);toast('请从下拉列表中选择创建人','warning');creator.focus();return}if(!isValidOrderDateRange(draft.startDate,draft.endDate)){const trigger=$('#orderDateTrigger');trigger?.setAttribute('aria-invalid','true');$('#orderDateError')?.classList.remove('hidden');toast('开始时间不能晚于结束时间','warning');trigger?.focus();return}appliedOrderFilters={...draft,creator:selectedCreator};updateOrderFilterButton();closeOrderFilterDrawer(true);renderOrders()}
@@ -2893,7 +2812,7 @@ function setupOrderManagementToolbar(){
   scopeMenu.addEventListener('pointerdown',event=>event.preventDefault());
   scopeMenu.addEventListener('click',event=>{const option=event.target.closest('[data-order-search-scope]');if(option)selectOrderSearchScope(Number(option.dataset.orderSearchIndex))});
   document.addEventListener('click',event=>{if(!searchContainer.contains(event.target))setOrderSearchScopeOpen(false)});
-  $('#orderFilterBtn').addEventListener('click',openOrderFilterDrawer);$('#orderFilterClose').addEventListener('click',()=>closeOrderFilterDrawer(false));$('#orderFilterCancel').addEventListener('click',()=>closeOrderFilterDrawer(false));$('#orderFilterSubmit').addEventListener('click',submitOrderFilters);drawer.addEventListener('click',event=>{if(event.target===drawer)closeOrderFilterDrawer(false)});document.addEventListener('keydown',event=>{if(drawer.classList.contains('hidden'))return;if(event.key==='Escape'){if(!$('#orderDatePicker')?.classList.contains('hidden'))return;event.preventDefault();closeOrderFilterDrawer(false)}else if(event.key==='Tab')trapFocus(event,panel)},true);updateOrderFilterButton();syncOrderSearchScopePrefix();renderOrderSearchScopes();
+  $('#orderFilterBtn').addEventListener('click',openOrderFilterDrawer);$('#orderFilterClose').addEventListener('click',()=>closeOrderFilterDrawer(false));$('#orderFilterCancel').addEventListener('click',resetOrderFilterDraft);$('#orderFilterSubmit').addEventListener('click',submitOrderFilters);drawer.addEventListener('click',event=>{if(event.target===drawer)closeOrderFilterDrawer(false)});document.addEventListener('keydown',event=>{if(drawer.classList.contains('hidden'))return;if(event.key==='Escape'){if(!$('#orderDatePicker')?.classList.contains('hidden'))return;event.preventDefault();closeOrderFilterDrawer(false)}else if(event.key==='Tab')trapFocus(event,panel)},true);updateOrderFilterButton();syncOrderSearchScopePrefix();renderOrderSearchScopes();
 }
 function orderProductDetails(order){const trafficOrder=order.orderTypeCode==='traffic_package';const flowOrder=trafficOrder||order.orderTypeCode==='dynamic_proxy'||Boolean(order.product?.trafficPackage);const proxy=flowOrder?'动态住宅':order.name.includes('动态')?'动态住宅':order.name.includes('静态')?'静态住宅':order.type.includes('代理')?'平台代理':'-';const trafficApplicable=flowOrder||order.type.includes('代理')||proxy!=='-';const duration=flowOrder?(order.product?.validity||'90 天'):order.type.includes('代理')||order.type.includes('套餐')?'30 天':'-';const paidDate=order.paid&&order.paid!=='-'?order.paid.slice(0,10):'';let expiry=order.product?.expiry||'-';if(!expiry&&paidDate&&duration!=='-'){const d=orderDateObj(paidDate);d.setDate(d.getDate()+30);expiry=orderDateKey(d)}return {info:order.name,proxyType:proxy,spec:flowOrder?`流量包 ${order.product?.trafficPackage||'10GB'} · ${duration}`:proxy==='-'?'—':'标准规格 · '+(proxy==='平台代理'?'综合服务':'HTTP(S)'),autoRenew:order.type.includes('续费')?'已开启':'未开启',coupon:order.amount>order.payable?'优惠抵扣 '+money(order.amount-order.payable):'—',duration,quantity:String(order.product?.quantity||1),unitPrice:money(order.product?.unitPrice||order.amount),expiry,status:order.status,packageTraffic:trafficApplicable?'10G/月':'-',overageRate:trafficApplicable?'限时免费':'-'}}
 function renderOrderProductRows(order){const item=orderProductDetails(order),subOrderNo=order.no+'-01';return '<tr><td class="mono">'+esc(subOrderNo)+'</td><td>'+esc(item.info)+'</td><td>'+esc(item.proxyType)+'</td><td>'+esc(item.spec)+'</td><td>'+esc(item.packageTraffic)+'</td><td>'+esc(item.overageRate)+'</td><td>'+esc(item.autoRenew)+'</td><td>'+esc(item.coupon)+'</td><td>'+esc(item.duration)+'</td><td class="mono">'+esc(item.quantity)+'</td><td class="mono">'+esc(item.unitPrice)+'</td><td class="mono">'+esc(item.expiry)+'</td><td>'+orderStatusText(item.status)+'</td></tr>'}

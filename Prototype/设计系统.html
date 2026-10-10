@@ -87,8 +87,8 @@ document.addEventListener('DOMContentLoaded', async function() {
       ['>游寄</div>', '>云登</div>'],
       ['>湖滨行李安心游 · 后台管理系统</h1>', '>云登PC端设计规范</h1>'],
       ['<p style="font-size:14px;color:#6E7685;margin-top:10px;max-width:720px;">面向运营 / 客服 / 柜机管理人员的 B 端工具型界面 —— 专业、高效、信息密度高。方向 Tech&nbsp;/&nbsp;Utility，克制冷静，让位于数据本身。桌面 1440px 基准。</p>', ''],
-      ['Sidebar 210 · Topbar 70', 'Chrome 72 · Topbar 56 · Sidebar 220/68'],
-      ['左侧固定导航 <b>210px</b> + 顶部功能栏 <b>70px</b> + 内容区 <b>max-width 1280 / padding 20</b>。经典三段式后台布局。', '旧版三段式示例已停用；当前 App Shell 以本页新增的 BrowserChrome + TopBar + Workspace 规范区块为准。'],
+      ['Sidebar 210 · Topbar 70', 'Topbar 56 · Sidebar 220 / 68'],
+      ['左侧固定导航 <b>210px</b> + 顶部功能栏 <b>70px</b> + 内容区 <b>max-width 1280 / padding 20</b>。经典三段式后台布局。', '旧版三段式示例已停用；当前 App Shell 以本页新增的 TopBar + Sidebar + Workspace 规范区块为准。'],
       ['id="layout-demo-root"', 'id="layout-demo-root" hidden'],
     ];
     for (const [source, replacement] of headerBrandCopy) {
@@ -211,27 +211,6 @@ document.addEventListener('DOMContentLoaded', async function() {
       .yds-shell-desc { max-width:820px; margin:8px 0 20px; color:#6E7685; font-size:14px; line-height:1.7; }
       .yds-shell-metrics { display:flex; flex-wrap:wrap; gap:8px 20px; margin:0 0 16px; color:#6E7685; font:12px/1.5 "JetBrains Mono",monospace; }
       .yds-shell-demo { overflow:hidden; border:1px solid #DFE1E5; border-radius:8px; background:#F7F8FA; box-shadow:0 6px 24px rgba(26,29,36,.08); }
-      .yds-browser-tabs { height:32px; padding:4px 8px 0; display:flex; align-items:flex-end; gap:4px; background:#E6F0FF; }
-      .yds-window-dots { height:28px; display:flex; align-items:center; gap:6px; padding:0 8px 0 2px; }
-      .yds-window-dot { width:10px; height:10px; border-radius:50%; display:block; }
-      .yds-browser-tab-cluster { min-width:0; flex:1; display:flex; align-items:flex-end; gap:4px; overflow:hidden; }
-      .yds-browser-tab-list { min-width:0; flex:0 1 auto; display:flex; align-items:flex-end; gap:4px; overflow:hidden; }
-      .yds-browser-tab { width:240px; min-width:160px; height:28px; padding:0 6px 0 10px; border-radius:8px 8px 0 0; display:flex; align-items:center; gap:8px; background:#F7F8FA; color:#6E7685; font-size:12px; }
-      .yds-browser-tab:hover { background:#F3F4F6; }
-      .yds-browser-tab.is-active { background:#FFFFFF; color:#1A1D24; }
-      .yds-browser-tab-mark { width:18px; height:18px; border-radius:4px; display:flex; align-items:center; justify-content:center; flex:none; background:#0066FF; color:#FFFFFF; font-size:10px; font-weight:700; }
-      .yds-browser-tab-title { min-width:0; flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-      .yds-browser-symbol { width:24px; height:24px; display:flex; align-items:center; justify-content:center; flex:none; border-radius:4px; color:#6E7685; font-size:16px; line-height:1; }
-      .yds-browser-tab .yds-browser-symbol { width:22px; height:22px; font-size:14px; }
-      .yds-browser-add { width:28px; height:28px; align-self:flex-end; margin-bottom:0; }
-      .yds-browser-tools { height:52px; padding:2px 8px; display:flex; align-items:center; gap:8px; border-bottom:1px solid #E8EAED; background:#FFFFFF; }
-      .yds-browser-tool { width:28px; height:28px; display:flex; align-items:center; justify-content:center; flex:none; border-radius:4px; color:#6E7685; font-size:15px; }
-      .yds-browser-tool svg { width:16px; height:16px; display:block; fill:none; stroke:currentColor; stroke-width:2; }
-      .yds-browser-tool.is-disabled { color:#C7CAD1; }
-      .yds-browser-address { height:32px; min-width:160px; padding:0 4px 0 12px; display:flex; align-items:center; gap:8px; flex:1; overflow:hidden; border:1px solid #E8EAED; border-radius:9999px; background:#F7F8FA; color:#6E7685; font:12px/1 "JetBrains Mono",monospace; white-space:nowrap; text-overflow:ellipsis; }
-      .yds-browser-address svg { width:14px; height:14px; flex:none; }
-      .yds-browser-bookmark { width:24px; height:24px; display:flex; align-items:center; justify-content:center; flex:none; border-radius:50%; color:#6E7685; }
-      .yds-browser-bookmark svg { width:16px; height:16px; }
       .yds-topbar { height:56px; padding:0 24px; display:flex; align-items:center; justify-content:space-between; gap:16px; position:relative; z-index:2; background:#FFFFFF; box-shadow:0 6px 8px -8px rgba(26,29,36,.24); }
       .yds-topbar-start,.yds-topbar-actions,.yds-brand { display:flex; align-items:center; min-width:0; }
       .yds-brand { gap:8px; flex:none; }
@@ -273,9 +252,7 @@ document.addEventListener('DOMContentLoaded', async function() {
       .yds-shell-state-rail.is-compact .yds-solid-arrow { transform:rotate(90deg); }
       @media (max-width:760px) {
         .yds-shell-spec { width:calc(100% - 24px); }
-        .yds-browser-tab { width:176px; }
-        .yds-browser-tool.is-secondary { display:none; }
-        .yds-topbar { padding:0 12px; }
+            .yds-topbar { padding:0 12px; }
         .yds-brand-name { display:none; }
         .yds-sidebar { width:68px; flex-basis:68px; padding:12px 8px; }
         .yds-create span,.yds-menu-row span,.yds-submenu-row { display:none; }
@@ -286,25 +263,10 @@ document.addEventListener('DOMContentLoaded', async function() {
       }
     </style>
     <div class="yds-shell-eyebrow">App Shell · Layout</div>
-    <h2 id="yds-shell-title" class="yds-shell-title">浏览器外壳与平台工作区</h2>
-    <p class="yds-shell-desc">BrowserChrome 使用 32px 标签行和 52px 工具行，标签行、工具行与平台导航之间不增加额外垂直间距；工具栏本身较原规格增加 16px。新增标签按钮紧跟标签列表，工具栏操作按扩展程序、下载、更多排列。地址框使用最大圆角胶囊，并在右侧提供带 hover 文案的书签星标。TopBar 只展示平台品牌与全局操作，不显示功能模块名称、面包屑或品牌后分隔线；侧栏一级叶子与分组统一使用 16px 图标、12px 图文间距和 ink-body 正文色，二级菜单不使用图标或左侧竖线；Router Outlet 外壳不加内边距，模块业务根统一使用 16px 内边距。</p>
-    <div class="yds-shell-metrics"><span>BrowserChrome 84</span><span>Toolbar 52</span><span>TopBar 56</span><span>Shell top 140</span><span>Row gaps 0 + 0</span><span>Chrome padding 8</span><span>Sidebar 220 / 68</span><span>Module padding 16</span><span>Menu 14</span><span>Edge handle 14 × 64</span></div>
-    <div class="yds-shell-demo" role="img" aria-label="云登浏览器外壳、平台导航、完整侧栏和主内容区布局示例">
-      <div class="yds-browser-tabs">
-        <div class="yds-window-dots" aria-hidden="true"><span class="yds-window-dot" style="background:#D9001B"></span><span class="yds-window-dot" style="background:#E7772D"></span><span class="yds-window-dot" style="background:#0FC060"></span></div>
-        <div class="yds-browser-tab-cluster">
-          <div class="yds-browser-tab-list">
-            <div class="yds-browser-tab is-active"><span class="yds-browser-tab-mark">云</span><span class="yds-browser-tab-title">环境管理 - 云登</span><span class="yds-browser-symbol">×</span></div>
-            <div class="yds-browser-tab"><span class="yds-browser-tab-mark">云</span><span class="yds-browser-tab-title">代理管理 - 云登</span><span class="yds-browser-symbol">×</span></div>
-          </div>
-          <span class="yds-browser-symbol yds-browser-add" aria-label="新增标签页">+</span>
-        </div>
-      </div>
-      <div class="yds-browser-tools">
-        <span class="yds-browser-tool"><i data-lucide="arrow-left"></i></span><span class="yds-browser-tool is-disabled is-secondary"><i data-lucide="arrow-right"></i></span><span class="yds-browser-tool is-secondary"><i data-lucide="rotate-cw"></i></span>
-        <div class="yds-browser-address"><i data-lucide="search"></i><span style="min-width:0;overflow:hidden;text-overflow:ellipsis">https://app.yunlogin.com/environment</span><span class="yds-browser-bookmark" title="为此标签页添加书签" aria-label="为此标签页添加书签"><i data-lucide="star"></i></span></div>
-        <span class="yds-browser-tool" aria-label="扩展程序"><i data-lucide="puzzle"></i></span><span class="yds-browser-tool" aria-label="下载"><i data-lucide="download"></i></span><span class="yds-browser-tool" aria-label="更多"><i data-lucide="ellipsis-vertical"></i></span>
-      </div>
+    <h2 id="yds-shell-title" class="yds-shell-title">平台导航与业务工作区</h2>
+    <p class="yds-shell-desc">App Shell 顶部由 56px TopBar 直接连接业务工作区。TopBar 只展示平台品牌与全局操作，不显示功能模块名称、面包屑或品牌后分隔线；侧栏一级叶子与分组统一使用 16px 图标、12px 图文间距和 ink-body 正文色，二级菜单不使用图标或左侧竖线；Router Outlet 外壳不加内边距，模块业务根统一使用 16px 内边距。</p>
+    <div class="yds-shell-metrics"><span>TopBar 56</span><span>Shell top 56</span><span>Sidebar 220 / 68</span><span>Module padding 16</span><span>Menu 14</span><span>Edge handle 14 × 64</span></div>
+    <div class="yds-shell-demo" role="img" aria-label="云登平台导航、完整侧栏和主内容区布局示例">
       <div class="yds-topbar">
         <div class="yds-topbar-start"><div class="yds-brand"><span class="yds-brand-mark">云</span><span class="yds-brand-name">云登</span></div></div>
         <div class="yds-topbar-actions"><span class="yds-top-action"><i data-lucide="compass" aria-label="新手引导图标" role="img"></i></span><span class="yds-top-action"><i data-lucide="bell" aria-label="通知图标" role="img"></i></span><span class="yds-top-action"><i data-lucide="languages" aria-label="界面语言图标" role="img"></i></span><span class="yds-top-action">张</span></div>
@@ -328,13 +290,12 @@ document.addEventListener('DOMContentLoaded', async function() {
       </div>
     </div>
     <div class="yds-shell-notes">
-      <div class="yds-shell-note"><strong>层级与标签状态</strong><span>84px BrowserChrome + 56px TopBar，总占高 140px；32px 标签行后直接连接 52px 工具行，工具行后直接连接平台导航。工具栏本身较原规格增加 16px。新增标签按钮紧跟标签列表；地址框为胶囊样式并提供书签星标；TopBar 只显示平台品牌与全局操作，模块名称保留在 BrowserChrome 当前标签、侧栏高亮与业务内容标题中；活动标签白底，非活动标签使用 bg-page，hover 使用 bg-hover；工作区通过无边框 iframe 承载模块。</span></div>
+      <div class="yds-shell-note"><strong>层级与占高</strong><span>App Shell 顶部为 56px TopBar，直接连接业务工作区，模块名称由侧栏唯一高亮与业务内容标题共同表达；工作区通过无边框 iframe 承载模块，高度按 calc(100dvh - 56px) 计算。</span></div>
       <div class="yds-shell-note"><strong>侧栏折叠</strong><span>14×64px 无边线把手默认背景 #E5E6ED，按钮 hover 背景 #ACB0BA；10px 白色实心箭头在完整态向左、紧凑态向右。把手随侧栏 hover 线性显示，鼠标移出后线性隐藏，键盘仅在把手 focus-visible 时显示。</span></div>
       <div class="yds-shell-note"><strong>二级菜单</strong><span>无图标、无竖线，文字距侧栏左边 48px并与一级文字对齐；同组二级切换保留其他手动展开分组，跨组切换仅展开目标分组，选择一级功能时收起全部二级菜单，刷新与历史恢复按当前路由归一化。</span></div>
       <div class="yds-shell-note"><strong>内容区间距</strong><span>SystemFrame 与 iframe 外层保持 0px；ModuleFrame 业务根四边固定 16px并占满可用宽度；卡片内部仍按组件规范使用 20px/24px。</span></div>
       <div class="yds-shell-note"><strong>Tailwind 背景映射</strong><span>颜色键直接使用 page、card、hover、block-hover，对应 bg-page、bg-card、bg-hover、bg-block-hover；禁止增加第二个 bg 前缀，避免业务区块背景变为透明。</span></div>
       <div class="yds-shell-note"><strong>区块 hover</strong><span>可交互白色内容卡片和业务区块使用 block-hover（#F0F1F3），与页面底色 bg-page（#F7F8FA）保持区分；表格行、菜单和按钮沿用各自 hover token。</span></div>
-      <div class="yds-shell-note"><strong>扩展程序、下载与更多</strong><span>工具栏从左到右使用 Lucide puzzle、download、ellipsis-vertical。扩展程序面板展示权限说明、element-selector Mock 条目、固定/更多与管理入口；下载只显示空状态；更多按 Chrome 分组展示历史、书签、缩放、打印、查找、更多工具和插件管理，动作只反馈本地状态。</span></div>
       <div class="yds-shell-note"><strong>顶部入口反馈</strong><span>新手引导使用 Lucide compass，并与通知 bell、语言 languages 统一为 18px、2px 描边的线性图标；纯图标入口在 hover / focus-visible 时显示 12px 深色名称气泡，移出后隐藏；通知、语言和账号下拉在移出入口后保留 180ms 缓冲，进入对应面板保持打开，离开入口与面板后关闭。</span></div>
     </div>
     <div class="yds-shell-states" aria-label="侧栏完整态和紧凑态对照">
@@ -464,7 +425,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     <h2 id="yds-router-title" class="yds-router-title">唯一运行外壳与 iframe Router Outlet</h2>
     <p class="yds-router-desc">除原型导航、设计系统和登录页外，后台模块统一通过 SystemFrame 运行。壳层与业务模块分别维护自己的 DOM 与标注；仅模块 PRD 明确要求全局遮罩时，由 SystemFrame 通过受信结构化 Drawer Portal 承载业务详情。</p>
     <div class="yds-router-flow" aria-label="SystemFrame 路由加载流程">
-      <div class="yds-router-node is-primary"><strong>SystemFrame</strong><span>独占 BrowserChrome、TopBar、Sidebar、全局助手、全局弹层、受信结构化 Drawer Portal 与顶层历史；地址栏由根 index.html 索引。</span><div class="yds-router-url">index.html?page=home</div></div>
+      <div class="yds-router-node is-primary"><strong>SystemFrame</strong><span>独占 TopBar、Sidebar、全局助手、全局弹层、受信结构化 Drawer Portal 与顶层历史；地址栏由根 index.html 索引。</span><div class="yds-router-url">index.html?page=home</div></div>
       <div class="yds-router-arrow" aria-hidden="true">→</div>
       <div class="yds-router-node"><strong>Router Outlet</strong><span>解析稳定 page key，使用无边框 iframe 加载模块，并维护 Loading / Error 状态。</span><div class="yds-router-url">iframe src="首页.html"</div></div>
       <div class="yds-router-arrow" aria-hidden="true">→</div>
@@ -474,15 +435,15 @@ document.addEventListener('DOMContentLoaded', async function() {
       <table class="yds-router-table">
         <thead><tr><th>运行场景</th><th>入口</th><th>必须结果</th></tr></thead>
         <tbody>
-          <tr><td>标准模块访问</td><td><code>index.html?page=&lt;key&gt;</code></td><td>地址栏保持根 index 索引；内部由唯一 SystemFrame 承载 iframe、BrowserChrome 标题与菜单高亮。</td></tr>
+          <tr><td>标准模块访问</td><td><code>index.html?page=&lt;key&gt;</code></td><td>地址栏保持根 index 索引；内部由唯一 SystemFrame 承载 iframe 与侧栏菜单高亮。</td></tr>
           <tr><td>业务文件直开</td><td><code>环境管理.html</code></td><td>自动回到对应 SystemFrame URL；iframe 嵌入时不重复跳转。</td></tr>
-          <tr><td>前进 / 后退 / 刷新</td><td>顶层历史与 BrowserChrome 导航</td><td>恢复同一模块和高亮；刷新 SystemFrame 后按 page 恢复同一 ModuleFrame，始终只保留一层 App Shell。</td></tr>
+          <tr><td>前进 / 后退 / 刷新</td><td>顶层历史与系统框架导航</td><td>恢复同一模块和高亮；刷新 SystemFrame 后按 page 恢复同一 ModuleFrame，始终只保留一层 App Shell。</td></tr>
           <tr><td>特殊独立页</td><td><code>index.html</code> / <code>Prototype/设计系统.html</code> / <code>Prototype/登录.html</code></td><td>直接运行，不进入 iframe SystemFrame。</td></tr>
         </tbody>
       </table>
     </div>
     <div class="yds-router-foot">
-      <div class="yds-router-rule"><strong>嵌入模式</strong><span>公共脚本保留公共样式、图标和分页增强，但不创建 BrowserChrome、TopBar、Sidebar、助手或全局弹层。</span></div>
+      <div class="yds-router-rule"><strong>嵌入模式</strong><span>公共脚本保留公共样式、图标和分页增强，但不创建 TopBar、Sidebar、助手或全局弹层。</span></div>
       <div class="yds-router-rule"><strong>标注与弹层</strong><span>业务弹层默认留在 iframe；PRD 明确要求全局遮罩时，ModuleFrame 仅以受信消息发送结构化数据，SystemFrame 校验来源后渲染，禁止原始 HTML 与跨文档 DOM 操作。全局 Drawer 蒙版覆盖 TopBar、Sidebar、MainContent，面板从 MainContent 顶部开始。</span></div>
       <div class="yds-router-rule"><strong>本地预览</strong><span>相对 URL、page key 与 iframe src 必须兼容 file://；直接双击 SystemFrame 或业务文件均可进入正确模块。</span></div>
       <div class="yds-router-rule"><strong>首帧接入</strong><span>模块在 head 中先加载公共 CSS、再加载同版本公共 JS；直开跳转或嵌入裁剪完成前不显示旧壳，完成后一次性呈现业务内容。</span></div>

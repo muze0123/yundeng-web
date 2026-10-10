@@ -4,7 +4,7 @@
   // Keep module initialization alive when the CDN icon script is delayed or unavailable.
   if (!window.lucide) window.lucide = { __yundengIconStub: true, createIcons() {} };
 
-  const ASSET_VERSION = '20260828i';
+  const ASSET_VERSION = '20261008a';
   const DEFAULT_ROUTE_KEY = 'home';
   const ONBOARDING_ICON_HTML = '<i data-lucide="compass" class="yundeng-onboarding-icon" aria-hidden="true"></i>';
   const ACCOUNT_TRAFFIC_USAGE = Object.freeze([
@@ -23,16 +23,20 @@
       { key: 'billing-invoice', label: '开票管理', icon: 'file-text', href: '费用管理-开票管理.html' },
       { key: 'billing-coupons', label: '优惠券', icon: 'ticket-percent', href: '费用管理-优惠券.html' }
     ]},
-    { key: 'team', label: '团队', icon: 'users-round', group: true, children: [
-      { key: 'team-management', label: '团队管理', icon: 'building-2', href: '团队管理.html' },
-      { key: 'account-management', label: '账号管理', icon: 'contact', href: '账号管理.html' },
-      { key: 'transfer', label: '分享转移', icon: 'arrow-right-left', href: '分享转移.html' },
-      { key: 'logs', label: '日志管理', icon: 'scroll-text', href: '日志管理.html' },
-      { key: 'account-settings', label: '账号设置', icon: 'key-round', href: '账号设置.html' }
+    { key: 'team', label: '团队管理', icon: 'users-round', group: true, children: [
+      { key: 'team-members', label: '成员管理', icon: 'users', href: '团队管理-成员管理.html' },
+      { key: 'team-departments', label: '部门管理', icon: 'network', href: '团队管理-部门管理.html' },
+      { key: 'team-roles', label: '角色管理', icon: 'shield-check', href: '团队管理-角色管理.html' },
+      { key: 'team-applications', label: '成员申请', icon: 'user-round-plus', href: '团队管理-成员申请.html' },
+      { key: 'team-logins', label: '登录请求', icon: 'monitor-check', href: '团队管理-登录请求.html' }
     ]},
+    { key: 'account-management', label: '账号管理', icon: 'contact', href: '账号管理.html' },
+    { key: 'transfer', label: '分享转移', icon: 'arrow-right-left', href: '分享转移.html' },
+    { key: 'logs', label: '日志管理', icon: 'scroll-text', href: '日志管理.html' },
+    { key: 'account-settings', label: '账号设置', icon: 'key-round', href: '账号设置.html' },
     { key: 'security', label: '安全策略', icon: 'shield-check', group: true, children: [
-      { key: 'access-policy', label: '访问策略', icon: 'shield-check', href: '访问策略.html' },
-      { key: 'access-logs', label: '访问日志', icon: 'scroll-text', href: '访问日志.html' }
+      { key: 'access-policy', label: '访问策略设置', icon: 'shield-check', href: '访问策略.html' },
+      { key: 'access-logs', label: '访问拦截日志', icon: 'scroll-text', href: '访问日志.html' }
     ]},
     { key: 'plugins', label: '插件管理', icon: 'blocks', href: '插件管理.html' },
     { key: 'automation', label: '自动化', icon: 'workflow', group: true, children: [
@@ -59,9 +63,122 @@
   const basename = decodeURIComponent(location.pathname.split('/').pop() || 'index.html');
   const searchParams = new URLSearchParams(location.search);
   const shellParamNames = new Set(['page', 'module', 'moduleHash', 'moduleSearch', 'embedded', 'guide', 'indexHost']);
+  // 左侧菜单待处理角标：key -> 数量（team-logins = 待处理的登录请求条数，
+  // team-applications = 待审批的成员申请条数）。
+  // 数据来源：团队模块通过 postMessage 上报，或由共享团队数据仓库的 logins / applications 状态计算。
+  const NAV_BADGE_STORE_KEY = 'yunlogin-nav-badges-v1';
+  const NAV_BADGE_KEYS = ['team-logins', 'team-applications'];
+  // 侧栏高亮跟随当前路由：pageKey 只是文档加载时的初始路由，
+  // 壳内软导航切换模块后必须改用这个可变值，否则角标刷新等重绘会按初始
+  // pageKey 渲染，左侧菜单高亮停留在上一个菜单。
+  let shellCurrentPageKey = '';
+  const navBadges = Object.create(null);
+  const normalizeBadgeCount = value => {
+    const count = Math.floor(Number(value));
+    return Number.isFinite(count) && count > 0 ? count : 0;
+  };
+  // 待处理状态文案：登录请求「等待授权」、成员申请「待审批（兼容待审核）」。
+  const PENDING_LOGIN_STATUS = new Set(['等待授权']);
+  const PENDING_APPLICATION_STATUS = new Set(['待审批', '待审核']);
+  // 旧版登录请求状态文案。共享数据里只要出现这些值，就说明这份 logins 还是旧结构
+  //（状态旧文案 + 手机号脱敏），不能作为角标依据，否则会把模块最新上报的角标算错 / 清零。
+  const LEGACY_LOGIN_STATUS = new Set(['待处理', '已允许', '已拒绝']);
+  // 旧版成员申请数据同样不能作为角标依据：成员管理 / 部门管理 / 角色管理 等页面遗留的
+  // 旧样例只有 1 条待审批（状态「不通过」+ 联系方式脱敏），直接派生会把「成员申请」页
+  // 上报的正确角标覆盖成 1。判定口径与 团队管理-成员申请.html 的 migrateApplications 保持一致。
+  const LEGACY_APPLICATION_STATUS = new Set(['不通过', '待处理']);
+  const isLegacyApplication = item => Boolean(item) && (LEGACY_APPLICATION_STATUS.has(item.status) || String(item.contact || '').includes('*'));
+  // 派生待处理数：字段缺失或结构不可用时返回 null（表示「未知」），
+  // 调用方跳过刷新，保留模块最近一次上报的角标。
+  // legacyCheck 支持状态集合或自定义判定函数（不传表示这份数据没有旧结构风险）。
+  const countPending = (store, field, statuses, legacyCheck) => {
+    if (!store || !Array.isArray(store[field])) return null;
+    if (legacyCheck) {
+      const isLegacy = typeof legacyCheck === 'function' ? legacyCheck : item => Boolean(item) && legacyCheck.has(item.status);
+      if (store[field].some(isLegacy)) return null;
+    }
+    return store[field].filter(item => item && statuses.has(item.status)).length;
+  };
+  const applyDerivedNavBadges = store => {
+    const logins = countPending(store, 'logins', PENDING_LOGIN_STATUS, LEGACY_LOGIN_STATUS);
+    const applications = countPending(store, 'applications', PENDING_APPLICATION_STATUS, isLegacyApplication);
+    if (logins !== null) setNavBadge('team-logins', logins, false);
+    if (applications !== null) setNavBadge('team-applications', applications, false);
+  };
+  const readNavBadges = () => {
+    try {
+      const saved = JSON.parse(localStorage.getItem(NAV_BADGE_STORE_KEY) || '{}');
+      if (saved && typeof saved === 'object') NAV_BADGE_KEYS.forEach(key => { navBadges[key] = normalizeBadgeCount(saved[key]); });
+    } catch (_) {}
+  };
+  const writeNavBadges = () => {
+    try {
+      const snapshot = {};
+      NAV_BADGE_KEYS.forEach(key => { snapshot[key] = normalizeBadgeCount(navBadges[key]); });
+      localStorage.setItem(NAV_BADGE_STORE_KEY, JSON.stringify(snapshot));
+    } catch (_) {}
+  };
+  const setNavBadge = (key, value, persist = true) => {
+    if (!NAV_BADGE_KEYS.includes(key)) return;
+    const next = normalizeBadgeCount(value);
+    if (navBadges[key] === next) return;
+    navBadges[key] = next;
+    if (persist) writeNavBadges();
+    const nav = document.getElementById('yundeng-primary-nav');
+    if (nav) renderNav(nav);
+  };
+  readNavBadges();
+
   const isSystemFrame = basename === '系统框架.html';
   const isIndexHosted = isSystemFrame && searchParams.get('indexHost') === '1';
   const isEmbedded = window.top !== window.self && !isIndexHosted;
+  if (isSystemFrame) {
+    const teamFiles = new Set(['团队管理-成员管理.html', '团队管理-部门管理.html', '团队管理-角色管理.html', '团队管理-成员申请.html', '团队管理-登录请求.html']);
+    const teamStoreKey = 'yunlogin-team-prototype-v1';
+    let teamStoreMemory = null;
+    let teamOverlayRestore = null;
+    try { teamStoreMemory = JSON.parse(localStorage.getItem(teamStoreKey) || 'null'); } catch (_) {}
+    // 已存在共享团队数据时，直接按 logins / applications 的待处理状态回填左侧菜单角标。
+    if (teamStoreMemory) applyDerivedNavBadges(teamStoreMemory);
+    window.addEventListener('message', event => {
+      const frame = document.getElementById('yundengModuleFrame');
+      if (!frame || event.source !== frame.contentWindow) return;
+      let file;
+      try { file = decodeURIComponent(new URL(frame.src, location.href).pathname.split('/').pop()); } catch (_) { return; }
+      if (!teamFiles.has(file)) return;
+      if (event.data?.type === 'yundeng:nav-badge') {
+        setNavBadge(event.data.key, event.data.count);
+        return;
+      }
+      if (event.data?.type === 'yundeng:team-overlay') {
+        const assistant = document.getElementById('assistantBtn');
+        if (assistant && event.data.open === true && !teamOverlayRestore) {
+          teamOverlayRestore = { hidden: assistant.hidden, display: assistant.style.getPropertyValue('display'), priority: assistant.style.getPropertyPriority('display') };
+          assistant.hidden = true;
+          assistant.style.setProperty('display', 'none', 'important');
+        } else if (assistant && event.data.open !== true && teamOverlayRestore) {
+          assistant.hidden = teamOverlayRestore.hidden;
+          if (teamOverlayRestore.display) assistant.style.setProperty('display', teamOverlayRestore.display, teamOverlayRestore.priority);
+          else assistant.style.removeProperty('display');
+          teamOverlayRestore = null;
+        }
+        return;
+      }
+      if (event.data?.type === 'yundeng:team-store-get') {
+        event.source.postMessage({ type: 'yundeng:team-store', value: teamStoreMemory }, '*');
+      } else if (event.data?.type === 'yundeng:team-store-set') {
+        const value = event.data.value;
+        if (value?.version !== 1 || !['members', 'departments', 'roles', 'applications', 'logins'].every(key => Array.isArray(value[key]))) return;
+        const serialized = JSON.stringify(value);
+        if (serialized.length > 2000000) return;
+        teamStoreMemory = value;
+        applyDerivedNavBadges(value);
+        try { localStorage.setItem(teamStoreKey, serialized); }
+        catch (_) { event.source.postMessage({ type: 'yundeng:team-store-error' }, '*'); }
+      }
+    });
+  }
+
   const pageAliases = {
     '系统框架.html': DEFAULT_ROUTE_KEY,
     '首页.html': DEFAULT_ROUTE_KEY,
@@ -99,7 +216,14 @@
     '订单管理':'billing-orders',
     '开票管理':'billing-invoice',
     '优惠券':'billing-coupons',
-    '团队管理':'team-management',
+    '团队管理':'team-members',
+    'team-management':'team-members',
+    '成员管理':'team-members',
+    '部门管理':'team-departments',
+    '角色管理':'team-roles',
+    '成员申请':'team-applications',
+    '登录请求':'team-logins',
+
     '账号管理':'account-management',
     '推广奖励':'promotion-reward',
     '分享转移':'transfer',
@@ -146,6 +270,8 @@
   const pageKey = isSystemFrame
     ? (routeItem?.key || DEFAULT_ROUTE_KEY)
     : (pageAliases[basename] || allItems.find(item => item.href === basename)?.key || 'index');
+  // 初始路由即为当前高亮 key，后续由 applySidebarActiveState 在软导航时更新。
+  shellCurrentPageKey = pageKey;
   const pageLabel = isSystemFrame
     ? (routedModule === '环境管理-编辑环境.html' ? '编辑环境' : routeItem?.label || '首页')
     : ({ 'index.html':'原型导航', '系统框架.html':'系统框架', '编辑浏览器.html':'编辑环境', '环境管理-编辑环境.html':'编辑环境' })[basename] || allItems.find(item => item.key === pageKey)?.label || document.title.replace(/^云登\s*[·-]?\s*|\s*[-·]\s*云登$/g, '');
@@ -154,7 +280,6 @@
     window.parent.postMessage({ type: 'yundeng:index-route-state', page: pageKey, search: location.search }, '*');
   }
   const shellStateKey = 'yundeng-sidebar-expanded-v3';
-  const shellTransitionKey = 'yundeng-sidebar-transition-v1';
   const compactStateKey = 'yundeng-sidebar-compact-v1';
 
   function itemForModule(file) {
@@ -181,31 +306,27 @@
     try { localStorage.setItem(shellStateKey, JSON.stringify(expanded)); } catch (_) {}
   }
 
-  function syncExpandedGroupsForPage(targetPageKey, preserveOtherGroups = false) {
+  // 侧栏分组采用手风琴交互：任意时刻仅一个分组展开，其余分组一律收起。
+  function syncExpandedGroupsForPage(targetPageKey) {
     const targetItem = allItems.find(item => item.key === targetPageKey);
-    if (!targetItem) return;
-    const targetGroup = groupForPageKey(targetItem.key);
-    const expanded = readExpandedGroups();
-    if (preserveOtherGroups && targetGroup) expanded[targetGroup.key] = true;
-    else NAV.filter(item => item.group).forEach(item => { expanded[item.key] = item.key === targetGroup?.key; });
+    const targetGroup = targetItem ? groupForPageKey(targetItem.key) : null;
+    const expanded = {};
+    NAV.filter(item => item.group).forEach(item => { expanded[item.key] = item.key === targetGroup?.key; });
     writeExpandedGroups(expanded);
   }
 
-  function rememberExpandedGroupTransition(targetPageKey, preserveOtherGroups) {
-    try {
-      if (preserveOtherGroups) sessionStorage.setItem(shellTransitionKey, JSON.stringify({ targetPageKey }));
-      else sessionStorage.removeItem(shellTransitionKey);
-    } catch (_) {}
-  }
+  const isGroupExpanded = (expanded, key) => expanded[key] === true;
 
-  function consumeExpandedGroupTransition(targetPageKey) {
-    try {
-      const transition = JSON.parse(sessionStorage.getItem(shellTransitionKey) || 'null');
-      sessionStorage.removeItem(shellTransitionKey);
-      return transition?.targetPageKey === targetPageKey;
-    } catch (_) {
-      return false;
-    }
+  function applySidebarExpandedState() {
+    const expanded = readExpandedGroups();
+    const nav = document.getElementById('yundeng-primary-nav');
+    NAV.filter(item => item.group).forEach(item => {
+      const toggle = nav?.querySelector(`[data-group-key="${item.key}"]`);
+      const sub = toggle?.nextElementSibling;
+      const isOpen = isGroupExpanded(expanded, item.key);
+      toggle?.setAttribute('aria-expanded', String(isOpen));
+      if (sub) sub.dataset.expanded = String(isOpen);
+    });
   }
 
   function syncExpandedGroupsForHref(href) {
@@ -213,12 +334,7 @@
       const url = new URL(href, location.href);
       const targetBasename = decodeURIComponent(url.pathname.split('/').pop() || '');
       if (targetBasename !== '系统框架.html' && targetBasename !== 'index.html') return;
-      const targetPageKey = url.searchParams.get('page');
-      const targetGroup = groupForPageKey(targetPageKey);
-      const currentGroup = groupForPageKey(pageKey);
-      const preserveOtherGroups = Boolean(targetGroup && targetGroup.key === currentGroup?.key);
-      syncExpandedGroupsForPage(targetPageKey, preserveOtherGroups);
-      rememberExpandedGroupTransition(targetPageKey, preserveOtherGroups);
+      syncExpandedGroupsForPage(url.searchParams.get('page'));
     } catch (_) {}
   }
 
@@ -365,318 +481,24 @@
     return directChild(wrapper, 'header') || directChild(main, 'header') || document.querySelector('header.h-14');
   }
 
-  function setupBrowserFrame(host, topbar) {
-    if (!host) return null;
+  // App Shell：把 TopBar 与工作区包进唯一的 #yundeng-app-frame 容器。
+  // 壳层只保留 TopBar + Sidebar + Router Outlet。
+  function setupAppFrame(host, topbar) {
+    if (!host || !host.parentElement) return null;
     let frame = document.getElementById('yundeng-app-frame');
     if (!frame) {
       frame = document.createElement('div');
       frame.id = 'yundeng-app-frame';
-      host.parentNode.insertBefore(frame, host);
+      host.parentElement.insertBefore(frame, host);
     }
-    let browser = document.getElementById('yundeng-browser-frame');
-    if (!browser) {
-      browser = document.createElement('section');
-      browser.id = 'yundeng-browser-frame';
-    }
-    browser.className = 'yundeng-browser-frame';
-    browser.setAttribute('aria-label', '浏览器工具栏');
-    browser.innerHTML = `
-      <div class="yundeng-tab-strip">
-        <div class="yundeng-window-controls" aria-hidden="true"><span class="is-danger"></span><span class="is-warning"></span><span class="is-success"></span></div>
-        <div class="yundeng-tab-cluster">
-          <div id="yundeng-browser-tabs" class="yundeng-browser-tabs" role="tablist" aria-label="浏览器标签页"></div>
-          <button type="button" id="yundeng-new-tab" class="yundeng-browser-button yundeng-new-tab" title="新增标签页" aria-label="新增标签页"><i data-lucide="plus"></i></button>
-        </div>
-      </div>
-      <div class="yundeng-browser-toolbar">
-        <div class="yundeng-history-actions" >
-          <button type="button" id="yundeng-browser-back" class="yundeng-browser-button" title="后退" aria-label="后退"><i data-lucide="arrow-left"></i></button>
-          <button type="button" id="yundeng-browser-forward" class="yundeng-browser-button" title="前进" aria-label="前进"><i data-lucide="arrow-right"></i></button>
-          <button type="button" id="yundeng-browser-reload" class="yundeng-browser-button" title="重新加载" aria-label="重新加载"><i data-lucide="rotate-cw"></i></button>
-        </div>
-        <form id="yundeng-address-form" class="yundeng-address-form" role="search"><i data-lucide="search" aria-hidden="true"></i><input id="yundeng-address-input" type="text" autocomplete="off" spellcheck="false" aria-label="搜索或输入地址"><button type="button" id="yundeng-bookmark-button" class="yundeng-bookmark-button" data-yundeng-tooltip="为此标签页添加书签" title="为此标签页添加书签" aria-label="为此标签页添加书签" aria-pressed="false"><i data-lucide="star"></i></button></form>
-        <div class="yundeng-browser-actions">
-          <button type="button" id="yundeng-extensions-button" class="yundeng-browser-button" title="扩展程序" aria-label="扩展程序" aria-haspopup="dialog" aria-controls="yundeng-extensions-panel" aria-expanded="false"><i data-lucide="puzzle"></i></button>
-          <button type="button" id="yundeng-download-button" class="yundeng-browser-button" title="下载内容" aria-label="下载内容" aria-haspopup="dialog" aria-controls="yundeng-download-panel" aria-expanded="false"><i data-lucide="download"></i></button>
-          <button type="button" id="yundeng-more-button" class="yundeng-browser-button" title="更多" aria-label="更多" aria-haspopup="menu" aria-controls="yundeng-more-panel" aria-expanded="false"><i data-lucide="ellipsis-vertical"></i></button>
-          <div id="yundeng-extensions-panel" class="yundeng-browser-panel yundeng-extensions-panel hidden" role="dialog" aria-label="扩展程序" aria-modal="false" tabindex="-1">
-            <div class="yundeng-panel-header"><strong>扩展程序</strong><button type="button" class="yundeng-panel-close" data-browser-panel-close title="关闭扩展程序" aria-label="关闭扩展程序"><i data-lucide="x"></i></button></div>
-            <div class="yundeng-panel-copy"><strong>完全访问权限</strong><p>这些扩展程序可以查看和更改此网站上的信息。</p></div>
-            <div class="yundeng-extension-row"><span class="yundeng-extension-icon"><i data-lucide="scan-line"></i></span><span class="yundeng-extension-name">element-selector</span><button type="button" class="yundeng-panel-icon-button" data-extension-action="pin" aria-pressed="false" title="固定扩展程序" aria-label="固定扩展程序"><i data-lucide="pin"></i></button><button type="button" class="yundeng-panel-icon-button" data-extension-action="more" aria-expanded="false" aria-controls="yundeng-extension-more-menu" title="更多扩展程序选项" aria-label="更多扩展程序选项"><i data-lucide="ellipsis-vertical"></i></button></div>
-            <div id="yundeng-extension-more-menu" class="yundeng-extension-more-menu" role="menu" hidden><button type="button" role="menuitem" data-extension-action="copy"><i data-lucide="copy"></i><span>复制已选择元素</span></button><button type="button" role="menuitem" data-extension-action="permission"><i data-lucide="shield-check"></i><span>管理网站访问权限</span></button></div>
-            <button type="button" class="yundeng-panel-footer" data-browser-action="manage-extensions"><i data-lucide="settings"></i><span>管理扩展程序</span></button>
-          </div>
-          <div id="yundeng-download-panel" class="yundeng-browser-panel yundeng-download-panel hidden" role="dialog" aria-label="下载内容" tabindex="-1"><div class="yundeng-panel-header"><strong>下载内容</strong><button type="button" class="yundeng-panel-close" data-browser-panel-close title="关闭下载内容" aria-label="关闭下载内容"><i data-lucide="x"></i></button></div><div class="yundeng-download-empty"><i data-lucide="download-cloud"></i><p>暂无下载任务</p></div></div>
-          <div id="yundeng-more-panel" class="yundeng-browser-panel yundeng-more-panel hidden" role="menu" aria-label="更多" tabindex="-1">
-            <button type="button" class="yundeng-more-item" role="menuitem" data-browser-action="new-tab"><i data-lucide="square-plus"></i><span>打开新的标签页</span><span class="yundeng-more-shortcut">⌘T</span></button>
-            <button type="button" class="yundeng-more-item" role="menuitem" data-browser-action="history"><i data-lucide="history"></i><span>历史记录</span><i data-lucide="chevron-right" class="yundeng-more-chevron"></i></button>
-            <button type="button" class="yundeng-more-item" role="menuitem" data-browser-action="downloads"><i data-lucide="download"></i><span>下载内容</span><span class="yundeng-more-shortcut">⌥⌘L</span></button>
-            <button type="button" class="yundeng-more-item" role="menuitem" data-browser-action="bookmarks"><i data-lucide="bookmark"></i><span>书签</span><i data-lucide="chevron-right" class="yundeng-more-chevron"></i></button>
-            <div class="yundeng-more-divider" role="separator"></div>
-            <div class="yundeng-zoom-row"><button type="button" class="yundeng-panel-icon-button" data-browser-action="zoom-out" title="缩小" aria-label="缩小"><i data-lucide="minus"></i></button><span id="yundeng-zoom-level">100%</span><button type="button" class="yundeng-panel-icon-button" data-browser-action="zoom-in" title="放大" aria-label="放大"><i data-lucide="plus"></i></button><button type="button" class="yundeng-panel-icon-button" data-browser-action="fullscreen" title="全屏" aria-label="全屏"><i data-lucide="maximize"></i></button></div>
-            <div class="yundeng-more-divider" role="separator"></div>
-            <button type="button" class="yundeng-more-item" role="menuitem" data-browser-action="print"><i data-lucide="printer"></i><span>打印…</span><span class="yundeng-more-shortcut">⌘P</span></button>
-            <button type="button" class="yundeng-more-item" role="menuitem" data-browser-action="find"><i data-lucide="search"></i><span>查找…</span><span class="yundeng-more-shortcut">⌘F</span></button>
-            <button type="button" class="yundeng-more-item" role="menuitem" data-browser-action="more-tools"><i data-lucide="wrench"></i><span>更多工具</span><i data-lucide="chevron-right" class="yundeng-more-chevron"></i></button>
-            <div class="yundeng-more-divider" role="separator"></div>
-            <button type="button" class="yundeng-more-item" role="menuitem" data-browser-action="manage-extensions"><i data-lucide="puzzle"></i><span>插件管理</span></button>
-          </div>
-        </div>
-        <span id="yundeng-browser-status" class="yundeng-sr-only" aria-live="polite"></span>
-      </div>`;
-
     if (host.parentElement !== frame) frame.appendChild(host);
-    frame.insertBefore(browser, frame.firstChild);
-    if (topbar) frame.insertBefore(topbar, host);
-
-    const tabsHost = browser.querySelector('#yundeng-browser-tabs');
-    const addressForm = browser.querySelector('#yundeng-address-form');
-    const addressInput = browser.querySelector('#yundeng-address-input');
-    const bookmarkButton = browser.querySelector('#yundeng-bookmark-button');
-    const backButton = browser.querySelector('#yundeng-browser-back');
-    const forwardButton = browser.querySelector('#yundeng-browser-forward');
-    const reloadButton = browser.querySelector('#yundeng-browser-reload');
-    const extensionsButton = browser.querySelector('#yundeng-extensions-button');
-    const downloadButton = browser.querySelector('#yundeng-download-button');
-    const moreButton = browser.querySelector('#yundeng-more-button');
-    const extensionsPanel = browser.querySelector('#yundeng-extensions-panel');
-    const downloadPanel = browser.querySelector('#yundeng-download-panel');
-    const morePanel = browser.querySelector('#yundeng-more-panel');
-    const status = browser.querySelector('#yundeng-browser-status');
-    let nextTabId = 1;
-    const makeTab = (title = '新的标签页', address = 'https://app.yunlogin.com/new-tab') => ({ id: `browser-tab-${nextTabId++}`, title, history: [address], historyIndex: 0, bookmarked: false });
-    let tabs = [makeTab(`云登 · ${pageLabel}`, `https://app.yunlogin.com/${pageKey}`)];
-    let activeTabId = tabs[0].id;
-    const escapeHtml = value => String(value).replace(/[&<>'"]/g, char => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', "'":'&#39;', '"':'&quot;' })[char]);
-    const activeTab = () => tabs.find(tab => tab.id === activeTabId) || tabs[0];
-    const currentAddress = tab => tab.history[tab.historyIndex];
-    const titleFromAddress = address => {
-      try {
-        const url = new URL(address);
-        const query = url.searchParams.get('q');
-        return query ? `搜索：${query}` : url.hostname.replace(/^www\./, '') || '新的标签页';
-      } catch (_) { return address || '新的标签页'; }
-    };
-    const announce = message => { status.textContent = ''; requestAnimationFrame(() => { status.textContent = message; }); };
-    const syncBrowserControls = () => {
-      const tab = activeTab();
-      if (!tab) return;
-      addressInput.value = currentAddress(tab);
-      bookmarkButton.setAttribute('aria-pressed', String(Boolean(tab.bookmarked)));
-      bookmarkButton.dataset.bookmarked = String(Boolean(tab.bookmarked));
-      const browserNavigation = window.navigation;
-      backButton.disabled = isSystemFrame
-        ? (browserNavigation ? !browserNavigation.canGoBack : true)
-        : tab.historyIndex <= 0;
-      forwardButton.disabled = isSystemFrame
-        ? (browserNavigation ? !browserNavigation.canGoForward : true)
-        : tab.historyIndex >= tab.history.length - 1;
-    };
-    const renderTabs = () => {
-      tabsHost.innerHTML = tabs.map(tab => `<div class="yundeng-browser-tab" data-tab-id="${tab.id}" data-active="${tab.id === activeTabId}" role="tab" aria-selected="${tab.id === activeTabId}" tabindex="${tab.id === activeTabId ? '0' : '-1'}" title="${escapeHtml(tab.title)}"><span class="yundeng-browser-tab-mark">云</span><span class="yundeng-browser-tab-title">${escapeHtml(tab.title)}</span><button type="button" class="yundeng-close-tab" data-close-tab="${tab.id}" title="关闭标签页" aria-label="关闭${escapeHtml(tab.title)}"><i data-lucide="x"></i></button></div>`).join('');
-      syncBrowserControls();
-      window.lucide?.createIcons?.();
-    };
-    // 软导航时同步伪浏览器标签标题与地址，避免整壳重载。
-    window.yundengSyncBrowserRoute = (title, address) => {
-      const tab = activeTab();
-      if (!tab) return;
-      tab.title = title;
-      tab.history = [address];
-      tab.historyIndex = 0;
-      renderTabs();
-    };
-    const selectTab = id => { if (!tabs.some(tab => tab.id === id)) return; activeTabId = id; renderTabs(); tabsHost.querySelector(`[data-tab-id="${id}"]`)?.scrollIntoView({ block:'nearest', inline:'nearest' }); };
-    const addTab = () => { const tab = makeTab(); tabs.push(tab); activeTabId = tab.id; renderTabs(); addressInput.focus(); addressInput.select(); announce('已新增标签页'); };
-    const closeTab = id => {
-      const index = tabs.findIndex(tab => tab.id === id);
-      if (index < 0) return;
-      if (tabs.length === 1) tabs = [makeTab()];
-      else tabs.splice(index, 1);
-      if (!tabs.some(tab => tab.id === activeTabId)) activeTabId = tabs[Math.min(index, tabs.length - 1)].id;
-      renderTabs();
-      tabsHost.querySelector(`[data-tab-id="${activeTabId}"]`)?.focus();
-      announce('已关闭标签页');
-    };
-    const normalizeAddress = raw => {
-      const value = raw.trim();
-      if (/^https?:\/\//i.test(value)) return value;
-      if (/^[\w.-]+\.[a-z]{2,}(?:[/:?#]|$)/i.test(value) && !value.includes(' ')) return `https://${value}`;
-      return `https://app.yunlogin.com/search?q=${encodeURIComponent(value)}`;
-    };
-    const commitAddress = raw => {
-      if (!raw.trim()) {
-        const message = '请输入搜索内容或地址';
-        addressForm.dataset.invalid = 'true';
-        addressInput.setAttribute('aria-invalid', 'true');
-        addressInput.setCustomValidity(message);
-        addressInput.reportValidity();
-        announce(message);
-        return;
-      }
-      delete addressForm.dataset.invalid;
-      addressInput.removeAttribute('aria-invalid');
-      addressInput.setCustomValidity('');
-      const tab = activeTab();
-      const address = normalizeAddress(raw);
-      tab.history = tab.history.slice(0, tab.historyIndex + 1).concat(address);
-      tab.historyIndex = tab.history.length - 1;
-      tab.title = titleFromAddress(address);
-      tab.bookmarked = false;
-      renderTabs();
-      announce(`已打开${tab.title}`);
-    };
-    const moveHistory = delta => {
-      if (isSystemFrame) {
-        if (window.yundengHistoryNavigate) window.yundengHistoryNavigate(delta);
-        else history.go(delta);
-        announce(delta < 0 ? '正在返回上一页' : '正在前往下一页');
-        return;
-      }
-      const tab = activeTab();
-      const next = tab.historyIndex + delta;
-      if (next < 0 || next >= tab.history.length) return;
-      tab.historyIndex = next;
-      tab.title = titleFromAddress(currentAddress(tab));
-      renderTabs();
-      announce(delta < 0 ? '已后退' : '已前进');
-    };
-    const reload = () => {
-      if (isSystemFrame) {
-        announce('正在重新加载页面');
-        if (window.yundengReloadShell) window.yundengReloadShell();
-        else location.reload();
-        return;
-      }
-      reloadButton.classList.remove('is-spinning');
-      requestAnimationFrame(() => reloadButton.classList.add('is-spinning'));
-      setTimeout(() => reloadButton.classList.remove('is-spinning'), 450);
-      announce('页面已重新加载');
-    };
-    let panelReturnFocus = moreButton;
-    const extensionMoreMenu = browser.querySelector('#yundeng-extension-more-menu');
-    const closeExtensionMoreMenu = () => {
-      if (!extensionMoreMenu) return;
-      extensionMoreMenu.hidden = true;
-      const more = extensionsPanel.querySelector('[data-extension-action="more"]');
-      more?.setAttribute('aria-expanded', 'false');
-    };
-    const closePanels = () => {
-      extensionsPanel.classList.add('hidden');
-      downloadPanel.classList.add('hidden');
-      morePanel.classList.add('hidden');
-      closeExtensionMoreMenu();
-      extensionsButton.setAttribute('aria-expanded', 'false');
-      downloadButton.setAttribute('aria-expanded', 'false');
-      moreButton.setAttribute('aria-expanded', 'false');
-    };
-    const togglePanel = (panel, button) => {
-      const shouldOpen = panel.classList.contains('hidden');
-      closePanels();
-      if (shouldOpen) {
-        panelReturnFocus = button;
-        panel.classList.remove('hidden');
-        button.setAttribute('aria-expanded', 'true');
-      }
-    };
-
-    tabsHost.addEventListener('click', event => { const close = event.target.closest('[data-close-tab]'); if (close) { event.stopPropagation(); closeTab(close.dataset.closeTab); return; } const tab = event.target.closest('[data-tab-id]'); if (tab) selectTab(tab.dataset.tabId); });
-    tabsHost.addEventListener('keydown', event => { const tab = event.target.closest('[data-tab-id]'); if (!tab) return; if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); selectTab(tab.dataset.tabId); } });
-    browser.querySelector('#yundeng-new-tab').onclick = addTab;
-    addressForm.onsubmit = event => { event.preventDefault(); commitAddress(addressInput.value); };
-    addressInput.addEventListener('input', () => {
-      if (!addressInput.validity.customError) return;
-      delete addressForm.dataset.invalid;
-      addressInput.removeAttribute('aria-invalid');
-      addressInput.setCustomValidity('');
-    });
-    backButton.onclick = () => moveHistory(-1);
-    forwardButton.onclick = () => moveHistory(1);
-    reloadButton.onclick = reload;
-    extensionsButton.onclick = event => { event.stopPropagation(); togglePanel(extensionsPanel, extensionsButton); };
-    downloadButton.onclick = event => { event.stopPropagation(); togglePanel(downloadPanel, downloadButton); };
-    moreButton.onclick = event => { event.stopPropagation(); togglePanel(morePanel, moreButton); };
-    bookmarkButton.onclick = event => {
-      event.preventDefault();
-      event.stopPropagation();
-      const tab = activeTab();
-      tab.bookmarked = !tab.bookmarked;
-      syncBrowserControls();
-      announce(tab.bookmarked ? '已为此标签页添加书签' : '已取消此标签页书签');
-    };
-    browser.querySelectorAll('[data-browser-panel-close]').forEach(button => {
-      button.onclick = event => { event.stopPropagation(); closePanels(); panelReturnFocus.focus(); };
-    });
-    extensionsPanel.addEventListener('click', event => {
-      const browserAction = event.target.closest('[data-browser-action]')?.dataset.browserAction;
-      if (browserAction === 'manage-extensions') {
-        event.stopPropagation();
-        announce('扩展程序管理将在后续版本接入');
-        return;
-      }
-      const action = event.target.closest('[data-extension-action]')?.dataset.extensionAction;
-      if (!action) return;
-      event.stopPropagation();
-      if (action === 'pin') {
-        const button = event.target.closest('[data-extension-action="pin"]');
-        const pinned = button.getAttribute('aria-pressed') !== 'true';
-        button.setAttribute('aria-pressed', String(pinned));
-        button.dataset.pinned = String(pinned);
-        announce(pinned ? '已固定扩展程序' : '已取消固定扩展程序');
-      } else if (action === 'more') {
-        const button = event.target.closest('[data-extension-action="more"]');
-        const open = extensionMoreMenu.hidden;
-        closeExtensionMoreMenu();
-        extensionMoreMenu.hidden = !open;
-        button.setAttribute('aria-expanded', String(open));
-      } else if (action === 'copy') {
-        closeExtensionMoreMenu();
-        announce('已复制已选择元素');
-      } else if (action === 'permission') {
-        closeExtensionMoreMenu();
-        announce('已打开网站访问权限设置');
-      }
-    });
-    let zoomLevel = 100;
-    const updateZoom = delta => {
-      zoomLevel = Math.min(200, Math.max(50, zoomLevel + delta));
-      browser.querySelector('#yundeng-zoom-level').textContent = `${zoomLevel}%`;
-      announce(`缩放比例 ${zoomLevel}%`);
-    };
-    morePanel.onclick = event => {
-      const action = event.target.closest('[data-browser-action]')?.dataset.browserAction;
-      if (!action) return;
-      event.stopPropagation();
-      if (action === 'downloads') { closePanels(); togglePanel(downloadPanel, downloadButton); return; }
-      closePanels();
-      if (action === 'new-tab') addTab();
-      else if (action === 'reload') reload();
-      else if (action === 'manage-extensions') togglePanel(extensionsPanel, extensionsButton);
-      else if (action === 'zoom-out') { togglePanel(morePanel, moreButton); updateZoom(-10); }
-      else if (action === 'zoom-in') { togglePanel(morePanel, moreButton); updateZoom(10); }
-      else if (action === 'fullscreen') announce('已切换全屏显示');
-      else if (action === 'print') announce('打印功能将在后续版本接入');
-      else if (action === 'find') { addressInput.focus(); announce('已聚焦搜索框'); }
-      else if (action === 'history') announce('历史记录功能将在后续版本接入');
-      else if (action === 'bookmarks') announce('书签管理功能将在后续版本接入');
-      else if (action === 'more-tools') announce('更多工具功能将在后续版本接入');
-    };
-    document.addEventListener('click', event => { if (!event.target.closest('.yundeng-browser-actions')) closePanels(); });
-    document.addEventListener('keydown', event => {
-      if (event.key === 'Escape' && (!extensionsPanel.classList.contains('hidden') || !downloadPanel.classList.contains('hidden') || !morePanel.classList.contains('hidden'))) { closePanels(); panelReturnFocus.focus(); return; }
-      if (!(event.metaKey || event.ctrlKey) || event.altKey) return;
-      const key = event.key.toLowerCase();
-      if (key === 'l') { event.preventDefault(); addressInput.focus(); addressInput.select(); }
-      else if (key === 't') { event.preventDefault(); addTab(); }
-      else if (key === 'w') { event.preventDefault(); closeTab(activeTabId); }
-    });
-    renderTabs();
-    return browser;
+    if (topbar && topbar.parentElement !== frame) frame.insertBefore(topbar, host);
+    return frame;
   }
 
   function createShellSidebar(sidebar) {
     sidebar.className = 'sidebar';
-    sidebar.innerHTML = `<div class="yundeng-create-wrap"><a class="yundeng-create" href="${shellRouteHref('create')}" title="新建环境"><i data-lucide="plus" class="w-4"></i><span class="create-label">新建环境</span></a></div><nav id="yundeng-primary-nav" aria-label="业务模块"></nav><div class="yundeng-sidebar-bottom"><div class="yundeng-sidebar-divider"></div><a class="yundeng-bottom-link" data-active="${pageKey === 'settings'}" href="${shellRouteHref('settings')}" title="设置"><i data-lucide="settings-2" class="menu-icon"></i><span class="bottom-label">设置</span></a><a class="yundeng-bottom-link" data-active="${pageKey === 'help'}" href="${shellRouteHref('help')}" title="帮助"><i data-lucide="circle-help" class="menu-icon"></i><span class="bottom-label">帮助</span></a></div><button type="button" id="collapseBtn" class="yundeng-sidebar-toggle" title="收起侧栏" aria-label="收起侧栏" aria-expanded="true"><i data-lucide="triangle" class="yundeng-solid-arrow"></i></button>`;
+    sidebar.innerHTML = `<div class="yundeng-create-wrap"><a class="yundeng-create" href="${shellRouteHref('create')}" title="新建环境"><i data-lucide="plus" class="w-4"></i><span class="create-label">新建环境</span></a></div><nav id="yundeng-primary-nav" aria-label="业务模块"></nav><div class="yundeng-sidebar-bottom"><div class="yundeng-sidebar-divider"></div><a class="yundeng-bottom-link" data-active="${shellCurrentPageKey === 'settings'}" href="${shellRouteHref('settings')}" title="设置"><i data-lucide="settings-2" class="menu-icon"></i><span class="bottom-label">设置</span></a><a class="yundeng-bottom-link" data-active="${shellCurrentPageKey === 'help'}" href="${shellRouteHref('help')}" title="帮助"><i data-lucide="circle-help" class="menu-icon"></i><span class="bottom-label">帮助</span></a></div><button type="button" id="collapseBtn" class="yundeng-sidebar-toggle" title="收起侧栏" aria-label="收起侧栏" aria-expanded="true"><i data-lucide="triangle" class="yundeng-solid-arrow"></i></button>`;
   }
 
   function normalizeExistingSidebar(sidebar) {
@@ -694,17 +516,32 @@
     return nav;
   }
 
+  // 菜单待处理角标：仅 NAV_BADGE_KEYS 中登记的 key 会渲染，数字超过 99 时显示 99+。
+  function badgeHTML(count, text) {
+    if (!count) return '';
+    const value = count > 99 ? '99+' : String(count);
+    return `<span class="yundeng-menu-badge" title="${text} ${value}" aria-label="${text} ${value}">${value}</span>`;
+  }
+
   function itemLink(item, child) {
     // 费用管理二级页面与其他导航项使用同一选中态规则。
-    const active = item.key === 'store' ? STORE_PAGE_KEYS.has(pageKey) : pageKey === item.key;
+    // 必须读取 shellCurrentPageKey（软导航会更新），不能读取页面加载时的 pageKey。
+    const active = item.key === 'store' ? STORE_PAGE_KEYS.has(shellCurrentPageKey) : shellCurrentPageKey === item.key;
     const icon = child ? '' : `<i data-lucide="${item.icon}" class="menu-icon"></i>`;
-    return `<a href="${shellRouteHref(item.key)}" class="yundeng-menu-link ${child ? 'yundeng-secondary-link' : ''}" data-active="${active}" data-page-key="${item.key}" title="${item.label}">${icon}<span class="menu-label nav-label truncate">${item.label}</span></a>`;
+    return `<a href="${shellRouteHref(item.key)}" class="yundeng-menu-link ${child ? 'yundeng-secondary-link' : ''}" data-active="${active}" data-page-key="${item.key}" title="${item.label}">${icon}<span class="menu-label nav-label truncate">${item.label}</span>${badgeHTML(navBadges[item.key], '待处理')}</a>`;
   }
 
   function renderNav(nav) {
-    syncExpandedGroupsForPage(pageKey, consumeExpandedGroupTransition(pageKey));
+    syncExpandedGroupsForPage(shellCurrentPageKey);
     const expanded = readExpandedGroups();
-    nav.innerHTML = NAV.map(item => item.group ? `<div class="yundeng-group"><button type="button" class="yundeng-group-toggle" data-active="${item.children.some(child => child.key === pageKey)}" aria-expanded="${expanded[item.key] !== false}" data-group-key="${item.key}"><i data-lucide="${item.icon}" class="menu-icon"></i><span class="menu-label nav-label">${item.label}</span><i data-lucide="chevron-down" class="yundeng-group-chevron w-3.5 h-3.5 ml-auto"></i></button><div class="yundeng-subnav" data-expanded="${expanded[item.key] !== false}">${item.children.map(child => itemLink(child, true)).join('')}</div></div>` : itemLink(item, false)).join('');
+    nav.innerHTML = NAV.map(item => {
+      if (!item.group) return itemLink(item, false);
+      // 分组角标为组内二级菜单待处理数之和；分组展开后由二级菜单自行展示，避免重复。
+      const groupCount = item.children.reduce((sum, child) => sum + (navBadges[child.key] || 0), 0);
+      // 箭头始终贴右侧：由 .yundeng-group-toggle > .menu-label 占满剩余空间撑开，
+      // 不能依赖角标的 margin-left:auto（分组展开时角标会被隐藏，箭头会随之左移）。
+      return `<div class="yundeng-group"><button type="button" class="yundeng-group-toggle" data-active="${item.children.some(child => child.key === shellCurrentPageKey)}" aria-expanded="${isGroupExpanded(expanded, item.key)}" data-group-key="${item.key}"><i data-lucide="${item.icon}" class="menu-icon"></i><span class="menu-label nav-label">${item.label}</span>${badgeHTML(groupCount, '待处理')}<i data-lucide="chevron-down" class="yundeng-group-chevron w-3.5 h-3.5 ml-auto"></i></button><div class="yundeng-subnav" data-expanded="${isGroupExpanded(expanded, item.key)}">${item.children.map(child => itemLink(child, true)).join('')}</div></div>`;
+    }).join('');
     window.lucide?.createIcons?.();
   }
 
@@ -1221,7 +1058,7 @@
         if (!parent) break;
         Array.from(parent.children).forEach(sibling => {
           if (sibling === current) return;
-          if (sibling.matches('aside, header, #sidebar, #mobileScrim, #yundeng-browser-frame, [data-yundeng-topbar], .topbar')) {
+          if (sibling.matches('aside, header, #sidebar, #mobileScrim, [data-yundeng-topbar], .topbar')) {
             sibling.dataset.yundengEmbedShell = 'true';
             sibling.setAttribute('aria-hidden', 'true');
           }
@@ -1230,7 +1067,7 @@
       }
     }
 
-    document.querySelectorAll('#yundeng-browser-frame, #sidebar, #mobileScrim, .yundeng-mobile-backdrop, #assistantBtn, #assistantButton, #yundengAssistantButton, [data-yundeng-assistant-button], #assistantDrawer, #serviceRoot, #yundengAssistantDrawer, [data-yundeng-assistant-drawer], #noticePopover, #languagePopover, #helpPopover, #accountPopover, .yundeng-popover').forEach(node => {
+    document.querySelectorAll('#sidebar, #mobileScrim, .yundeng-mobile-backdrop, #assistantBtn, #assistantButton, #yundengAssistantButton, [data-yundeng-assistant-button], #assistantDrawer, #serviceRoot, #yundengAssistantDrawer, [data-yundeng-assistant-drawer], #noticePopover, #languagePopover, #helpPopover, #accountPopover, .yundeng-popover').forEach(node => {
       node.dataset.yundengEmbedShell = 'true';
       node.setAttribute('aria-hidden', 'true');
     });
@@ -1448,6 +1285,8 @@
       } catch (_) { return null; }
     };
     const applySidebarActiveState = nextKey => {
+      // 记录当前路由 key，供后续 renderNav（角标刷新等）重绘时保持左侧菜单高亮正确。
+      if (nextKey) shellCurrentPageKey = nextKey;
       const nav = document.getElementById('yundeng-primary-nav');
       nav?.querySelectorAll('a[data-page-key]').forEach(link => {
         const key = link.dataset.pageKey;
@@ -1462,17 +1301,6 @@
           const page = new URL(link.getAttribute('href'), location.href).searchParams.get('page');
           link.dataset.active = String(page === nextKey);
         } catch (_) {}
-      });
-    };
-    const applySidebarExpandedState = () => {
-      const expanded = readExpandedGroups();
-      const nav = document.getElementById('yundeng-primary-nav');
-      NAV.filter(item => item.group).forEach(item => {
-        const toggle = nav?.querySelector(`[data-group-key="${item.key}"]`);
-        const sub = toggle?.nextElementSibling;
-        const isOpen = expanded[item.key] !== false;
-        toggle?.setAttribute('aria-expanded', String(isOpen));
-        if (sub) sub.dataset.expanded = String(isOpen);
       });
     };
     const softApplyRoute = (href, { push = true } = {}) => {
@@ -1493,7 +1321,6 @@
       applySidebarExpandedState();
       activePageLabel = target.label;
       document.title = `云登 · ${target.label}`;
-      window.yundengSyncBrowserRoute?.(`云登 · ${target.label}`, `https://app.yunlogin.com/${target.key}`);
       outlet.setAttribute('aria-label', `${target.label}业务内容区`);
       frame.title = target.label;
       if (!sameModule) {
@@ -1610,7 +1437,18 @@
     mobile && (mobile.onclick = () => setMobileOpen(!sidebar.classList.contains('yundeng-mobile-open')));
     backdrop.onclick = () => setMobileOpen(false);
     const nav = document.getElementById('yundeng-primary-nav');
-    nav?.addEventListener('click', e => { const group = e.target.closest('[data-group-key]'); if (!group) return; e.preventDefault(); const sub = group.nextElementSibling; const expanded = group.getAttribute('aria-expanded') !== 'true'; group.setAttribute('aria-expanded', String(expanded)); sub.dataset.expanded = String(expanded); try { const saved = JSON.parse(localStorage.getItem(shellStateKey) || '{}'); saved[group.dataset.groupKey] = expanded; localStorage.setItem(shellStateKey, JSON.stringify(saved)); } catch (_) {} });
+    // 一级菜单遵循手风琴：展开目标分组时收起其它分组，收起时保持全部收起。
+    nav?.addEventListener('click', e => {
+      const toggle = e.target.closest('[data-group-key]');
+      if (!toggle) return;
+      e.preventDefault();
+      const groupKey = toggle.dataset.groupKey;
+      const willOpen = toggle.getAttribute('aria-expanded') !== 'true';
+      const expanded = {};
+      NAV.filter(item => item.group).forEach(item => { expanded[item.key] = willOpen && item.key === groupKey; });
+      writeExpandedGroups(expanded);
+      applySidebarExpandedState();
+    });
     document.addEventListener('click', e => {
       const link = e.target.closest('a.yundeng-menu-link, a.yundeng-create, a.yundeng-bottom-link');
       if (!link) return;
@@ -1644,6 +1482,298 @@
     addEventListener('resize', () => { if (innerWidth >= 768) setMobileOpen(false); });
   }
 
+  /* =====================================================================
+     列表工具栏搜索组件（design.md 5.4.2 统一标准的唯一实现）
+     - 结构、样式、范围下拉、键盘与匹配语义全部由本组件负责；
+     - 页面只声明容器、可检索字段与重绘回调，禁止在页面内复制实现。
+     用法：
+       YDSearchBox.init('#memberSearchBox', {
+         label: '成员',
+         inputId: 'keyword',
+         scopes: [{ key: 'all', label: '全局搜索' }, { key: 'name', label: '成员名称' }],
+         values: row => ({ name: row.name, phone: row.phone }),
+         onChange: () => renderResults()
+       });
+       过滤时：YDSearchBox.matches('#memberSearchBox', row)
+     ===================================================================== */
+  const SEARCH_PLACEHOLDER_TEXT = '请输入关键词，多个用中文逗号分隔';
+  const SEARCH_BOX_STATES = new Map();
+  const SEARCH_BOX_INSTANCES = new WeakMap();
+
+  function searchEscapeHtml(value) {
+    return String(value === null || value === undefined ? '' : value).replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
+  }
+
+  function searchSplitKeywords(value) {
+    return String(value || '').split('，').map(part => part.trim().toLowerCase()).filter(Boolean);
+  }
+
+  function searchFieldValues(fieldMap, key) {
+    if (!fieldMap || typeof fieldMap !== 'object') return [];
+    const raw = fieldMap[key];
+    if (raw === null || raw === undefined) return [];
+    return (Array.isArray(raw) ? raw : [raw]).map(item => String(item));
+  }
+
+  function resolveSearchTarget(target) {
+    if (!target) return null;
+    if (typeof target === 'string') return document.querySelector(target);
+    return target instanceof Element ? target : null;
+  }
+
+  function createSearchBox(container, config) {
+    const options = config || {};
+    const scopes = Array.isArray(options.scopes) && options.scopes.length ? options.scopes.slice() : [{ key: 'all', label: '全局搜索' }];
+    const label = options.label || '列表';
+    const inputId = options.inputId || container.getAttribute('data-search-input') || (container.id ? container.id + 'Keyword' : '');
+    if (!inputId) return null;
+    const stateKey = options.key || container.id || inputId;
+    let state = SEARCH_BOX_STATES.get(stateKey);
+    if (!state) {
+      state = { value: '', draft: '', scopeKey: scopes[0].key, activeIndex: 0, committed: false, hadFocus: false };
+      SEARCH_BOX_STATES.set(stateKey, state);
+    }
+    if (typeof state.draft !== 'string') state.draft = state.value;
+    if (typeof options.value === 'string' && options.value !== state.value) {
+      state.value = options.value;
+      state.draft = options.value;
+      if (!options.value) { state.scopeKey = scopes[0].key; state.activeIndex = 0; state.committed = false; }
+    }
+
+    container.classList.add('order-global-search');
+    if (!container.hasAttribute('role')) container.setAttribute('role', 'search');
+    if (!container.querySelector('input')) {
+      const prefixId = inputId + 'ScopePrefix';
+      const clearId = inputId + 'Clear';
+      const submitId = inputId + 'Submit';
+      const menuId = inputId + 'ScopeMenu';
+      container.classList.remove('has-committed-scope', 'is-open');
+      container.insertAdjacentHTML('afterbegin',
+        '<label class="sr-only" for="' + inputId + '">搜索' + searchEscapeHtml(label) + '</label>' +
+        '<span id="' + prefixId + '" class="order-search-scope-prefix hidden" aria-hidden="true">' + searchEscapeHtml(scopes[0].label) + '包含：</span>' +
+        '<input id="' + inputId + '" class="field" type="search" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="' + menuId + '" autocomplete="off" placeholder="' + SEARCH_PLACEHOLDER_TEXT + '">' +
+        '<button id="' + clearId + '" type="button" class="order-search-clear hidden" aria-label="清空' + searchEscapeHtml(label) + '搜索"><i data-lucide="x" class="w-4 h-4" aria-hidden="true"></i></button>' +
+        '<button id="' + submitId + '" type="button" class="order-search-submit" aria-label="搜索' + searchEscapeHtml(label) + '"><i data-lucide="search" class="order-search-icon" aria-hidden="true"></i></button>' +
+        '<div id="' + menuId + '" class="order-search-scope-menu hidden" role="listbox" aria-label="选择' + searchEscapeHtml(label) + '搜索范围"></div>');
+    }
+
+    const input = container.querySelector('input[type="search"]') || container.querySelector('input');
+    const prefix = container.querySelector('.order-search-scope-prefix');
+    const clearButton = container.querySelector('.order-search-clear');
+    const submitButton = container.querySelector('.order-search-submit');
+    const menu = container.querySelector('.order-search-scope-menu');
+    if (!input || !prefix || !clearButton || !submitButton || !menu) return null;
+
+    const instance = { key: stateKey, container, input, state, scopes };
+    const renderList = () => { if (typeof options.onChange === 'function') options.onChange(instance); };
+    const optionId = index => inputId + 'ScopeOption' + index;
+    const activeScope = () => scopes.find(item => item.key === state.scopeKey) || scopes[0];
+
+    /* 字段名长度不一（如「请求授权姓名包含：」），前缀宽度按实际内容量取后写回容器，
+       输入框左内边距随 --yd-search-prefix-width 调整，避免文字被裁切或压住输入内容。 */
+    const syncPrefixWidth = () => {
+      if (prefix.classList.contains('hidden')) {
+        container.style.removeProperty('--yd-search-prefix-width');
+        return;
+      }
+      const width = Math.ceil(prefix.getBoundingClientRect().width);
+      if (width > 0) container.style.setProperty('--yd-search-prefix-width', width + 'px');
+    };
+
+    const sync = () => {
+      const scope = activeScope();
+      prefix.textContent = scope.label + '包含：';
+      prefix.classList.toggle('hidden', !state.committed);
+      container.classList.toggle('has-committed-scope', state.committed);
+      syncPrefixWidth();
+      clearButton.classList.toggle('hidden', !state.draft);
+      if (input.value !== state.draft) input.value = state.draft;
+      input.setAttribute('aria-label', state.committed ? label + '搜索，' + scope.label : label + '搜索');
+    };
+
+    const renderMenu = () => {
+      const query = String(state.draft || '').trim();
+      menu.innerHTML = scopes.map((scope, index) =>
+        '<button id="' + optionId(index) + '" type="button" class="order-search-scope-option ' + (index === state.activeIndex ? 'is-active' : '') + '" role="option" tabindex="-1" aria-selected="' + String(scope.key === activeScope().key) + '" data-yd-search-index="' + index + '"><span class="order-search-scope-radio" aria-hidden="true"></span><span class="order-search-scope-label">' + searchEscapeHtml(scope.label) + '</span><span class="order-search-scope-relation">包含</span><span class="order-search-scope-query">' + searchEscapeHtml(query) + '</span></button>'
+      ).join('');
+      if (!menu.classList.contains('hidden')) {
+        input.setAttribute('aria-activedescendant', optionId(state.activeIndex));
+        menu.querySelector('.is-active')?.scrollIntoView({ block: 'nearest' });
+      }
+    };
+
+    const setOpen = open => {
+      const shouldOpen = Boolean(open && String(state.draft || '').trim());
+      container.classList.toggle('is-open', shouldOpen);
+      menu.classList.toggle('hidden', !shouldOpen);
+      input.setAttribute('aria-expanded', String(shouldOpen));
+      if (shouldOpen) renderMenu();
+      else input.removeAttribute('aria-activedescendant');
+    };
+
+    const selectScope = index => {
+      const scope = scopes[index];
+      if (!scope) return;
+      state.scopeKey = scope.key;
+      state.activeIndex = index;
+      state.committed = true;
+      state.value = state.draft;
+      sync();
+      renderList();
+      setOpen(false);
+      input.focus();
+    };
+
+    const confirm = () => {
+      if (!String(state.draft || '').trim()) { setOpen(false); input.focus(); return; }
+      if (!menu.classList.contains('hidden')) selectScope(state.activeIndex);
+      else if (!state.committed) selectScope(0);
+      else { state.value = state.draft; sync(); renderList(); }
+      input.focus();
+      setOpen(false);
+    };
+
+    const clear = (clearOptions) => {
+      const shouldFocus = !clearOptions || clearOptions.focus !== false;
+      state.value = '';
+      state.draft = '';
+      state.scopeKey = scopes[0].key;
+      state.activeIndex = 0;
+      state.committed = false;
+      input.value = '';
+      sync();
+      setOpen(false);
+      renderList();
+      if (shouldFocus) input.focus();
+    };
+
+    input.addEventListener('input', () => {
+      state.draft = input.value;
+      if (!state.draft.trim()) {
+        state.value = '';
+        state.scopeKey = scopes[0].key;
+        state.activeIndex = 0;
+        state.committed = false;
+        sync();
+        setOpen(false);
+        renderList();
+      } else {
+        state.activeIndex = Math.max(0, scopes.findIndex(scope => scope.key === state.scopeKey));
+        sync();
+        renderMenu();
+        setOpen(true);
+      }
+    });
+    input.addEventListener('focus', () => { state.hadFocus = true; if (state.draft.trim()) setOpen(true); });
+    input.addEventListener('click', () => { state.hadFocus = true; if (state.draft.trim()) setOpen(true); });
+    input.addEventListener('blur', () => { state.hadFocus = false; });
+    input.addEventListener('keydown', event => {
+      if (!state.draft.trim()) return;
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+        event.preventDefault();
+        setOpen(true);
+        state.activeIndex = (state.activeIndex + (event.key === 'ArrowDown' ? 1 : -1) + scopes.length) % scopes.length;
+        renderMenu();
+      } else if (event.key === 'Enter') {
+        event.preventDefault();
+        confirm();
+      } else if (event.key === 'Escape' && !menu.classList.contains('hidden')) {
+        event.preventDefault();
+        setOpen(false);
+      }
+    });
+    clearButton.addEventListener('click', () => clear());
+    submitButton.addEventListener('click', confirm);
+    menu.addEventListener('pointerdown', event => event.preventDefault());
+    menu.addEventListener('click', event => {
+      const option = event.target.closest('[data-yd-search-index]');
+      if (option) selectScope(Number(option.dataset.ydSearchIndex));
+    });
+    document.addEventListener('click', event => { if (!container.contains(event.target)) setOpen(false); });
+
+    instance.value = () => state.value;
+    instance.draft = () => state.draft;
+    instance.scope = () => activeScope().key;
+    instance.keywords = () => searchSplitKeywords(state.value);
+    instance.committed = () => state.committed;
+    instance.setValue = next => {
+      const raw = String(next === null || next === undefined ? '' : next);
+      state.value = raw;
+      state.draft = raw;
+      if (!raw.trim()) { state.scopeKey = scopes[0].key; state.activeIndex = 0; state.committed = false; setOpen(false); }
+      sync();
+    };
+    instance.clear = clear;
+    instance.sync = sync;
+    instance.matches = row => {
+      const keywords = searchSplitKeywords(state.value);
+      if (!keywords.length) return true;
+      const fieldMap = typeof options.values === 'function' ? options.values(row) : null;
+      const keys = fieldMap && typeof fieldMap === 'object' ? Object.keys(fieldMap) : [];
+      /* 已提交范围在当前上下文的字段清单中不存在时（如页签切换后字段集合变化），
+         与前缀展示保持一致退回全局语义，避免「前缀显示全局搜索却匹配不到任何行」。 */
+      const scopeKey = activeScope().key;
+      const source = scopeKey === 'all' || !keys.includes(scopeKey)
+        ? keys.reduce((acc, key) => acc.concat(searchFieldValues(fieldMap, key)), [])
+        : searchFieldValues(fieldMap, scopeKey);
+      const searchable = source.join(' ').toLowerCase();
+      return keywords.some(keyword => searchable.includes(keyword));
+    };
+
+    state.activeIndex = Math.max(0, scopes.findIndex(scope => scope.key === state.scopeKey));
+    sync();
+    window.addEventListener('resize', syncPrefixWidth);
+    window.lucide?.createIcons?.();
+    SEARCH_BOX_INSTANCES.set(container, instance);
+    if (state.hadFocus) {
+      input.focus();
+      const end = input.value.length;
+      try { input.setSelectionRange(end, end); } catch (error) { /* type=search 在部分浏览器不支持，忽略 */ }
+    }
+    return instance;
+  }
+
+  function initSearchBox(target, options) {
+    const container = resolveSearchTarget(target);
+    if (!container) return null;
+    const live = SEARCH_BOX_INSTANCES.get(container);
+    if (live && container.querySelector('input')) { live.sync(); return live; }
+    return createSearchBox(container, options);
+  }
+
+  window.YDSearchBox = {
+    init: initSearchBox,
+    get(target) {
+      const container = resolveSearchTarget(target);
+      return container ? SEARCH_BOX_INSTANCES.get(container) || null : null;
+    },
+    matches(target, row) {
+      const instance = window.YDSearchBox.get(target);
+      return instance ? instance.matches(row) : true;
+    },
+    keywords(target) {
+      const instance = window.YDSearchBox.get(target);
+      return instance ? instance.keywords() : [];
+    },
+    value(target) {
+      const instance = window.YDSearchBox.get(target);
+      return instance ? instance.value() : '';
+    },
+    draft(target) {
+      const instance = window.YDSearchBox.get(target);
+      return instance ? instance.draft() : '';
+    },
+    setValue(target, next) {
+      window.YDSearchBox.get(target)?.setValue(next);
+    },
+    clear(target, options) {
+      window.YDSearchBox.get(target)?.clear(options);
+    },
+    sync(target) {
+      window.YDSearchBox.get(target)?.sync();
+    }
+  };
+
   function init() {
     if (basename === 'index.html') {
       delete document.documentElement.dataset.yundengRuntimePending;
@@ -1671,7 +1801,7 @@
     const nav = document.getElementById('yundeng-primary-nav');
     renderNav(nav);
     const topbar = findTopbar(main);
-    setupBrowserFrame(host, topbar);
+    setupAppFrame(host, topbar);
     setupTopbar(topbar);
     setupPopovers(topbar);
     setupRouter(main);

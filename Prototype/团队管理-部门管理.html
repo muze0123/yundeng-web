@@ -1,0 +1,2656 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>云登 · 部门管理</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap"
+    />
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: {
+                DEFAULT: "#0066FF",
+                hover: "#0052CC",
+                active: "#0047B3",
+                bg: "#E6F0FF",
+              },
+              ink: {
+                title: "#1A1D24",
+                body: "#3A3F4A",
+                sub: "#6E7685",
+                muted: "#9DA2AC",
+              },
+              line: {
+                DEFAULT: "#DFE1E5",
+                light: "#E8EAED",
+                lighter: "#F0F1F3",
+              },
+              page: "#F7F8FA",
+              card: "#FFFFFF",
+              hover: "#F3F4F6",
+              "block-hover": "#F0F1F3",
+              price: "#FE5416",
+              success: { DEFAULT: "#0FC060", bg: "#E7F9F0" },
+              warning: { DEFAULT: "#E7772D", bg: "#FDF2E9" },
+              danger: { DEFAULT: "#D9001B", bg: "#FFE8EB" },
+              info: { DEFAULT: "#0091D5", bg: "#E4F4FB" },
+            },
+            borderRadius: { DEFAULT: "4px", md: "6px", lg: "8px" },
+            fontFamily: {
+              sans: [
+                "-apple-system",
+                "BlinkMacSystemFont",
+                "PingFang SC",
+                "Hiragino Sans GB",
+                "Microsoft YaHei",
+                "Helvetica Neue",
+                "Helvetica",
+                "Arial",
+                "sans-serif",
+              ],
+              mono: ["JetBrains Mono", "monospace"],
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      /* 布局、颜色和尺寸取自 design.md §2–5；业务树缩进取 20px 间距梯度。 */
+      :root {
+        --primary: #0066ff;
+        --primary-hover: #0052cc;
+        --primary-bg: #e6f0ff;
+        --title: #1a1d24;
+        --body: #3a3f4a;
+        --sub: #6e7685;
+        --muted: #9da2ac;
+        --line: #dfe1e5;
+        --light: #e8eaed;
+        --lighter: #f0f1f3;
+        --page: #f7f8fa;
+        --card: #ffffff;
+        --hover: #f3f4f6;
+        --danger: #d9001b;
+        --danger-bg: #ffe8eb;
+        --success: #0fc060;
+        --warning: #e7772d;
+        --warning-bg: #fdf2e9;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font:
+          13px/1.5 -apple-system,
+          BlinkMacSystemFont,
+          "PingFang SC",
+          "Microsoft YaHei",
+          sans-serif;
+        color: var(--body);
+        background: var(--page);
+      }
+      button,
+      input,
+      select,
+      textarea {
+        font: inherit;
+      }
+      button {
+        cursor: pointer;
+      }
+      button:disabled {
+        cursor: not-allowed;
+        opacity: 0.45;
+      }
+      input,
+      textarea {
+        caret-color: var(--primary);
+      }
+      input[type="checkbox"],
+      input[type="radio"] {
+        accent-color: var(--primary);
+      }
+      ::selection {
+        background: var(--primary-bg);
+        color: var(--primary);
+      }
+      :focus-visible {
+        outline: 2px solid var(--primary);
+        outline-offset: 2px;
+      }
+      svg {
+        width: 16px;
+        height: 16px;
+        flex-shrink: 0;
+      }
+      h2,
+      h3,
+      p {
+        margin: 0;
+      }
+      h2 {
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--title);
+      }
+      h3 {
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--title);
+      }
+      a {
+        color: var(--primary);
+        text-underline-offset: 3px;
+      }
+      [hidden] {
+        display: none !important;
+      }
+      .mono {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 12px;
+        font-variant-numeric: tabular-nums;
+      }
+      .muted {
+        color: var(--sub);
+      }
+      .small {
+        font-size: 12px;
+      }
+      .actions {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .spaced {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+      .btn {
+        height: 32px;
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        background: var(--card);
+        color: var(--body);
+        padding: 0 12px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        white-space: nowrap;
+      }
+      .btn:hover:not(:disabled) {
+        border-color: var(--primary);
+        color: var(--primary);
+      }
+      .btn.primary {
+        background: var(--primary);
+        border-color: var(--primary);
+        color: var(--card);
+      }
+      .btn.primary:hover {
+        background: var(--primary-hover);
+      }
+      .btn.danger {
+        background: var(--danger);
+        border-color: var(--danger);
+        color: var(--card);
+      }
+      .icon-btn {
+        width: 32px;
+        height: 32px;
+        padding: 0;
+        border: 0;
+        border-radius: 4px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: transparent;
+        color: var(--sub);
+      }
+      .icon-btn:hover {
+        background: var(--hover);
+        color: var(--body);
+      }
+      .link {
+        border: 0;
+        background: transparent;
+        color: var(--primary);
+        padding: 0;
+        white-space: nowrap;
+      }
+      .link:hover {
+        text-decoration: underline;
+        text-underline-offset: 3px;
+      }
+      .link.danger {
+        color: var(--danger);
+      }
+      .row-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        white-space: nowrap;
+      }
+      .field {
+        height: 32px;
+        width: 100%;
+        padding: 0 10px;
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        background: var(--card);
+        color: var(--body);
+        min-width: 0;
+      }
+      .field:focus {
+        outline: 0;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 2px var(--primary-bg);
+      }
+      textarea.field {
+        height: 88px;
+        padding: 8px 10px;
+        resize: vertical;
+      }
+      .field[aria-invalid="true"] {
+        border-color: var(--danger);
+      }
+      /* 只读字段：按 design.md 禁用态处理（文字与底色置灰、不可编辑），
+         保留完整边框以免视觉上塌陷。 */
+      .field[disabled] {
+        color: var(--muted);
+        background: var(--light);
+        cursor: not-allowed;
+      }
+      .field[disabled]:focus {
+        border-color: var(--line);
+        box-shadow: none;
+      }
+      .error {
+        color: var(--danger);
+        font-size: 12px;
+        margin-top: 4px;
+        min-height: 0;
+      }
+      .required {
+        color: var(--danger);
+        margin-right: 4px;
+      }
+      .workspace {
+        background: var(--card);
+        border-radius: 8px;
+        padding: 24px;
+        min-height: 100%;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+      }
+      .team-summary {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 16px;
+        padding-bottom: 20px;
+        margin-bottom: 20px;
+        border-bottom: 1px solid var(--light);
+      }
+      .team-summary h2 {
+        margin-right: 4px;
+      }
+      .toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px 16px;
+        flex-wrap: wrap;
+        margin-bottom: 16px;
+      }
+      .filter-btn {
+        position: relative;
+      }
+      .filter-btn.active {
+        border-color: var(--primary);
+        color: var(--primary);
+      }
+      .filter-count {
+        position: absolute;
+        right: -8px;
+        top: -8px;
+        min-width: 16px;
+        height: 16px;
+        border-radius: 8px;
+        background: var(--danger);
+        color: var(--card);
+        font:
+          600 11px/16px "JetBrains Mono",
+          monospace;
+      }
+      .title-row {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        padding-bottom: 16px;
+      }
+      .split {
+        display: grid;
+        grid-template-columns: 220px minmax(0, 1fr);
+        gap: 20px;
+        flex: 1;
+        min-width: 0;
+      }
+      .rail {
+        min-width: 0;
+        border-right: 1px solid var(--light);
+        padding-right: 20px;
+      }
+      .rail-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 12px;
+      }
+      .rail .field {
+        margin-bottom: 12px;
+      }
+      .detail {
+        min-width: 0;
+      }
+      .tree-row {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        min-height: 36px;
+        border-radius: 4px;
+        padding-right: 4px;
+      }
+      .tree-row:hover {
+        background: var(--hover);
+      }
+      .tree-row.active {
+        background: var(--primary-bg);
+        color: var(--primary);
+      }
+      .tree-row .tree-label {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        text-align: left;
+        border: 0;
+        background: transparent;
+        padding: 6px 0;
+        color: inherit;
+      }
+      .tree-label span:first-child {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .tree-row .icon-btn {
+        width: 24px;
+        height: 24px;
+        flex-shrink: 0;
+      }
+      .tree-row .node-more {
+        opacity: 0;
+      }
+      .tree-row:hover .node-more,
+      .tree-row:focus-within .node-more {
+        opacity: 1;
+      }
+      .table-scroll {
+        width: 100%;
+        overflow-x: auto;
+      }
+      .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+      }
+      .data-table th {
+        text-align: left;
+        font-weight: 600;
+        font-size: 12px;
+        color: var(--sub);
+        padding: 9px 12px;
+        background: var(--lighter);
+        border-bottom: 1px solid var(--line);
+        white-space: nowrap;
+      }
+      .data-table td {
+        text-align: left;
+        padding: 9px 12px;
+        height: 48px;
+        border-bottom: 1px solid var(--lighter);
+        white-space: nowrap;
+      }
+      .data-table tbody tr:hover {
+        background: var(--hover);
+      }
+      .data-table tr.selected {
+        background: var(--primary-bg);
+      }
+      /* 列表整行拖拽排序（交互标准见 design.md §5.14）：可拖拽行给抓取光标，落点用渐变插入线反馈，
+         非法落点用 danger 浅底提示；仅同级部门间可排序，跨级拖拽为非法落点。 */
+      .data-table tr.draggable-row {
+        cursor: grab;
+      }
+      .data-table tr.draggable-row:active {
+        cursor: grabbing;
+      }
+      .data-table tr.dragging {
+        opacity: 0.4;
+      }
+      /* 落点提示用渐变绘制，避免 border 造成行高抖动。 */
+      .data-table tr.drop-before td {
+        background-image: linear-gradient(
+          to bottom,
+          var(--primary) 0 2px,
+          transparent 2px
+        );
+      }
+      .data-table tr.drop-after td {
+        background-image: linear-gradient(
+          to top,
+          var(--primary) 0 2px,
+          transparent 2px
+        );
+      }
+      .data-table tbody tr.drop-invalid,
+      .data-table tbody tr.drop-invalid:hover {
+        background: var(--danger-bg);
+      }
+      .member-table {
+        min-width: 1150px;
+      }
+      .member-cell {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .avatar {
+        width: 28px;
+        height: 28px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: var(--primary-bg);
+        color: var(--primary);
+        position: relative;
+        font-size: 12px;
+        flex-shrink: 0;
+      }
+      .avatar .owner {
+        position: absolute;
+        right: -4px;
+        top: -4px;
+        width: 12px;
+        height: 12px;
+        color: var(--warning);
+        background: var(--card);
+        border-radius: 50%;
+      }
+      .toggle {
+        position: relative;
+        width: 32px;
+        height: 18px;
+        background: var(--line);
+        border: 0;
+        border-radius: 16px;
+        padding: 0;
+      }
+      .toggle::after {
+        content: "";
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        left: 2px;
+        top: 2px;
+        background: var(--card);
+        border-radius: 50%;
+        transition: transform 0.15s;
+      }
+      .toggle[aria-checked="true"] {
+        background: var(--primary);
+      }
+      .toggle[aria-checked="true"]::after {
+        transform: translateX(14px);
+      }
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        border-radius: 4px;
+        padding: 2px 8px;
+        font-size: 12px;
+        background: var(--page);
+        color: var(--sub);
+      }
+      .badge.success {
+        color: var(--success);
+        background: #e7f9f0;
+      }
+      .badge.warning {
+        color: var(--warning);
+        background: #fdf2e9;
+      }
+      .badge.danger {
+        color: var(--danger);
+        background: #ffe8eb;
+      }
+      .pager {
+        padding-top: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        flex-wrap: wrap;
+        gap: 16px;
+        font-size: 12px;
+      }
+      .page-nav {
+        display: flex;
+        gap: 4px;
+      }
+      .pg-btn {
+        height: 30px;
+        min-width: 30px;
+        border: 1px solid var(--line);
+        background: var(--card);
+        border-radius: 4px;
+      }
+      .pg-btn.current {
+        color: var(--card);
+        background: var(--primary);
+        border-color: var(--primary);
+      }
+      .pager select {
+        height: 30px;
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        background: var(--card);
+      }
+      .jump {
+        width: 44px;
+        height: 30px;
+        text-align: center;
+        border: 1px solid var(--line);
+        border-radius: 4px;
+      }
+      .empty {
+        padding: 56px 16px;
+        text-align: center;
+        color: var(--sub);
+      }
+      .empty svg {
+        display: block;
+        width: 32px;
+        height: 32px;
+        margin: 0 auto 12px;
+        color: var(--muted);
+      }
+      .role-item {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+        padding: 6px 8px;
+        min-height: 40px;
+        border-radius: 4px;
+        margin-bottom: 4px;
+      }
+      .role-item.active {
+        background: var(--primary-bg);
+        color: var(--primary);
+      }
+      .role-item:hover {
+        background: var(--hover);
+      }
+      .role-item button {
+        border: 0;
+        background: none;
+        color: inherit;
+        text-align: left;
+        flex: 1;
+        padding: 4px 0;
+      }
+      .role-item .grip {
+        color: var(--muted);
+        cursor: grab;
+      }
+      .role-item .reorder {
+        width: 24px;
+        flex: 0 0 24px;
+        text-align: center;
+        opacity: 0;
+      }
+      .role-item:hover .reorder,
+      .role-item:focus-within .reorder {
+        opacity: 1;
+      }
+      .role-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px 20px;
+        color: var(--sub);
+        font-size: 12px;
+        margin: 12px 0 8px;
+      }
+      .role-note {
+        color: var(--sub);
+        margin-bottom: 20px;
+        overflow-wrap: anywhere;
+      }
+      .tabs {
+        display: flex;
+        gap: 20px;
+        border-bottom: 1px solid var(--light);
+        margin-bottom: 20px;
+      }
+      .tab {
+        border: 0;
+        border-bottom: 2px solid transparent;
+        background: none;
+        color: var(--sub);
+        padding: 10px 0;
+        white-space: nowrap;
+      }
+      .tab[aria-selected="true"] {
+        border-color: var(--primary);
+        color: var(--primary);
+        font-weight: 600;
+      }
+      .tab:hover {
+        color: var(--primary);
+      }
+      dialog.overlay {
+        padding: 0;
+        border: 0;
+        border-radius: 8px;
+        background: var(--card);
+        color: var(--body);
+        width: 760px;
+        max-width: 92vw;
+        max-height: 90dvh;
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.12);
+      }
+      dialog.overlay::backdrop {
+        background: rgba(0, 0, 0, 0.3);
+      }
+      dialog.overlay[open] {
+        display: flex;
+        flex-direction: column;
+      }
+      dialog.drawer {
+        margin: 0 0 0 auto;
+        top: 0;
+        right: 0;
+        height: 100dvh;
+        max-height: 100dvh;
+        max-width: 100vw;
+        width: 800px;
+        border-radius: 0;
+      }
+      dialog.filter-drawer {
+        width: 480px;
+      }
+      .dialog-head {
+        padding: 0 20px;
+        height: 56px;
+        min-height: 56px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        border-bottom: 1px solid var(--light);
+      }
+      .dialog-body {
+        padding: 24px;
+        overflow-y: auto;
+        min-height: 0;
+        flex: 1;
+      }
+      .dialog-foot {
+        height: 64px;
+        min-height: 64px;
+        border-top: 1px solid var(--light);
+        padding: 0 20px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 12px;
+      }
+      .form {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+      .form-row {
+        display: grid;
+        grid-template-columns: 96px minmax(0, 400px);
+        gap: 6px 12px;
+        justify-content: center;
+        align-items: start;
+      }
+      .form-row > label {
+        padding-top: 6px;
+        text-align: right;
+      }
+      .form-row .field-wrap {
+        min-width: 0;
+      }
+      /* 部门名称字数统计贴在输入框内右侧（design.md §5.4 输入框内右对齐计数器）。 */
+      .field-wrap.has-counter {
+        position: relative;
+      }
+      .field-wrap.has-counter > .field {
+        padding-right: 54px;
+      }
+      .field-wrap.has-counter > .counter {
+        position: absolute;
+        right: 10px;
+        top: 0;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        margin-top: 0;
+        color: var(--muted);
+      }
+      .filter-drawer .form-row {
+        display: block;
+      }
+      .filter-drawer .form-row > label {
+        display: block;
+        text-align: left;
+        padding: 0;
+        margin-bottom: 6px;
+      }
+      .counter {
+        text-align: right;
+        color: var(--sub);
+        font-size: 12px;
+        margin-top: 4px;
+      }
+      .form-section {
+        padding-top: 20px;
+        margin-top: 20px;
+        border-top: 1px solid var(--light);
+      }
+      .form-section h3 {
+        margin-bottom: 16px;
+      }
+      .choice-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        max-height: 240px;
+        overflow: auto;
+      }
+      .check-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-height: 32px;
+      }
+      .picker {
+        position: relative;
+        border: 1px solid var(--line);
+        border-radius: 4px;
+      }
+      .picker > summary {
+        list-style: none;
+        min-height: 30px;
+        padding: 5px 10px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+      }
+      .picker > summary::-webkit-details-marker {
+        display: none;
+      }
+      /* 展开时面板脱离表单流并固定到视口，不撑开行高、不被弹层滚动区裁切。 */
+      .picker[open] {
+        z-index: 30;
+      }
+      .picker-content {
+        position: fixed;
+        z-index: 1;
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        background: var(--card);
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.12);
+        padding: 8px;
+        max-height: 260px;
+        overflow: auto;
+      }
+      .picker-content > .field {
+        margin-bottom: 8px;
+      }
+      .picker-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      .picker-row:hover {
+        background: var(--hover);
+      }
+      /* 单选圈隐藏（不占位），多选复选框保持原生可见。 */
+      .picker-row input[type="radio"] {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        opacity: 0;
+        pointer-events: none;
+      }
+      .picker-row input[type="checkbox"] {
+        margin: 0;
+        flex-shrink: 0;
+      }
+      .picker-row.is-selected {
+        color: var(--primary);
+        font-weight: 600;
+      }
+      /* 组织树展开箭头固定 16px 宽，叶子节点用等宽占位保持名称对齐。 */
+      .picker-caret {
+        width: 16px;
+        height: 16px;
+        padding: 0;
+        border: 0;
+        border-radius: 2px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        background: transparent;
+        color: var(--sub);
+      }
+      .picker-caret:hover {
+        color: var(--primary);
+      }
+      /* 箭头图标只渲染一次，展开态用旋转表达，避免每次筛选重绘。 */
+      .picker-caret[aria-expanded="true"] svg {
+        transform: rotate(90deg);
+      }
+      .picker-caret svg {
+        width: 12px;
+        height: 12px;
+        transition: transform 0.15s;
+      }
+      .picker-caret-ph {
+        width: 16px;
+        flex-shrink: 0;
+      }
+      .placeholder {
+        color: var(--muted);
+      }
+      .chips {
+        display: flex;
+        gap: 4px;
+        flex-wrap: wrap;
+      }
+      .chip {
+        background: var(--primary-bg);
+        color: var(--primary);
+        border-radius: 4px;
+        padding: 2px 6px;
+        font-size: 12px;
+        display: inline-flex;
+        gap: 4px;
+        align-items: center;
+      }
+      .chip button {
+        border: 0;
+        background: transparent;
+        color: inherit;
+        padding: 0;
+        display: flex;
+      }
+      .chip svg {
+        width: 12px;
+        height: 12px;
+      }
+      /* 标签内的移除按钮：静默态降低不透明度，悬停时恢复并在标签底色上加深，仅作可用性提示。
+         design.md 未覆盖该微交互，就近取 primary 色梯度，不引入新色值。 */
+      .chip-remove {
+        opacity: 0.55;
+        border-radius: 2px;
+      }
+      .chip-remove:hover {
+        opacity: 1;
+        background: var(--primary-bg);
+      }
+      .chip-remove:focus-visible {
+        opacity: 1;
+        outline: 2px solid var(--primary);
+        outline-offset: 1px;
+      }
+      .notice {
+        padding: 12px;
+        background: var(--page);
+        border-radius: 4px;
+        color: var(--sub);
+        margin-bottom: 16px;
+      }
+      .notice.warning {
+        color: var(--warning);
+        background: #fdf2e9;
+      }
+      .toast {
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 20000;
+        max-width: calc(100% - 32px);
+        padding: 10px 16px;
+        border-radius: 4px;
+        background: var(--title);
+        color: var(--card);
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.12);
+      }
+      .permission-node {
+        border-bottom: 1px solid var(--lighter);
+        padding: 6px 0;
+      }
+      .permission-head {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-height: 32px;
+      }
+      .permission-ops {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px 20px;
+        padding: 4px 0 8px 32px;
+      }
+      .selector-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+      }
+      .selector-side {
+        min-width: 0;
+        max-height: 400px;
+        overflow: auto;
+      }
+      .selector-side + .selector-side {
+        border-left: 1px solid var(--light);
+        padding-left: 20px;
+      }
+      .selected-person {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 6px 0;
+      }
+      .dropdown {
+        position: relative;
+      }
+      .dropdown > summary {
+        list-style: none;
+      }
+      .dropdown > summary::-webkit-details-marker {
+        display: none;
+      }
+      .menu {
+        position: absolute;
+        top: 36px;
+        left: 0;
+        z-index: 20;
+        min-width: 160px;
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        padding: 4px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      }
+      .menu button {
+        display: block;
+        border: 0;
+        border-radius: 4px;
+        background: transparent;
+        width: 100%;
+        text-align: left;
+        padding: 8px 12px;
+        color: var(--body);
+      }
+      .menu button:hover {
+        background: var(--hover);
+      }
+      .import-upload {
+        padding: 32px;
+        text-align: center;
+        border: 1px dashed var(--line);
+        border-radius: 8px;
+        margin: 16px 0;
+      }
+      .import-upload.dragover {
+        border-color: var(--primary);
+        background: var(--primary-bg);
+      }
+      .wrap {
+        white-space: normal !important;
+        overflow-wrap: anywhere;
+      }
+      @media (max-width: 1000px) {
+        .split {
+          grid-template-columns: 180px minmax(0, 1fr);
+          gap: 16px;
+        }
+        .rail {
+          padding-right: 16px;
+        }
+        .workspace {
+          padding: 20px;
+        }
+      }
+      @media (max-width: 720px) {
+        .split {
+          grid-template-columns: minmax(0, 1fr);
+        }
+        .rail {
+          border-right: 0;
+          border-bottom: 1px solid var(--light);
+          padding: 0 0 16px;
+        }
+        .rail-tree,
+        .role-list {
+          max-height: 200px;
+          overflow: auto;
+        }
+        .workspace {
+          padding: 16px;
+        }
+        .toolbar {
+          align-items: stretch;
+        }
+        .form-row {
+          grid-template-columns: 1fr;
+        }
+        .form-row > label {
+          text-align: left;
+          padding: 0;
+        }
+        .selector-grid {
+          grid-template-columns: 1fr;
+        }
+        .selector-side + .selector-side {
+          border-left: 0;
+          border-top: 1px solid var(--light);
+          padding: 16px 0 0;
+        }
+        .dialog-body {
+          padding: 20px;
+        }
+        .team-summary {
+          gap: 8px 12px;
+        }
+        .tabs {
+          gap: 16px;
+          overflow-x: auto;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          scroll-behavior: auto !important;
+          transition: none !important;
+        }
+      }
+      /* CDN 的基础样式异步注入；明确业务标题选择器，保持 design.md 的 16px/600 层级。 */
+      .workspace h2,
+      .overlay h2,
+      .workspace h3,
+      .overlay h3 {
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--title);
+      }
+      .form-section h3 {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .form-section h3 > span {
+        display: inline-flex;
+        color: var(--sub);
+      }
+      /* 宽成员表格固定操作列，滚动时仍可编辑和删除。 */
+      .member-table th:last-child,
+      .member-table td:last-child {
+        position: sticky;
+        right: 0;
+        min-width: 96px;
+        border-left: 1px solid var(--light);
+        background: var(--card);
+      }
+      .member-table th:last-child {
+        background: var(--lighter);
+      }
+      .member-table tbody tr:hover td:last-child {
+        background: var(--hover);
+      }
+      .member-table tr.selected td:last-child {
+        background: var(--primary-bg);
+      }
+      @media (min-width: 721px) {
+        .role-rail {
+          display: flex;
+          flex-direction: column;
+          height: calc(100dvh - 80px);
+        }
+        .role-rail > .field {
+          flex-shrink: 0;
+        }
+        .role-list {
+          flex: 1;
+          min-height: 0;
+          overflow: auto;
+        }
+        #roleDetail {
+          height: calc(100dvh - 80px);
+          overflow-y: auto;
+          padding-right: 4px;
+        }
+      }
+      /* ---------- 删除成员 / 角色 / 部门二次确认弹窗 ----------
+         视觉按 design.md §5.8「信息提示弹窗 Dialog」实现，与 §5.6 Modal 区分：
+         容器 600×250（max-width 92vw）、圆角 8px、阴影 0 8px 32px rgba(0,0,0,.12)；
+         右上角为纯文本 × 关闭（20px、ink-muted、top 14 / right 18），不使用 Lucide 图标；
+         内容区 flex:1 垂直居中、左右内边距 24px；ICO 为 20px 圆形浅底 + 语义色图形，
+         删除属「操作确认」→ confirm 类型（? / warning 色，§5.8 明文规定删除确认用 confirm）；
+         标题 16px/600 ink-title，说明 14px ink-sub、行高 1.6、与标题间距 6px；
+         底部按钮区右对齐、间距 12px、padding 0 24px 20px、无分割线；
+         确定按钮用 danger 红底强调破坏性操作。宽度用 dialog.overlay.confirm-dialog
+         提升特异性，覆盖 §5.6 Modal 的 760px 通用宽度。 */
+      dialog.overlay.confirm-dialog {
+        width: 600px;
+        height: 250px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+      }
+      /* 关闭 ×：§5.8 规定为纯文本 ×（非 Lucide 图标），颜色取 ink-muted。 */
+      .confirm-dialog-close {
+        position: absolute;
+        top: 14px;
+        right: 18px;
+        z-index: 1;
+        padding: 0;
+        border: 0;
+        background: transparent;
+        font-size: 20px;
+        line-height: 1;
+        color: var(--muted);
+        cursor: pointer;
+      }
+      .confirm-dialog-close:hover,
+      .confirm-dialog-close:focus-visible {
+        color: var(--body);
+      }
+      .confirm-dialog-body {
+        flex: 1;
+        min-height: 0;
+        display: flex;
+        align-items: center;
+        padding: 0 24px;
+      }
+      .confirm-dialog-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        width: 100%;
+      }
+      /* ICO：§5.8 圆形 20×20，底色取 warning 浅底（#FDF2E9）、图形取 warning 语义色，
+         与标题首行顶部对齐（margin-top 2px），字号 11px/700。 */
+      .confirm-dialog-icon {
+        flex: 0 0 20px;
+        width: 20px;
+        height: 20px;
+        margin-top: 2px;
+        border-radius: 50%;
+        background: var(--warning-bg);
+        color: var(--warning);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        font-weight: 700;
+        line-height: 1;
+      }
+      .confirm-dialog-title {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--title);
+      }
+      /* 说明文字：§5.8 副标题 14px ink-sub、行高 1.6、与标题间距 6px。 */
+      .confirm-dialog-desc {
+        margin: 6px 0 0;
+        font-size: 14px;
+        line-height: 1.6;
+        color: var(--sub);
+      }
+      .confirm-dialog-foot {
+        padding: 0 24px 20px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 12px;
+      }
+      /* 弹窗按钮沿用 §5.8 的 Dialog 按钮规格：13px/500、左右内边距 20px，
+         高度仍取 32px 与页面 .btn 保持一致。 */
+      .confirm-dialog-foot .btn {
+        padding: 0 20px;
+        font-size: 13px;
+        font-weight: 500;
+      }
+    </style>
+    <link rel="stylesheet" href="公共导航.css?v=20261008a" />
+    <script src="公共导航.js?v=20261008a"></script>
+  </head>
+  <body>
+    <!-- 业务工作区：唯一系统框架由公共导航承载 -->
+    <main id="mainContent">
+      <div class="page-content">
+        <section class="workspace" id="workspace" aria-label="部门管理">
+          <p class="muted" role="status">正在加载团队数据…</p>
+        </section>
+      </div>
+    </main>
+    <!-- 模块内表单、筛选和确认弹层 -->
+    <dialog class="overlay" id="businessDialog" aria-labelledby="dialogTitle">
+      <header class="dialog-head">
+        <h2 id="dialogTitle"></h2>
+        <button id="dialogClose" class="icon-btn" aria-label="关闭">
+          <i data-lucide="x"></i>
+        </button>
+      </header>
+      <div id="dialogBody" class="dialog-body"></div>
+      <footer class="dialog-foot">
+        <button class="btn" id="dialogCancel">取消</button
+        ><button class="btn primary" id="dialogSave">确定</button>
+      </footer>
+    </dialog>
+    <dialog
+      class="overlay confirm-dialog"
+      id="confirmDialog"
+      aria-labelledby="confirmTitle"
+      aria-describedby="confirmBody"
+    >
+      <button
+        type="button"
+        class="confirm-dialog-close"
+        id="confirmClose"
+        aria-label="关闭"
+      >
+        ×
+      </button>
+      <div class="confirm-dialog-body">
+        <div class="confirm-dialog-row">
+          <span class="confirm-dialog-icon" aria-hidden="true">?</span>
+          <div>
+            <h2 class="confirm-dialog-title" id="confirmTitle"></h2>
+            <p class="confirm-dialog-desc" id="confirmBody"></p>
+          </div>
+        </div>
+      </div>
+      <footer class="confirm-dialog-foot">
+        <button class="btn" id="confirmCancel">取消</button
+        ><button class="btn danger" id="confirmSave">确定</button>
+      </footer>
+    </dialog>
+    <script>
+      const PAGE = "departments";
+      ("use strict");
+      // 内联团队数据与业务工具；五个模块通过 SystemFrame 保存同一份本地演示数据。
+      const $ = (s, root = document) => root.querySelector(s);
+      const $$ = (s, root = document) => [...root.querySelectorAll(s)];
+      const esc = (value) =>
+        String(value ?? "").replace(
+          /[&<>"']/g,
+          (c) =>
+            ({
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              '"': "&quot;",
+              "'": "&#39;",
+            })[c],
+        );
+      const icon = (name) => `<i data-lucide="${name}" aria-hidden="true"></i>`;
+      const icons = () => window.lucide?.createIcons();
+      const button = (label, action, id = "", kind = "") =>
+        `<button type="button" class="btn ${kind}" data-action="${action}" data-id="${esc(id)}">${esc(label)}</button>`;
+      const link = (label, action, id = "", danger = false) =>
+        `<button type="button" class="link${danger ? " danger" : ""}" data-action="${action}" data-id="${esc(id)}">${esc(label)}</button>`;
+      const empty = (text) =>
+        `<div class="empty">${icon("inbox")}<p>${esc(text)}</p></div>`;
+      const dateTime = () => new Date().toLocaleString("sv-SE");
+      const uid = (prefix) =>
+        prefix +
+        "-" +
+        Date.now().toString(36) +
+        "-" +
+        Math.random().toString(36).slice(2, 7);
+      const maskPhone = (phone) =>
+        String(phone).replace(/^(\d{3})\d{4}(\d{4})$/, "$1****$2");
+      const badge = (status) =>
+        `<span class="badge ${["启用", "已允许", "已通过"].includes(status) ? "success" : ["禁用", "已拒绝", "不通过"].includes(status) ? "danger" : "warning"}">${esc(status)}</span>`;
+      const permissionGroups = [
+        {
+          name: "环境管理",
+          children: [
+            { name: "新建环境", ops: ["查看", "单个创建", "批量创建", "导入"] },
+            {
+              name: "环境列表",
+              ops: ["查看", "启动", "编辑", "删除", "分配", "导出"],
+            },
+          ],
+        },
+        {
+          name: "代理管理",
+          ops: ["查看", "添加", "编辑", "删除", "检测", "授权"],
+        },
+        {
+          name: "费用管理",
+          children: [
+            { name: "云币交易流水", ops: ["查看", "导出"] },
+            { name: "订单管理", ops: ["查看", "支付", "取消", "导出"] },
+            { name: "开票管理", ops: ["查看", "申请开票", "管理抬头"] },
+            { name: "优惠券", ops: ["查看"] },
+          ],
+        },
+        {
+          name: "团队管理",
+          children: [
+            {
+              name: "成员管理",
+              ops: [
+                "查看",
+                "添加",
+                "邀请",
+                "编辑",
+                "删除",
+                "导入",
+                "导出",
+                "调岗",
+              ],
+            },
+            { name: "部门管理", ops: ["查看", "添加", "编辑", "删除"] },
+            {
+              name: "角色管理",
+              ops: ["查看", "添加", "编辑", "删除", "配置成员"],
+            },
+            { name: "成员申请", ops: ["查看", "审批"] },
+            { name: "登录请求", ops: ["查看", "审批"] },
+          ],
+        },
+        ...[
+          "商城",
+          "账号管理",
+          "分享转移",
+          "日志管理",
+          "账号设置",
+          "安全策略",
+          "插件管理",
+          "API",
+          "RPA",
+          "回收站",
+        ].map((name) => ({
+          name,
+          ops: name === "日志管理" ? ["查看", "导出"] : ["查看", "管理"],
+        })),
+      ];
+      function permissionLeaves(nodes = permissionGroups, path = "") {
+        return nodes.flatMap((n) =>
+          n.children
+            ? permissionLeaves(n.children, path + n.name + "/")
+            : n.ops.map((op) => path + n.name + "/" + op),
+        );
+      }
+      const allPermissions = permissionLeaves();
+      const seedDepartments = [
+        { id: "d0", name: "云登运营团队", parent: null, leaders: ["m1"] },
+        { id: "d1", name: "默认部门", parent: "d0", leaders: ["m1"] },
+        { id: "d2", name: "跨境运营", parent: "d0", leaders: ["m2"] },
+        { id: "d3", name: "北美运营组", parent: "d2", leaders: ["m3"] },
+        { id: "d4", name: "欧洲运营组", parent: "d2", leaders: ["m4"] },
+        { id: "d5", name: "内容增长", parent: "d0", leaders: ["m5"] },
+        { id: "d6", name: "内容策划组", parent: "d5", leaders: ["m6"] },
+        { id: "d7", name: "客户成功", parent: "d0", leaders: ["m7"] },
+        { id: "d8", name: "财务部", parent: "d0", leaders: ["m8"] },
+      ];
+      const seedRoles = [
+        "超级管理员",
+        "经理",
+        "财务",
+        "环境配置员",
+        "环境操作员",
+        "内容审核员",
+        "客户支持",
+        "临时协作者",
+      ].map((name, i) => ({
+        id: "r" + i,
+        name,
+        enabled: i !== 7,
+        note:
+          i === 0
+            ? "系统自动生成"
+            : [
+                "",
+                "负责日常团队运营",
+                "维护订单与开票信息",
+                "创建和维护环境配置",
+                "操作已授权的浏览器环境",
+                "审核账号与内容资料",
+                "处理客户协作事项",
+                "短期项目协作",
+              ][i],
+        scope: i === 0 ? "全部数据" : i === 1 ? "本部门及下级部门" : "仅本人",
+        creator: i === 0 ? "系统" : "张小登",
+        created: "2026-08-01 10:00:00",
+        permissions:
+          i === 0
+            ? [...allPermissions]
+            : allPermissions.filter((p) =>
+                i === 2
+                  ? p.startsWith("费用管理/")
+                  : i === 1
+                    ? !p.startsWith("账号设置/")
+                    : p.startsWith("环境管理/") &&
+                      (i === 3 || p.endsWith("/查看") || p.endsWith("/启动")),
+              ),
+      }));
+      const seedMembers = [
+        "张小登",
+        "李运营",
+        "王蕾",
+        "陈凯",
+        "周内容",
+        "孙悦",
+        "郑客服",
+        "林财务",
+        "赵明",
+        "吴晨",
+        "郑岩",
+        "冯欣",
+        "褚宁",
+        "卫晴",
+        "蒋越",
+        "杨支持",
+      ].map((name, i) => ({
+        id: "m" + (i + 1),
+        name,
+        phone: "1990000" + String(1000 + i),
+        dept: ["d1", "d2", "d3", "d4", "d5", "d6", "d7", "d8"][i % 8],
+        roles:
+          i === 0
+            ? ["r0"]
+            : i === 1
+              ? ["r1", "r4"]
+              : i === 7
+                ? ["r2"]
+                : ["r" + (3 + (i % 4))],
+        enabled: i !== 9 && i !== 13,
+        joined: "2026-08-" + String(i + 1).padStart(2, "0"),
+        entry: i % 4 === 0 ? "" : "2026-07-01",
+        updated: "2026-09-28 09:30:00",
+        note: "",
+        owner: i === 0,
+      }));
+      const seed = {
+        version: 1,
+        departments: seedDepartments,
+        roles: seedRoles,
+        members: seedMembers,
+        applications: Object.values({
+          待审批: [
+            {
+              time: "2026-08-14 08:16",
+              name: "黄云",
+              contact: "193****6028",
+              status: "待审批",
+            },
+          ],
+          已通过: [
+            {
+              time: "2026-08-10 13:42",
+              name: "林可",
+              contact: "156****7731",
+              status: "已通过",
+            },
+            {
+              time: "2026-08-08 09:25",
+              name: "何川",
+              contact: "180****1146",
+              status: "已通过",
+            },
+          ],
+          不通过: [
+            {
+              time: "2026-07-28 15:37",
+              name: "曹宁",
+              contact: "133****8021",
+              status: "不通过",
+            },
+          ],
+        })
+          .flat()
+          .map((a, i) => ({ ...a, id: "a" + i })),
+        logins: [
+          {
+            user: "177****0832",
+            name: "李宁",
+            device: "DEV-8F2A-9012",
+            mac: "A4:83:E7:2B:1C:09",
+            network: "192.168.8.18",
+            time: "2026-08-14 09:36",
+            status: "待处理",
+          },
+          {
+            user: "193****0832",
+            name: "周敏",
+            device: "DEV-72BD-3418",
+            mac: "34:6F:24:10:5D:A2",
+            network: "192.168.8.21",
+            time: "2026-08-14 08:52",
+            status: "待处理",
+          },
+          {
+            user: "186****2719",
+            name: "王蕾",
+            device: "DEV-C18E-2204",
+            mac: "58:11:22:9A:76:03",
+            network: "10.10.2.16",
+            time: "2026-08-13 18:21",
+            status: "已允许",
+          },
+          {
+            user: "155****6280",
+            name: "陈凯",
+            device: "DEV-390F-7712",
+            mac: "B0:41:6A:18:2C:7E",
+            network: "192.168.3.42",
+            time: "2026-08-13 16:08",
+            status: "已拒绝",
+          },
+          {
+            user: "133****9051",
+            name: "赵明",
+            device: "DEV-68CE-1209",
+            mac: "80:7D:3A:66:20:14",
+            network: "172.16.0.31",
+            time: "2026-08-13 13:44",
+            status: "已允许",
+          },
+          {
+            user: "188****4421",
+            name: "孙悦",
+            device: "DEV-A026-5517",
+            mac: "44:8A:5B:01:77:C0",
+            network: "192.168.1.64",
+            time: "2026-08-12 20:17",
+            status: "已拒绝",
+          },
+          {
+            user: "159****3708",
+            name: "周岚",
+            device: "DEV-F77D-0083",
+            mac: "9C:2F:9D:03:6A:21",
+            network: "10.2.8.17",
+            time: "2026-08-12 15:30",
+            status: "已允许",
+          },
+          {
+            user: "137****1196",
+            name: "吴晨",
+            device: "DEV-110C-8390",
+            mac: "20:4E:7F:88:13:2A",
+            network: "192.168.8.76",
+            time: "2026-08-11 11:26",
+            status: "待处理",
+          },
+          {
+            user: "181****5602",
+            name: "郑岩",
+            device: "DEV-42AE-7621",
+            mac: "E8:31:CD:4A:20:9B",
+            network: "172.16.4.22",
+            time: "2026-08-10 17:48",
+            status: "已允许",
+          },
+          {
+            user: "136****7741",
+            name: "冯欣",
+            device: "DEV-B8A1-3007",
+            mac: "68:39:22:AB:70:14",
+            network: "192.168.6.33",
+            time: "2026-08-09 09:14",
+            status: "已拒绝",
+          },
+          {
+            user: "189****2285",
+            name: "褚宁",
+            device: "DEV-5E20-9174",
+            mac: "18:7A:93:4D:2A:60",
+            network: "10.8.3.19",
+            time: "2026-08-08 14:32",
+            status: "已允许",
+          },
+          {
+            user: "158****3914",
+            name: "卫晴",
+            device: "DEV-90C4-2268",
+            mac: "7C:8B:CA:14:39:22",
+            network: "192.168.2.58",
+            time: "2026-08-07 19:05",
+            status: "待处理",
+          },
+          {
+            user: "187****6033",
+            name: "蒋越",
+            device: "DEV-76A9-4301",
+            mac: "38:21:10:FA:82:64",
+            network: "172.18.0.12",
+            time: "2026-08-06 10:42",
+            status: "已允许",
+          },
+          {
+            user: "132****8470",
+            name: "沈安",
+            device: "DEV-E305-1182",
+            mac: "50:11:92:6A:8C:07",
+            network: "192.168.9.15",
+            time: "2026-08-05 08:18",
+            status: "已拒绝",
+          },
+        ].map((r, i) => ({ ...r, id: "l" + i })),
+        inviteVersion: 1,
+      };
+      let data = structuredClone(seed);
+      let ui = {
+        keyword: "",
+        page: 1,
+        size: 10,
+        dept: "d0",
+        role: "r0",
+        tab: "members",
+        applicationStatus: "待审批",
+        filters: {},
+        selected: [],
+      };
+      try {
+        ui = {
+          ...ui,
+          ...JSON.parse(
+            sessionStorage.getItem("yunlogin-team-ui-" + PAGE) || "{}",
+          ),
+        };
+      } catch {}
+      let expanded = new Set(seedDepartments.map((d) => d.id));
+      let dragSrc = null;
+      let loaded = false;
+      const STORAGE = "yunlogin-team-prototype-v1";
+      function remember() {
+        try {
+          sessionStorage.setItem(
+            "yunlogin-team-ui-" + PAGE,
+            JSON.stringify(ui),
+          );
+        } catch {}
+      }
+      function readLocal() {
+        try {
+          return JSON.parse(localStorage.getItem(STORAGE) || "null");
+        } catch {
+          return null;
+        }
+      }
+      function saveData() {
+        if (window.parent !== window)
+          window.parent.postMessage(
+            { type: "yundeng:team-store-set", value: data },
+            "*",
+          );
+        else {
+          try {
+            localStorage.setItem(STORAGE, JSON.stringify(data));
+          } catch {
+            toast("本次修改仅在当前页面保留");
+          }
+        }
+      }
+      function commit(message) {
+        saveData();
+        remember();
+        render();
+        if (message) toast(message);
+      }
+      function initData(value) {
+        if (loaded) return;
+        loaded = true;
+        if (value?.version === 1 && Array.isArray(value.members)) data = value;
+        render();
+      }
+      window.addEventListener("message", (event) => {
+        if (event.source !== window.parent) return;
+        if (event.data?.type === "yundeng:team-store") {
+          initData(event.data.value);
+        }
+        if (event.data?.type === "yundeng:team-store-error")
+          toast("本地存储不可用，当前修改在本次会话内保留");
+      });
+      function start() {
+        if (window.parent !== window) {
+          window.parent.postMessage({ type: "yundeng:team-store-get" }, "*");
+          setTimeout(() => initData(readLocal()), 1500);
+        } else initData(readLocal());
+      }
+      function deptBy(id) {
+        return data.departments.find((d) => d.id === id);
+      }
+      function roleBy(id) {
+        return data.roles.find((r) => r.id === id);
+      }
+      function memberBy(id) {
+        return data.members.find((m) => m.id === id);
+      }
+      function descendants(id) {
+        let ids = [id];
+        for (const d of data.departments.filter((d) => d.parent === id))
+          ids.push(...descendants(d.id));
+        return ids;
+      }
+      function deptCount(id) {
+        const ids = descendants(id);
+        return data.members.filter((m) => ids.includes(m.dept)).length;
+      }
+      // 组织树（先序展开）。chain 记录祖先链供折叠判定，hasChildren 供展开箭头判定；
+      // 不传 parent 时返回完整组织树，不限制层级深度，任意层级都可继续挂子部门。
+      function deptTree(parent = null, level = 0, ancestors = []) {
+        return data.departments
+          .filter((d) => d.parent === parent)
+          .flatMap((d) => [
+            {
+              ...d,
+              level,
+              chain: ancestors,
+              hasChildren: data.departments.some((c) => c.parent === d.id),
+            },
+            ...deptTree(d.id, level + 1, [...ancestors, d.id]),
+          ]);
+      }
+      function matches(text, query = ui.keyword) {
+        const parts = query
+          .trim()
+          .toLowerCase()
+          .split("，")
+          .map((s) => s.trim())
+          .filter(Boolean);
+        return (
+          !parts.length ||
+          parts.some((p) => String(text).toLowerCase().includes(p))
+        );
+      }
+      function memberSearch(m) {
+        return [
+          m.name,
+          maskPhone(m.phone),
+          m.phone,
+          deptBy(m.dept)?.name,
+          m.roles.map((id) => roleBy(id)?.name).join(" "),
+        ].join(" ");
+      }
+      function memberCell(m) {
+        return `<div class="member-cell"><span class="avatar">${esc(m.name.slice(-2))}${m.owner ? '<i data-lucide="crown" class="owner" aria-label="主账号"></i>' : ""}</span><span>${esc(m.name)}${m.owner ? '<span class="muted small">（主账号）</span>' : ""}</span></div>`;
+      }
+      function searchBar(withFilter = true) {
+        const n = Object.values(ui.filters).filter(Boolean).length;
+        return `<div class="order-search-filter-group"><div id="departmentSearchBox" class="order-global-search" role="search"></div>${withFilter ? `<button class="btn filter-btn ${n ? "active" : ""}" data-action="filters" aria-haspopup="dialog" aria-expanded="false" aria-controls="businessDialog">${icon("list-filter")}筛选${n ? `<span class="filter-count">${n}</span>` : ""}</button>` : ""}</div>`;
+      }
+      // design.md §5.4.2：页面只声明搜索容器、可检索字段与重绘回调，结构 / 样式 / 交互全部来自公共层 YDSearchBox。
+      function departmentSearchValues(d) {
+        return {
+          name: [d.name],
+          leader: d.leaders.map((id) => memberBy(id)?.name).filter(Boolean),
+          parent: [d.parent ? deptBy(d.parent)?.name || "—" : "顶级部门"],
+          count: [String(deptCount(d.id))],
+        };
+      }
+      let departmentSearchBox = null;
+      function initDepartmentSearchBox() {
+        departmentSearchBox =
+          window.YDSearchBox?.init("#departmentSearchBox", {
+            label: "部门管理",
+            inputId: "keyword",
+            value: ui.keyword || "",
+            scopes: [
+              { key: "all", label: "全局搜索" },
+              { key: "name", label: "部门名称" },
+              { key: "leader", label: "部门负责人" },
+              { key: "parent", label: "上级部门" },
+              { key: "count", label: "成员数" },
+            ],
+            values: departmentSearchValues,
+            onChange: (instance) => {
+              ui.keyword = instance.value();
+              ui.page = 1;
+              ui.selected = [];
+              remember();
+              renderResults();
+            },
+          }) || null;
+      }
+      function pager(total) {
+        const pages = Math.max(1, Math.ceil(total / ui.size));
+        ui.page = Math.min(Math.max(1, ui.page), pages);
+        return `<nav class="pager" aria-label="分页"><div class="page-nav"><button class="pg-btn" data-action="page" data-id="${ui.page - 1}" aria-label="上一页" ${ui.page === 1 ? "disabled" : ""}>${icon("chevron-left")}</button>${Array.from(
+          { length: pages },
+          (_, i) => i + 1,
+        )
+          .filter(
+            (n) =>
+              pages <= 7 ||
+              n === 1 ||
+              n === pages ||
+              Math.abs(n - ui.page) <= 1,
+          )
+          .map(
+            (n, i, a) =>
+              (i && n - a[i - 1] > 1 ? '<span class="muted">…</span>' : "") +
+              `<button class="pg-btn ${ui.page === n ? "current" : ""}" data-action="page" data-id="${n}" ${ui.page === n ? 'aria-current="page"' : ""}>${n}</button>`,
+          )
+          .join(
+            "",
+          )}<button class="pg-btn" data-action="page" data-id="${ui.page + 1}" aria-label="下一页" ${ui.page === pages ? "disabled" : ""}>${icon("chevron-right")}</button></div><select id="pageSize" aria-label="每页条数">${[10, 20, 50].map((n) => `<option value="${n}" ${ui.size === n ? "selected" : ""}>${n} 条/页</option>`).join("")}</select><label>跳至 <input class="jump" id="jumpPage" type="number" min="1" max="${pages}" value="1" aria-label="跳转页码"> 页</label><span class="muted">共 <span class="mono">${total}</span> 条记录　第 ${ui.page}/${pages} 页</span></nav>`;
+      }
+      function sliceRows(rows) {
+        ui.page = Math.min(
+          Math.max(1, ui.page),
+          Math.max(1, Math.ceil(rows.length / ui.size)),
+        );
+        return rows.slice((ui.page - 1) * ui.size, ui.page * ui.size);
+      }
+      function toast(message) {
+        let el = $("#teamToast");
+        if (!el) {
+          el = document.createElement("div");
+          el.id = "teamToast";
+          el.className = "toast";
+          el.setAttribute("role", "status");
+          document.body.append(el);
+        }
+        const host = $("#confirmDialog").open
+          ? $("#confirmDialog")
+          : $("#businessDialog").open
+            ? $("#businessDialog")
+            : document.body;
+        host.append(el);
+        el.textContent = message;
+        el.hidden = false;
+        clearTimeout(toast.timer);
+        toast.timer = setTimeout(() => (el.hidden = true), 3500);
+      }
+      function formRow(label, id, control, required = false) {
+        const wrapClass = control.includes("data-count-for")
+          ? "field-wrap has-counter"
+          : "field-wrap";
+        return `<div class="form-row"><label for="${id}">${required ? '<span class="required">*</span>' : ""}${label}：</label><div class="${wrapClass}">${control}<p class="error" id="${id}Error" role="alert"></p></div></div>`;
+      }
+      function field(id, value = "", extra = "") {
+        return `<input id="${id}" class="field" value="${esc(value)}" ${extra}>`;
+      }
+      function select(id, options, value = "") {
+        return `<select id="${id}" class="field">${options
+          .map((o) => {
+            const [v, l] = Array.isArray(o) ? o : [o, o];
+            return `<option value="${esc(v)}" ${v === value ? "selected" : ""}>${esc(l)}</option>`;
+          })
+          .join("")}</select>`;
+      }
+      function error(id, message) {
+        const el = $("#" + id);
+        el?.setAttribute("aria-invalid", message ? "true" : "false");
+        const text = $("#" + id + "Error");
+        if (text) text.textContent = message;
+        if (message) el?.focus();
+        return !message;
+      }
+      function countField(id, max) {
+        return `<div class="counter" data-count-for="${id}"><span>0</span>/${max}</div>`;
+      }
+      function updateCounters() {
+        $$("[data-count-for]").forEach((el) => {
+          $("span", el).textContent = (
+            $("#" + el.dataset.countFor)?.value || ""
+          ).length;
+        });
+      }
+      let dialogConfirm = null,
+        returnFocus = null,
+        dialogFilterMode = false;
+      function openDialog(
+        title,
+        body,
+        onSave = null,
+        {
+          drawer = false,
+          filter = false,
+          confirm = "确定",
+          cancel = "取消",
+        } = {},
+      ) {
+        const dialog = $("#businessDialog");
+        if (dialog.open) dialog.close();
+        returnFocus = document.activeElement;
+        dialogFilterMode = filter;
+        dialog.className =
+          "overlay" +
+          (drawer ? " drawer" : "") +
+          (filter ? " filter-drawer" : "");
+        $("#dialogTitle").textContent = title;
+        $("#dialogBody").innerHTML = body;
+        $("#dialogSave").textContent = confirm;
+        // design.md §5.4.4：筛选抽屉底部固定为“重置 + 确认提交”，重置只作用于当前草稿。
+        $("#dialogCancel").textContent = filter ? "重置" : cancel;
+        $("#dialogSave").hidden = !onSave;
+        $("#dialogSave").disabled = false;
+        dialogConfirm = onSave;
+        dialog.showModal();
+        $("#mainContent").style.overflow = "hidden";
+        icons();
+        updateCounters();
+        requestAnimationFrame(() => {
+          (
+            $("input:not([disabled]),select,textarea,button", $("#dialogBody")) ||
+            $("#dialogClose")
+          ).focus();
+        });
+      }
+      function closeDialog() {
+        const d = $("#businessDialog");
+        if (d.open) d.close();
+        $("#dialogBody").innerHTML = "";
+        $("#mainContent").style.overflow = "";
+        $$("[data-action=filters]").forEach((e) =>
+          e.setAttribute("aria-expanded", "false"),
+        );
+        returnFocus?.focus();
+        dialogConfirm = null;
+        dialogFilterMode = false;
+      }
+      // design.md §5.4.4：重置仅清空抽屉内的当前草稿并保持抽屉打开，不写入已提交条件。
+      function resetFilterDraft() {
+        $$("#dialogBody input,#dialogBody select,#dialogBody textarea").forEach(
+          (el) => {
+            if (el.type === "checkbox" || el.type === "radio")
+              el.checked = el.defaultChecked;
+            else if (el.tagName === "SELECT") {
+              el.value = "";
+              if (el.selectedIndex === -1) el.selectedIndex = 0;
+            } else el.value = "";
+          },
+        );
+        $$("#dialogBody [aria-invalid]").forEach((el) =>
+          el.setAttribute("aria-invalid", "false"),
+        );
+        $$("#dialogBody .error").forEach((el) => (el.textContent = ""));
+        updateCounters();
+      }
+      function confirmAction(title, description, callback) {
+        const d = $("#confirmDialog");
+        $("#confirmTitle").textContent = title;
+        $("#confirmBody").textContent = description;
+        $("#confirmSave").onclick = () => {
+          d.close();
+          callback();
+        };
+        d.showModal();
+        $("#confirmCancel").focus();
+      }
+      const dialogObserver = new MutationObserver(() => {
+        if (window.parent !== window)
+          window.parent.postMessage(
+            { type: "yundeng:team-overlay", open: !!$("dialog[open]") },
+            "*",
+          );
+      });
+      ["businessDialog", "confirmDialog"].forEach((id) =>
+        dialogObserver.observe($("#" + id), {
+          attributes: true,
+          attributeFilter: ["open"],
+        }),
+      );
+      $("#dialogClose").onclick = closeDialog;
+      $("#dialogCancel").onclick = () => {
+        if (dialogFilterMode) resetFilterDraft();
+        else closeDialog();
+      };
+      $("#dialogSave").onclick = async () => {
+        if (!dialogConfirm) return;
+        const fn = dialogConfirm;
+        $("#dialogSave").disabled = true;
+        try {
+          const result = await fn();
+          if (result !== false && dialogConfirm === fn) closeDialog();
+        } finally {
+          $("#dialogSave").disabled = false;
+        }
+      };
+      $("#businessDialog").addEventListener("cancel", (e) => {
+        e.preventDefault();
+        closeDialog();
+      });
+      $("#businessDialog").addEventListener("click", (e) => {
+        if (e.target === $("#businessDialog")) {
+          const r = e.target.getBoundingClientRect();
+          if (
+            e.clientX < r.left ||
+            e.clientX > r.right ||
+            e.clientY < r.top ||
+            e.clientY > r.bottom
+          )
+            closeDialog();
+        }
+      });
+      $("#confirmCancel").onclick = () => $("#confirmDialog").close();
+      $("#confirmClose").onclick = () => $("#confirmDialog").close();
+      $("#confirmDialog").addEventListener("click", (e) => {
+        if (e.target === $("#confirmDialog")) {
+          const r = e.target.getBoundingClientRect();
+          if (
+            e.clientX < r.left ||
+            e.clientX > r.right ||
+            e.clientY < r.top ||
+            e.clientY > r.bottom
+          )
+            e.target.close();
+        }
+      });
+      async function copyText(text) {
+        try {
+          await navigator.clipboard.writeText(text);
+          toast("复制成功");
+        } catch {
+          const t = document.createElement("textarea");
+          t.value = text;
+          ($("#businessDialog").open ? $("#dialogBody") : document.body).append(
+            t,
+          );
+          t.select();
+          const ok = document.execCommand("copy");
+          t.remove();
+          toast(ok ? "复制成功" : "复制失败，请手动复制");
+        }
+      }
+      function download(name, content, type = "text/csv;charset=utf-8") {
+        const url = URL.createObjectURL(new Blob([content], { type }));
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = name;
+        document.body.append(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+      }
+      // 树形单选与成员多选均为悬浮下拉：面板 fixed 定位在触发框下层，遮住下方字段。
+      function deptPicker(id, value = "d0", exclude = []) {
+        const d = deptBy(value);
+        const label = d?.name || "请选择";
+        // 上级部门不限制层级：始终展示完整组织树（编辑时仅排除自身及其子树，避免自环）。
+        const nodes = deptTree().filter((n) => !exclude.includes(n.id));
+        // 弹窗打开时组织树默认全量展开，父节点收拢后其子孙随之隐藏。
+        const open = new Set(nodes.filter((n) => n.hasChildren).map((n) => n.id));
+        return `<details class="picker" id="${id}Picker" data-expanded="${[...open].join(" ")}"><summary><span id="${id}Label"${d ? "" : ' class="placeholder"'}>${esc(label)}</span>${icon("chevron-down")}</summary><div class="picker-content"><input class="field picker-search" placeholder="搜索部门" aria-label="搜索部门"><div class="picker-tree">${nodes
+          .map(
+            (n) =>
+              `<label class="picker-row${value === n.id && n.level > 0 ? " is-selected" : ""}" data-search="${esc(n.name)}" data-ancestors="${n.chain.join(" ")}" data-level="${n.level}" style="padding-left:${4 + n.level * 20}px">${n.hasChildren ? `<button type="button" class="picker-caret" data-caret-id="${n.id}" data-caret-name="${esc(n.name)}" aria-label="展开${esc(n.name)}" aria-expanded="true">${icon("chevron-right")}</button>` : '<span class="picker-caret-ph"></span>'}<input type="radio" name="${id}" value="${n.id}" ${value === n.id ? "checked" : ""} data-dept-picker="${id}" data-label="${esc(n.name)}">${esc(n.name)}</label>`,
+          )
+          .join("")}</div></div></details><input type="hidden" id="${id}" value="${esc(value)}">`;
+      }
+      function multiPicker(id, items, values = []) {
+        // 已选负责人以标签形式展示，标签内「×」可单独移除该负责人。
+        const chips = values
+          .map((v) => {
+            const name = items.find((i) => i.id === v)?.name || v;
+            return `<span class="chip">${esc(name)}<button type="button" class="chip-remove" data-chip-remove="${id}" data-chip-value="${esc(v)}" aria-label="移除${esc(name)}">${icon("x")}</button></span>`;
+          })
+          .join("");
+        return `<details class="picker" id="${id}Picker"><summary><span class="chips" id="${id}Label">${chips || '<span class="placeholder">请选择</span>'}</span>${icon("chevron-down")}</summary><div class="picker-content"><input class="field picker-search" placeholder="输入关键词搜索" aria-label="搜索选项">${items.map((i) => `<label class="picker-row${values.includes(i.id) ? " is-selected" : ""}" data-search="${esc(i.name)}"><input type="checkbox" name="${id}" value="${i.id}" data-multi-picker="${id}" data-label="${esc(i.name)}" ${values.includes(i.id) ? "checked" : ""}>${esc(i.name)}</label>`).join("")}</div></details>`;
+      }
+      const checkedValues = (name) =>
+        $$(`input[name="${name}"]:checked`).map((e) => e.value);
+      // title 区分“添加部门 / 添加子部门”；上级部门下拉统一展示完整组织树，不限层级。
+      function departmentEditor(id = null, parent = "d0", title = null) {
+        const original = id ? deptBy(id) : null;
+        const root = original?.parent === null;
+        const excluded = id ? descendants(id) : [];
+        openDialog(
+          id ? "编辑部门" : title || "添加部门",
+          `<form class="form" onsubmit="return false">${formRow("部门名称", "deptName", field("deptName", original?.name || "", `maxlength="20" placeholder="请输入部门名称"${root ? " disabled" : ""}`) + countField("deptName", 20), true)}${!root ? formRow("上级部门", "deptParent", deptPicker("deptParent", original?.parent || parent, excluded), true) : ""}${formRow("负责人", "deptLeaders", multiPicker("deptLeaders", data.members, original?.leaders || []))}</form>`,
+          () => {
+            const name = $("#deptName").value.trim();
+            if (
+              !error(
+                "deptName",
+                !name
+                  ? "请输入部门名称"
+                  : data.departments.some((d) => d.id !== id && d.name === name)
+                    ? "部门名称已存在"
+                    : "",
+              )
+            )
+              return false;
+            const parentId = root ? null : $("#deptParent").value;
+            if (!root && (!deptBy(parentId) || excluded.includes(parentId))) {
+              error("deptParent", "请选择有效上级部门");
+              return false;
+            }
+            const item = {
+              id: id || uid("d"),
+              name,
+              parent: parentId,
+              leaders: checkedValues("deptLeaders"),
+            };
+            if (id) Object.assign(original, item);
+            else data.departments.push(item);
+            expanded.add(parentId);
+            expanded.add(item.id);
+            commit(id ? "部门已更新" : "部门已添加");
+          },
+        );
+      }
+      // 删除部门：子树内只要还有成员就阻断删除（成员须先转移到其他部门）；
+      // 无成员的部门连同其无成员的子部门一并删除。
+      function deleteDepartment(id) {
+        const d = deptBy(id);
+        if (!d || d.parent === null) return;
+        const ids = descendants(id);
+        const count = deptCount(id);
+        if (count) {
+          openDialog(
+            "无法删除",
+            `<p>部门「${esc(d.name)}」下还有 ${count} 名成员，请先转移成员后再删除。</p>`,
+            null,
+            { cancel: "我知道了" },
+          );
+          return;
+        }
+        const children = ids.length - 1;
+        confirmAction(
+          "确认删除该部门吗？",
+          `将删除“${d.name}”${children ? `及其 ${children} 个子部门` : ""}，删除后不可恢复。`,
+          () => {
+            data.departments = data.departments.filter(
+              (x) => !ids.includes(x.id),
+            );
+            if (ids.includes(ui.dept)) ui.dept = "d0";
+            commit("部门已删除");
+          },
+        );
+      }
+      function departmentMenu(id) {
+        const d = deptBy(id);
+        openDialog(
+          d.name,
+          `<div class="form">${button("添加子部门", "dept-add-child", id)}${button("编辑部门", "dept-edit", id)}${d.parent !== null ? button("删除部门", "dept-delete", id, "danger") : ""}</div>`,
+        );
+      }
+      function treeRows(query = "", parent = null, level = 0) {
+        return data.departments
+          .filter((d) => d.parent === parent)
+          .map((d) => {
+            const children = data.departments.filter((c) => c.parent === d.id);
+            const visible =
+              !query ||
+              descendants(d.id).some((id) => matches(deptBy(id)?.name, query));
+            if (!visible) return "";
+            return `<div class="tree-row ${ui.dept === d.id ? "active" : ""}" style="padding-left:${level * 20}px">${children.length ? `<button class="icon-btn" data-action="tree-expand" data-id="${d.id}" aria-label="${expanded.has(d.id) ? "收起" : "展开"}${esc(d.name)}" aria-expanded="${expanded.has(d.id)}">${icon(expanded.has(d.id) || query ? "chevron-down" : "chevron-right")}</button>` : '<span style="width:24px;flex-shrink:0"></span>'}<button class="tree-label" data-action="dept-select" data-id="${d.id}" title="${esc(d.name)}"><span>${esc(d.name)}</span><span class="muted small mono">${deptCount(d.id)}</span></button><button class="icon-btn node-more" data-action="dept-menu" data-id="${d.id}" aria-label="管理${esc(d.name)}">${icon("ellipsis")}</button></div>${expanded.has(d.id) || query ? treeRows(query, d.id, level + 1) : ""}`;
+          })
+          .join("");
+      }
+      function openFilters() {
+        let body = "";
+        if (PAGE === "members") {
+          body =
+            formRow(
+              "角色",
+              "filterRole",
+              select(
+                "filterRole",
+                [["", "全部角色"], ...data.roles.map((r) => [r.id, r.name])],
+                ui.filters.role || "",
+              ),
+            ) +
+            formRow(
+              "成员状态",
+              "filterStatus",
+              select(
+                "filterStatus",
+                [
+                  ["", "全部状态"],
+                  ["enabled", "启用"],
+                  ["disabled", "禁用"],
+                ],
+                ui.filters.status || "",
+              ),
+            );
+        } else if (PAGE === "logins") {
+          body =
+            formRow(
+              "开始日期",
+              "filterStart",
+              field("filterStart", ui.filters.start || "", 'type="date"'),
+            ) +
+            formRow(
+              "结束日期",
+              "filterEnd",
+              field("filterEnd", ui.filters.end || "", 'type="date"'),
+            ) +
+            formRow(
+              "审批状态",
+              "filterStatus",
+              select(
+                "filterStatus",
+                [["", "全部状态"], "待处理", "已允许", "已拒绝"],
+                ui.filters.status || "",
+              ),
+            );
+        }
+        openDialog(
+          "筛选",
+          `<form class="form" onsubmit="return false">${body}</form>`,
+          () => {
+            if (PAGE === "members")
+              ui.filters = {
+                role: $("#filterRole").value,
+                status: $("#filterStatus").value,
+              };
+            else {
+              const start = $("#filterStart").value,
+                end = $("#filterEnd").value;
+              if (start && end && start > end) {
+                error("filterEnd", "结束日期不能早于开始日期");
+                return false;
+              }
+              ui.filters = { start, end, status: $("#filterStatus").value };
+            }
+            ui.page = 1;
+            ui.selected = [];
+            remember();
+            render();
+          },
+          { drawer: true, filter: true, confirm: "确认提交" },
+        );
+        $$("[data-action=filters]").forEach((e) =>
+          e.setAttribute("aria-expanded", "true"),
+        );
+      }
+      document.addEventListener("input", (e) => {
+        if (e.target.classList.contains("picker-search")) {
+          const picker = e.target.closest(".picker");
+          const query = e.target.value;
+          $$("[data-search]", e.target.parentElement).forEach(
+            (row) => (row.hidden = !matches(row.dataset.search, query)),
+          );
+          if (!query.trim() && picker) renderDeptPickerTree(picker);
+        }
+        if (e.target.id === "deptSearch") {
+          const tree = $("#departmentTree");
+          tree.innerHTML = treeRows(e.target.value);
+          icons();
+        }
+        updateCounters();
+      });
+      document.addEventListener("change", (e) => {
+        if (e.target.id === "pageSize") {
+          ui.size = Number(e.target.value);
+          ui.page = 1;
+          ui.selected = [];
+          remember();
+          renderResults();
+        }
+        if (e.target.dataset.deptPicker) {
+          const id = e.target.dataset.deptPicker;
+          $("#" + id).value = e.target.value;
+          const label = $("#" + id + "Label");
+          label.textContent = e.target.dataset.label;
+          label.classList.remove("placeholder");
+          $$(`input[name="${id}"]`).forEach((i) => {
+            const row = i.closest(".picker-row");
+            // 根目录只作层级起点，不参与选中高亮。
+            row?.classList.toggle(
+              "is-selected",
+              i.checked && row.dataset.level !== "0",
+            );
+          });
+          $("#" + id + "Picker").open = false;
+        }
+        if (e.target.dataset.multiPicker) {
+          const id = e.target.dataset.multiPicker;
+          const checked = $$(`input[name="${id}"]:checked`);
+          checked.forEach((i) =>
+            i.closest(".picker-row")?.classList.add("is-selected"),
+          );
+          $$(`input[name="${id}"]:not(:checked)`).forEach((i) =>
+            i.closest(".picker-row")?.classList.remove("is-selected"),
+          );
+          const label = $("#" + id + "Label");
+          label.innerHTML =
+            checked
+              .map(
+                (i) =>
+                  `<span class="chip">${esc(i.dataset.label)}<button type="button" class="chip-remove" data-chip-remove="${id}" data-chip-value="${esc(i.value)}" aria-label="移除${esc(i.dataset.label)}">${icon("x")}</button></span>`,
+              )
+              .join("") || '<span class="placeholder">请选择</span>';
+          // 标签由 innerHTML 重建，需重新渲染其中的 Lucide 图标。
+          icons();
+        }
+      });
+      // 标签内的「×」移除已选项：取消勾选、同步标签与选项行高亮。
+      document.addEventListener("click", (e) => {
+        const btn = e.target.closest("[data-chip-remove]");
+        if (!btn) return;
+        // 标签位于 summary 内，需阻止默认行为避免顺带展开/收起下拉。
+        e.preventDefault();
+        const id = btn.dataset.chipRemove;
+        const input = $$(`input[name="${id}"]`).find(
+          (i) => i.value === btn.dataset.chipValue,
+        );
+        if (input) input.checked = false;
+        $$(`input[name="${id}"]`).forEach((i) =>
+          i.closest(".picker-row")?.classList.toggle("is-selected", i.checked),
+        );
+        btn.closest(".chip")?.remove();
+        const label = $("#" + id + "Label");
+        if (label && !$$(`input[name="${id}"]:checked`).length)
+          label.innerHTML = '<span class="placeholder">请选择</span>';
+      });
+      // 下拉面板固定定位在触发框正下方，空间不足时上翻，跟随滚动实时重算。
+      let openPicker = null;
+      function placePicker(picker) {
+        const content = $(".picker-content", picker);
+        if (!content) return;
+        const r = picker.getBoundingClientRect();
+        const gap = 4;
+        const below = window.innerHeight - r.bottom - 12;
+        const above = r.top - 12;
+        content.style.left = "0px";
+        content.style.top = "0px";
+        content.style.bottom = "auto";
+        content.style.width = `${r.width}px`;
+        content.style.maxHeight = "260px";
+        const height = content.offsetHeight;
+        const flip = below < height && above > below;
+        content.style.left = `${Math.max(8, r.left)}px`;
+        content.style.maxHeight = `${Math.min(260, Math.max(160, (flip ? above : below) - gap))}px`;
+        if (flip) content.style.bottom = `${window.innerHeight - r.top + gap}px`;
+        else content.style.top = `${r.bottom + gap}px`;
+      }
+      function closePickers(except = null) {
+        $$(".picker[open]").forEach((picker) => {
+          if (picker === except) return;
+          picker.open = false;
+        });
+        openPicker = except;
+      }
+      function syncPicker() {
+        if (openPicker?.open) placePicker(openPicker);
+      }
+      document.addEventListener("toggle", (e) => {
+        const picker = e.target;
+        if (!picker.classList?.contains("picker")) return;
+        if (picker.open) {
+          closePickers(picker);
+          openPicker = picker;
+          if (!$(".picker-search", picker)?.value.trim())
+            renderDeptPickerTree(picker);
+          placePicker(picker);
+        } else if (openPicker === picker) {
+          openPicker = null;
+        }
+      }, true);
+      // 点击触发框与面板以外的任意区域即收起下拉（多选下拉仅收起，已勾选项照常保留）。
+      document.addEventListener("mousedown", (e) => {
+        if (!openPicker || openPicker.contains(e.target)) return;
+        openPicker.open = false;
+      });
+      window.addEventListener("resize", syncPicker);
+      $(".dialog-body")?.addEventListener("scroll", syncPicker);
+      window.addEventListener("scroll", syncPicker, true);
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && openPicker) {
+          openPicker.open = false;
+          openPicker = null;
+        }
+        if (e.target.id === "jumpPage" && e.key === "Enter") {
+          ui.page = Math.max(1, Number(e.target.value) || 1);
+          remember();
+          renderResults();
+        }
+        const tab = e.target.closest("[role=tab]");
+        if (tab && ["ArrowLeft", "ArrowRight", "Home", "End"].includes(e.key)) {
+          e.preventDefault();
+          const tabs = $$("[role=tab]", tab.parentElement);
+          let index = tabs.indexOf(tab);
+          index =
+            e.key === "Home"
+              ? 0
+              : e.key === "End"
+                ? tabs.length - 1
+                : (index + (e.key === "ArrowRight" ? 1 : -1) + tabs.length) %
+                  tabs.length;
+          tabs[index].click();
+          $$("[role=tab]", document)
+            .find((t) => t.dataset.id === tabs[index].dataset.id)
+            ?.focus();
+        }
+      });
+      document.addEventListener("click", (e) => {
+        const caret = e.target.closest?.(".picker-caret");
+        if (caret) {
+          e.preventDefault();
+          const picker = caret.closest(".picker");
+          const id = caret.dataset.caretId;
+          const open = pickerExpanded(picker);
+          const expanded = open.has(id);
+          expanded ? open.delete(id) : open.add(id);
+          picker.dataset.expanded = [...open].join(" ");
+          caret.setAttribute("aria-expanded", String(!expanded));
+          caret.setAttribute("aria-label", `${expanded ? "展开" : "收起"}${caret.dataset.caretName}`);
+          renderDeptPickerTree(picker);
+          return;
+        }
+        const target = e.target.closest("[data-action]");
+        if (!target) return;
+        const { action, id } = target.dataset;
+        if (action === "page") {
+          ui.page = Number(id);
+          ui.selected = [];
+          remember();
+          renderResults();
+        }
+        if (action === "filters") openFilters();
+        if (action === "reset-filter-draft") resetFilterDraft();
+        if (action === "dept-add") departmentEditor();
+        if (action === "dept-add-child") {
+          closeDialog();
+          departmentEditor(null, id, "添加子部门");
+        }
+        if (action === "dept-edit") {
+          closeDialog();
+          departmentEditor(id);
+        }
+        if (action === "dept-delete") deleteDepartment(id);
+        if (action === "dept-menu") departmentMenu(id);
+        if (action === "tree-expand") {
+          expanded.has(id) ? expanded.delete(id) : expanded.add(id);
+          renderTree();
+        }
+        if (action === "dept-select") {
+          ui.dept = id;
+          ui.page = 1;
+          ui.selected = [];
+          remember();
+          render();
+        }
+      });
+
+      // 部门管理：层级人数、负责人和组织结构维护。
+      function render() {
+        $("#workspace").innerHTML =
+          `<div class="toolbar"><div class="actions">${button("添加部门", "dept-add", "", "primary")}<button class="btn" data-action="expand-all">${icon("list-tree")}展开 / 收起全部</button></div>${searchBar(false)}</div><div id="results"></div>`;
+        initDepartmentSearchBox();
+        renderResults();
+        icons();
+      }
+      function renderTree() {
+        renderResults();
+      }
+      function renderResults() {
+        const visible = [];
+        function visit(parent = null, level = 0) {
+          for (const d of data.departments.filter((d) => d.parent === parent)) {
+            const matched =
+              !window.YDSearchBox.value("#departmentSearchBox") ||
+              descendants(d.id).some((id) =>
+                window.YDSearchBox.matches("#departmentSearchBox", deptBy(id)),
+              );
+            if (!matched) continue;
+            visible.push({ ...d, level });
+            if (expanded.has(d.id) || ui.keyword) visit(d.id, level + 1);
+          }
+        }
+        visit();
+        $("#results").innerHTML =
+          `<div class="table-scroll"><table class="data-table" style="min-width:720px"><thead><tr><th>部门名称</th><th>部门人数</th><th>负责人</th><th>操作</th></tr></thead><tbody>${
+            visible.length
+              ? visible
+                  .map((d) => {
+                    const children = data.departments.some(
+                      (c) => c.parent === d.id,
+                    );
+                    const draggable = d.parent !== null;
+                    return `<tr data-dept-row="${d.id}"${draggable ? ` draggable="true" class="draggable-row" title="拖拽调整同级顺序"` : ""}><td><div class="actions" style="padding-left:${d.level * 20}px;flex-wrap:nowrap">${children ? `<button class="icon-btn" data-action="tree-expand" data-id="${d.id}" aria-label="${expanded.has(d.id) ? "收起" : "展开"}${esc(d.name)}" aria-expanded="${expanded.has(d.id)}">${icon(expanded.has(d.id) || ui.keyword ? "chevron-down" : "chevron-right")}</button>` : '<span style="width:32px"></span>'}${d.parent ? "" : icon("building-2")}<span ${!d.parent ? 'style="font-weight:600"' : ""}>${esc(d.name)}</span></div></td><td class="mono">${deptCount(d.id)}</td><td>${esc(
+                      d.leaders
+                        .map((id) => memberBy(id)?.name)
+                        .filter(Boolean)
+                        .join("、") || "—",
+                    )}</td><td><div class="row-actions">${link("添加子部门", "dept-add-child", d.id)}${link("编辑", "dept-edit", d.id)}${d.parent ? link("删除", "dept-delete", d.id, true) : ""}</div></td></tr>`;
+                  })
+                  .join("")
+              : `<tr><td colspan="4">${empty("暂无搜索结果")}</td></tr>`
+          }</tbody></table></div>`;
+        icons();
+      }
+      // 组织树折叠：行上 data-ancestors 记录祖先链，可见性判定为纯查表。
+      // 展开集合保存在下拉节点的 data-expanded 上，弹窗关闭后自然失效。
+      function pickerExpanded(picker) {
+        return new Set((picker.dataset.expanded || "").split(" ").filter(Boolean));
+      }
+      function renderDeptPickerTree(picker) {
+        const content = $(".picker-content", picker);
+        if (!content) return;
+        if ($(".picker-search", picker)?.value.trim()) return;
+        const open = pickerExpanded(picker);
+        $$(".picker-row", content).forEach((row) => {
+          const chain = (row.dataset.ancestors || "").split(" ").filter(Boolean);
+          row.hidden = chain.some((id) => !open.has(id));
+        });
+      }
+      function clearDropMarks() {
+        $$("#results tr").forEach((tr) =>
+          tr.classList.remove("drop-before", "drop-after", "drop-invalid"),
+        );
+      }
+      function moveDepartment(sourceId, targetId, after) {
+        const source = deptBy(sourceId);
+        const target = deptBy(targetId);
+        if (!source || !target || source.parent !== target.parent) return;
+        const list = data.departments;
+        list.splice(list.indexOf(source), 1);
+        const at = list.indexOf(target) + (after ? 1 : 0);
+        list.splice(at, 0, source);
+      }
+      document.addEventListener("dragstart", (e) => {
+        const tr = e.target.closest?.("tr[data-dept-row]");
+        // 行内按钮、输入框等交互元素上按下时不启动拖拽，避免遮挡点击。
+        if (!tr?.classList.contains("draggable-row") || e.target.closest("button,a,input")) {
+          e.preventDefault();
+          return;
+        }
+        dragSrc = tr.dataset.deptRow;
+        tr.classList.add("dragging");
+        e.dataTransfer.effectAllowed = "move";
+        e.dataTransfer.setData("text/plain", dragSrc);
+      });
+      document.addEventListener("dragover", (e) => {
+        if (!dragSrc) return;
+        const tr = e.target.closest?.("tr[data-dept-row]");
+        clearDropMarks();
+        if (!tr) return;
+        const source = deptBy(dragSrc);
+        const target = deptBy(tr.dataset.deptRow);
+        if (!source || !target || source.id === target.id) return;
+        if (source.parent !== target.parent) {
+          tr.classList.add("drop-invalid");
+          return;
+        }
+        e.preventDefault();
+        e.dataTransfer.dropEffect = "move";
+        const r = tr.getBoundingClientRect();
+        tr.classList.add(
+          e.clientY < r.top + r.height / 2 ? "drop-before" : "drop-after",
+        );
+      });
+      document.addEventListener("drop", (e) => {
+        if (!dragSrc) return;
+        const tr = e.target.closest?.("tr[data-dept-row]");
+        const source = deptBy(dragSrc);
+        dragSrc = null;
+        clearDropMarks();
+        if (!tr || !source) return;
+        const target = deptBy(tr.dataset.deptRow);
+        if (!target || target.id === source.id) return;
+        if (source.parent !== target.parent) {
+          toast("仅支持同级部门间排序");
+          return;
+        }
+        const r = tr.getBoundingClientRect();
+        e.preventDefault();
+        moveDepartment(source.id, target.id, e.clientY >= r.top + r.height / 2);
+        commit("排序已更新");
+      });
+      document.addEventListener("dragend", () => {
+        dragSrc = null;
+        clearDropMarks();
+        $$("#results tr.dragging").forEach((tr) =>
+          tr.classList.remove("dragging"),
+        );
+      });
+      document.addEventListener("click", (e) => {
+        if (e.target.closest('[data-action="expand-all"]')) {
+          expanded = expanded.size
+            ? new Set()
+            : new Set(data.departments.map((d) => d.id));
+          renderResults();
+        }
+      });
+
+      start();
+    </script>
+  </body>
+</html>

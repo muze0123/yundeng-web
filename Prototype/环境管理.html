@@ -18,6 +18,12 @@
   <style>
     *{box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei','Segoe UI',system-ui,sans-serif;font-size:13px}.mono{font-family:'JetBrains Mono',monospace}.btn{height:32px;padding:0 12px;border-radius:4px;display:inline-flex;align-items:center;justify-content:center;gap:6px;font-weight:500;white-space:nowrap}.btn-primary{background:#0066FF;color:#fff}.btn-primary:hover{background:#0052CC}.btn-default{background:#fff;color:#3A3F4A;border:1px solid #DFE1E5}.btn-default:hover{background:#F3F4F6}.control{height:32px;border:1px solid #DFE1E5;border-radius:4px;padding:0 8px;outline:none;background:#fff}.control:focus{border-color:#0066FF;box-shadow:0 0 0 2px rgba(0,102,255,.12)}.data-table{width:100%;border-collapse:collapse;font-size:13px}.data-table th{background:#F0F1F3;color:#6E7685;font-size:12px;font-weight:600;padding:9px 12px;border-bottom:1px solid #DFE1E5;text-align:left;white-space:nowrap}.data-table td{padding:9px 12px;border-bottom:1px solid #F0F1F3;color:#3A3F4A;white-space:nowrap}.data-table tbody tr:hover{background:#F3F4F6}.nav-item{height:36px;border-radius:4px;display:flex;align-items:center;gap:10px;padding:0 12px;color:#6E7685}.nav-item:hover{background:#F3F4F6;color:#1A1D24}.nav-item.active{background:#E6F0FF;color:#0066FF;font-weight:600}.menu{position:fixed;z-index:60;width:210px;background:#fff;border:1px solid #DFE1E5;border-radius:8px;box-shadow:0 6px 24px rgba(0,0,0,.12);padding:6px}.menu button{width:100%;height:32px;text-align:left;padding:0 10px;border-radius:4px;color:#3A3F4A}.menu button:hover{background:#F3F4F6}.modal-in{animation:modalIn .15s ease}@keyframes modalIn{from{opacity:0;transform:translateY(6px) scale(.98)}to{opacity:1;transform:none}}.status-dot{width:8px;height:8px;border-radius:50%;display:inline-block}.sidebar.compact{width:68px}.sidebar.compact .nav-label,.sidebar.compact .brand-copy{display:none}.sidebar.compact .nav-item{justify-content:center;padding:0}.toast{animation:toastIn .2s ease}@keyframes toastIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}@media(max-width:767px){.sidebar{position:fixed;z-index:45;height:100%;transform:translateX(-100%)}.sidebar.open{transform:translateX(0)}main{padding:12px!important}}
     .menu{max-height:calc(100dvh - 16px);overflow-y:auto}
+    /* 环境管理为单区块数据页：内容区与唯一业务区块纵向拉伸，区块底部与视口保持 20px 间距（design.md §5.0）。 */
+    #mainContent.page-content{padding-bottom:20px!important;min-height:100%;display:flex;flex-direction:column}
+    #mainContent.page-content>section:only-child{min-height:100%;flex:1 1 auto;display:flex;flex-direction:column}
+    /* 分页器紧接数据列表，固定 20px 间距；不通过 flex 增长制造额外空白（design.md §5.5）。 */
+    #mainContent.page-content>section:only-child>.overflow-x-auto{flex:none;min-height:0}
+    #mainContent.page-content>section:only-child>#environmentPagination{flex:none;margin-top:0;padding-top:20px!important}
     #proxyEditor .proxy-dialog-panel{--proxy-dialog-label-width:112px;--proxy-dialog-control-width:400px;width:min(1440px,96vw);height:min(900px,92vh);max-width:none;max-height:none;overflow:hidden}
     #proxyEditor .proxy-dialog-body{min-height:0;display:flex;flex:1;flex-direction:column;background:#fff}
     #proxyEditor .proxy-dialog-settings{padding:24px 32px 18px;flex:none}
@@ -150,26 +156,169 @@
 .environment-toolbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px 16px;margin-bottom:16px}
 .order-toolbar-actions{display:flex;align-items:center;justify-content:flex-start;gap:8px;flex-wrap:wrap;min-width:0}
 .order-search-filter-group{display:flex;align-items:center;justify-content:flex-end;gap:20px;min-width:0;flex:0 1 500px;margin-left:auto}
-.environment-search{position:relative;width:400px;max-width:100%;min-width:0;height:32px}
-.environment-search input{width:100%;padding-right:58px}
-.environment-search button{position:absolute;top:4px;right:4px;width:24px;height:24px;display:flex;align-items:center;justify-content:center;color:#9DA2AC;border-radius:4px}
-.environment-search button.hidden{display:none}.environment-search #clearSearch{right:30px}
-.environment-search button:hover,.environment-search button:focus-visible,.filter-close:hover{background:#F3F4F6;color:#3A3F4A}
+/* 筛选按钮与其右侧仅图标命令为一组：组内间距 8px，与搜索框之间仍保持 design.md §5.4.1 的 20px */
+.order-toolbar-icon-group{display:flex;align-items:center;justify-content:flex-end;gap:8px;min-width:0}
+/* 仅图标按钮：32×32 正方形、图标居中、无文字（design.md §5.4.1 工具栏命令按钮尺寸） */
+.btn-icon{width:32px;padding:0;flex:none}
+/* 「字段设置」图标：Lucide 无 hexagon-dot，用 hexagon 内叠一个小圆还原线上图标（design.md 未覆盖，仅取现有图标组合）
+   线上图标为平顶六边形 + 同心圆环，故 hexagon 旋转 90°，圆心环外径 7px、环孔约 3px（按参考图实测比例） */
+.btn-icon-stack{position:relative;display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px}
+svg.btn-icon-hex{transform:rotate(90deg)}
+svg.btn-icon-dot{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:6px;height:6px;stroke-width:8}
+/* 搜索框输入框基础样式：公共层 YDSearchBox 只负责定位、内边距与交互，控件外观由页面提供（design.md §5.4.2 B：高度 32px、1px line 边框、4px 圆角）。
+   限定 input.field，避免命中代理弹窗中作为栅格行容器的 <div class="field proxy-dialog-field">。 */
+input.field{height:32px;border:1px solid #DFE1E5;border-radius:4px;background:#fff;padding:0 10px;outline:none;color:#3A3F4A}
+input.field:focus{border-color:#0066FF;box-shadow:0 0 0 2px #E6F0FF}
+.filter-close:hover{background:#F3F4F6;color:#3A3F4A}
 #filterBtn{position:relative;flex:none}#filterBtn.applied{border-color:#0066FF;color:#0066FF;background:#fff}
 #filterCount{position:absolute;right:-8px;top:-8px;min-width:16px;height:16px;border-radius:999px;background:#D9001B;color:#fff;font:600 11px/16px 'JetBrains Mono',monospace;text-align:center}
 #environmentFilterDrawer{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.3)}
 .environment-filter-panel{position:fixed;top:0;right:0;bottom:0;width:480px;max-width:100vw;height:100dvh;background:#fff;display:flex;flex-direction:column;box-shadow:0 6px 24px rgba(0,0,0,.12);animation:filter-in 220ms ease}
 .environment-filter-panel header{height:56px;flex:none;padding:0 20px;border-bottom:1px solid #E8EAED;display:flex;align-items:center;justify-content:space-between}
 .environment-filter-panel h2{font-size:16px;font-weight:600;color:#1A1D24}.filter-close{width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:4px;color:#9DA2AC}
-.environment-filter-body{flex:1;min-height:0;overflow-y:auto;padding:20px;background:#F7F8FA;display:flex;flex-direction:column;align-items:stretch}
-.environment-filter-body label{font-size:13px;line-height:18px;color:#3A3F4A;white-space:nowrap;margin-bottom:6px}.environment-filter-body .control{width:100%;flex:none;margin-bottom:16px}
+    /* 筛选抽屉内容区：白底、单列字段、字段间距 16px（design.md §5.4.4） */
+    .environment-filter-body{flex:1;min-height:0;overflow-y:auto;padding:20px;background:#fff;display:flex;flex-direction:column;align-items:stretch}
+    .environment-filter-field{margin-bottom:16px}
+    .environment-filter-field:last-child{margin-bottom:0}
+    .environment-filter-field>.em-label{display:block;font-size:13px;line-height:18px;color:#3A3F4A;white-space:nowrap;margin-bottom:6px}
+    /* 单选项与复选项：字段单列、选项横排（design.md §5.4.4） */
+    .em-choice-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px 24px;min-height:32px}
+    .em-choice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 24px;min-height:32px}
+    .em-choice{display:inline-flex;align-items:center;gap:6px;font-size:13px;line-height:18px;color:#3A3F4A;white-space:nowrap;cursor:pointer}
+    .em-choice input{width:14px;height:14px;margin:0;flex:none;accent-color:#0066FF;cursor:pointer}
+    /* 多选下拉触发器：未选显示占位，已选用 pill 换行排布（对齐线上「选择平台」组件） */
+    .em-select{position:relative}
+    .em-trigger{position:relative;display:flex;align-items:center;flex-wrap:wrap;gap:6px;width:100%;min-height:32px;padding:4px 30px 4px 8px;border:1px solid #DFE1E5;border-radius:4px;background:#fff;text-align:left;cursor:pointer;transition:border-color .15s,box-shadow .15s}
+    .em-trigger:hover{border-color:rgba(0,102,255,.45)}
+    .em-trigger[aria-expanded="true"]{border-color:#0066FF;box-shadow:0 0 0 2px rgba(0,102,255,.12)}
+    .em-trigger .em-placeholder{font-size:13px;line-height:22px;color:#9DA2AC;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .em-trigger .em-caret{position:absolute;right:8px;top:50%;transform:translateY(-50%);color:#9DA2AC;pointer-events:none}
+    .em-pill{display:inline-flex;align-items:center;gap:4px;max-width:100%;height:22px;padding:0 4px 0 8px;border-radius:4px;background:#F3F4F6;color:#3A3F4A;font-size:12px;line-height:22px}
+    .em-pill>span{max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .em-pill>button{display:flex;align-items:center;justify-content:center;width:14px;height:14px;flex:none;border-radius:999px;background:#9DA2AC;color:#fff}
+    .em-pill>button:hover{background:#6E7685}
+    /* 下拉面板走 Portal 图层，保证盖在抽屉内容层之上且不被裁切（design.md §5.4.4 / §5.13） */
+    #envFilterPortal{position:fixed;z-index:10001;display:none}
+    #envFilterPortal.is-open{display:block}
+    .em-panel{width:100%;max-height:260px;overflow-y:auto;padding:6px;background:#fff;border:1px solid #DFE1E5;border-radius:6px;box-shadow:0 6px 24px rgba(0,0,0,.12)}
+    .em-option{display:flex;align-items:center;gap:8px;height:32px;padding:0 8px;border-radius:4px;color:#3A3F4A;font-size:13px;white-space:nowrap;cursor:pointer}
+    .em-option:hover{background:#F3F4F6}
+    .em-option input{width:14px;height:14px;margin:0;flex:none;accent-color:#0066FF;cursor:pointer}
+    .em-option .em-opt-icon{display:flex;align-items:center;justify-content:center;width:18px;height:18px;flex:none;border-radius:999px;background:#6E7685;color:#fff}
+    .em-option .em-opt-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis}
+    .em-option .em-opt-more{flex:none;color:#3A3F4A}
+    .em-empty{margin:0;padding:10px 8px;font-size:13px;color:#9DA2AC;text-align:center}
+    /* 创建时间：项目统一「时间筛选器」下拉框组件 —— 触发器展示「开始时间 ~ 结束时间」，展开双月日历浮层（design.md §5.4.4 / §5.13）。
+       触发器外观沿用设计系统 order-date 规范：高度 32px、1px line 边框、4px 圆角；已选值用等宽字体、占位保持 ink-muted。 */
+    .em-date-wrap{position:relative;display:block;width:100%;max-width:100%}
+    .em-date-wrap>input[type=hidden]{display:none}
+    .em-date-trigger{position:relative;display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;height:32px;padding:0 10px 0 12px;border:1px solid #DFE1E5;border-radius:4px;background:#fff;color:#9DA2AC;font-size:13px;line-height:20px;text-align:left;cursor:pointer;outline:none;transition:border-color .15s,box-shadow .15s,background .15s}
+    .em-date-trigger:hover{border-color:rgba(0,102,255,.45)}
+    .em-date-trigger:focus-visible{border-color:#0066FF;box-shadow:0 0 0 2px #E6F0FF}
+    .em-date-trigger[aria-invalid="true"]{border-color:#D9001B;box-shadow:0 0 0 2px rgba(217,0,27,.08)}
+    .em-date-values{display:flex;align-items:center;min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+    .em-date-value{overflow:hidden;text-overflow:ellipsis}
+    .em-date-value.is-selected{color:#3A3F4A;font-family:'JetBrains Mono',monospace;font-variant-numeric:tabular-nums}
+    .em-date-sep{flex:none;margin:0 8px;color:#9DA2AC}
+    .em-date-trigger .em-date-icon{flex:none;width:16px;height:16px;color:#9DA2AC;pointer-events:none}
+    /* 浮层提升到顶层后以 fixed 定位锚定触发器：展开不推动其它筛选条件，也不会被 480px 抽屉裁切（design.md §5.4.4 末条） */
+    .em-date-picker{position:fixed;inset:auto;margin:0;width:620px;max-width:min(620px,calc(100vw - 40px));padding:16px;background:#fff;border:1px solid #DFE1E5;border-radius:8px;box-shadow:0 6px 24px rgba(0,0,0,.12);z-index:1200}
+    .em-calendar-months{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+    .em-calendar-month{min-width:0}
+    .em-calendar-month+.em-calendar-month{padding-left:12px;border-left:1px solid #F0F1F3}
+    .em-calendar-head{display:grid;grid-template-columns:58px minmax(0,1fr) 58px;align-items:center;margin-bottom:8px}
+    .em-calendar-nav-group{display:flex;align-items:center;gap:2px}
+    .em-calendar-nav{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border:0;border-radius:4px;background:transparent;color:#6E7685;cursor:pointer}
+    .em-calendar-nav:hover{background:#F3F4F6;color:#0066FF}
+    .em-calendar-nav-spacer{display:block;width:58px;height:28px}
+    .em-calendar-title{margin:0;font-size:14px;font-weight:500;line-height:28px;text-align:center;color:#3A3F4A}
+    .em-calendar-week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:2px;margin-bottom:4px;font-size:11px;color:#9DA2AC;text-align:center}
+    .em-calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:2px}
+    .em-calendar-day{display:inline-flex;align-items:center;justify-content:center;height:30px;border:0;border-radius:4px;background:transparent;color:#3A3F4A;font:12px 'JetBrains Mono',monospace;cursor:pointer}
+    .em-calendar-day:hover{background:#F3F4F6;color:#0066FF}
+    .em-calendar-day.is-other{color:#C7CAD1}
+    .em-calendar-day.is-range{background:#E6F0FF;border-radius:0}
+    .em-calendar-day.is-start,.em-calendar-day.is-end{background:#0066FF;color:#fff;font-weight:600}
+    .em-calendar-day:disabled{background:transparent;color:#C7CAD1;cursor:not-allowed}
+    .em-calendar-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:14px;padding-top:12px;border-top:1px solid #F0F1F3}
+    .em-calendar-value{font-family:'JetBrains Mono',monospace;font-size:12px;color:#6E7685}
+    .em-calendar-actions{display:flex;gap:8px;flex:none}
+    /* 窄屏收紧日历头，避免月份标题换行；640px 以下单月纵向排列 */
+    @media(max-width:720px){.em-calendar-head{grid-template-columns:48px minmax(0,1fr) 48px}.em-calendar-title{font-size:13px;white-space:nowrap}.em-calendar-nav{width:22px;height:26px}}
+    @media(max-width:640px){.em-date-picker{width:calc(100vw - 24px);max-width:calc(100vw - 24px)}.em-calendar-months{grid-template-columns:1fr}.em-calendar-month+.em-calendar-month{margin-top:14px;padding-top:14px;padding-left:0;border-top:1px solid #F0F1F3;border-left:0}}
+    .em-field-error{display:none;margin-top:6px;font-size:12px;line-height:16px;color:#D9001B}
+    .em-field-error.is-shown{display:block}
+    /* 批量操作条：仅在勾选数据项时出现，左侧批量功能、右侧已选计数与退出 */
+    #batchBar{min-height:44px;padding:6px 12px;border:1px solid rgba(0,102,255,.2);border-radius:8px;background:#E6F0FF;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+    #batchBar.hidden{display:none}
+    .batch-action{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 8px;border-radius:4px;color:#3A3F4A;font-size:13px;white-space:nowrap}
+    .batch-action:hover{background:#fff;color:#0066FF}
+    .batch-divider{width:1px;height:14px;flex:none;background:rgba(26,29,36,.16)}
+    .batch-summary{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:#3A3F4A;white-space:nowrap}
+    #batchExit{color:#0066FF}
+    #batchExit:hover{text-decoration:underline}
+    .menu-divider{height:1px;margin:6px 4px;background:#F0F1F3}
+
 .environment-filter-panel footer{height:64px;flex:none;padding:0 20px;border-top:1px solid #E8EAED;display:flex;align-items:center;justify-content:flex-end;gap:12px}
 @keyframes filter-in{from{transform:translateX(100%)}to{transform:translateX(0)}}
-@media(max-width:719px){.environment-toolbar{flex-direction:column;align-items:stretch}.order-search-filter-group{flex:auto;width:100%;margin-left:0}.environment-search{flex:1;width:auto}.environment-filter-panel{width:100%}}
+@media(max-width:719px){.environment-toolbar{flex-direction:column;align-items:stretch}.order-search-filter-group{flex:auto;width:100%;margin-left:0}.environment-filter-panel{width:100%}}
+
+    /* 自定义快捷区编辑器：快捷区 / 折叠区双列 + 指针拖拽排序（列容器底色取自参考图 #F4F4F4，design.md 未覆盖该灰阶，就近取 bg-hover #F3F4F6） */
+    .ecq-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:26px}
+    .ecq-subtitle{font-size:13px;color:#3A3F4A}
+    .ecq-reset{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:#3A3F4A;white-space:nowrap}
+    .ecq-reset:hover{color:#0066FF}
+    .ecq-layout{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:21px}
+    .ecq-column{min-width:0}
+    .ecq-col-title{font-size:13px;font-weight:600;color:#1A1D24;margin-bottom:8px}
+    .ecq-col{height:410px;padding:10px;border-radius:4px;background:#F3F4F6;overflow-y:auto;overflow-x:hidden}
+    .ecq-card{height:40px;display:flex;align-items:center;gap:10px;padding:0 10px;border-radius:2px;background:#fff;font-size:13px;color:#3A3F4A;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none}
+    .ecq-card+.ecq-card{margin-top:10px}
+    .ecq-card:active{cursor:grabbing}
+    .ecq-card.is-dragging{opacity:.4}
+    .ecq-card-move{width:16px;height:16px;flex:none;display:inline-flex;align-items:center;justify-content:center;color:#6E7685}
+    .ecq-card-move:hover{color:#0066FF}
+    .ecq-card-label{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .ecq-grip{margin-left:auto;flex:none;color:#F0F1F3;pointer-events:none}
+    .ecq-card:hover .ecq-grip{color:#DFE1E5}
+    .ecq-card-drop{cursor:default;pointer-events:none}
+    .ecq-empty{height:40px;display:flex;align-items:center;justify-content:center;padding:0 8px;border:1px dashed #DFE1E5;border-radius:2px;font-size:12px;color:#9DA2AC;text-align:center}
+    .ecq-ghost{position:fixed;z-index:9999;height:40px;display:flex;align-items:center;gap:10px;padding:0 10px;border-radius:2px;background:#fff;font-size:13px;color:#3A3F4A;box-shadow:0 6px 24px rgba(0,0,0,.16);pointer-events:none}
+    .ecq-ghost .ecq-grip{margin-left:auto;color:#F0F1F3}
+    body.ecq-dragging{user-select:none;-webkit-user-select:none;cursor:grabbing}
+    @media(max-width:720px){.ecq-layout{grid-template-columns:minmax(0,1fr);gap:16px}.ecq-col{height:240px}}
+
+    /* 列设置气泡弹窗：字段勾选 + 指针拖拽排序。行高 37px、复选框 14px、把手 16×2px 三段线等尺寸取自线上参考图实测；
+       design.md 未单列该组件，外观取 §5.3 菜单（1px line 边框 / 8px 圆角 / 0 6px 24px 阴影）、§5.4.4 复选项（14px、accent-color primary）、§5.14 拖拽（把手与落点插入线） */
+    .cso-panel{position:fixed;z-index:80;width:196px;padding:8px 6px 6px;background:#fff;border:1px solid #DFE1E5;border-radius:8px;box-shadow:0 6px 24px rgba(0,0,0,.12)}
+    .cso-list{max-height:min(444px,calc(100dvh - 200px));overflow-y:auto;overflow-x:hidden}
+    .cso-row{position:relative;display:flex;align-items:center;gap:8px;height:37px;padding:0 18px 0 8px;border-radius:4px;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none}
+    .cso-row:active{cursor:grabbing}
+    .cso-row:hover{background:#F7F8FA}
+    .cso-row input,.cso-ghost input{width:14px;height:14px;margin:0;flex:none;accent-color:#0066FF;cursor:pointer}
+    .cso-label{flex:1;min-width:0;font-size:13px;line-height:18px;color:#3A3F4A;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer}
+    /* 固定列（序号）：不可取消勾选、不可拖拽，整行呈禁用态（对齐参考图浅灰勾选） */
+    .cso-row.is-locked,.cso-row.is-locked .cso-label{color:#9DA2AC;cursor:default}
+    .cso-row.is-locked:hover{background:transparent}
+    .cso-row.is-locked input{cursor:not-allowed}
+    .cso-row.is-dragging{opacity:.4}
+    /* 拖拽把手：3 条 16×2px 横线、间距 3px、默认 line-lighter、hover 加深（design.md §5.14） */
+    .cso-grip{width:16px;flex:none;display:inline-flex;flex-direction:column;justify-content:center;gap:3px;pointer-events:none}
+    .cso-grip i{display:block;height:2px;border-radius:1px;background:#F0F1F3}
+    .cso-row:hover .cso-grip i{background:#DFE1E5}
+    /* 落点插入线：用 background-image 绘制 2px primary，避免 border 造成行高抖动（design.md §5.14） */
+    .cso-row.drop-before{background-image:linear-gradient(#0066FF,#0066FF);background-repeat:no-repeat;background-size:100% 2px;background-position:top left}
+    .cso-row.drop-after{background-image:linear-gradient(#0066FF,#0066FF);background-repeat:no-repeat;background-size:100% 2px;background-position:bottom left}
+    .cso-ghost{position:fixed;z-index:9999;display:flex;align-items:center;gap:8px;height:37px;padding:0 18px 0 8px;border-radius:4px;background:#fff;font-size:13px;color:#3A3F4A;box-shadow:0 6px 24px rgba(0,0,0,.16);pointer-events:none}
+    .cso-ghost .cso-grip i{background:#DFE1E5}
+    body.cso-dragging{user-select:none;-webkit-user-select:none;cursor:grabbing}
+    /* 底部「恢复默认」：整宽 40px 高、8px 圆角、1px 边框、图标与文字整体居中（对齐参考图） */
+    .cso-restore{margin-top:10px;display:flex;align-items:center;justify-content:center;gap:6px;width:100%;height:40px;border:1px solid #E8EAED;border-radius:8px;background:#fff;font-size:13px;color:#3A3F4A}
+    .cso-restore:hover{background:#F3F4F6;border-color:#DFE1E5;color:#0066FF}
 
   </style>
-  <link rel="stylesheet" href="公共导航.css?v=20260825a">
-  <script src="公共导航.js?v=20260916a"></script>
+  <link rel="stylesheet" href="公共导航.css?v=20261008a">
+  <script src="公共导航.js?v=20261008a"></script>
 </head>
 <body class="bg-page text-ink-body overflow-hidden">
 <div class="h-screen flex">
@@ -182,7 +331,7 @@
       <a class="nav-item" href="商城-代理.html"><i data-lucide="shopping-bag" class="w-[17px]"></i><span class="nav-label">商城</span></a>
       <a class="nav-item" href="费用管理-订单管理.html"><i data-lucide="wallet-cards" class="w-[17px]"></i><span class="nav-label">费用管理</span></a>
       <div class="pt-2 pb-1 px-3 nav-label text-[11px] text-ink-muted">团队</div>
-      <a class="nav-item" href="团队管理.html"><i data-lucide="users" class="w-[17px]"></i><span class="nav-label">团队管理</span></a>
+      <a class="nav-item" href="团队管理-成员管理.html"><i data-lucide="users" class="w-[17px]"></i><span class="nav-label">团队管理</span></a>
       <a class="nav-item" href="账号管理.html"><i data-lucide="contact" class="w-[17px]"></i><span class="nav-label">账号管理</span></a>
       <a class="nav-item" href="分享转移.html"><i data-lucide="share-2" class="w-[17px]"></i><span class="nav-label">分享转移</span></a>
       <a class="nav-item" href="日志管理.html"><i data-lucide="notebook-tabs" class="w-[17px]"></i><span class="nav-label">日志管理</span></a>
@@ -194,11 +343,35 @@
   </aside>
   <div class="flex-1 min-w-0 flex flex-col">
     <header class="h-14 bg-card shadow-[0_8px_8px_-8px_rgba(0,0,0,.18)] flex items-center justify-between px-4 md:px-6 z-20"><div class="flex items-center gap-3"><button id="mobileMenu" class="md:hidden"><i data-lucide="menu" class="w-5"></i></button><span class="text-ink-sub">管理中心 / 环境管理</span></div><div class="flex items-center gap-1"><button class="w-8 h-8 rounded hover:bg-hover" data-toast="新手教程已打开"><i data-lucide="circle-help" class="w-[18px] mx-auto text-ink-sub"></i></button><button class="w-8 h-8 rounded hover:bg-hover" data-toast="暂无新通知"><i data-lucide="bell" class="w-[18px] mx-auto text-ink-sub"></i></button><button class="flex items-center gap-2 rounded px-2 py-1 hover:bg-hover"><span class="w-7 h-7 rounded-full bg-primary-bg text-primary flex items-center justify-center font-semibold">张</span><span class="hidden sm:block">张小登</span></button></div></header>
-    <main id="mainContent" class="flex-1 min-h-0 overflow-auto p-4">
+    <main id="mainContent" class="page-content flex flex-1 min-h-0 flex-col overflow-auto p-4 pb-5">
       <!-- 搜索、筛选、列表与分页共用业务区块（design.md §5.4） -->
-      <section class="bg-card rounded-lg p-5 md:p-6">
-        <div class="environment-toolbar"><div class="order-toolbar-actions"><a href="../index.html?page=create" class="btn btn-primary"><i data-lucide="plus" class="w-4"></i>新建环境</a><button data-open="group" class="btn btn-default">分组管理</button><button data-open="tag" class="btn btn-default">标签管理</button><button data-toast="已刷新环境数据" class="btn btn-default"><i data-lucide="refresh-cw" class="w-4"></i>刷新</button><button id="fieldBtn" class="btn btn-default"><i data-lucide="columns-3" class="w-4"></i>字段设置</button></div><div class="order-search-filter-group"><div class="environment-search"><input id="searchInput" class="control" placeholder="请输入关键词，多个用中文逗号分隔" aria-label="搜索环境"><button id="clearSearch" class="hidden" aria-label="清空搜索"><i data-lucide="x" class="w-4 h-4"></i></button><button id="queryBtn" aria-label="搜索"><i data-lucide="search" class="w-4 h-4"></i></button></div><button id="filterBtn" class="btn btn-default" aria-haspopup="dialog" aria-expanded="false" aria-controls="environmentFilterDrawer"><i data-lucide="list-filter" class="w-4 h-4"></i>筛选<span id="filterCount" class="hidden">1</span></button></div></div>
-          <div id="batchBar" class="hidden mb-3 p-3 rounded-md bg-primary-bg flex items-center justify-between flex-wrap gap-3"><span>已选择 <b id="selectedCount" class="mono text-primary">0</b> 个环境</span><div class="flex flex-wrap gap-2"><button data-batch="start" class="btn btn-primary">启动</button><button data-batch="close" class="btn btn-default">关闭</button><button data-open="rpa" class="btn btn-default">RPA</button><button data-open="authorize" class="btn btn-default">授权</button><button data-open="share" class="btn btn-default">分享</button><button data-open="transfer" class="btn btn-default">转移分组</button><button id="moreBatch" class="btn btn-default">更多<i data-lucide="chevron-down" class="w-4"></i></button></div></div>
+      <section class="flex min-h-0 flex-1 flex-col bg-card rounded-lg p-5 md:p-6">
+        <div class="environment-toolbar">
+          <!-- 左侧页面操作组：只放明确命令（design.md §5.4.1） -->
+          <div class="order-toolbar-actions">
+            <a href="../index.html?page=create" class="btn btn-primary"><i data-lucide="plus" class="w-4"></i>新建环境</a>
+            <button data-open="group" class="btn btn-default">分组管理</button>
+            <button data-open="tag" class="btn btn-default">标签管理</button>
+          </div>
+          <!-- 右侧搜索与筛选组：搜索框 → 筛选 → 仅图标命令（刷新 / 字段设置） -->
+          <div class="order-search-filter-group">
+            <div id="environmentSearchBox" class="order-global-search" role="search"></div>
+            <div class="order-toolbar-icon-group">
+              <button id="filterBtn" class="btn btn-default" aria-haspopup="dialog" aria-expanded="false" aria-controls="environmentFilterDrawer"><i data-lucide="list-filter" class="w-4 h-4"></i>筛选<span id="filterCount" class="hidden">1</span></button>
+              <button type="button" data-toast="已刷新环境数据" class="btn btn-default btn-icon" title="刷新" aria-label="刷新"><i data-lucide="rotate-cw" class="w-4 h-4"></i></button>
+              <button type="button" id="fieldBtn" class="btn btn-default btn-icon" title="字段设置" aria-label="字段设置" aria-haspopup="dialog" aria-expanded="false" aria-controls="columnSettingsPopover"><span class="btn-icon-stack"><i data-lucide="hexagon" class="w-4 h-4 btn-icon-hex"></i><i data-lucide="circle" class="btn-icon-dot"></i></span></button>
+            </div>
+          </div>
+        </div>
+          <!-- 批量操作条：左侧按「自定义快捷区」顺序渲染快捷功能，右侧已选计数与退出 -->
+          <div id="batchBar" class="hidden mb-3" role="toolbar" aria-label="批量操作">
+            <div class="flex items-center gap-1 flex-wrap">
+              <div id="batchActions" class="flex items-center gap-1 flex-wrap"></div>
+              <span class="batch-divider" aria-hidden="true"></span>
+              <button type="button" id="moreBatch" class="batch-action" aria-haspopup="menu" aria-expanded="false" aria-label="更多批量操作"><i data-lucide="ellipsis" class="w-4 h-4"></i></button>
+            </div>
+            <div class="batch-summary">已选择 <b id="selectedCount" class="mono text-primary">0</b> 项<button type="button" id="batchExit" class="batch-action">退出</button></div>
+          </div>
           <div class="overflow-x-auto"><table class="data-table min-w-[1280px]"><thead id="tableHead"></thead><tbody id="tableBody"></tbody></table></div>
           <div id="emptyState" class="hidden py-16 text-center text-ink-sub"><i data-lucide="inbox" class="w-8 mx-auto mb-2 text-ink-muted"></i><p>暂无符合条件的环境</p><button class="text-primary mt-2" id="emptyReset">重置筛选条件</button></div>
           <div id="environmentPagination" class="pt-5" aria-label="环境列表分页"></div>
@@ -207,11 +380,52 @@
   </div>
 </div>
 <!-- 筛选草稿仅在确认提交时生效 -->
+<!-- 筛选抽屉：内容区为独立草稿，仅「确定筛选」写入已提交条件（design.md §5.4.4） -->
 <div id="environmentFilterDrawer" class="hidden" role="dialog" aria-modal="true" aria-labelledby="environmentFilterTitle">
-  <section class="environment-filter-panel"><header><h2 id="environmentFilterTitle">筛选条件</h2><button id="closeFilter" class="filter-close" aria-label="关闭筛选"><i data-lucide="x" class="w-4 h-4"></i></button></header>
-  <div class="environment-filter-body"><label for="groupFilter">所属分组：</label><select id="groupFilter" class="control"><option>全部分组</option><option>默认分组</option><option>跨境电商</option><option>短视频运营</option><option>测试环境</option></select></div>
-  <footer><button id="cancelFilter" class="btn btn-default">取消</button><button id="submitFilter" class="btn btn-primary">确认提交</button></footer></section>
+  <section class="environment-filter-panel">
+    <header><h2 id="environmentFilterTitle">筛选环境</h2><button id="closeFilter" class="filter-close" aria-label="关闭筛选"><i data-lucide="x" class="w-4 h-4"></i></button></header>
+    <div class="environment-filter-body">
+      <!-- 所属平台：下拉框多选，复用线上「选择平台」组件形态（勾选框 + 平台图标 + 平台名 + 展开箭头） -->
+      <div class="environment-filter-field"><span class="em-label" id="emLabelPlatform">所属平台：</span><div class="em-select" id="emPlatform" data-em-key="platform" data-em-placeholder="请选择所属平台" data-em-icon="1" role="group" aria-labelledby="emLabelPlatform"></div></div>
+      <!-- 绑定代理情况：单选 -->
+      <div class="environment-filter-field"><span class="em-label" id="emLabelBind">绑定代理情况：</span><div class="em-choice-row" role="radiogroup" aria-labelledby="emLabelBind"><label class="em-choice"><input type="radio" name="emBind" value="all" checked>全部</label><label class="em-choice"><input type="radio" name="emBind" value="pending">待绑定</label><label class="em-choice"><input type="radio" name="emBind" value="bound">已绑定</label></div></div>
+      <!-- 代理类型：复选 -->
+      <div class="environment-filter-field"><span class="em-label" id="emLabelProxyType">代理类型：</span><div class="em-choice-grid" role="group" aria-labelledby="emLabelProxyType"><label class="em-choice"><input type="checkbox" name="emProxyType" value="本机网络">本机网络</label><label class="em-choice"><input type="checkbox" name="emProxyType" value="平台代理">平台代理</label><label class="em-choice"><input type="checkbox" name="emProxyType" value="自有代理">自有代理</label><label class="em-choice"><input type="checkbox" name="emProxyType" value="代理API">代理API</label></div></div>
+      <!-- 授权成员情况：单选 -->
+      <div class="environment-filter-field"><span class="em-label" id="emLabelAuth">授权成员情况：</span><div class="em-choice-row" role="radiogroup" aria-labelledby="emLabelAuth"><label class="em-choice"><input type="radio" name="emAuth" value="all" checked>全部</label><label class="em-choice"><input type="radio" name="emAuth" value="unauthorized">未授权</label><label class="em-choice"><input type="radio" name="emAuth" value="authorized">已授权</label></div></div>
+      <!-- 分组 / 标签 / 创建人：下拉框多选 -->
+      <div class="environment-filter-field"><span class="em-label" id="emLabelGroup">分组：</span><div class="em-select" id="emGroup" data-em-key="group" data-em-placeholder="请选择分组" role="group" aria-labelledby="emLabelGroup"></div></div>
+      <div class="environment-filter-field"><span class="em-label" id="emLabelTag">标签：</span><div class="em-select" id="emTag" data-em-key="tag" data-em-placeholder="请选择环境标签" role="group" aria-labelledby="emLabelTag"></div></div>
+      <div class="environment-filter-field"><span class="em-label" id="emLabelCreator">创建人：</span><div class="em-select" id="emCreator" data-em-key="creator" data-em-placeholder="请选择创建者" role="group" aria-labelledby="emLabelCreator"></div></div>
+      <!-- 创建时间：项目统一「时间筛选器」下拉框 —— 触发器显示「开始时间 ~ 结束时间」，展开双月日历浮层，精确到年月日 -->
+      <div class="environment-filter-field"><span class="em-label" id="emLabelCreated">创建时间：</span>
+        <div class="em-date-wrap" id="emCreatedRange" role="group" aria-labelledby="emLabelCreated">
+          <input type="hidden" id="emStartDate" value="">
+          <input type="hidden" id="emEndDate" value="">
+          <button type="button" id="emCreatedTrigger" class="em-date-trigger" aria-haspopup="dialog" aria-expanded="false" aria-controls="emCreatedPicker"><span class="em-date-values"><span id="emStartDisplay" class="em-date-value">开始时间</span><span class="em-date-sep" aria-hidden="true">~</span><span id="emEndDisplay" class="em-date-value">结束时间</span></span><i data-lucide="calendar-days" class="em-date-icon" aria-hidden="true"></i></button>
+          <div id="emCreatedPicker" class="em-date-picker" role="dialog" aria-label="创建时间范围选择" popover="manual" hidden>
+            <div class="em-calendar-months">
+              <section class="em-calendar-month" aria-label="左侧月份">
+                <div class="em-calendar-head"><div class="em-calendar-nav-group"><button type="button" class="em-calendar-nav" data-em-date-nav="prev-year" aria-label="上一年" title="上一年"><i data-lucide="chevrons-left" class="w-4 h-4"></i></button><button type="button" class="em-calendar-nav" data-em-date-nav="prev-month" aria-label="上个月" title="上个月"><i data-lucide="chevron-left" class="w-4 h-4"></i></button></div><h3 id="emCreatedMonth1" class="em-calendar-title"></h3><span class="em-calendar-nav-spacer" aria-hidden="true"></span></div>
+                <div id="emCreatedWeeks1" class="em-calendar-week"></div>
+                <div id="emCreatedGrid1" class="em-calendar-grid"></div>
+              </section>
+              <section class="em-calendar-month" aria-label="右侧月份">
+                <div class="em-calendar-head"><span class="em-calendar-nav-spacer" aria-hidden="true"></span><h3 id="emCreatedMonth2" class="em-calendar-title"></h3><div class="em-calendar-nav-group"><button type="button" class="em-calendar-nav" data-em-date-nav="next-month" aria-label="下个月" title="下个月"><i data-lucide="chevron-right" class="w-4 h-4"></i></button><button type="button" class="em-calendar-nav" data-em-date-nav="next-year" aria-label="下一年" title="下一年"><i data-lucide="chevrons-right" class="w-4 h-4"></i></button></div></div>
+                <div id="emCreatedWeeks2" class="em-calendar-week"></div>
+                <div id="emCreatedGrid2" class="em-calendar-grid"></div>
+              </section>
+            </div>
+            <div class="em-calendar-foot"><span id="emCreatedValue" class="em-calendar-value">未选择</span><div class="em-calendar-actions"><button type="button" id="emCreatedClear" class="btn btn-default">清空</button><button type="button" id="emCreatedCancel" class="btn btn-default">取消</button><button type="button" id="emCreatedConfirm" class="btn btn-primary">确定</button></div></div>
+          </div>
+        </div>
+        <p class="em-field-error" id="emDateError" role="alert">开始时间不能晚于结束时间</p>
+      </div>
+    </div>
+    <footer><button id="cancelFilter" class="btn btn-default">重置</button><button id="submitFilter" class="btn btn-primary">确定筛选</button></footer>
+  </section>
 </div>
+
 <!-- 修改代理：完整复用编辑浏览器的代理选择及子表单 -->
                 <div id="proxyEditor" class="hidden fixed inset-0 z-[1100] bg-black/30 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="proxyDialogTitle">
                   <div class="modal-in proxy-dialog-panel bg-card rounded-lg shadow-[0_6px_24px_rgba(0,0,0,.12)] flex flex-col">
@@ -311,33 +525,59 @@
                 </div>
   <div id="proxyHelpPopover" class="field-help-popover hidden fixed z-[1300] bg-card border border-line rounded-lg popover p-4" role="tooltip"><div id="fieldHelpContent" class="text-[12px] text-ink-sub leading-relaxed"></div></div>
 <div id="floatingMenu" class="menu hidden"></div>
-<div id="modal" class="hidden fixed inset-0 z-50 bg-black/30 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><section id="modalPanel" class="modal-in w-[760px] max-w-[92vw] max-h-[84vh] bg-card rounded-lg shadow-[0_6px_24px_rgba(0,0,0,.12)] flex flex-col" tabindex="-1"><header class="px-6 h-14 flex items-center justify-between border-b border-line-lighter"><h3 id="modalTitle" class="inline-block text-[16px] font-semibold text-ink-title"></h3><button data-close aria-label="关闭" class="text-ink-muted"><i data-lucide="x" class="w-5 h-5"></i></button></header><div id="modalBody" class="p-6 overflow-y-auto"></div><footer class="px-6 py-4 border-t border-line-lighter flex justify-end gap-3"><button data-close class="btn btn-default">取消</button><button id="modalConfirm" class="btn btn-primary">确定</button></footer></section></div>
-<div id="dialog" class="hidden fixed inset-0 z-[70] bg-black/30 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="dialogTitle" aria-describedby="dialogDesc"><section id="dialogPanel" class="modal-in w-[600px] max-w-[92vw] h-[250px] bg-card rounded-lg shadow-[0_6px_24px_rgba(0,0,0,.12)] flex flex-col relative" tabindex="-1"><button data-dialog-close class="absolute top-3 right-4 text-ink-muted" aria-label="关闭确认框"><i data-lucide="x" class="w-5 h-5"></i></button><div class="flex-1 flex items-center px-6"><span class="w-8 h-8 rounded-full bg-warning-bg text-warning flex items-center justify-center mr-3 shrink-0"><i data-lucide="triangle-alert" class="w-4 h-4"></i></span><div><h3 id="dialogTitle" class="text-[16px] font-semibold text-ink-title"></h3><p id="dialogDesc" class="text-[14px] text-ink-sub mt-1.5"></p></div></div><footer class="px-6 pb-5 flex justify-end gap-3"><button data-dialog-close class="btn btn-default">取消</button><button id="dialogConfirm" class="btn bg-danger text-white">确定</button></footer></section></div>
+<!-- 列设置气泡弹窗：独立节点，不复用 #floatingMenu（行「更多」与批量「…」共用该节点） -->
+<div id="columnSettingsPopover" class="cso-panel hidden" role="dialog" aria-label="列设置"></div>
+<div id="envFilterPortal" aria-hidden="true"></div>
+<!-- 弹层层级：公共导航.css 给工具栏搜索框 .order-global-search 定了 z-index:120，窄屏下工具栏换行会与居中弹窗重叠，故弹窗层级统一提到 1200 以上（日期选择器 1200、拖拽幽灵卡 9999、Toast 10000 保持更高） -->
+<div id="modal" class="hidden fixed inset-0 z-[1200] bg-black/30 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><section id="modalPanel" class="modal-in w-[760px] max-w-[92vw] max-h-[84vh] bg-card rounded-lg shadow-[0_6px_24px_rgba(0,0,0,.12)] flex flex-col" tabindex="-1"><header class="px-6 h-14 flex items-center justify-between border-b border-line-lighter"><h3 id="modalTitle" class="inline-block text-[16px] font-semibold text-ink-title"></h3><button data-close aria-label="关闭" class="text-ink-muted"><i data-lucide="x" class="w-5 h-5"></i></button></header><div id="modalBody" class="p-6 overflow-y-auto"></div><footer class="px-6 py-4 border-t border-line-lighter flex justify-end gap-3"><button data-close class="btn btn-default">取消</button><button id="modalConfirm" class="btn btn-primary">确定</button></footer></section></div>
+<div id="dialog" class="hidden fixed inset-0 z-[1210] bg-black/30 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="dialogTitle" aria-describedby="dialogDesc"><section id="dialogPanel" class="modal-in w-[600px] max-w-[92vw] h-[250px] bg-card rounded-lg shadow-[0_6px_24px_rgba(0,0,0,.12)] flex flex-col relative" tabindex="-1"><button data-dialog-close class="absolute top-3 right-4 text-ink-muted" aria-label="关闭确认框"><i data-lucide="x" class="w-5 h-5"></i></button><div class="flex-1 flex items-center px-6"><span class="w-8 h-8 rounded-full bg-warning-bg text-warning flex items-center justify-center mr-3 shrink-0"><i data-lucide="triangle-alert" class="w-4 h-4"></i></span><div><h3 id="dialogTitle" class="text-[16px] font-semibold text-ink-title"></h3><p id="dialogDesc" class="text-[14px] text-ink-sub mt-1.5"></p></div></div><footer class="px-6 pb-5 flex justify-end gap-3"><button data-dialog-close class="btn btn-default">取消</button><button id="dialogConfirm" class="btn bg-danger text-white">确定</button></footer></section></div>
 <div id="toastContainer" class="fixed top-4 left-1/2 -translate-x-1/2 z-[10000] space-y-2" role="status" aria-live="polite"></div>
 <script src="分页器.js?v=20260814"></script><script>
 const $=s=>document.querySelector(s)||document.getElementById(s), $$=s=>[...document.querySelectorAll(s)];
-const envs=[
- {id:18,group:'短视频运营',name:'指纹测试',account:'TikTok / tk***32',ip:'115.206.***.233',proxy:'直连｜中国-杭州',note:'短视频账号运营',tags:['投放'],auth:'李运营',created:'2026-08-05 09:26:18',status:'stopped',star:false},
- {id:14,group:'默认分组',name:'云登浏览器_1',account:'tiktok小店 / Acc***01',ip:'115.206.***.233',proxy:'直连｜中国-杭州',note:'主店铺日常运营',tags:['重要','杭州'],auth:'1938',created:'2026-08-03 16:38:14',status:'stopped',star:true},
- {id:17,group:'默认分组',name:'云登浏览器_4',account:'未绑定',ip:'124.90.***.196',proxy:'直连｜中国-杭州',note:'直播备用',tags:['备用'],auth:'-',created:'2026-08-03 16:38:14',status:'failed',star:false},
- {id:16,group:'跨境电商',name:'云登浏览器_3',account:'Amazon / sel***16',ip:'124.90.***.196',proxy:'自有｜中国-杭州',note:'美国站点',tags:['美国站'],auth:'张小登',created:'2026-08-03 16:38:14',status:'running',star:false},
- {id:13,group:'跨境电商',name:'云登浏览器',account:'Shopee / sp***88',ip:'124.90.***.196',proxy:'直连｜中国-杭州',note:'东南亚业务',tags:['东南亚'],auth:'李运营',created:'2026-07-31 15:14:21',status:'stopped',star:false},
- {id:12,group:'短视频运营',name:'云登浏览器',account:'TikTok / tk***32',ip:'124.90.***.196',proxy:'直连｜中国-杭州',note:'短视频投放',tags:['投放'],auth:'1938',created:'2026-07-31 15:09:06',status:'stopped',star:true},
- {id:11,group:'测试环境',name:'指纹测试',account:'未绑定',ip:'124.90.***.196',proxy:'自有｜中国-杭州',note:'指纹兼容测试',tags:['测试'],auth:'测试员',created:'2026-07-30 15:15:17',status:'starting',star:false},
- {id:10,group:'测试环境',name:'RPA测试',account:'未绑定',ip:'124.90.***.196',proxy:'直连｜中国-杭州',note:'自动化回归',tags:['RPA','测试'],auth:'测试员',created:'2026-07-30 11:55:31',status:'stopped',star:false},
- {id:8,group:'默认分组',name:'云登浏览器云端备份',account:'Facebook / fb***08',ip:'124.90.***.196',proxy:'直连｜中国-杭州',note:'云端快照已开启',tags:['备份'],auth:'1938',created:'2026-07-28 16:42:52',status:'stopped',star:false},
- {id:7,group:'跨境电商',name:'亚马逊欧洲站',account:'Amazon / eu***07',ip:'18.170.***.21',proxy:'平台代理｜英国-伦敦',note:'欧洲站运营',tags:['欧洲站'],auth:'王运营',created:'2026-07-27 10:20:16',status:'running',star:false}
+let envs=[
+ {id:18,group:'短视频运营',platform:'TikTok Shop',name:'指纹测试',account:'TikTok / tk***32',ip:'115.206.***.233',proxy:'直连｜中国-杭州',proxyType:'本机网络',bind:'bound',creator:'李运营',note:'短视频账号运营',tags:['投放'],auth:'李运营',created:'2026-08-05 09:26:18',status:'stopped',shareTeam:2,star:false},
+ {id:14,group:'默认分组',platform:'TikTok Shop',name:'云登浏览器_1',account:'tiktok小店 / Acc***01',ip:'115.206.***.233',proxy:'直连｜中国-杭州',proxyType:'本机网络',bind:'bound',creator:'张小登',note:'主店铺日常运营',tags:['重要','杭州'],auth:'1938',created:'2026-08-03 16:38:14',status:'stopped',shareTeam:3,star:true},
+ {id:17,group:'默认分组',platform:'未绑定',name:'云登浏览器_4',account:'未绑定',ip:'45.61.***.118',proxy:'代理API｜美国-洛杉矶',proxyType:'代理API',bind:'pending',creator:'张小登',note:'直播备用',tags:['备用'],auth:'-',created:'2026-08-03 16:38:14',status:'failed',shareTeam:0,star:false},
+ {id:16,group:'跨境电商',platform:'亚马逊',name:'云登浏览器_3',account:'Amazon / sel***16',ip:'124.90.***.196',proxy:'自有｜中国-杭州',proxyType:'自有代理',bind:'bound',creator:'张小登',note:'美国站点',tags:['美国站'],auth:'张小登',created:'2026-08-03 16:38:14',status:'running',shareTeam:1,star:false},
+ {id:13,group:'跨境电商',platform:'Shopee',name:'云登浏览器',account:'Shopee / sp***88',ip:'124.90.***.196',proxy:'直连｜中国-杭州',proxyType:'本机网络',bind:'bound',creator:'李运营',note:'东南亚业务',tags:['东南亚'],auth:'李运营',created:'2026-07-31 15:14:21',status:'stopped',shareTeam:2,star:false},
+ {id:12,group:'短视频运营',platform:'TikTok Shop',name:'云登浏览器',account:'TikTok / tk***32',ip:'124.90.***.196',proxy:'直连｜中国-杭州',proxyType:'本机网络',bind:'bound',creator:'王运营',note:'短视频投放',tags:['投放'],auth:'1938',created:'2026-07-31 15:09:06',status:'stopped',shareTeam:0,star:true},
+ {id:11,group:'测试环境',platform:'未绑定',name:'指纹测试',account:'未绑定',ip:'124.90.***.196',proxy:'自有｜中国-杭州',proxyType:'自有代理',bind:'pending',creator:'测试员',note:'指纹兼容测试',tags:['测试'],auth:'测试员',created:'2026-07-30 15:15:17',status:'starting',shareTeam:4,star:false},
+ {id:10,group:'测试环境',platform:'未绑定',name:'RPA测试',account:'未绑定',ip:'124.90.***.196',proxy:'直连｜中国-杭州',proxyType:'本机网络',bind:'pending',creator:'测试员',note:'自动化回归',tags:['RPA','测试'],auth:'测试员',created:'2026-07-30 11:55:31',status:'stopped',shareTeam:1,star:false},
+ {id:8,group:'默认分组',platform:'Facebook',name:'云登浏览器云端备份',account:'Facebook / fb***08',ip:'124.90.***.196',proxy:'直连｜中国-杭州',proxyType:'本机网络',bind:'bound',creator:'张小登',note:'云端快照已开启',tags:['备份'],auth:'1938',created:'2026-07-28 16:42:52',status:'stopped',shareTeam:2,star:false},
+ {id:7,group:'跨境电商',platform:'亚马逊',name:'亚马逊欧洲站',account:'Amazon / eu***07',ip:'18.170.***.21',proxy:'平台代理｜英国-伦敦',proxyType:'平台代理',bind:'bound',creator:'王运营',note:'欧洲站运营',tags:['欧洲站'],auth:'王运营',created:'2026-07-27 10:20:16',status:'running',shareTeam:3,star:false}
 ];
 const envSeed=envs.slice();
 for(let index=0;index<15;index++){const item=envSeed[index%envSeed.length],copyNumber=index+1;envs.push({...item,id:100+copyNumber,name:`${item.name}-${String(copyNumber).padStart(2,'0')}`,account:item.account==='未绑定'?item.account:item.account.replace(/\*\*\*\d+/,`***${String(copyNumber).padStart(2,'0')}`),tags:item.tags.slice(),star:false})}
-let state={query:'',group:'全部分组',selected:new Set(),page:1,size:10,sort:'star',visible:['star','id','group','name','account','proxy','note','tags','auth','created','action'],deepLinkId:null,deepLinkFocusPending:false,deepLinkNotice:null,deepLinkFeedbackScheduled:false},pager=null,lastModalFocus=null,lastDialogFocus=null;
-const labels={star:'',id:'序号/ID',group:'分组',name:'名称',account:'账号',proxy:'代理信息',note:'备注',tags:'标签',auth:'授权人',created:'创建时间',action:'操作'};
+// 筛选维度字典：所属平台 / 代理类型按线上口径固定，分组 / 标签 / 创建人按业务口径给出
+const environmentFacets={platform:['亚马逊','TikTok Shop','eBay','SHEIN','Shopee','Facebook'],proxyType:['本机网络','平台代理','自有代理','代理API'],group:['默认分组','跨境电商','短视频运营','测试环境'],tag:['重要','杭州','美国站','欧洲站','东南亚','投放','备用','测试','RPA','备份'],creator:['张小登','李运营','王运营','测试员']};
+/* ===== 批量操作快捷功能候选池：默认快捷区启动 / 关闭 / 删除，其余功能默认折叠（顺序对齐「…」菜单与参考图折叠区）===== */
+const QUICK_ACTION_ICONS={start:'play',close:'power',delete:'trash-2',authorize:'shield-check',share:'share-2',transfer:'arrow-left-right','transfer-group':'folder-tree','window-sync':'app-window',proxy:'network',remark:'pencil-line',tag:'tag',star:'star','copy-seq':'copy'};
+const QUICK_ACTION_LABELS={start:'启动',close:'关闭',delete:'删除',authorize:'授权',share:'分享',transfer:'转移','transfer-group':'转移分组','window-sync':'窗口同步',proxy:'修改代理',remark:'编辑备注',tag:'设置标签',star:'设置星标','copy-seq':'复制序号'};
+const QUICK_ACTION_POOL=Object.keys(QUICK_ACTION_LABELS);
+const QUICK_ACTION_DEFAULT=['start','close','delete'];
+const QUICK_ACTION_FOLD_DEFAULT=QUICK_ACTION_POOL.filter(key=>!QUICK_ACTION_DEFAULT.includes(key));
+/* 筛选草稿与已提交条件分离：抽屉内编辑草稿，仅「确定筛选」写入 state.filter（design.md §5.4.4） */
+const environmentFilterDefaults=()=>({platform:[],bind:'all',proxyType:[],auth:'all',group:[],tag:[],creator:[],start:'',end:''});
+const cloneEnvironmentFilter=filter=>Object.assign(environmentFilterDefaults(),filter||{},{platform:[...(filter&&filter.platform||[])],proxyType:[...(filter&&filter.proxyType||[])],group:[...(filter&&filter.group||[])],tag:[...(filter&&filter.tag||[])],creator:[...(filter&&filter.creator||[])]});
+let environmentFilterDraft=environmentFilterDefaults();
+/* ===== 列设置（字段设置）气泡弹窗：字段池顺序 / 显示名 / 默认勾选列（顺序与勾选态对齐线上参考图）===== */
+const COLUMN_SETTING_POOL=['id','group','name','account','proxy','note','tags','auth','created','star','shareTeam','creator'];
+/* 面板显示名与表头文案分离：面板用「序号 / IP」，表头沿用 labels 的「序号 / 代理信息」 */
+const COLUMN_SETTING_LABELS={id:'序号',group:'分组',name:'名称',account:'账号',proxy:'IP',note:'备注',tags:'标签',auth:'授权人',created:'创建时间',star:'设置星标',shareTeam:'分享团队数',creator:'创建人'};
+/* 默认勾选：除「分享团队数」「创建人」外均勾选（对齐参考图） */
+const COLUMN_SETTING_CHECKED_DEFAULT=['id','group','name','account','proxy','note','tags','auth','created','star'];
+/* 固定列：序号始终勾选、不可取消、不可拖拽，恒定排在字段池首位 */
+const COLUMN_SETTING_LOCKED='id';
+let state={query:'',filter:environmentFilterDefaults(),quickZone:[...QUICK_ACTION_DEFAULT],quickFold:[...QUICK_ACTION_FOLD_DEFAULT],selected:new Set(),page:1,size:10,sort:'star',columnOrder:[...COLUMN_SETTING_POOL],columnChecked:new Set(COLUMN_SETTING_CHECKED_DEFAULT),visible:COLUMN_SETTING_POOL.filter(key=>COLUMN_SETTING_CHECKED_DEFAULT.includes(key)).concat(['action']),deepLinkId:null,deepLinkFocusPending:false,deepLinkNotice:null,deepLinkFeedbackScheduled:false},pager=null,lastModalFocus=null,lastDialogFocus=null;
+/* 表头文案：与列设置面板的显示名共用同一套字段键；「代理信息」为表头专有叫法（面板内简称「IP」） */
+const labels={star:'设置星标',id:'序号',group:'分组',name:'名称',account:'账号',proxy:'代理信息',note:'备注',tags:'标签',auth:'授权人',created:'创建时间',shareTeam:'分享团队数',creator:'创建人',action:'操作'};
 const statusMap={stopped:['已关闭','bg-page text-ink-sub'],running:['运行中','bg-success-bg text-success'],starting:['启动中','bg-info-bg text-info'],failed:['启动失败','bg-danger-bg text-danger']};
-function filtered(){const terms=state.query.toLowerCase().split(/[，,]/).map(term=>term.trim()).filter(Boolean);return envs.filter(e=>(state.group==='全部分组'||e.group===state.group)&&(!terms.length||terms.some(q=>[e.id,e.group,e.name,e.account,e.ip,e.proxy,e.note,e.tags.join(' '),e.auth].join(' ').toLowerCase().includes(q)))).sort((a,b)=>state.sort==='name'?a.name.localeCompare(b.name,'zh-CN'):(b.star-a.star||b.id-a.id));}
-function prepareEnvironmentDeepLink(){const url=new URL(location.href);if(!url.searchParams.has('id'))return;const rawId=url.searchParams.get('id')||'',targetId=/^\d+$/.test(rawId)?Number(rawId):NaN,target=Number.isSafeInteger(targetId)?envs.find(item=>item.id===targetId&&item.authorized!==false):null;if(!target){url.searchParams.delete('id');history.replaceState(history.state,'',url.href);state.deepLinkNotice='unavailable';return}state.query='';state.group='全部分组';state.deepLinkId=target.id;state.deepLinkFocusPending=true;$('#searchInput').value='';$('#groupFilter').value='全部分组';const targetIndex=filtered().findIndex(item=>item.id===target.id);state.page=Math.floor(targetIndex/state.size)+1;}
+function environmentMatchFilter(item){const f=state.filter;if(f.platform.length&&!f.platform.includes(item.platform))return false;if(f.bind!=='all'&&item.bind!==f.bind)return false;if(f.proxyType.length&&!f.proxyType.includes(item.proxyType))return false;const authorized=!!item.auth&&item.auth!=='-';if(f.auth==='authorized'&&!authorized)return false;if(f.auth==='unauthorized'&&authorized)return false;if(f.group.length&&!f.group.includes(item.group))return false;if(f.tag.length&&!f.tag.some(tag=>(item.tags||[]).includes(tag)))return false;if(f.creator.length&&!f.creator.includes(item.creator))return false;const day=(item.created||'').slice(0,10);if(f.start&&day&&day<f.start)return false;if(f.end&&day&&day>f.end)return false;return true}
+function filtered(){return envs.filter(e=>environmentMatchFilter(e)&&window.YDSearchBox.matches('#environmentSearchBox',e)).sort((a,b)=>state.sort==='name'?a.name.localeCompare(b.name,'zh-CN'):(b.star-a.star||b.id-a.id));}
+function prepareEnvironmentDeepLink(){const url=new URL(location.href);if(!url.searchParams.has('id'))return;const rawId=url.searchParams.get('id')||'',targetId=/^\d+$/.test(rawId)?Number(rawId):NaN,target=Number.isSafeInteger(targetId)?envs.find(item=>item.id===targetId&&item.authorized!==false):null;if(!target){url.searchParams.delete('id');history.replaceState(history.state,'',url.href);state.deepLinkNotice='unavailable';return}state.query='';state.filter=environmentFilterDefaults();saveEnvironmentFilters();state.deepLinkId=target.id;state.deepLinkFocusPending=true;window.YDSearchBox.setValue('#environmentSearchBox','');const targetIndex=filtered().findIndex(item=>item.id===target.id);state.page=Math.floor(targetIndex/state.size)+1;}
 function scheduleDeepLinkFeedback(){if(state.deepLinkFeedbackScheduled||(!state.deepLinkFocusPending&&!state.deepLinkNotice))return;if(document.readyState==='loading'){state.deepLinkFeedbackScheduled=true;document.addEventListener('DOMContentLoaded',()=>{state.deepLinkFeedbackScheduled=false;scheduleDeepLinkFeedback()},{once:true});return}state.deepLinkFeedbackScheduled=true;requestAnimationFrame(()=>{state.deepLinkFeedbackScheduled=false;if(state.deepLinkNotice==='unavailable'){state.deepLinkNotice=null;toast('当前环境不可用，已返回环境列表。','info');return}const row=$$('[data-environment-id]').find(item=>item.dataset.environmentId===String(state.deepLinkId));if(!row)return;row.scrollIntoView({block:'center',inline:'nearest'});row.focus({preventScroll:true});state.deepLinkFocusPending=false;toast(`已定位环境 ${state.deepLinkId}。`,'info')});}
-function cell(e,k){if(k==='star')return `<td><button data-star="${e.id}" aria-label="${e.star?'取消':'设置'}星标"><i data-lucide="star" class="w-4 ${e.star?'fill-warning text-warning':'text-ink-muted'}"></i></button></td>`;if(k==='id')return `<td class="mono">${e.id}</td>`;if(k==='name')return `<td><div class="inline-block font-medium text-ink-title">${e.name}</div><br><span class="inline-flex mt-1 px-1.5 py-0.5 rounded ${statusMap[e.status][1]}">${statusMap[e.status][0]}</span></td>`;if(k==='proxy')return `<td><div class="mono">${e.ip}</div><span class="text-[12px] text-ink-sub">${e.proxy}</span></td>`;if(k==='tags')return `<td>${e.tags.map(t=>`<span class="inline-flex px-1.5 py-0.5 mr-1 rounded bg-primary-bg text-primary">${t}</span>`).join('')}</td>`;if(k==='created')return `<td class="mono">${e.created}</td>`;if(k==='action')return `<td><button data-toggle="${e.id}" class="text-primary mr-3">${e.status==='running'?'关闭':'启动'}</button><button data-more="${e.id}" class="text-primary">更多</button></td>`;return `<td>${e[k]||'-'}</td>`;}
-function render(syncPager=true){const rows=filtered(),pages=Math.max(1,Math.ceil(rows.length/state.size));state.page=Math.min(state.page,pages);const start=(state.page-1)*state.size,shown=rows.slice(start,start+state.size);$('#tableHead').innerHTML='<tr><th><input id="checkAll" type="checkbox" aria-label="全选当前页"></th>'+state.visible.map(k=>`<th>${k==='name'?'<button id="sortName" class="flex items-center gap-1">名称<i data-lucide="arrow-up-down" class="w-3"></i></button>':labels[k]}</th>`).join('')+'</tr>';$('#tableBody').innerHTML=shown.map(e=>{const isDeepLinkTarget=e.id===state.deepLinkId;return `<tr data-environment-id="${e.id}" ${isDeepLinkTarget?`tabindex="-1" aria-current="true" aria-label="已定位环境 ${e.id}，${e.name}" class="bg-primary-bg outline-none ring-1 ring-inset ring-primary"`:''}><td><input type="checkbox" data-select="${e.id}" aria-label="选择环境 ${e.id}" ${state.selected.has(e.id)?'checked':''}></td>${state.visible.map(k=>cell(e,k)).join('')}</tr>`}).join('');$('#emptyState').classList.toggle('hidden',rows.length>0);$('#tableHead').parentElement.classList.toggle('hidden',rows.length===0);$('#selectedCount').textContent=state.selected.size;$('#batchBar').classList.toggle('hidden',state.selected.size===0);$('#checkAll')&&($('#checkAll').checked=shown.length>0&&shown.every(e=>state.selected.has(e.id)));if(!pager)pager=new YDPager('#environmentPagination',{total_count:rows.length,current_page:state.page,page_size:state.size,page_size_options:[10,20,50],onChange:pageState=>{state.page=pageState.current_page;state.size=pageState.page_size;render(false)},toast});else if(syncPager)pager.setState({total_count:rows.length,current_page:state.page,page_size:state.size},{silent:true});lucide.createIcons();scheduleDeepLinkFeedback();}
+function cell(e,k){if(k==='star')return `<td><button data-star="${e.id}" aria-label="${e.star?'取消':'设置'}星标"><i data-lucide="star" class="w-4 ${e.star?'fill-warning text-warning':'text-ink-muted'}"></i></button></td>`;if(k==='id')return `<td class="mono">${e.id}</td>`;if(k==='name')return `<td><div class="inline-block font-medium text-ink-title">${e.name}</div><br><span class="inline-flex mt-1 px-1.5 py-0.5 rounded ${statusMap[e.status][1]}">${statusMap[e.status][0]}</span></td>`;if(k==='proxy')return `<td><div class="mono">${e.ip}</div><span class="text-[12px] text-ink-sub">${e.proxy}</span></td>`;if(k==='tags')return `<td>${e.tags.map(t=>`<span class="inline-flex px-1.5 py-0.5 mr-1 rounded bg-primary-bg text-primary">${t}</span>`).join('')}</td>`;if(k==='created')return `<td class="mono">${e.created}</td>`;if(k==='shareTeam')return `<td><span class="mono">${e.shareTeam||0}</span> 个团队</td>`;if(k==='action')return `<td><button data-toggle="${e.id}" class="text-primary mr-3">${e.status==='running'?'关闭':'启动'}</button><button data-more="${e.id}" class="text-primary">更多</button></td>`;return `<td>${e[k]||'-'}</td>`;}
+function render(syncPager=true){const rows=filtered(),pages=Math.max(1,Math.ceil(rows.length/state.size));state.page=Math.min(state.page,pages);const start=(state.page-1)*state.size,shown=rows.slice(start,start+state.size);$('#tableHead').innerHTML='<tr><th><input id="checkAll" type="checkbox" aria-label="全选当前页"></th>'+state.visible.map(k=>`<th>${k==='name'?'<button id="sortName" class="flex items-center gap-1">名称<i data-lucide="arrow-up-down" class="w-3"></i></button>':labels[k]}</th>`).join('')+'</tr>';$('#tableBody').innerHTML=shown.map(e=>{const isDeepLinkTarget=e.id===state.deepLinkId;return `<tr data-environment-id="${e.id}" ${isDeepLinkTarget?`tabindex="-1" aria-current="true" aria-label="已定位环境 ${e.id}，${e.name}" class="bg-primary-bg outline-none ring-1 ring-inset ring-primary"`:''}><td><input type="checkbox" data-select="${e.id}" aria-label="选择环境 ${e.id}" ${state.selected.has(e.id)?'checked':''}></td>${state.visible.map(k=>cell(e,k)).join('')}</tr>`}).join('');$('#emptyState').classList.toggle('hidden',rows.length>0);$('#tableHead').parentElement.classList.toggle('hidden',rows.length===0);$('#selectedCount').textContent=state.selected.size;$('#batchBar').classList.toggle('hidden',state.selected.size===0);renderBatchBar();$('#checkAll')&&($('#checkAll').checked=shown.length>0&&shown.every(e=>state.selected.has(e.id)));if(!pager)pager=new YDPager('#environmentPagination',{total_count:rows.length,current_page:state.page,page_size:state.size,page_size_options:[10,20,50],onChange:pageState=>{state.page=pageState.current_page;state.size=pageState.page_size;render(false)},toast});else if(syncPager)pager.setState({total_count:rows.length,current_page:state.page,page_size:state.size},{silent:true});lucide.createIcons();scheduleDeepLinkFeedback();}
 function toast(msg,kind='info'){const c={info:'bg-info',success:'bg-success',warning:'bg-warning',danger:'bg-danger'}[kind],el=document.createElement('div');el.className=`toast ${c} text-white px-4 py-2 rounded shadow text-[13px]`;el.textContent=msg;$('#toastContainer').append(el);setTimeout(()=>el.remove(),2400)}
 // ===== 修改代理：源自编辑浏览器，独立状态避免影响环境列表 =====
 let openEnvironmentProxy;
@@ -464,41 +704,441 @@ const fieldHelpContent={'proxy-ip-channel':`<ol class="list-decimal pl-5 space-y
     if(event.key==='Tab'){const items=[...active.querySelectorAll('button:not(:disabled),input:not(:disabled),select:not(:disabled),textarea:not(:disabled)')].filter(el=>el.getClientRects().length);const first=items[0],last=items.at(-1);if(event.shiftKey&&document.activeElement===first){event.preventDefault();last?.focus()}else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first?.focus()}}
   },true);
 })(state);
-const modalTemplates={group:['分组管理',`<div class="space-y-4"><div class="flex gap-3"><input class="control flex-1" placeholder="搜索分组名称"><button class="btn btn-primary">添加分组</button></div><table class="data-table"><thead><tr><th>分组名称</th><th>环境数</th><th>操作</th></tr></thead><tbody>${['默认分组','跨境电商','短视频运营','测试环境'].map((x,i)=>`<tr><td>${x}</td><td class="mono">${[5,2,1,2][i]}</td><td><button class="text-primary">授权</button>　<button class="text-primary">修改</button></td></tr>`).join('')}</tbody></table></div>`],tag:['标签管理',`<div class="space-y-4"><div class="flex gap-3"><input id="modalRequired" maxlength="30" class="control flex-1" placeholder="请输入新建标签内容"><button class="btn btn-primary">创建</button></div><div class="flex gap-2">${['重要','杭州','备用','测试','RPA'].map(x=>`<span class="px-2 py-1 rounded bg-primary-bg text-primary">${x}</span>`).join('')}</div></div>`],rpa:['RPA',`<div class="space-y-[18px]"><label class="flex items-center gap-4"><span class="w-28 text-right">选择 RPA 模板：</span><select id="modalRequired" class="control w-[400px]"><option value="">请选择模板</option><option>商品数据采集</option><option>店铺健康检查</option></select></label><label class="flex items-center gap-4"><span class="w-28 text-right">执行类型：</span><select class="control w-[400px]"><option>普通任务</option><option>计划任务</option></select></label><label class="flex items-center gap-4"><span class="w-28 text-right">计划名称：</span><input class="control w-[400px]" value="plan_${new Date().toISOString().slice(0,10)}"></label></div>`],authorize:['批量选择授权人员',`<div class="space-y-4"><input class="control w-full" placeholder="搜索成员"><label class="flex items-center gap-2"><input type="checkbox" checked> 张小登（团队管理员）</label><label class="flex items-center gap-2"><input type="checkbox"> 李运营（运营成员）</label><label class="flex items-center gap-2"><input type="checkbox"> 测试员（测试成员）</label></div>`],share:['分享环境',`<div class="space-y-[18px]"><label class="flex gap-4"><span class="w-24 text-right">分享内容：</span><span><input type="checkbox"> 缓存数据</span></label><label class="flex gap-4"><span class="w-24 text-right">分享给团队：</span><textarea id="modalRequired" class="control w-[400px] h-24 py-2" placeholder="请输入团队 ID，每行一个"></textarea></label><label class="flex gap-4"><span class="w-24 text-right">备注：</span><textarea class="control w-[400px] h-20 py-2" maxlength="200"></textarea></label></div>`],transfer:['转移分组',`<div class="space-y-4"><p>以下 <b>${state.selected.size||1}</b> 个环境全部转移至分组：</p><select id="modalRequired" class="control w-[400px]"><option value="">请选择</option><option>默认分组</option><option>跨境电商</option><option>短视频运营</option><option>测试环境</option></select></div>`],remark:['修改备注',`<label class="block"><textarea id="modalRequired" maxlength="200" class="control w-full h-28 py-2" placeholder="请输入备注内容"></textarea><span class="block text-right text-ink-muted mt-1">0/200</span></label>`],cookie:['编辑 Cookie',`<div><p class="text-warning mb-3">Cookie 属于敏感信息，请确认来源可信。</p><textarea id="modalRequired" class="control w-full h-44 py-2 mono" placeholder='请输入 JSON 或 Netscape 格式 Cookie'>[{"domain":"file.yunlogin.com","name":"session","value":"***"}]</textarea></div>`],cache:['缓存管理',`<div><div class="flex gap-2 mb-4"><button class="btn btn-primary">本地缓存</button><button class="btn btn-default">本地快照</button><button class="btn btn-default">云端快照</button></div><table class="data-table"><thead><tr><th>缓存类型</th><th>大小</th><th>更新时间</th><th>操作</th></tr></thead><tbody>${[['Local Storage','7.34K'],['IndexedDB','2.27K'],['插件数据','46.35K'],['历史记录','183.46K']].map(x=>`<tr><td>${x[0]}</td><td class="mono">${x[1]}</td><td class="mono">2026-08-12 11:23:36</td><td><button class="text-danger">删除</button></td></tr>`).join('')}</tbody></table></div>`]};
+const modalTemplates={custom:['自定义快捷区',`<div class="ecq-editor">
+  <!-- 说明行：左侧文案 + 右侧恢复默认设置 -->
+  <div class="ecq-head">
+    <p class="ecq-subtitle">支持将常用操作添加至【快捷区】</p>
+    <button type="button" id="ecqReset" class="ecq-reset"><i data-lucide="reply" class="w-4 h-4 text-primary"></i>恢复默认设置</button>
+  </div>
+  <!-- 双列编辑区：左快捷区、右折叠区，卡片可拖拽排序与跨列移动 -->
+  <div class="ecq-layout">
+    <section class="ecq-column">
+      <h4 class="ecq-col-title">快捷区</h4>
+      <div id="ecqQuick" class="ecq-col" role="list" aria-label="快捷区"></div>
+    </section>
+    <section class="ecq-column">
+      <h4 class="ecq-col-title">折叠区</h4>
+      <div id="ecqFold" class="ecq-col" role="list" aria-label="折叠区"></div>
+    </section>
+  </div>
+</div>`],group:['分组管理',`<div class="space-y-4"><div class="flex gap-3"><input class="control flex-1" placeholder="搜索分组名称"><button class="btn btn-primary">添加分组</button></div><table class="data-table"><thead><tr><th>分组名称</th><th>环境数</th><th>操作</th></tr></thead><tbody>${['默认分组','跨境电商','短视频运营','测试环境'].map((x,i)=>`<tr><td>${x}</td><td class="mono">${[5,2,1,2][i]}</td><td><button class="text-primary">授权</button>　<button class="text-primary">修改</button></td></tr>`).join('')}</tbody></table></div>`],tag:['标签管理',`<div class="space-y-4"><div class="flex gap-3"><input id="modalRequired" maxlength="30" class="control flex-1" placeholder="请输入新建标签内容"><button class="btn btn-primary">创建</button></div><div class="flex gap-2">${['重要','杭州','备用','测试','RPA'].map(x=>`<span class="px-2 py-1 rounded bg-primary-bg text-primary">${x}</span>`).join('')}</div></div>`],rpa:['RPA',`<div class="space-y-[18px]"><label class="flex items-center gap-4"><span class="w-28 text-right">选择 RPA 模板：</span><select id="modalRequired" class="control w-[400px]"><option value="">请选择模板</option><option>商品数据采集</option><option>店铺健康检查</option></select></label><label class="flex items-center gap-4"><span class="w-28 text-right">执行类型：</span><select class="control w-[400px]"><option>普通任务</option><option>计划任务</option></select></label><label class="flex items-center gap-4"><span class="w-28 text-right">计划名称：</span><input class="control w-[400px]" value="plan_${new Date().toISOString().slice(0,10)}"></label></div>`],authorize:['批量选择授权人员',`<div class="space-y-4"><input class="control w-full" placeholder="搜索成员"><label class="flex items-center gap-2"><input type="checkbox" checked> 张小登（团队管理员）</label><label class="flex items-center gap-2"><input type="checkbox"> 李运营（运营成员）</label><label class="flex items-center gap-2"><input type="checkbox"> 测试员（测试成员）</label></div>`],share:['分享环境',`<div class="space-y-[18px]"><label class="flex gap-4"><span class="w-24 text-right">分享内容：</span><span><input type="checkbox"> 缓存数据</span></label><label class="flex gap-4"><span class="w-24 text-right">分享给团队：</span><textarea id="modalRequired" class="control w-[400px] h-24 py-2" placeholder="请输入团队 ID，每行一个"></textarea></label><label class="flex gap-4"><span class="w-24 text-right">备注：</span><textarea class="control w-[400px] h-20 py-2" maxlength="200"></textarea></label></div>`],transfer:['转移分组',`<div class="space-y-4"><p>以下 <b>${state.selected.size||1}</b> 个环境全部转移至分组：</p><select id="modalRequired" class="control w-[400px]"><option value="">请选择</option><option>默认分组</option><option>跨境电商</option><option>短视频运营</option><option>测试环境</option></select></div>`],remark:['修改备注',`<label class="block"><textarea id="modalRequired" maxlength="200" class="control w-full h-28 py-2" placeholder="请输入备注内容"></textarea><span class="block text-right text-ink-muted mt-1">0/200</span></label>`],cookie:['编辑 Cookie',`<div><p class="text-warning mb-3">Cookie 属于敏感信息，请确认来源可信。</p><textarea id="modalRequired" class="control w-full h-44 py-2 mono" placeholder='请输入 JSON 或 Netscape 格式 Cookie'>[{"domain":"file.yunlogin.com","name":"session","value":"***"}]</textarea></div>`],cache:['缓存管理',`<div><div class="flex gap-2 mb-4"><button class="btn btn-primary">本地缓存</button><button class="btn btn-default">本地快照</button><button class="btn btn-default">云端快照</button></div><table class="data-table"><thead><tr><th>缓存类型</th><th>大小</th><th>更新时间</th><th>操作</th></tr></thead><tbody>${[['Local Storage','7.34K'],['IndexedDB','2.27K'],['插件数据','46.35K'],['历史记录','183.46K']].map(x=>`<tr><td>${x[0]}</td><td class="mono">${x[1]}</td><td class="mono">2026-08-12 11:23:36</td><td><button class="text-danger">删除</button></td></tr>`).join('')}</tbody></table></div>`]};
 function modalFocusables(){return $$('#modal button:not([disabled]),#modal input:not([disabled]),#modal select:not([disabled]),#modal textarea:not([disabled]),#modal [tabindex]:not([tabindex="-1"])').filter(item=>item.offsetParent!==null)}
-function openModal(type,title){if(type==='proxy'){openEnvironmentProxy();return}const tpl=modalTemplates[type]||[title||'环境操作',`<div class="py-6 text-center text-ink-sub">已选择 ${state.selected.size||1} 个环境，确认执行“${title}”操作。</div>`];lastModalFocus=document.activeElement;$('#modalTitle').textContent=title||tpl[0];$('#modalBody').className='p-6 overflow-y-auto';$('#modalBody').innerHTML=tpl[1];$('#modalPanel>footer').innerHTML='<button data-close class="btn btn-default">取消</button><button id="modalConfirm" class="btn btn-primary">确定</button>';$('#modal').classList.remove('hidden');requestAnimationFrame(()=>{(modalFocusables()[0]||$('#modalPanel')).focus()});lucide.createIcons()}
-function closeModal(){if($('#modal').classList.contains('hidden'))return;$('#modal').classList.add('hidden');$('#modalBody').className='p-6 overflow-y-auto';$('#modalPanel>footer').innerHTML='<button data-close class="btn btn-default">取消</button><button id="modalConfirm" class="btn btn-primary">确定</button>';$('#modalTitle').textContent='';lastModalFocus?.focus?.();lastModalFocus=null}
+function openModal(type,title){if(type==='proxy'){openEnvironmentProxy();return}const tpl=modalTemplates[type]||[title||'环境操作',`<div class="py-6 text-center text-ink-sub">已选择 ${state.selected.size||1} 个环境，确认执行“${title}”操作。</div>`];lastModalFocus=document.activeElement;$('#modalTitle').textContent=title||tpl[0];$('#modalBody').className='p-6 overflow-y-auto';$('#modalBody').innerHTML=tpl[1];if(type==='custom')initQuickZoneEditor();$('#modalPanel>footer').innerHTML='<button data-close class="btn btn-default">取消</button><button id="modalConfirm" class="btn btn-primary">确定</button>';$('#modal').classList.remove('hidden');requestAnimationFrame(()=>{(modalFocusables()[0]||$('#modalPanel')).focus()});lucide.createIcons()}
+function closeModal(){if($('#modal').classList.contains('hidden'))return;teardownQuickZoneEditor();$('#modal').classList.add('hidden');$('#modalBody').className='p-6 overflow-y-auto';$('#modalPanel>footer').innerHTML='<button data-close class="btn btn-default">取消</button><button id="modalConfirm" class="btn btn-primary">确定</button>';$('#modalTitle').textContent='';lastModalFocus?.focus?.();lastModalFocus=null}
 function closeDialog(){if($('#dialog').classList.contains('hidden'))return;$('#dialog').classList.add('hidden');lastDialogFocus?.focus?.({preventScroll:true});lastDialogFocus=null}function confirmDialog(title,desc,action){lastDialogFocus=document.activeElement;$('#dialogTitle').textContent=title;$('#dialogDesc').textContent=desc;$('#dialog').classList.remove('hidden');$('#dialogConfirm').onclick=()=>{action();closeDialog()};lucide.createIcons();requestAnimationFrame(()=>$('[data-dialog-close]').focus())}
 function showRowMenu(btn,id){const items=[['修改环境','edit'],['修改指纹','finger'],['转移分组','transfer'],['修改标签','tag'],['修改备注','remark'],['环境信息','info'],['修改账号','account'],['修改代理','proxy'],['环境授权','authorize'],['编辑 Cookie','cookie'],['缓存管理','cache'],['技术协助','support'],['克隆环境','clone'],['Cookie Robot','robot'],['清除 Cookie','clear'],['删除环境','delete']];const m=$('#floatingMenu'),r=btn.getBoundingClientRect();m.innerHTML=items.map(x=>`<button data-row-action="${x[1]}" data-id="${id}">${x[0]}</button>`).join('');m.style.left=Math.min(innerWidth-220,r.left)+'px';m.style.top=Math.min(innerHeight-570,r.bottom+4)+'px';m.classList.remove('hidden')}
 const baseShowRowMenu=showRowMenu;showRowMenu=function(btn,id){baseShowRowMenu(btn,id);const menu=$('#floatingMenu'),anchor=btn.getBoundingClientRect(),menuRect=menu.getBoundingClientRect(),gap=8;menu.style.left=Math.max(gap,Math.min(innerWidth-menuRect.width-gap,anchor.left))+'px';const below=anchor.bottom+4,above=anchor.top-menuRect.height-4;menu.style.top=Math.max(gap,Math.min(innerHeight-menuRect.height-gap,below+menuRect.height<=innerHeight-gap?below:above))+'px'};
-document.addEventListener('click',e=>{const s=e.target.closest('[data-select]'),star=e.target.closest('[data-star]'),more=e.target.closest('[data-more]'),toggle=e.target.closest('[data-toggle]'),page=e.target.closest('[data-page]'),open=e.target.closest('[data-open]'),row=e.target.closest('[data-row-action]'),batch=e.target.closest('[data-batch]'),toastBtn=e.target.closest('[data-toast]');if(s){const id=+s.dataset.select;s.checked?state.selected.add(id):state.selected.delete(id);render()}if(star){const env=envs.find(x=>x.id==star.dataset.star);env.star=!env.star;render();toast(env.star?'已置星标':'已取消星标','success')}if(more)showRowMenu(more,+more.dataset.more);else if(!e.target.closest('#floatingMenu'))$('#floatingMenu').classList.add('hidden');if(toggle){const env=envs.find(x=>x.id==toggle.dataset.toggle);if(env.status==='running')confirmDialog('确定关闭环境吗？',`关闭前请注意保存【${env.id}/${env.name}】中的工作。`,()=>{env.status='stopped';render();toast('环境已关闭','success')});else{env.status='starting';render();toast('环境正在启动','info');setTimeout(()=>{env.status=env.id===17?'failed':'running';render();toast(env.status==='failed'?'环境启动失败，请稍后重试':'环境启动成功',env.status==='failed'?'danger':'success')},700)}}if(page){state.page=+page.dataset.page;render()}if(open)openModal(open.dataset.open);if(row){const a=row.dataset.rowAction;$('#floatingMenu').classList.add('hidden');if(a==='delete'||a==='clear')confirmDialog(a==='delete'?'删除环境':'清除 Cookie',a==='delete'?'删除后 30 天内可从回收站恢复。':'清除后可能影响账号风控安全，是否继续？',()=>{toast('操作已完成','success')});else if(a==='edit'){if(parent!==window)parent.postMessage({type:'yundeng:route',file:'环境管理-编辑环境.html'},'*');else location.href='../index.html?page=environment&module='+encodeURIComponent('环境管理-编辑环境.html')}else openModal(({transfer:'transfer',tag:'tag',remark:'remark',proxy:'proxy',authorize:'authorize',cookie:'cookie',cache:'cache'}[a]),e.target.textContent)}if(batch){if(batch.dataset.batch==='start'){envs.filter(x=>state.selected.has(x.id)).forEach(x=>x.status='running');render();toast('所选环境已启动','success')}else confirmDialog('批量关闭环境',`确定关闭已选择的 ${state.selected.size} 个环境吗？`,()=>{envs.filter(x=>state.selected.has(x.id)).forEach(x=>x.status='stopped');render();toast('所选环境已关闭','success')})}if(toastBtn)toast(toastBtn.dataset.toast,'success')});
-// 搜索即时生效；抽屉控件为草稿，取消不会影响已提交条件。
-function saveEnvironmentFilters(){try{sessionStorage.setItem('yundeng-environment-filters',JSON.stringify({query:state.query,group:state.group}))}catch(_){}}
-function applyEnvironmentSearch(){state.query=$('#searchInput').value.trim();state.page=1;$('#clearSearch').classList.toggle('hidden',!state.query);saveEnvironmentFilters();render()}
-function updateFilterBadge(){const active=state.group!=='全部分组';$('#filterBtn').classList.toggle('applied',active);$('#filterCount').classList.toggle('hidden',!active)}
+document.addEventListener('click',e=>{const s=e.target.closest('[data-select]'),star=e.target.closest('[data-star]'),more=e.target.closest('[data-more]'),toggle=e.target.closest('[data-toggle]'),page=e.target.closest('[data-page]'),open=e.target.closest('[data-open]'),row=e.target.closest('[data-row-action]'),batch=e.target.closest('[data-batch]'),toastBtn=e.target.closest('[data-toast]');if(s){const id=+s.dataset.select;s.checked?state.selected.add(id):state.selected.delete(id);render()}if(star){const env=envs.find(x=>x.id==star.dataset.star);env.star=!env.star;render();toast(env.star?'已置星标':'已取消星标','success')}if(more)showRowMenu(more,+more.dataset.more);else if(open||!e.target.closest('#floatingMenu'))$('#floatingMenu').classList.add('hidden');if(toggle){const env=envs.find(x=>x.id==toggle.dataset.toggle);if(env.status==='running')confirmDialog('确定关闭环境吗？',`关闭前请注意保存【${env.id}/${env.name}】中的工作。`,()=>{env.status='stopped';render();toast('环境已关闭','success')});else{env.status='starting';render();toast('环境正在启动','info');setTimeout(()=>{env.status=env.id===17?'failed':'running';render();toast(env.status==='failed'?'环境启动失败，请稍后重试':'环境启动成功',env.status==='failed'?'danger':'success')},700)}}if(page){state.page=+page.dataset.page;render()}if(open)openModal(open.dataset.open,open.dataset.openLabel);if(row){const a=row.dataset.rowAction;$('#floatingMenu').classList.add('hidden');if(a==='delete'||a==='clear')confirmDialog(a==='delete'?'删除环境':'清除 Cookie',a==='delete'?'删除后 30 天内可从回收站恢复。':'清除后可能影响账号风控安全，是否继续？',()=>{toast('操作已完成','success')});else if(a==='edit'){if(parent!==window)parent.postMessage({type:'yundeng:route',file:'环境管理-编辑环境.html'},'*');else location.href='../index.html?page=environment&module='+encodeURIComponent('环境管理-编辑环境.html')}else openModal(({transfer:'transfer',tag:'tag',remark:'remark',proxy:'proxy',authorize:'authorize',cookie:'cookie',cache:'cache'}[a]),e.target.textContent)}if(batch){const action=batch.dataset.batch,picked=envs.filter(x=>state.selected.has(x.id));if(action==='start'){picked.forEach(x=>x.status='running');render();toast('所选环境已启动','success')}else if(action==='close'){confirmDialog('批量关闭环境',`确定关闭已选择的 ${picked.length} 个环境吗？`,()=>{picked.forEach(x=>x.status='stopped');render();toast('所选环境已关闭','success')})}else if(action==='delete'){confirmDialog('批量删除环境',`删除后 30 天内可从回收站恢复，确定删除已选择的 ${picked.length} 个环境吗？`,()=>{envs=envs.filter(x=>!state.selected.has(x.id));state.selected.clear();render();toast('所选环境已删除','success')})}else if(QUICK_ACTION_LABELS[action]){openModal(action,QUICK_ACTION_LABELS[action])}}if(toastBtn)toast(toastBtn.dataset.toast,'success')});
+// 搜索为提交式：输入不触发查询，点选范围项（含「全局搜索」）后提交并重绘（design.md §5.4.2 D）；抽屉控件为草稿，重置不清空已提交条件（design.md §5.4.4）。
+const ENVIRONMENT_FILTER_KEY='yundeng-environment-filters';
+/* 已提交条件随会话保存：刷新后恢复，切换模块返回时由 shouldRestoreEnvironmentFilters() 判定清空 */
+function saveEnvironmentFilters(){try{sessionStorage.setItem(ENVIRONMENT_FILTER_KEY,JSON.stringify({query:state.query,filter:state.filter}))}catch(_){}}
+// 页面只声明搜索容器、可检索字段与重绘回调，结构 / 样式 / 交互由公共层 YDSearchBox 提供。
+function environmentSearchValues(e){return{name:[e.name],proxy:[e.ip,e.proxy],tags:e.tags||[],auth:[e.auth],note:[e.note],id:[e.id]}}
+let environmentSearchBox=null;
+function initEnvironmentSearchBox(){
+  environmentSearchBox=window.YDSearchBox?.init('#environmentSearchBox',{
+    label:'环境管理',inputId:'searchInput',value:state.query||'',
+    scopes:[{key:'all',label:'全局搜索'},{key:'name',label:'环境名称'},{key:'proxy',label:'代理IP'},{key:'tags',label:'标签'},{key:'auth',label:'授权人'},{key:'note',label:'备注'},{key:'id',label:'序号/ID'}],
+    values:environmentSearchValues,
+    onChange:instance=>{state.query=instance.value();state.page=1;saveEnvironmentFilters();render()}
+  })||null;
+}
+/* 角标只统计偏离默认值的已提交条件，日期范围按 1 个计算（design.md §5.4.3） */
+function environmentFilterCount(filter=state.filter){let count=0;if(filter.platform.length)count++;if(filter.bind!=='all')count++;if(filter.proxyType.length)count++;if(filter.auth!=='all')count++;if(filter.group.length)count++;if(filter.tag.length)count++;if(filter.creator.length)count++;if(filter.start||filter.end)count++;return count}
+function updateFilterBadge(){const count=environmentFilterCount();$('#filterBtn').classList.toggle('applied',count>0);const badge=$('#filterCount');badge.textContent=count;badge.classList.toggle('hidden',count===0)}
+/* ===== 筛选抽屉多选下拉：触发器 pill 化，面板走 Portal 图层，避免被抽屉内容层裁切（design.md §5.4.4） ===== */
+const envFilterPortal=document.getElementById('envFilterPortal');
+const envPlatformIcons={'亚马逊':'shopping-bag','TikTok Shop':'music-2','eBay':'shopping-cart','SHEIN':'shopping-bag','Shopee':'shopping-cart','Facebook':'thumbs-up'};
+const envMultiSelects=[];let activeEnvMultiSelect=null;
+function paintEnvMultiSelect(instance){const values=environmentFilterDraft[instance.key]||[];instance.trigger.innerHTML=(values.length?values.map(value=>`<span class="em-pill"><span>${value}</span><button type="button" data-em-remove="${value}" aria-label="移除 ${value}"><i data-lucide="x" class="w-2.5 h-2.5"></i></button></span>`).join(''):`<span class="em-placeholder">${instance.placeholder}</span>`)+'<i data-lucide="chevron-down" class="em-caret w-4 h-4"></i>';if(instance.open)paintEnvMultiSelectPanel(instance);lucide.createIcons()}
+function paintEnvMultiSelectPanel(instance){const options=environmentFacets[instance.key]||[],values=environmentFilterDraft[instance.key]||[];instance.panel.innerHTML=options.length?options.map(value=>`<label class="em-option"><input type="checkbox" data-em-value="${value}" ${values.includes(value)?'checked':''}>${instance.withIcon?`<span class="em-opt-icon"><i data-lucide="${envPlatformIcons[value]||'globe'}" class="w-3 h-3"></i></span>`:''}<span class="em-opt-name">${value}</span>${instance.withIcon?'<i data-lucide="chevron-right" class="em-opt-more w-4 h-4"></i>':''}</label>`).join(''):'<p class="em-empty">暂无可选项</p>';lucide.createIcons()}
+function positionEnvMultiSelectPanel(instance){const rect=instance.trigger.getBoundingClientRect(),gap=4,height=Math.min(instance.panel.scrollHeight,260);let top=rect.bottom+gap;if(top+height>innerHeight-8)top=Math.max(8,rect.top-height-gap);envFilterPortal.style.left=rect.left+'px';envFilterPortal.style.top=top+'px';envFilterPortal.style.width=rect.width+'px'}
+function closeEnvMultiSelectPanels(){envMultiSelects.forEach(item=>{if(!item.open)return;item.open=false;item.panel=null;item.trigger.setAttribute('aria-expanded','false')});activeEnvMultiSelect=null;envFilterPortal.classList.remove('is-open');envFilterPortal.innerHTML=''}
+function openEnvMultiSelectPanel(instance){closeEnvMultiSelectPanels();instance.panel=document.createElement('div');instance.panel.className='em-panel';envFilterPortal.innerHTML='';envFilterPortal.appendChild(instance.panel);envFilterPortal.classList.add('is-open');instance.open=true;activeEnvMultiSelect=instance;instance.trigger.setAttribute('aria-expanded','true');paintEnvMultiSelectPanel(instance);positionEnvMultiSelectPanel(instance)}
+function toggleEnvFilterValue(instance,value,checked){const values=(environmentFilterDraft[instance.key]||[]).slice(),index=values.indexOf(value);if(checked&&index<0)values.push(value);if(!checked&&index>=0)values.splice(index,1);environmentFilterDraft[instance.key]=values;paintEnvMultiSelect(instance);if(instance.open)positionEnvMultiSelectPanel(instance)}
+function initEnvMultiSelect(rootId){const root=document.getElementById(rootId);if(!root)return;const instance={key:root.dataset.emKey,placeholder:root.dataset.emPlaceholder||'请选择',withIcon:root.dataset.emIcon==='1',root};root.innerHTML='<button type="button" class="em-trigger" aria-haspopup="listbox" aria-expanded="false"></button>';instance.trigger=root.querySelector('.em-trigger');root.addEventListener('click',event=>{const remove=event.target.closest('[data-em-remove]');if(remove){event.stopPropagation();toggleEnvFilterValue(instance,remove.dataset.emRemove,false);instance.trigger.focus();return}if(instance.open){closeEnvMultiSelectPanels();instance.trigger.focus()}else openEnvMultiSelectPanel(instance)});envMultiSelects.push(instance)}
+document.addEventListener('change',event=>{const input=event.target.closest('#envFilterPortal [data-em-value]');if(!input||!activeEnvMultiSelect)return;toggleEnvFilterValue(activeEnvMultiSelect,input.dataset.emValue,input.checked)});
+document.addEventListener('click',event=>{if(!envFilterPortal.classList.contains('is-open'))return;if(event.target.closest('#envFilterPortal')||event.target.closest('.em-select'))return;closeEnvMultiSelectPanels()});
+/* 抽屉入场动画（220ms translateX）期间触发器仍在位移中，直接量取会得到偏移坐标；动画结束后按最终位置重新对位 */
+$('#environmentFilterDrawer').addEventListener('animationend',event=>{if(event.target.classList.contains('environment-filter-panel')&&activeEnvMultiSelect)positionEnvMultiSelectPanel(activeEnvMultiSelect)});
+window.addEventListener('resize',()=>closeEnvMultiSelectPanels());
+$('#environmentFilterDrawer').addEventListener('scroll',()=>closeEnvMultiSelectPanels(),true);
+/* ===== 抽屉表单：草稿读写与创建时间区间校验（design.md §5.4.4） ===== */
+/* ===== 创建时间「时间筛选器」下拉框：触发器 + 双月日历浮层（design.md §5.4.4 / §5.13） =====
+   选择期间只改本地状态，点「确定」才写入 #emStartDate / #emEndDate 草稿；「取消」与点击浮层外丢弃本次选择，「清空」清空草稿。 */
+const emDateState={start:'',end:'',view:null,active:'start',snapshot:null,open:false};
+function emDateStamp(date){return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`}
+function emDateParse(value){const matched=/^(\d{4})-(\d{2})-(\d{2})$/.exec(value||'');return matched?new Date(+matched[1],+matched[2]-1,+matched[3]):null}
+/* 触发器文案与隐藏字段同步：已选值用等宽字体，未选保持 ink-muted 占位（设计系统 order-date 规范） */
+function emDateSync(){const state=emDateState;$('#emStartDate').value=state.start;$('#emEndDate').value=state.end;[[$('#emStartDisplay'),state.start,'开始时间'],[$('#emEndDisplay'),state.end,'结束时间']].forEach(([node,value,placeholder])=>{if(!node)return;node.textContent=value||placeholder;node.classList.toggle('is-selected',Boolean(value))})}
+function emDateMonthHtml(year,month){const state=emDateState,offset=new Date(year,month,1).getDay(),validRange=Boolean(state.start&&state.end&&state.end>=state.start),max=emDateStamp(new Date()),cells=[];for(let index=0;index<42;index++){const date=new Date(year,month,index-offset+1),key=emDateStamp(date),current=date.getMonth()===month,inRange=validRange&&key>state.start&&key<state.end,isStart=key===state.start,isEnd=key===state.end,disabled=key>max;cells.push(`<button type="button" class="em-calendar-day${current?'':' is-other'}${inRange?' is-range':''}${isStart?' is-start':''}${isEnd?' is-end':''}" data-em-date-day="${key}" ${disabled?'disabled aria-disabled="true"':''} aria-label="${key}">${date.getDate()}</button>`)}return cells.join('')}
+function emDateRender(){const state=emDateState;if(!state.view)state.view=emDateParse(state.start||state.end)||new Date();const left=new Date(state.view.getFullYear(),state.view.getMonth(),1),right=new Date(left.getFullYear(),left.getMonth()+1,1);[left,right].forEach((month,index)=>{const title=$('#emCreatedMonth'+(index+1)),week=$('#emCreatedWeeks'+(index+1)),grid=$('#emCreatedGrid'+(index+1));if(!title||!week||!grid)return;title.textContent=`${month.getFullYear()} 年 ${month.getMonth()+1} 月`;week.innerHTML='<span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span>';grid.innerHTML=emDateMonthHtml(month.getFullYear(),month.getMonth())});const value=$('#emCreatedValue');if(value)value.textContent=state.start&&state.end?`${state.start} 至 ${state.end}`:(state.start||state.end||'未选择')}
+/* 浮层为 fixed 定位并锚定触发器右缘：展开不推动其它筛选条件，也不会被 480px 抽屉裁切 */
+function emDatePosition(){const picker=$('#emCreatedPicker'),trigger=$('#emCreatedTrigger');if(!picker||!trigger||picker.hidden)return;const rect=trigger.getBoundingClientRect(),pad=12,width=picker.offsetWidth,height=picker.offsetHeight;let left=Math.max(pad,Math.min(rect.right-width,innerWidth-width-pad)),top=rect.bottom+8;if(height&&top+height>innerHeight-pad){const above=rect.top-height-8;top=above>=pad?above:Math.max(pad,innerHeight-height-pad)}picker.style.left=Math.round(left)+'px';picker.style.top=Math.round(top)+'px'}
+function emDateOpen(){const picker=$('#emCreatedPicker'),trigger=$('#emCreatedTrigger'),state=emDateState;if(!picker||!trigger)return;state.snapshot={start:state.start,end:state.end,active:state.active};const base=emDateParse(state.start||state.end);state.view=base?new Date(base.getFullYear(),base.getMonth(),1):new Date();emDateRender();picker.hidden=false;if(typeof picker.showPopover==='function'&&!picker.matches(':popover-open')){try{picker.showPopover()}catch(_){/* 旧内核不支持 popover 时降级为普通固定定位浮层 */}}emDatePosition();state.open=true;trigger.setAttribute('aria-expanded','true')}
+function emDateClose(commit=false){const picker=$('#emCreatedPicker'),trigger=$('#emCreatedTrigger'),state=emDateState;if(!picker||picker.hidden)return;if(commit){if(state.start&&!state.end)state.end=state.start;emDateSync()}else if(state.snapshot){state.start=state.snapshot.start;state.end=state.snapshot.end;state.active=state.snapshot.active;emDateSync()}if(typeof picker.hidePopover==='function'&&picker.matches(':popover-open')){try{picker.hidePopover()}catch(_){}}picker.style.left='';picker.style.top='';picker.hidden=true;state.open=false;trigger?.setAttribute('aria-expanded','false')}
+/* 抽屉打开与「重置」都经此函数复位：收起浮层并按草稿回填触发器与日历 */
+function paintEnvDatePicker(){emDateClose();const state=emDateState;state.start=environmentFilterDraft.start||'';state.end=environmentFilterDraft.end||'';state.active='start';state.view=emDateParse(state.start||state.end);state.snapshot=null;emDateSync();emDateRender()}
+function initEnvironmentDatePicker(){const trigger=$('#emCreatedTrigger'),picker=$('#emCreatedPicker');if(!trigger||!picker)return;paintEnvDatePicker();
+  trigger.onclick=()=>{emDateState.open?emDateClose():emDateOpen()};
+  picker.addEventListener('click',event=>{event.stopPropagation();const nav=event.target.closest('[data-em-date-nav]'),day=event.target.closest('[data-em-date-day]');if(nav){const direction=nav.dataset.emDateNav,view=emDateState.view,year=direction==='prev-year'?-1:direction==='next-year'?1:0,month=direction==='prev-month'?-1:direction==='next-month'?1:0;emDateState.view=year?new Date(view.getFullYear()+year,view.getMonth(),1):new Date(view.getFullYear(),view.getMonth()+month,1);emDateRender();return}if(!day)return;const key=day.dataset.emDateDay;if(key>emDateStamp(new Date()))return;const state=emDateState;if(state.active==='start'){state.start=key;if(state.end&&state.end<key)state.end='';state.active='end'}else if(!state.start){state.start=key;state.active='end'}else{state.end=key}emDateRender()});
+  $('#emCreatedClear').onclick=()=>{const state=emDateState;state.start='';state.end='';state.active='start';emDateSync();emDateRender()};
+  $('#emCreatedCancel').onclick=()=>{emDateClose();trigger.focus()};
+  $('#emCreatedConfirm').onclick=()=>{const state=emDateState;if(state.start&&!state.end)state.end=state.start;emDateClose(true);trigger.focus()};
+  document.addEventListener('click',event=>{if(!emDateState.open)return;if(event.target.closest('#emCreatedPicker')||event.target.closest('#emCreatedTrigger'))return;emDateClose()});
+  /* 抽屉内容区滚动与视口尺寸变化时浮层跟随触发器重新对位 */
+  $('#environmentFilterDrawer').addEventListener('scroll',emDatePosition,true);
+  window.addEventListener('resize',emDatePosition);
+}
+function validateEnvironmentDateRange(){const start=environmentFilterDraft.start,end=environmentFilterDraft.end,invalid=!!(start&&end&&start>end);$('#emCreatedTrigger')?.setAttribute('aria-invalid',invalid?'true':'false');$('#emDateError').classList.toggle('is-shown',invalid);return !invalid}
+function paintEnvironmentFilterForm(){envMultiSelects.forEach(paintEnvMultiSelect);$$('input[name="emBind"]').forEach(input=>input.checked=input.value===environmentFilterDraft.bind);$$('input[name="emAuth"]').forEach(input=>input.checked=input.value===environmentFilterDraft.auth);$$('input[name="emProxyType"]').forEach(input=>input.checked=environmentFilterDraft.proxyType.includes(input.value));paintEnvDatePicker();validateEnvironmentDateRange()}
+function readEnvironmentFilterForm(){const bind=$$('input[name="emBind"]').find(input=>input.checked),auth=$$('input[name="emAuth"]').find(input=>input.checked);environmentFilterDraft.bind=bind?bind.value:'all';environmentFilterDraft.auth=auth?auth.value:'all';environmentFilterDraft.proxyType=$$('input[name="emProxyType"]').filter(input=>input.checked).map(input=>input.value);environmentFilterDraft.start=$('#emStartDate').value||'';environmentFilterDraft.end=$('#emEndDate').value||'';return validateEnvironmentDateRange()}
+$('#environmentFilterDrawer').addEventListener('change',event=>{if(['emBind','emAuth','emProxyType'].includes(event.target.name))readEnvironmentFilterForm()});
+initEnvironmentDatePicker();
 let filterScrollBefore='';
-function closeEnvironmentFilter(){if($('#environmentFilterDrawer').classList.contains('hidden'))return;$('#environmentFilterDrawer').classList.add('hidden');$('#groupFilter').value=state.group;$('#filterBtn').setAttribute('aria-expanded','false');$('#mainContent').style.overflow=filterScrollBefore;$('#filterBtn').focus()}
-$('#filterBtn').onclick=()=>{$('#groupFilter').value=state.group;filterScrollBefore=$('#mainContent').style.overflow;$('#mainContent').style.overflow='hidden';$('#environmentFilterDrawer').classList.remove('hidden');$('#filterBtn').setAttribute('aria-expanded','true');$('#closeFilter').focus()};
-$('#closeFilter').onclick=$('#cancelFilter').onclick=closeEnvironmentFilter;
+/* 遮罩 / 关闭按钮 / Escape 关闭抽屉即丢弃草稿，已提交条件与角标不受影响（design.md §5.4.4） */
+function closeEnvironmentFilter(){if($('#environmentFilterDrawer').classList.contains('hidden'))return;closeEnvMultiSelectPanels();emDateClose();$('#environmentFilterDrawer').classList.add('hidden');$('#filterBtn').setAttribute('aria-expanded','false');$('#mainContent').style.overflow=filterScrollBefore;$('#filterBtn').focus()}
+function openEnvironmentFilter(){environmentFilterDraft=cloneEnvironmentFilter(state.filter);paintEnvironmentFilterForm();filterScrollBefore=$('#mainContent').style.overflow;$('#mainContent').style.overflow='hidden';$('#environmentFilterDrawer').classList.remove('hidden');$('#filterBtn').setAttribute('aria-expanded','true');$('#closeFilter').focus()}
+$('#filterBtn').onclick=openEnvironmentFilter;
+$('#closeFilter').onclick=closeEnvironmentFilter;
+/* 「重置」只清空抽屉草稿：不提交、不关闭抽屉、不改角标（design.md §5.4.4） */
+$('#cancelFilter').onclick=()=>{environmentFilterDraft=environmentFilterDefaults();closeEnvMultiSelectPanels();paintEnvironmentFilterForm();$('#closeFilter').focus()};
 $('#environmentFilterDrawer').onclick=e=>{if(e.target===$('#environmentFilterDrawer'))closeEnvironmentFilter()};
-$('#submitFilter').onclick=()=>{state.group=$('#groupFilter').value;state.page=1;saveEnvironmentFilters();updateFilterBadge();render();closeEnvironmentFilter()};
-$('#queryBtn').onclick=applyEnvironmentSearch;$('#searchInput').oninput=applyEnvironmentSearch;
-$('#searchInput').onkeydown=e=>{if(e.key==='Enter')applyEnvironmentSearch()};
-$('#clearSearch').onclick=()=>{$('#searchInput').value='';applyEnvironmentSearch();$('#searchInput').focus()};
-$('#emptyReset').onclick=()=>{$('#searchInput').value='';$('#groupFilter').value='全部分组';state.group='全部分组';updateFilterBadge();applyEnvironmentSearch()};
-document.addEventListener('keydown',e=>{if($('#environmentFilterDrawer').classList.contains('hidden'))return;if(e.key==='Escape'){e.preventDefault();e.stopImmediatePropagation();closeEnvironmentFilter()}if(e.key==='Tab'){const first=$('#closeFilter'),last=$('#submitFilter');if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}}},true);
-$('#fieldBtn').onclick=e=>{const m=$('#floatingMenu'),r=e.currentTarget.getBoundingClientRect();m.innerHTML=Object.entries(labels).filter(([k])=>!['star','action'].includes(k)).map(([k,v])=>`<label class="flex items-center gap-2 h-8 px-2"><input type="checkbox" data-field="${k}" ${state.visible.includes(k)?'checked':''}>${v}</label>`).join('')+'<button id="restoreFields" class="text-primary">恢复默认</button>';m.style.left=(r.right-210)+'px';m.style.top=(r.bottom+4)+'px';m.classList.remove('hidden')};
-document.addEventListener('change',e=>{if(e.target.dataset.field){e.target.checked?state.visible.splice(state.visible.length-1,0,e.target.dataset.field):state.visible=state.visible.filter(x=>x!==e.target.dataset.field);render()}if(e.target.id==='checkAll'){filtered().slice((state.page-1)*state.size,state.page*state.size).forEach(x=>e.target.checked?state.selected.add(x.id):state.selected.delete(x.id));render()}});document.addEventListener('click',e=>{if(e.target.id==='restoreFields'){state.visible=['star','id','group','name','account','proxy','note','tags','auth','created','action'];render();$('#floatingMenu').classList.add('hidden')}if(e.target.id==='sortName'){state.sort=state.sort==='name'?'star':'name';render()}});
-$('#moreBatch').onclick=e=>{e.stopPropagation();const m=$('#floatingMenu'),r=e.currentTarget.getBoundingClientRect();m.innerHTML=['修改代理','编辑备注','设置标签','设置星标','复制序号','自定义快捷区'].map(x=>`<button data-open="${x==='修改代理'?'proxy':x==='编辑备注'?'remark':'generic'}">${x}</button>`).join('');m.style.left=Math.min(innerWidth-220,r.left)+'px';m.style.top=r.bottom+4+'px';m.classList.remove('hidden')};$$('[data-close]').forEach(x=>x.onclick=closeModal);$('#modal').onclick=e=>{if(e.target===$('#modal'))closeModal()};$('#modalConfirm').onclick=()=>{const req=$('#modalRequired');if(req&&!req.value.trim()){req.classList.add('border-danger');toast('请填写或选择必填内容','warning');return}closeModal();toast('操作已保存','success');render()};$$('[data-dialog-close]').forEach(x=>x.onclick=closeDialog);$('#dialog').onclick=e=>{if(e.target===$('#dialog'))closeDialog()};
+/* 「确定筛选」：无已选条件只关闭抽屉；有则提交条件、刷新列表、更新按钮高亮与角标 */
+
+/* 「确定筛选」：草稿为空且无已提交条件时只关闭（不触发筛选事件）；草稿为空但已有已提交条件时提交空条件=清空筛选（design.md §5.4.4「确认提交」写入草稿） */
+$('#submitFilter').onclick=()=>{if(!readEnvironmentFilterForm()){toast('开始时间不能晚于结束时间','warning');return}const emptyDraft=environmentFilterCount(environmentFilterDraft)===0;if(emptyDraft&&environmentFilterCount(state.filter)===0){closeEnvironmentFilter();return}state.filter=cloneEnvironmentFilter(environmentFilterDraft);state.page=1;saveEnvironmentFilters();updateFilterBadge();render();closeEnvironmentFilter();toast(emptyDraft?'筛选条件已清空':'筛选条件已生效',emptyDraft?'info':'success')};
+$('#emptyReset').onclick=()=>{state.filter=environmentFilterDefaults();environmentFilterDraft=environmentFilterDefaults();state.page=1;saveEnvironmentFilters();updateFilterBadge();window.YDSearchBox.clear('#environmentSearchBox',{focus:false});render()};
+document.addEventListener('keydown',e=>{if($('#environmentFilterDrawer').classList.contains('hidden'))return;if(e.key==='Escape'){e.preventDefault();e.stopImmediatePropagation();if(emDateState.open){emDateClose();$('#emCreatedTrigger').focus();return}if(envFilterPortal.classList.contains('is-open')){const owner=activeEnvMultiSelect;closeEnvMultiSelectPanels();owner?.trigger.focus();return}closeEnvironmentFilter()}if(e.key==='Tab'){const first=$('#closeFilter'),last=$('#submitFilter');if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}}},true);
+/* 「字段设置」：气泡弹窗展示字段池，勾选即时改列、把手拖拽改列顺序（design.md §5.4 工具栏命令） */
+$('#fieldBtn').onclick=e=>{e.stopPropagation();if(!$('#columnSettingsPopover').classList.contains('hidden')){closeColumnSettings();return}$('#floatingMenu').classList.add('hidden');renderColumnSettings();$('#columnSettingsPopover').classList.remove('hidden');positionColumnSettings();e.currentTarget.setAttribute('aria-expanded','true')};
+document.addEventListener('change',e=>{if(e.target.dataset.field){const key=e.target.dataset.field;if(key===COLUMN_SETTING_LOCKED)return; /* 固定列不可取消 */e.target.checked?state.columnChecked.add(key):state.columnChecked.delete(key);syncVisibleColumns();render()}if(e.target.id==='checkAll'){filtered().slice((state.page-1)*state.size,state.page*state.size).forEach(x=>e.target.checked?state.selected.add(x.id):state.selected.delete(x.id));render()}});document.addEventListener('click',e=>{if(e.target.id==='restoreFields'){resetColumnSettings()}if(e.target.id==='sortName'){state.sort=state.sort==='name'?'star':'name';render()}});
+/* 批量操作「…」：授权 / 分享 / 转移 / 转移分组 / 修改代理 / 编辑备注 / 设置标签 / 设置星标 / 复制序号，并保留自定义快捷区入口 */
+$('#moreBatch').onclick=e=>{e.stopPropagation();const m=$('#floatingMenu'),r=e.currentTarget.getBoundingClientRect();const items=[['授权','authorize','shield-check'],['分享','share','share-2'],['转移','transfer','arrow-left-right'],['转移分组','transfer-group','folder-tree'],['修改代理','proxy','network'],['编辑备注','remark','pencil-line'],['设置标签','tag','tag'],['设置星标','star','star'],['复制序号','copy-seq','copy']].filter(item=>!state.quickZone.includes(item[1]));m.innerHTML=(items.length?items.map(item=>`<button data-open="${item[1]}" data-open-label="${item[0]}" class="flex items-center gap-2"><i data-lucide="${item[2]}" class="w-4 h-4"></i>${item[0]}</button>`).join('')+'<div class="menu-divider"></div>':'')+'<button data-open="custom" class="flex items-center gap-2"><i data-lucide="layout-grid" class="w-4 h-4"></i>自定义快捷区</button>';m.style.left=Math.min(innerWidth-220,r.left)+'px';m.style.top=r.bottom+4+'px';m.classList.remove('hidden');$('#moreBatch').setAttribute('aria-expanded','true');lucide.createIcons()};
+$('#batchExit').onclick=()=>{state.selected.clear();render();toast('已退出批量操作','info')};
+document.addEventListener('click',event=>{if(event.target.closest('#floatingMenu [data-open]')||event.target.closest('#batchExit'))$('#moreBatch').setAttribute('aria-expanded','false')});
+/* 弹窗底部按钮改用事件委托，保证 openModal 重建 footer 后取消 / 确定依然可用 */
+document.addEventListener('click',event=>{if(event.target.closest('#modalConfirm')){if(ecqDraft){state.quickZone=[...ecqDraft.quick];state.quickFold=[...ecqDraft.fold];renderBatchBar();}const req=$('#modalRequired');if(req&&!req.value.trim()){req.classList.add('border-danger');toast('请填写或选择必填内容','warning');return}closeModal();toast('操作已保存','success');render();return}if(event.target.closest('[data-close]'))closeModal()});
+$('#modal').onclick=e=>{if(e.target===$('#modal'))closeModal()};
+$$('[data-dialog-close]').forEach(x=>x.onclick=closeDialog);$('#dialog').onclick=e=>{if(e.target===$('#dialog'))closeDialog()};
 document.addEventListener('keydown',event=>{if($('#modal').classList.contains('hidden')||event.key!=='Tab')return;const items=modalFocusables();if(!items.length){event.preventDefault();$('#modalPanel').focus();return}const first=items[0],last=items.at(-1);if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus()}else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus()}},true);
 $('#collapseBtn').onclick=()=>{$('#sidebar').classList.toggle('compact');$('#collapseBtn').innerHTML=`<i data-lucide="${$('#sidebar').classList.contains('compact')?'panel-left-open':'panel-left-close'}" class="w-[18px]"></i>`;lucide.createIcons()};$('#mobileMenu').onclick=()=>$('#sidebar').classList.toggle('open');
 document.addEventListener('click',e=>{const open=e.target.closest('[data-open="proxy"]'),row=e.target.closest('[data-row-action="proxy"]');if(open){e.stopImmediatePropagation();openEnvironmentProxy();return}if(row){e.stopImmediatePropagation();openEnvironmentProxy([Number(row.dataset.id)])}},true);
-try{const saved=JSON.parse(sessionStorage.getItem('yundeng-environment-filters')||'null');if(saved){state.query=typeof saved.query==='string'?saved.query:'';state.group=[...$('#groupFilter').options].some(option=>option.value===saved.group)?saved.group:'全部分组';$('#searchInput').value=state.query;$('#groupFilter').value=state.group}}catch(_){}
+/* 刷新（浏览器刷新 / 框架整页刷新）保留已提交条件；从其他模块切回本模块时清空条件（需求说明） */
+function shouldRestoreEnvironmentFilters(){try{if(parent!==window&&parent.performance&&parent.performance.timeOrigin)return Math.abs(performance.timeOrigin-parent.performance.timeOrigin)<3000}catch(_){}const own=performance.getEntriesByType('navigation')[0];return !!own&&own.type==='reload'}
+try{if(shouldRestoreEnvironmentFilters()){const saved=JSON.parse(sessionStorage.getItem(ENVIRONMENT_FILTER_KEY)||'null');if(saved&&typeof saved==='object'){state.query=typeof saved.query==='string'?saved.query:'';state.filter=cloneEnvironmentFilter(saved.filter)}}else{sessionStorage.removeItem(ENVIRONMENT_FILTER_KEY)}}catch(_){}
 // 通知唯一系统框架，避免全局助手遮挡模块弹层底部按钮。
 const moduleDialogNodes=['environmentFilterDrawer','proxyEditor','ownedProxyDialog','apiProxyDialog'].map(id=>$('#'+id));
 const reportModuleDialog=()=>{if(parent!==window)parent.postMessage({type:'yundeng:module-dialog-state',open:moduleDialogNodes.some(node=>!node.classList.contains('hidden'))},'*')};
 const moduleDialogObserver=new MutationObserver(reportModuleDialog);
 moduleDialogNodes.forEach(node=>moduleDialogObserver.observe(node,{attributes:true,attributeFilter:['class']}));
-prepareEnvironmentDeepLink();updateFilterBadge();$('#clearSearch').classList.toggle('hidden',!state.query);render();lucide.createIcons();
+/* ===== 自定义快捷区：批量操作条按已选快捷功能渲染 ===== */
+function renderBatchBar(){
+  const box=$('#batchActions');
+  if(!box)return;
+  const actions=state.quickZone.filter(key=>QUICK_ACTION_LABELS[key]);
+  box.innerHTML=actions.map((key,index)=>(index?'<span class="batch-divider" aria-hidden="true"></span>':'')+`<button type="button" data-batch="${key}" class="batch-action"><i data-lucide="${QUICK_ACTION_ICONS[key]}" class="w-4 h-4"></i>${QUICK_ACTION_LABELS[key]}</button>`).join('');
+  lucide.createIcons();
+}
+
+/* ===== 自定义快捷区弹窗：草稿 + 拖拽排序（快捷区 / 折叠区）===== */
+let ecqDraft=null;    // 弹窗草稿：{quick:[],fold:[]}，取消 / 遮罩 / Esc 时丢弃
+let ecqPreview=null;  // 拖拽落点预览：{key,zone,index}
+let ecqDrag=null;     // 拖拽会话：{key,zone,startX,startY,active,ghost,offsetX,offsetY,width}
+
+/* 卡片：快捷区显示「移出」×，折叠区显示「加入」⊞，右侧为拖拽把手 */
+function ecqCardHTML(key,zone){
+  const isQuick=zone==='quick',label=QUICK_ACTION_LABELS[key];
+  const tip=isQuick?`将「${label}」移出快捷区`:`将「${label}」加入快捷区`;
+  return `<div class="ecq-card" data-ecq-card data-ecq-key="${key}" data-ecq-zone="${zone}" role="listitem"><button type="button" class="ecq-card-move" data-ecq-move="${key}" aria-label="${tip}" title="${tip}"><i data-lucide="${isQuick?'x':'square-plus'}" class="w-4 h-4"></i></button><span class="ecq-card-label">${label}</span><i data-lucide="align-justify" class="ecq-grip w-4 h-4" aria-hidden="true"></i></div>`;
+}
+/* 落点占位卡：按目标列渲染「加入 / 移出」图标，视觉与普通卡片一致（对齐参考图） */
+function ecqDropHTML(key,zone){
+  return `<div class="ecq-card ecq-card-drop" data-ecq-placeholder aria-hidden="true"><span class="ecq-card-move"><i data-lucide="${zone==='quick'?'x':'square-plus'}" class="w-4 h-4"></i></span><span class="ecq-card-label">${QUICK_ACTION_LABELS[key]}</span><i data-lucide="align-justify" class="ecq-grip w-4 h-4"></i></div>`;
+}
+function ecqGhostHTML(key,zone){
+  const icon=zone==='quick'?'x':'square-plus';
+  return `<span class="ecq-card-move"><i data-lucide="${icon}" class="w-4 h-4"></i></span><span class="ecq-card-label">${QUICK_ACTION_LABELS[key]}</span><i data-lucide="align-justify" class="ecq-grip w-4 h-4"></i>`;
+}
+function renderQuickZoneEditor(){
+  if(!ecqDraft)return;
+  const dragging=ecqPreview?ecqPreview.key:null;
+  [['quick',$('#ecqQuick')],['fold',$('#ecqFold')]].forEach(pair=>{
+    const zone=pair[0],box=pair[1];
+    if(!box)return;
+    const list=(zone==='quick'?ecqDraft.quick:ecqDraft.fold).filter(key=>key!==dragging);
+    const parts=list.map(key=>ecqCardHTML(key,zone));
+    if(ecqPreview&&ecqPreview.zone===zone)parts.splice(Math.max(0,Math.min(ecqPreview.index,parts.length)),0,ecqDropHTML(dragging,zone));
+    box.innerHTML=parts.length?parts.join(''):`<div class="ecq-empty">${zone==='quick'?'将折叠区的功能拖到此处即可加入快捷区':'暂无折叠的功能'}</div>`;
+  });
+  lucide.createIcons();
+}
+/* 从两列中摘出条目并插入目标列指定位置 */
+function ecqInsert(key,zone,index){
+  const inQuick=ecqDraft.quick.indexOf(key),inFold=ecqDraft.fold.indexOf(key);
+  if(inQuick>-1)ecqDraft.quick.splice(inQuick,1);
+  if(inFold>-1)ecqDraft.fold.splice(inFold,1);
+  const list=zone==='quick'?ecqDraft.quick:ecqDraft.fold;
+  list.splice(Math.max(0,Math.min(index,list.length)),0,key);
+}
+function ecqAppend(key,zone){ecqInsert(key,zone,(zone==='quick'?ecqDraft.quick:ecqDraft.fold).length)}
+function ecqTarget(x,y){
+  const boxes=[{zone:'quick',el:$('#ecqQuick')},{zone:'fold',el:$('#ecqFold')}].filter(pair=>pair.el);
+  if(!boxes.length||!ecqDrag)return null;
+  let target=boxes[0],best=Infinity;
+  boxes.forEach(pair=>{const score=Math.abs(x-(pair.el.getBoundingClientRect().left+pair.el.getBoundingClientRect().width/2));if(score<best){best=score;target=pair}});
+  const box=target.el,rect=box.getBoundingClientRect();
+  if(y<rect.top+16)box.scrollTop-=8;else if(y>rect.bottom-16)box.scrollTop+=8;
+  const cards=[...box.querySelectorAll('[data-ecq-card]')].filter(card=>card.dataset.ecqKey!==ecqDrag.key);
+  let index=cards.length;
+  for(let i=0;i<cards.length;i++){const cardRect=cards[i].getBoundingClientRect();if(y<cardRect.top+cardRect.height/2){index=i;break}}
+  return {zone:target.zone,index};
+}
+function ecqResetDrag(){
+  if(ecqDrag){
+    if(ecqDrag.ghost)ecqDrag.ghost.remove();
+    if(ecqDrag.source)ecqDrag.source.classList.remove('is-dragging');
+  }
+  document.removeEventListener('pointermove',ecqPointerMove,true);
+  document.removeEventListener('pointerup',ecqPointerUp,true);
+  document.removeEventListener('pointercancel',ecqPointerCancel,true);
+  document.body.classList.remove('ecq-dragging');
+  ecqDrag=null;
+}
+function ecqCancelDrag(){
+  if(!ecqDrag)return;
+  ecqResetDrag();
+  if(ecqPreview){ecqPreview=null;renderQuickZoneEditor()}
+}
+function ecqPointerDown(event){
+  if(!ecqDraft||event.button!==0)return;
+  const card=event.target.closest('[data-ecq-card]');
+  if(!card||!card.closest('#modalBody')||event.target.closest('[data-ecq-move]'))return;
+  const rect=card.getBoundingClientRect();
+  ecqDrag={key:card.dataset.ecqKey,zone:card.dataset.ecqZone,source:card,startX:event.clientX,startY:event.clientY,active:false,ghost:null,offsetX:event.clientX-rect.left,offsetY:event.clientY-rect.top,width:rect.width};
+  document.addEventListener('pointermove',ecqPointerMove,true);
+  document.addEventListener('pointerup',ecqPointerUp,true);
+  document.addEventListener('pointercancel',ecqPointerCancel,true);
+  event.preventDefault();
+}
+function ecqPointerMove(event){
+  if(!ecqDrag)return;
+  const dx=event.clientX-ecqDrag.startX,dy=event.clientY-ecqDrag.startY;
+  if(!ecqDrag.active){
+    if(Math.sqrt(dx*dx+dy*dy)<4)return; /* 位移阈值：小于 4px 视为点击，不进入拖拽 */
+    ecqDrag.active=true;
+    const ghost=document.createElement('div');
+    ghost.className='ecq-ghost';
+    ghost.style.width=ecqDrag.width+'px';
+    ghost.style.left=(event.clientX-ecqDrag.offsetX)+'px';
+    ghost.style.top=(event.clientY-ecqDrag.offsetY)+'px';
+    ghost.innerHTML=ecqGhostHTML(ecqDrag.key,ecqDrag.zone);
+    document.body.append(ghost);
+    ecqDrag.ghost=ghost;
+    document.body.classList.add('ecq-dragging');
+    if(ecqDrag.source)ecqDrag.source.classList.add('is-dragging');
+    lucide.createIcons();
+  }
+  ecqDrag.ghost.style.left=(event.clientX-ecqDrag.offsetX)+'px';
+  ecqDrag.ghost.style.top=(event.clientY-ecqDrag.offsetY)+'px';
+  const next=ecqTarget(event.clientX,event.clientY);
+  if(!next)return;
+  if(ecqPreview&&ecqPreview.zone===next.zone&&ecqPreview.index===next.index)return;
+  ecqPreview={key:ecqDrag.key,zone:next.zone,index:next.index};
+  ecqDrag.ghost.innerHTML=ecqGhostHTML(ecqDrag.key,next.zone);
+  renderQuickZoneEditor();
+  event.preventDefault();
+}
+function ecqPointerUp(){
+  if(!ecqDrag)return;
+  const active=ecqDrag.active,key=ecqDrag.key,drop=(active&&ecqPreview)?{zone:ecqPreview.zone,index:ecqPreview.index}:null;
+  ecqResetDrag();
+  if(!active)return; /* 未超过阈值：按普通点击处理，不改动顺序 */
+  if(drop)ecqInsert(key,drop.zone,drop.index);
+  ecqPreview=null;
+  renderQuickZoneEditor();
+}
+function ecqPointerCancel(){ecqCancelDrag()}
+function initQuickZoneEditor(){
+  ecqResetDrag();
+  ecqPreview=null;
+  ecqDraft={quick:[...state.quickZone],fold:[...state.quickFold]};
+  const reset=$('#ecqReset');
+  if(reset)reset.onclick=()=>{ecqDraft={quick:[...QUICK_ACTION_DEFAULT],fold:[...QUICK_ACTION_FOLD_DEFAULT]};ecqPreview=null;renderQuickZoneEditor();toast('已恢复默认快捷区设置','info')};
+  renderQuickZoneEditor();
+}
+function teardownQuickZoneEditor(){ecqCancelDrag();ecqPreview=null;ecqDraft=null}
+/* 编辑区事件：卡片拖拽（pointer）+ 加入 / 移出按钮（click）+ Esc 取消拖拽 */
+document.addEventListener('pointerdown',ecqPointerDown,true);
+document.addEventListener('click',event=>{
+  const move=event.target.closest('[data-ecq-move]');
+  if(!move||!ecqDraft)return;
+  const key=move.dataset.ecqMove,toQuick=ecqDraft.fold.indexOf(key)>-1;
+  ecqAppend(key,toQuick?'quick':'fold');
+  ecqPreview=null;
+  renderQuickZoneEditor();
+  toast(toQuick?`已将「${QUICK_ACTION_LABELS[key]}」加入快捷区`:`已将「${QUICK_ACTION_LABELS[key]}」移出快捷区`,toQuick?'success':'info');
+},true);
+document.addEventListener('keydown',event=>{
+  if(event.key!=='Escape'||!ecqDrag)return;
+  event.preventDefault();event.stopImmediatePropagation();
+  ecqCancelDrag();
+},true);
+
+/* ===== 列设置（字段设置）气泡弹窗：字段勾选 + 指针拖拽排序 =====
+   复用「自定义快捷区」的 pointer + 幽灵行范式（项目内既有先例）；两者均为弹层内字段项排序，
+   与 design.md §5.14 的表格整行排序场景不同，故落点提示沿用 §5.14 的 background-image 2px primary 插入线而非 border。 */
+let csoDrag=null;    // 拖拽会话：{key,source,startX,startY,active,ghost,offsetX,offsetY,width}
+let csoPreview=null; // 拖拽落点：{index,rest}，index 为「摘除源行后」的插入序号
+
+/* 依据面板字段顺序与勾选态重建表头列：只保留勾选项，操作列固定末尾 */
+function syncVisibleColumns(){state.visible=state.columnOrder.filter(key=>state.columnChecked.has(key)).concat(['action'])}
+
+/* 普通字段行：复选框 + 名称 + 拖拽把手 */
+function csoRowHTML(key){
+  const label=COLUMN_SETTING_LABELS[key],checked=state.columnChecked.has(key)?'checked':'';
+  return `<div class="cso-row" data-cso-row data-cso-key="${key}" role="listitem"><input type="checkbox" id="cso-${key}" data-field="${key}" ${checked} aria-label="${label}"><label class="cso-label" for="cso-${key}">${label}</label><span class="cso-grip" aria-hidden="true"><i></i><i></i><i></i></span></div>`;
+}
+/* 固定行（序号）：勾选态禁用、无把手、不参与排序 */
+function csoLockedRowHTML(){
+  return `<div class="cso-row is-locked" role="listitem"><input type="checkbox" checked disabled aria-label="${COLUMN_SETTING_LABELS[COLUMN_SETTING_LOCKED]}（固定列，不可取消）"><span class="cso-label">${COLUMN_SETTING_LABELS[COLUMN_SETTING_LOCKED]}</span></div>`;
+}
+/* 拖拽幽灵行：视觉与面板行一致，仅把手加深提示正在拖拽 */
+function csoGhostHTML(key){
+  return `<input type="checkbox" tabindex="-1" ${state.columnChecked.has(key)?'checked':''} aria-hidden="true"><span class="cso-label">${COLUMN_SETTING_LABELS[key]}</span><span class="cso-grip" aria-hidden="true"><i></i><i></i><i></i></span>`;
+}
+function renderColumnSettings(){
+  const panel=$('#columnSettingsPopover');
+  if(!panel)return;
+  const rows=state.columnOrder.filter(key=>key!==COLUMN_SETTING_LOCKED).map(csoRowHTML);
+  panel.innerHTML=`<div class="cso-list" id="csoList">${csoLockedRowHTML()}${rows.join('')}</div><button type="button" id="restoreFields" class="cso-restore"><i data-lucide="rotate-ccw" class="w-4 h-4"></i>恢复默认</button>`;
+  lucide.createIcons();
+}
+/* 面板定位：右对齐触发按钮并做视口收敛；窗口尺寸变化时重新收敛，避免平板窄视口下溢出 */
+function positionColumnSettings(){
+  const panel=$('#columnSettingsPopover'),btn=$('#fieldBtn');
+  if(!panel||!btn||panel.classList.contains('hidden'))return;
+  const r=btn.getBoundingClientRect(),box=panel.getBoundingClientRect(),gap=8;
+  panel.style.left=Math.max(gap,Math.min(innerWidth-box.width-gap,r.right-box.width))+'px';
+  const below=r.bottom+4,above=r.top-box.height-4;
+  panel.style.top=Math.max(gap,Math.min(innerHeight-box.height-gap,below+box.height<=innerHeight-gap?below:above))+'px';
+}
+function closeColumnSettings(focusBack){
+  const panel=$('#columnSettingsPopover');
+  if(!panel||panel.classList.contains('hidden'))return;
+  csoCancelDrag();
+  panel.classList.add('hidden');
+  $('#fieldBtn').setAttribute('aria-expanded','false');
+  if(focusBack)$('#fieldBtn').focus();
+}
+/* 「恢复默认」：恢复字段池默认顺序与默认勾选列 */
+function resetColumnSettings(){
+  state.columnOrder=[...COLUMN_SETTING_POOL];
+  state.columnChecked=new Set(COLUMN_SETTING_CHECKED_DEFAULT);
+  syncVisibleColumns();
+  renderColumnSettings();
+  render();
+  toast('已恢复默认列设置','info');
+}
+function csoRows(){const list=$('#csoList');return list?[...list.querySelectorAll('[data-cso-row]')]:[]}
+/* 摘出源字段后插入目标序号（固定列恒在字段池首位） */
+function csoInsert(key,index){
+  const editable=state.columnOrder.filter(item=>item!==COLUMN_SETTING_LOCKED);
+  const from=editable.indexOf(key);
+  if(from>-1)editable.splice(from,1);
+  editable.splice(Math.max(0,Math.min(index,editable.length)),0,key);
+  state.columnOrder=[COLUMN_SETTING_LOCKED,...editable];
+  syncVisibleColumns();
+}
+/* 落点计算：以「摘除源行后的行列表」为基准，index 落在某行上半区即插到该行之前 */
+function csoTarget(y){
+  const list=$('#csoList');
+  if(!list||!csoDrag)return null;
+  const rect=list.getBoundingClientRect();
+  if(y<rect.top+12)list.scrollTop-=8;else if(y>rect.bottom-12)list.scrollTop+=8;
+  const rest=csoRows().filter(row=>row.dataset.csoKey!==csoDrag.key);
+  let index=rest.length;
+  for(let i=0;i<rest.length;i++){const box=rest[i].getBoundingClientRect();if(y<box.top+box.height/2){index=i;break}}
+  return {index,rest};
+}
+/* 落点提示：直接改行 class 绘制插入线，不重建 DOM，避免拖拽过程中行高抖动 */
+function csoPaintDrop(preview){
+  csoRows().forEach(row=>row.classList.remove('drop-before','drop-after'));
+  if(!preview||!preview.rest.length)return;
+  if(preview.index<preview.rest.length)preview.rest[preview.index].classList.add('drop-before');
+  else preview.rest[preview.rest.length-1].classList.add('drop-after');
+}
+function csoResetDrag(){
+  if(csoDrag){
+    if(csoDrag.ghost)csoDrag.ghost.remove();
+    if(csoDrag.source)csoDrag.source.classList.remove('is-dragging');
+  }
+  document.removeEventListener('pointermove',csoPointerMove,true);
+  document.removeEventListener('pointerup',csoPointerUp,true);
+  document.removeEventListener('pointercancel',csoPointerCancel,true);
+  document.body.classList.remove('cso-dragging');
+  csoDrag=null;
+}
+function csoCancelDrag(){if(!csoDrag)return;csoResetDrag();csoPreview=null;csoPaintDrop(null)}
+function csoPointerDown(event){
+  if(event.button!==0)return;
+  const row=event.target.closest('[data-cso-row]');
+  /* 勾选区（复选框与名称）不启动拖拽，保证「拖拽结束误触发勾选」不会发生 */
+  if(!row||!row.closest('#columnSettingsPopover')||event.target.closest('input,label'))return;
+  const rect=row.getBoundingClientRect();
+  csoDrag={key:row.dataset.csoKey,source:row,startX:event.clientX,startY:event.clientY,active:false,ghost:null,offsetX:event.clientX-rect.left,offsetY:event.clientY-rect.top,width:rect.width};
+  document.addEventListener('pointermove',csoPointerMove,true);
+  document.addEventListener('pointerup',csoPointerUp,true);
+  document.addEventListener('pointercancel',csoPointerCancel,true);
+  event.preventDefault();
+}
+function csoPointerMove(event){
+  if(!csoDrag)return;
+  const dx=event.clientX-csoDrag.startX,dy=event.clientY-csoDrag.startY;
+  if(!csoDrag.active){
+    if(Math.sqrt(dx*dx+dy*dy)<4)return; /* 位移阈值：小于 4px 视为点击，不进入拖拽 */
+    csoDrag.active=true;
+    const ghost=document.createElement('div');
+    ghost.className='cso-ghost';
+    ghost.style.width=csoDrag.width+'px';
+    ghost.innerHTML=csoGhostHTML(csoDrag.key);
+    document.body.append(ghost);
+    csoDrag.ghost=ghost;
+    csoDrag.source.classList.add('is-dragging');
+    document.body.classList.add('cso-dragging');
+  }
+  csoDrag.ghost.style.left=(event.clientX-csoDrag.offsetX)+'px';
+  csoDrag.ghost.style.top=(event.clientY-csoDrag.offsetY)+'px';
+  const next=csoTarget(event.clientY);
+  if(!next)return;
+  csoPreview={index:next.index,rest:next.rest};
+  csoPaintDrop(csoPreview);
+  event.preventDefault();
+}
+function csoPointerUp(){
+  if(!csoDrag)return;
+  const active=csoDrag.active,key=csoDrag.key,index=(active&&csoPreview)?csoPreview.index:null;
+  csoResetDrag();
+  if(!active)return; /* 未超过阈值：不改动顺序 */
+  if(index!==null)csoInsert(key,index);
+  csoPreview=null;
+  csoPaintDrop(null);
+  renderColumnSettings();
+  render();
+}
+function csoPointerCancel(){csoCancelDrag()}
+/* 面板事件：拖拽（pointer）+ 点击面板外部 / Esc 收起（按钮自身已 stopPropagation） */
+document.addEventListener('pointerdown',csoPointerDown,true);
+/* 外部点击收起：面板内「恢复默认」会整体重建 innerHTML，脱离文档的点击目标不再算「面板内」，需单独放行 */
+document.addEventListener('click',event=>{if($('#columnSettingsPopover').classList.contains('hidden'))return;if(!event.target.isConnected)return;if(event.target.closest('#columnSettingsPopover'))return;closeColumnSettings()});
+document.addEventListener('keydown',event=>{
+  if(event.key!=='Escape')return;
+  if(csoDrag){event.preventDefault();event.stopImmediatePropagation();csoCancelDrag();return}
+  if(!$('#columnSettingsPopover').classList.contains('hidden')){event.preventDefault();closeColumnSettings(true)}
+},true);
+
+window.addEventListener('resize',positionColumnSettings);
+prepareEnvironmentDeepLink();initEnvironmentSearchBox();initEnvMultiSelect('emPlatform');initEnvMultiSelect('emGroup');initEnvMultiSelect('emTag');initEnvMultiSelect('emCreator');paintEnvironmentFilterForm();updateFilterBadge();render();lucide.createIcons();
 </script>
 </body></html>

@@ -157,7 +157,6 @@ index.html?page=billing-invoice&invoiceTab=records
 | PAYMENT_PENDING               | 订单尚未支付成功        | 返回订单完成支付                                      |
 | PAYMENT_FAILED                | 订单支付未成功         | 返回订单重新支付或查看支付结果                               |
 | PAYMENT_NOT_ELIGIBLE          | 该订单使用云币支付，不支持开票 | 无；法币充值云币的充值订单可按充值金额开票，云币消费订单不可开票，避免同一法币资金重复开票 |
-| COMPOSITE_PAYMENT_UNSUPPORTED | 组合支付订单暂不支持自助开票  | 提示联系平台支持，由后台人工处置；客户端不创建工单                     |
 | ZERO_FIAT_AMOUNT              | 该订单没有可开票的法币实付金额 | 无；赠送、优惠全额抵扣或零元订单不可开票                          |
 | FULFILLMENT_PENDING           | 服务尚未完成，完成后可申请   | 查看订单进度                                        |
 | FULFILLMENT_FAILED            | 服务履约异常，暂不可开票    | 联系售后或查看异常处理                                   |
@@ -202,7 +201,6 @@ index.html?page=billing-invoice&invoiceTab=records
 | `PAYMENT_PENDING`               | 订单尚未支付成功                 |
 | `PAYMENT_FAILED`                | 订单支付未成功                  |
 | `PAYMENT_NOT_ELIGIBLE`          | 该订单使用云币支付，不支持开票          |
-| `COMPOSITE_PAYMENT_UNSUPPORTED` | 组合支付订单暂不支持自助开票，请联系平台支持。  |
 | `ZERO_FIAT_AMOUNT`              | 该订单没有可开票的法币实付金额          |
 | `FULFILLMENT_PENDING`           | 服务尚未完成，完成后可申请            |
 | `FULFILLMENT_FAILED`            | 服务履约异常，暂不可开票             |
@@ -695,7 +693,7 @@ index.html?page=billing-invoice&invoiceTab=records
 
 1. 通过费用管理一级页签可进入开票管理；开票页内部 `invoiceTab=orders|records|titles` 深链可恢复对应 Tab，页面不显示订单面包屑。申请详情深链属于生产接口目标，当前原型不自动打开指定申请。
 2. 默认“可申请”列表只显示用户权限范围内、处于 12 个月自助窗口且余额大于 0 的订单；可切换“不可申请”查看全部非可申请订单。
-3. 云币支付、组合支付、未支付、支付失败、未履约、履约失败、退款中、全额退款、零法币实付、余额已占用/已开票、超期、无权限和配置缺失等场景均返回 4.4 对应原因及恢复动作；不可申请行仅提供“查看原因”。
+3. 云币支付、未支付、支付失败、未履约、履约失败、退款中、全额退款、零法币实付、余额已占用/已开票、超期、无权限和配置缺失等场景均返回 4.4 对应原因及恢复动作；不可申请行仅提供“查看原因”。
 4. 单订单在预览中只返回一个申请对象和一张发票；申请金额不可编辑，客户端拒绝多订单提交。
 5. 个人/企业和普票/专票组合校验正确。
 6. 发票内容只显示财务配置的共同兼容选项。

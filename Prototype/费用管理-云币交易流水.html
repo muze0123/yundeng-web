@@ -8,7 +8,7 @@
   <script src="https://unpkg.com/lucide@1.34.0/dist/umd/lucide.min.js"></script>
   <link rel="stylesheet" href="../src/styles/global.css?v=20260821a">
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="公共导航.css?v=20260828e">
+  <link rel="stylesheet" href="公共导航.css?v=20261008a">
   <link rel="stylesheet" href="分页器.css?v=20260814">
   <script>
     if (window.tailwind) tailwind.config = { theme: { extend: { colors: {
@@ -71,14 +71,6 @@
     .coin-tabs .subtab{height:40px;padding:0 18px;border-radius:4px}
     .coin-tabs .subtab.active{background:#E6F0FF;color:#0066FF}
     .coin-transaction-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px 16px;flex-wrap:wrap;margin-bottom:16px}
-    .coin-search-filter-group{display:flex;align-items:center;justify-content:flex-end;gap:20px;min-width:0;flex:0 1 500px;margin-left:auto}
-    .coin-global-search{position:relative;width:400px;max-width:100%;flex:0 1 400px}
-    .coin-global-search .field{width:100%;padding-left:10px;padding-right:58px}
-    .coin-global-search input[type="search"]::-webkit-search-cancel-button{display:none}
-    .coin-search-submit,.coin-search-clear{position:absolute;top:4px;width:24px;height:24px;padding:0;border:0;border-radius:4px;display:inline-flex;align-items:center;justify-content:center;background:transparent;color:#9DA2AC;cursor:pointer;outline:none}
-    .coin-search-submit{right:4px}
-    .coin-search-clear{right:30px}
-    .coin-search-submit:hover,.coin-search-clear:hover,.coin-search-submit:focus-visible,.coin-search-clear:focus-visible{background:#F3F4F6;color:#3A3F4A}
     .coin-filter-button{position:relative;min-width:74px;white-space:nowrap}
     .coin-filter-button.has-active-filters{border-color:#0066FF;background:#fff;color:#0066FF}
     .coin-filter-button.has-active-filters:hover{background:#F3F4F6;color:#0066FF}
@@ -234,8 +226,6 @@
       .coin-balance-art{right:-30px;top:0;width:170px;opacity:.38}
       .coin-tabs{overflow-x:auto}
       .coin-transaction-toolbar{align-items:stretch}
-      .coin-search-filter-group{width:100%;flex-basis:100%;margin-left:0;justify-content:space-between}
-      .coin-global-search{width:100%;flex-basis:100%}
       .coin-filter-drawer-panel{width:100%}
       .coin-filter-row{grid-template-columns:1fr}
       .coin-recharge-body{padding:20px 16px 24px}
@@ -260,7 +250,7 @@
       .coin-recharge-amount-options{grid-template-columns:180px}
     }
   </style>
-  <script src="公共导航.js?v=20260916a"></script>
+  <script src="公共导航.js?v=20261008a"></script>
 </head>
 <body class="bg-page text-ink-body">
   <script>
@@ -278,17 +268,9 @@
               <div class="coin-transaction-toolbar">
                 <button id="exportTransactions" data-anno="1" type="button" class="btn btn-default"><i data-lucide="download" class="w-4 h-4" aria-hidden="true"></i>导出</button>
                 <span id="txCount" class="sr-only" role="status" aria-live="polite"></span>
-                <div class="coin-search-filter-group">
-                  <div class="coin-global-search" role="search">
-                    <label class="sr-only" for="txSearchInput">搜索云币流水</label>
-                    <input data-anno="2" id="txSearchInput" class="field" type="search" placeholder="请输入关键词，多个用中文逗号分隔" autocomplete="off">
-                    <button id="txSearchClear" type="button" class="coin-search-clear hidden" aria-label="清空搜索">
-                      <i data-lucide="x" class="w-4 h-4" aria-hidden="true"></i>
-                    </button>
-                    <button id="txSearchSubmit" type="button" class="coin-search-submit" aria-label="搜索">
-                      <i data-lucide="search" class="w-4 h-4" aria-hidden="true"></i>
-                    </button>
-                  </div>
+                <div class="order-search-filter-group">
+                  <!-- 搜索框结构、样式与交互由公共层 YDSearchBox 统一提供（design.md 5.4.2），页面只留容器。 -->
+                  <div data-anno="2" id="txSearchBox" class="order-global-search" role="search"></div>
                   <button data-anno="3" id="txFilterBtn" type="button" class="btn btn-default coin-filter-button" aria-haspopup="dialog" aria-expanded="false" aria-controls="txFilterDrawer">
                     <i data-lucide="list-filter" class="w-4 h-4" aria-hidden="true"></i>
                     <span>筛选</span>
@@ -381,7 +363,7 @@
               </div>
             </div>
             <footer class="coin-filter-drawer-footer">
-              <button data-filter-focusable id="txFilterCancel" type="button" class="btn btn-default">取消</button>
+              <button data-filter-focusable id="txFilterCancel" type="button" class="btn btn-default">重置</button>
               <button data-filter-focusable data-anno="5" id="txFilterSubmit" type="button" class="btn btn-primary">确认提交</button>
             </footer>
           </aside>
@@ -399,7 +381,6 @@
       const $$ = selector => [...document.querySelectorAll(selector)];
       const money = value => '¥' + Number(value || 0).toFixed(2);
       const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
-      const tokenize = value => String(value || '').trim().toLowerCase().split(/[，,\s]+/).filter(Boolean);
       const sessionKey = 'yundeng.billing.coin.transactions.v1';
       const readState = () => { try { const value = JSON.parse(sessionStorage.getItem(sessionKey) || '{}'); return value && typeof value === 'object' ? value : {}; } catch (_) { return {}; } };
       let state = readState();
@@ -425,9 +406,6 @@
         transactions.push({...item,time:`2026-07-${day} ${item.time.slice(11)}`,no:`${item.no}-${suffix}`,order:`${item.order}-${suffix}`});
       }
 
-      const txSearchInput = $('#txSearchInput');
-      const txSearchClear = $('#txSearchClear');
-      const txSearchSubmit = $('#txSearchSubmit');
       const txFilterBtn = $('#txFilterBtn');
       const txFilterDrawer = $('#txFilterDrawer');
       const txFilterPanel = $('#txFilterPanel');
@@ -496,10 +474,39 @@
         `).join('') || '<tr><td colspan="8" class="py-16 text-center text-ink-sub">暂无符合条件的流水</td></tr>';
       }
 
-      function matchesSearch(item, terms) {
-        if (!terms.length) return true;
-        const haystack = [item.type, item.time, item.no, item.order, item.project, item.user, String(item.amount), String(item.balance)].join(' ').toLowerCase();
-        return terms.every(term => haystack.includes(term));
+      // design.md §5.4.2：页面只声明搜索容器、可检索字段与重绘回调，结构 / 样式 / 交互全部来自公共层 YDSearchBox。
+      const txSearchValues = item => ({
+        no: [item.no],
+        order: [item.order],
+        type: [item.type],
+        project: [item.project],
+        amount: [String(item.amount), money(item.amount)],
+        time: [item.time],
+        user: [item.user]
+      });
+      function initTxSearchBox() {
+        if (!window.YDSearchBox) return;
+        window.YDSearchBox.init('#txSearchBox', {
+          label: '云币交易流水',
+          inputId: 'txSearchInput',
+          value: txSearch,
+          scopes: [
+            { key: 'all', label: '全局搜索' },
+            { key: 'no', label: '交易单号' },
+            { key: 'order', label: '订单号' },
+            { key: 'type', label: '交易类型' },
+            { key: 'project', label: '项目' },
+            { key: 'amount', label: '金额' },
+            { key: 'time', label: '交易时间' },
+            { key: 'user', label: '操作人' }
+          ],
+          values: txSearchValues,
+          onChange: instance => {
+            txSearch = instance.value();
+            saveState({txSearch, txPage: 1});
+            renderTx(true);
+          }
+        });
       }
 
       function matchesFilters(item) {
@@ -524,8 +531,7 @@
       }
 
       function renderTx(resetPage = false) {
-        const terms = tokenize(txSearch);
-        filteredTransactions = transactions.filter(item => matchesSearch(item, terms) && matchesFilters(item));
+        filteredTransactions = transactions.filter(item => window.YDSearchBox.matches('#txSearchBox', item) && matchesFilters(item));
         $('#txCount').textContent = `共 ${filteredTransactions.length} 条`;
         const savedPage = Number(state.txPage) || 1;
         const savedSize = Number(state.txPageSize) || 10;
@@ -707,6 +713,23 @@
         renderTxDateTimePicker();
       }
 
+      function resetTxFilterDraft() {
+        /* design.md §5.4.4：底部「重置」仅清空当前草稿，不提交、不关闭抽屉 */
+        txFilterType.value = '全部';
+        txFilterNo.value = '';
+        txFilterOrder.value = '';
+        txFilterStartDate.value = '';
+        txFilterEndDate.value = '';
+        txFilterStartTime.value = '00:00';
+        txFilterEndTime.value = '23:59';
+        txFilterStartDate.removeAttribute('aria-invalid');
+        txFilterEndDate.removeAttribute('aria-invalid');
+        txFilterDateError.classList.add('hidden');
+        closeTxDateTimePicker(false);
+        clearTxDateTimeDraft();
+        syncTxDateTimeTrigger();
+      }
+
       function openTxFilter() {
         drawerFocus = document.activeElement;
         previousBodyOverflow = document.body.style.overflow;
@@ -784,14 +807,10 @@
         renderTx(true);
       }
 
-      function updateSearchClear() {
-        txSearchClear.classList.toggle('hidden', !txSearchInput.value);
-      }
-
       const annotations = {
         1: {title:'导出流水',desc:['导出当前搜索和筛选结果的全部 Mock 流水，格式为 CSV']},
-        2: {title:'流水搜索框',desc:['关键词实时过滤完整结果集，并回到第一页']},
-        3: {title:'流水筛选入口',desc:['打开右侧抽屉；取消不提交草稿，确认后应用条件']},
+        2: {title:'流水搜索框',desc:['输入关键词只更新待提交草稿，不触发查询，也不重绘列表','点选搜索范围（含「全局搜索」）、回车或点击搜索按钮后才生效，并回到第一页','可按交易单号、订单号、交易类型、项目、金额、交易时间与操作人限定检索范围']},
+        3: {title:'流水筛选入口',desc:['打开右侧抽屉；重置仅清空草稿，确认提交后应用条件']},
         4: {title:'云币交易流水',desc:['保留交易单号、订单号、类型、时间、项目、金额、账户金额和操作人']},
         5: {title:'提交筛选',desc:['日期范围校验通过后应用条件']}
       };
@@ -826,25 +845,9 @@
         });
       }
 
-      function updateSearchFromInput(value) {
-        txSearch = value;
-        saveState({txSearch, txPage: 1});
-        updateSearchClear();
-        renderTx(true);
-      }
-
-      txSearchInput.addEventListener('input', event => updateSearchFromInput(event.target.value));
-      txSearchInput.addEventListener('keydown', event => {
-        if (event.key === 'Enter') {
-          event.preventDefault();
-          renderTx(true);
-        }
-      });
-      txSearchSubmit.addEventListener('click', () => renderTx(true));
-      txSearchClear.addEventListener('click', () => { txSearchInput.value = ''; updateSearchFromInput(''); txSearchInput.focus(); });
       txFilterBtn.addEventListener('click', openTxFilter);
       $('#txFilterClose').addEventListener('click', () => closeTxFilter(false));
-      $('#txFilterCancel').addEventListener('click', () => closeTxFilter(false));
+      $('#txFilterCancel').addEventListener('click', resetTxFilterDraft);
       $('#txFilterSubmit').addEventListener('click', submitTxFilter);
       txFilterDrawer.addEventListener('click', event => { if (event.target === txFilterDrawer) closeTxFilter(false); });
       txDateTimeTrigger.addEventListener('click', openTxDateTimePicker);
@@ -959,6 +962,7 @@
         setTimeout(() => URL.revokeObjectURL(url), 1000);
         toast('已导出 ' + filteredTransactions.length + ' 条流水', 'success');
       });
+      initTxSearchBox();
       renderTx(false);
       lucide.createIcons();
       renderAnno();

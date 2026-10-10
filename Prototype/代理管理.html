@@ -32,8 +32,13 @@
   </script>
   <link rel="stylesheet" href="筛选布局.css?v=20260817y">
   <link rel="stylesheet" href="分页器.css?v=20260817y">
-  <link rel="stylesheet" href="公共导航.css?v=20260825a">
+  <link rel="stylesheet" href="公共导航.css?v=20261008a">
   <style>
+    /* 代理管理为单区块数据页：内容区与唯一业务区块纵向拉伸，区块底部与视口保持 20px 间距（design.md §5.0）。 */
+    #mainContent.page-content { padding-bottom: 20px !important; min-height: 100%; display: flex; flex-direction: column; }
+    #mainContent.page-content > section:only-child { min-height: 100%; flex: 1 1 auto; display: flex; flex-direction: column; }
+    /* 表格与分页保持固定 20px 间距，不通过 flex 增长制造额外空白（design.md §5.5）。 */
+    #mainContent.page-content > section:only-child > #tableRegion { flex: none; min-height: 0; }
     * { box-sizing: border-box; }
     html, body { min-height: 100%; }
     body {
@@ -186,6 +191,9 @@
     .data-table input[type="checkbox"], .checkbox { width: 15px; height: 15px; accent-color: #0066FF; }
     .action-link { color: #0066FF; cursor: pointer; }
     .action-link:hover { color: #0052CC; text-decoration: underline; text-underline-offset: 3px; }
+    /* 代理名称常态使用标题色，不做蓝色高亮；hover 时再给出主色与下划线反馈（design.md §5.2 列表特例） */
+    .proxy-name-link { color: #1A1D24; cursor: pointer; }
+    .proxy-name-link:hover { color: #0066FF; text-decoration: underline; text-underline-offset: 3px; }
     .action-link.danger { color: #D9001B; }
     .badge {
       display: inline-flex;
@@ -347,7 +355,6 @@
     }
     .modal-close:hover, .drawer-close:hover { color: #3A3F4A; background: #F3F4F6; }
     body[data-yundeng-embedded="true"] .drawer-close { margin-right: 104px; }
-    body[data-yundeng-embedded="true"] #closeExpiryNotice { margin-right: 104px; }
     .dialog-close {
       position: absolute;
       top: 14px;
@@ -390,29 +397,187 @@
     .result-panel.is-success { border-color: #0FC060; background: #E7F9F0; }
     .result-panel.is-warning { border-color: #E7772D; background: #FDF2E9; }
     .result-panel.is-danger { border-color: #D9001B; background: #FFE8EB; }
-      position: fixed;
-      right: 8px;
-      top: 120px;
-      z-index: 9997;
-      height: 32px;
-      padding: 0 12px;
-      border: 0;
-      border-radius: 16px;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      color: #FFFFFF;
-      background: #9DA2AC;
-      box-shadow: 0 2px 8px rgba(0,0,0,.06);
+    /* ===================== 平台代理工具栏（design.md §5.4.1） ===================== */
+    .order-management-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px 16px; flex-wrap: wrap; margin-bottom: 16px; }
+    .order-toolbar-left { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; min-width: 0; }
+    .order-toolbar-icon-group { position: relative; display: flex; align-items: center; justify-content: flex-end; gap: 8px; min-width: 0; }
+    /* 仅图标命令按钮：32×32 正方形、图标居中（design.md §5.4.1 工具栏命令按钮尺寸） */
+    .btn-icon { width: 32px; padding: 0; flex: none; }
+    /* 「字段设置」图标：Lucide 无 hexagon-dot，用 hexagon 内叠一个小圆还原（design.md 未覆盖，仅取现有图标组合） */
+    .btn-icon-stack { position: relative; display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; }
+    svg.btn-icon-dot { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 7px; height: 7px; stroke-width: 4.5; }
+    /* 搜索框输入框外观由页面提供（design.md §5.4.2 B：高度 32px、1px line 边框、4px 圆角）；
+       限定 input.field，避免命中弹窗中作为栅格行容器的 <div class="field">。 */
+    input.field { height: 32px; border: 1px solid #DFE1E5; border-radius: 4px; background: #FFFFFF; padding: 0 10px; outline: none; color: #3A3F4A; }
+    input.field:focus { border-color: #0066FF; box-shadow: 0 0 0 2px #E6F0FF; }
+    /* 筛选按钮与「已应用条件」角标（design.md §5.4.4） */
+    .order-filter-button { position: relative; }
+    .order-filter-button.has-active-filters { border-color: #0066FF; background: #FFFFFF; color: #0066FF; }
+    .order-filter-count { position: absolute; top: -8px; right: -8px; min-width: 16px; height: 16px; padding: 0 4px; border: 1px solid #FFFFFF; border-radius: 8px; background: #D9001B; color: #FFFFFF; font: 600 11px/14px 'JetBrains Mono', monospace; text-align: center; box-shadow: 0 2px 6px rgba(0,0,0,.15); }
+    /* 排序表头（design.md §5.4.3） */
+    .order-sort-button { display: inline-flex; align-items: center; gap: 4px; color: inherit; font: inherit; font-weight: 600; white-space: nowrap; cursor: pointer; }
+    .order-sort-button[data-sort-direction="none"] { color: #6E7685; }
+    .order-sort-button[data-sort-direction="asc"], .order-sort-button[data-sort-direction="desc"] { color: #0066FF; }
+    .order-sort-button:hover { color: #0066FF; }
+    .order-sort-button:focus-visible { outline: 2px solid #0066FF; outline-offset: 2px; border-radius: 2px; }
+    .order-sort-icon { display: inline-flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; width: 6px; height: 10px; flex: none; }
+    .order-sort-caret { width: 6px; height: 4px; display: block; background: currentColor; color: #9DA2AC; }
+    .order-sort-caret.is-up { clip-path: polygon(50% 0, 100% 100%, 0 100%); }
+    .order-sort-caret.is-down { clip-path: polygon(0 0, 100% 0, 50% 100%); }
+    .order-sort-button[data-sort-direction="asc"] .order-sort-caret.is-up,
+    .order-sort-button[data-sort-direction="desc"] .order-sort-caret.is-down { color: #0066FF; }
+    /* 表头帮助图标（design.md 未覆盖该场景，取 ink-muted 就近色） */
+    .proxy-help { display: inline-flex; align-items: center; vertical-align: -2px; margin-left: 4px; color: #9DA2AC; cursor: help; }
+    /* ===================== 平台代理列表单元格（design.md §5.2 平台代理列表特例） ===================== */
+    .proxy-ip { display: flex; align-items: center; gap: 4px; }
+    .proxy-ip button { display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; padding: 0; border: 0; background: transparent; color: #9DA2AC; cursor: pointer; }
+    .proxy-ip button:hover { color: #0066FF; }
+    .proxy-net-chips { display: flex; align-items: center; gap: 4px; margin-top: 2px; }
+    .proxy-chip { display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; border: 1px solid #E7772D; border-radius: 4px; color: #E7772D; font-size: 11px; line-height: 1; }
+    .proxy-check-line { display: flex; align-items: center; gap: 4px; margin-top: 2px; font-size: 11px; color: #9DA2AC; }
+    .proxy-deleted { color: #9DA2AC; }
+    /* 代理状态为纯文本而非 Badge（design.md §5.2 line 245 特例） */
+    .proxy-status { font-size: 13px; }
+    .proxy-status.is-running { color: #0FC060; }
+    .proxy-status.is-stopped { color: #1A1D24; }
+    .proxy-status.is-warning { color: #E7772D; }
+    .proxy-status.is-expired { color: #D9001B; }
+    /* 标签 pill：截图实测底色 #D1EBEC / 字色 #0FC060；design.md 未收录该 token，就近取 success 语义色并保留截图底色 */
+    .proxy-tag { display: inline-flex; align-items: center; height: 22px; padding: 0 6px; border-radius: 4px; background: #D1EBEC; color: #0FC060; font-size: 12px; line-height: 22px; white-space: nowrap; }
+    /* 绑定环境按钮（描边主色按钮，design.md §5.3 次要按钮变体） */
+    .proxy-env-btn { display: inline-flex; align-items: center; gap: 4px; height: 28px; padding: 0 8px; border: 1px solid #0066FF; border-radius: 4px; background: #FFFFFF; color: #0066FF; font-size: 12px; cursor: pointer; }
+    .proxy-env-btn:hover { background: #E6F0FF; }
+    .btn-xs { height: 28px; padding: 0 10px; }
+    /* 自动续费月数：截图实测 #FF6666；design.md 无该 token，就近取 danger 语义色 */
+    .proxy-renew-months { margin-left: 6px; color: #D9001B; font-size: 12px; }
+    .proxy-expire-rest { color: #3A3F4A; font-size: 12px; }
+    /* 操作列「更多」图标按钮 */
+    .proxy-more-btn { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; padding: 0; border: 0; border-radius: 4px; background: transparent; color: #3A3F4A; cursor: pointer; }
+    .proxy-more-btn:hover { background: #F3F4F6; color: #0066FF; }
+    /* ===================== 批量操作条（design.md §5.4.5） ===================== */
+    #batchBar { min-height: 44px; padding: 6px 12px; border: 1px solid rgba(0,102,255,.2); border-radius: 8px; background: #E6F0FF; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+    #batchBar.hidden { display: none; }
+    .batch-action { display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 8px; border: 0; border-radius: 4px; background: transparent; color: #0066FF; font-size: 13px; white-space: nowrap; cursor: pointer; }
+    .batch-action:hover { background: #FFFFFF; }
+    .batch-divider { width: 1px; height: 14px; flex: none; background: rgba(26,29,36,.16); }
+    .batch-summary { display: inline-flex; align-items: center; gap: 8px; margin: 0; font-size: 13px; color: #3A3F4A; white-space: nowrap; }
+    #batchExit { border: 0; background: transparent; padding: 0; color: #0066FF; cursor: pointer; }
+    #batchExit:hover { text-decoration: underline; }
+    /* ===================== 「筛选代理」抽屉（design.md §5.4.4） ===================== */
+    #proxyFilterOverlay { position: fixed; inset: 0; z-index: 9999; background: rgba(0,0,0,.3); }
+    #proxyFilterOverlay.hidden { display: none; }
+    .order-filter-drawer-panel { position: fixed; top: 0; right: 0; margin: 0; width: 480px; max-width: 100vw; height: 100dvh; max-height: 100dvh; display: flex; flex-direction: column; background: #FFFFFF; box-shadow: -4px 0 24px rgba(0,0,0,.12); animation: drawer-in .22s ease; }
+    .order-filter-drawer-header { height: 56px; flex: 0 0 56px; padding: 0 20px; border-bottom: 1px solid #E8EAED; display: flex; align-items: center; justify-content: space-between; }
+    .order-filter-drawer-body { flex: 1; min-height: 0; overflow-y: auto; padding: 20px; }
+    .order-filter-drawer-body .order-filter-flow { display: flex; flex-direction: column; gap: 16px; }
+    .order-filter-drawer-body .order-filter-item { display: flex; flex-direction: column; align-items: stretch; gap: 6px; width: 100%; }
+    .order-filter-drawer-body .order-filter-label { width: auto; flex: none; color: #3A3F4A; font-size: 13px; line-height: 18px; text-align: left; }
+    .order-filter-drawer-footer { height: 64px; flex: 0 0 64px; padding: 0 20px; border-top: 1px solid #E8EAED; display: flex; align-items: center; justify-content: flex-end; gap: 12px; background: #FFFFFF; }
+    /* 单选项 / 复选项：字段单列、选项横排或网格（design.md §5.4.4） */
+    .pf-choice-grid3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px 12px; min-height: 32px; }
+    .pf-choice-grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 12px; min-height: 32px; }
+    .pf-choice { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; line-height: 18px; color: #3A3F4A; white-space: nowrap; cursor: pointer; }
+    .pf-choice input { width: 14px; height: 14px; margin: 0; flex: none; accent-color: #0066FF; cursor: pointer; }
+    /* 标签多选下拉：复用环境管理 em-* 语义类名与交互（design.md §5.4.4） */
+    .em-select { position: relative; }
+    .em-trigger { position: relative; display: flex; align-items: center; flex-wrap: wrap; gap: 6px; width: 100%; min-height: 32px; padding: 4px 30px 4px 8px; border: 1px solid #DFE1E5; border-radius: 4px; background: #FFFFFF; text-align: left; cursor: pointer; transition: border-color .15s, box-shadow .15s; }
+    .em-trigger:hover { border-color: rgba(0,102,255,.45); }
+    .em-trigger[aria-expanded="true"] { border-color: #0066FF; box-shadow: 0 0 0 2px rgba(0,102,255,.12); }
+    .em-trigger .em-placeholder { font-size: 13px; line-height: 22px; color: #9DA2AC; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .em-trigger .em-caret { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); color: #9DA2AC; pointer-events: none; }
+    .em-pill { display: inline-flex; align-items: center; gap: 4px; max-width: 100%; height: 22px; padding: 0 4px 0 8px; border-radius: 4px; background: #F3F4F6; color: #3A3F4A; font-size: 12px; line-height: 22px; }
+    .em-pill > span { max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .em-pill > button { display: flex; align-items: center; justify-content: center; width: 14px; height: 14px; flex: none; border: 0; border-radius: 999px; background: #9DA2AC; color: #FFFFFF; cursor: pointer; }
+    .em-pill > button:hover { background: #6E7685; }
+    /* 下拉面板走 Portal 图层，保证盖在抽屉内容层之上且不被裁切（design.md §5.4.4 / §5.13） */
+    #proxyTagPortal { position: fixed; z-index: 10001; display: none; }
+    #proxyTagPortal.is-open { display: block; }
+    .em-panel { width: 100%; max-height: 260px; overflow-y: auto; padding: 6px; background: #FFFFFF; border: 1px solid #DFE1E5; border-radius: 6px; box-shadow: 0 6px 24px rgba(0,0,0,.12); }
+    .em-option { display: flex; align-items: center; gap: 8px; height: 32px; padding: 0 8px; border-radius: 4px; color: #3A3F4A; font-size: 13px; white-space: nowrap; cursor: pointer; }
+    .em-option:hover { background: #F3F4F6; }
+    .em-option input { width: 14px; height: 14px; margin: 0; flex: none; accent-color: #0066FF; cursor: pointer; }
+    .em-empty { margin: 0; padding: 10px 8px; font-size: 13px; color: #9DA2AC; text-align: center; }
+    /* 日期范围：两个同高日期控件 + 分隔符（design.md §5.4.4） */
+    /* design.md §5.4.4：日期区间为单框形态（开始时间 ~ 结束时间 + 右侧日历图标），高度 32px / 圆角 4px 与输入框一致 */
+    .em-range { position: relative; display: flex; align-items: center; gap: 8px; height: 32px; padding: 0 30px 0 8px; border: 1px solid #DFE1E5; border-radius: 4px; background: #FFFFFF; transition: border-color .15s, box-shadow .15s; }
+    .em-range:hover { border-color: rgba(0,102,255,.45); }
+    .em-range:focus-within { border-color: #0066FF; box-shadow: 0 0 0 2px rgba(0,102,255,.12); }
+    .em-range-field { position: relative; flex: 1; min-width: 0; height: 100%; }
+    .em-range input[type=date] { width: 100%; height: 100%; padding: 0; border: 0; background: transparent; font-size: 13px; color: #3A3F4A; outline: none; }
+    /* 空值时不展示原生 mm/dd/yyyy，由 .em-range-ph 呈现「开始时间 / 结束时间」占位文案；聚焦后回到原生分段编辑态 */
+    .em-range input[type=date].is-empty::-webkit-datetime-edit { color: transparent; }
+    .em-range-field:focus-within input[type=date].is-empty::-webkit-datetime-edit { color: #3A3F4A; }
+    .em-range-ph { position: absolute; left: 0; top: 50%; transform: translateY(-50%); font-size: 13px; color: #9DA2AC; pointer-events: none; }
+    .em-range-field:focus-within .em-range-ph { display: none; }
+    /* 已选日期后隐藏占位文案，避免与原生日期文本重叠 */
+    .em-range-field input[type=date]:not(.is-empty) + .em-range-ph { display: none; }
+    .em-range input[type=date]::-webkit-calendar-picker-indicator { opacity: 0; }
+    .em-range .em-range-sep { flex: none; font-size: 13px; color: #9DA2AC; }
+    .em-range-icon { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); display: flex; align-items: center; justify-content: center; width: 20px; height: 20px; padding: 0; border: 0; background: transparent; color: #9DA2AC; cursor: pointer; }
+    .em-range-icon:hover { color: #0066FF; }
+    .em-field-error { display: none; margin-top: 6px; font-size: 12px; line-height: 16px; color: #D9001B; }
+    .em-field-error.is-shown { display: block; }
+    /* ===================== 「代理详情」弹窗（design.md §5.7） ===================== */
+    #proxyDetailOverlay { position: fixed; inset: 0; z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(0,0,0,.3); }
+    #proxyDetailOverlay.hidden { display: none; }
+    .proxy-detail-panel { display: flex; flex-direction: column; width: 1400px; max-width: 92vw; max-height: 90vh; border-radius: 8px; background: #FFFFFF; box-shadow: 0 6px 24px rgba(0,0,0,.12); animation: modal-in .18s ease; }
+    .proxy-detail-header { flex: 0 0 56px; height: 56px; padding: 0 20px; border-bottom: 1px solid #E8EAED; display: flex; align-items: center; justify-content: space-between; }
+    .proxy-detail-body { flex: 1; min-height: 0; overflow-y: auto; padding: 20px; }
+    /* 详情「到期时间 | 剩余N天」：竖线分隔符与日期之间留 4px 间距（design.md §5.4.3） */
+    .proxy-detail-grid .proxy-expire-rest { margin-left: 4px; }
+    .proxy-detail-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 14px 24px; margin: 0; }
+    .proxy-detail-item { display: grid; grid-template-columns: auto minmax(0,1fr); align-items: start; min-width: 0; }
+    .proxy-detail-item dt { color: #6E7685; font-size: 13px; line-height: 20px; white-space: nowrap; }
+    .proxy-detail-item dt::after { content: '：'; }
+    .proxy-detail-item dd { margin: 0; color: #3A3F4A; font-size: 13px; line-height: 20px; min-width: 0; overflow-wrap: anywhere; }
+    .proxy-detail-item.is-wide { grid-column: 1 / -1; }
+    .proxy-name-edit { margin-left: 6px; padding: 0; border: 0; background: transparent; color: #0066FF; cursor: pointer; vertical-align: -3px; }
+    .proxy-name-input { width: 220px; max-width: 100%; }
+    /* 「+n」气泡：hover 后展开全部成员 / 标签 */
+    .proxy-more-pill { position: relative; display: inline-flex; align-items: center; height: 20px; margin-left: 6px; padding: 0 4px; border-radius: 4px; background: #F0F1F3; color: #6E7685; font-size: 12px; cursor: default; }
+    .proxy-more-pill:hover::after { content: attr(data-tip); position: absolute; left: 0; top: calc(100% + 6px); z-index: 60; min-width: 120px; max-width: 280px; padding: 8px 10px; border-radius: 6px; background: #1A1D24; color: #FFFFFF; font-size: 12px; line-height: 18px; white-space: normal; box-shadow: 0 6px 24px rgba(0,0,0,.2); }
+    .proxy-detail-tabs { display: flex; align-items: center; gap: 24px; margin-top: 20px; border-bottom: 1px solid #F0F1F3; }
+    .proxy-detail-tab { position: relative; height: 40px; padding: 0; border: 0; background: transparent; color: #6E7685; font-size: 14px; cursor: pointer; }
+    .proxy-detail-tab::after { content: ''; position: absolute; right: 0; bottom: -1px; left: 0; height: 2px; border-radius: 2px 2px 0 0; background: transparent; }
+    .proxy-detail-tab:hover { color: #0066FF; }
+    .proxy-detail-tab.is-active { color: #0066FF; font-weight: 600; }
+    .proxy-detail-tab.is-active::after { background: #0066FF; }
+    .proxy-detail-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .proxy-detail-table th { padding: 9px 12px; background: #F0F1F3; color: #6E7685; font-size: 12px; font-weight: 600; line-height: 18px; text-align: left; white-space: nowrap; }
+    .proxy-detail-table td { padding: 10px 12px; border-bottom: 1px solid #F0F1F3; color: #3A3F4A; line-height: 20px; text-align: left; vertical-align: middle; white-space: nowrap; }
+    /* 列设置气泡弹窗（design.md §5.15）：字段勾选 + 指针拖拽排序，独立固定浮层、不支持裁切 */
+    .cso-panel { position: fixed; z-index: 80; width: 196px; padding: 8px 6px 6px; background: #FFFFFF; border: 1px solid #DFE1E5; border-radius: 8px; box-shadow: 0 6px 24px rgba(0,0,0,.12); }
+    .cso-list { max-height: min(444px, calc(100dvh - 200px)); overflow-y: auto; overflow-x: hidden; }
+    .cso-row { position: relative; display: flex; align-items: center; gap: 8px; height: 37px; padding: 0 18px 0 8px; border-radius: 4px; cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; }
+    .cso-row:active { cursor: grabbing; }
+    .cso-row:hover { background: #F7F8FA; }
+    .cso-row input, .cso-ghost input { width: 14px; height: 14px; margin: 0; flex: none; accent-color: #0066FF; cursor: pointer; }
+    .cso-label { flex: 1; min-width: 0; font-size: 13px; line-height: 18px; color: #3A3F4A; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: pointer; }
+    /* 固定列（序号）：不可取消勾选、不可拖拽，整行呈禁用态 */
+    .cso-row.is-locked, .cso-row.is-locked .cso-label { color: #9DA2AC; cursor: default; }
+    .cso-row.is-locked:hover { background: transparent; }
+    .cso-row.is-locked input { cursor: not-allowed; }
+    .cso-row.is-dragging { opacity: .4; }
+    /* 拖拽把手：3 条 16×2px 横线、间距 3px，默认 line-lighter、行 hover 时加深（design.md §5.14） */
+    .cso-grip { width: 16px; flex: none; display: inline-flex; flex-direction: column; justify-content: center; gap: 3px; pointer-events: none; }
+    .cso-grip i { display: block; height: 2px; border-radius: 1px; background: #F0F1F3; }
+    .cso-row:hover .cso-grip i { background: #DFE1E5; }
+    /* 落点插入线：用 background-image 绘制 2px primary，避免 border 造成行高抖动（design.md §5.14） */
+    .cso-row.drop-before { background-image: linear-gradient(#0066FF, #0066FF); background-repeat: no-repeat; background-size: 100% 2px; background-position: top left; }
+    .cso-row.drop-after { background-image: linear-gradient(#0066FF, #0066FF); background-repeat: no-repeat; background-size: 100% 2px; background-position: bottom left; }
+    .cso-ghost { position: fixed; z-index: 9999; display: flex; align-items: center; gap: 8px; height: 37px; padding: 0 18px 0 8px; border-radius: 4px; background: #FFFFFF; font-size: 13px; color: #3A3F4A; box-shadow: 0 6px 24px rgba(0,0,0,.16); pointer-events: none; }
+    .cso-ghost .cso-grip i { background: #DFE1E5; }
+    body.cso-dragging { user-select: none; -webkit-user-select: none; cursor: grabbing; }
+    /* 底部「恢复默认」：整宽 40px 高、8px 圆角、1px 边框、图标与文字整体居中 */
+    .cso-restore { margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; height: 40px; border: 1px solid #E8EAED; border-radius: 8px; background: #FFFFFF; font-size: 13px; color: #3A3F4A; }
+    .cso-restore:hover { background: #F3F4F6; border-color: #DFE1E5; color: #0066FF; }
+    @media (max-width: 900px) {
+      .proxy-detail-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
     }
-      width: 520px;
-      max-width: 92vw;
-      max-height: 80vh;
-      border-radius: 8px;
-      display: flex;
-      flex-direction: column;
-      background: #FFFFFF;
-      box-shadow: 0 6px 24px rgba(0,0,0,.12);
+    @media (max-width: 720px) {
+      .order-filter-drawer-panel { width: 100vw; }
+      .proxy-detail-grid { grid-template-columns: minmax(0,1fr); }
+      .order-management-toolbar { align-items: stretch; }
     }
     .toast {
       min-width: 220px;
@@ -450,90 +615,62 @@
     }
   </style>
   <script src="分页器.js?v=20260817y"></script>
-  <script src="公共导航.js?v=20260916a"></script>
+  <script src="公共导航.js?v=20261008a"></script>
 </head>
 <body class="bg-page text-ink-body overflow-hidden">
-  <main id="mainContent" class="h-screen overflow-y-auto p-4" aria-label="代理管理业务内容">
-    <!-- 到期风险提示 -->
-    <section id="expiryNotice" class="mb-4 min-h-10 px-4 py-3 rounded-lg bg-warning-bg text-warning flex items-start justify-between gap-3" aria-label="代理到期提醒">
-      <div class="inline-flex items-start gap-2 min-w-0">
-        <i data-lucide="triangle-alert" class="w-4 h-4 mt-0.5 shrink-0" aria-hidden="true"></i>
-        <span>代理过期后将自动注销且不支持找回，为避免影响环境使用，请在到期前完成续费。</span>
+  <main id="mainContent" class="page-content flex flex-1 min-h-0 flex-col overflow-auto p-4 pb-5" aria-label="代理管理业务内容">
+    <!-- 代理管理主体：到期提醒、筛选区与数据区同属唯一白块（design.md §5.0 / §5.4.1） -->
+    <section class="flex min-h-0 flex-1 flex-col bg-white rounded-lg p-5 md:p-6" aria-label="代理管理">
+      <!-- 到期风险提示：仅在平台代理页且确有 7 天内到期数据时展示 -->
+      <!-- 右侧「去续费」按钮距提醒区块右边缘 20px；左侧保留 16px 与告警文案对齐。 -->
+      <div id="expiryNotice" class="hidden mb-4 min-h-10 pl-4 pr-5 py-3 rounded-lg bg-warning-bg text-warning flex items-center justify-between gap-3" aria-label="代理到期提醒">
+        <div class="inline-flex items-center gap-2 min-w-0">
+          <i data-lucide="triangle-alert" class="w-4 h-4 shrink-0" aria-hidden="true"></i>
+          <span><strong class="font-semibold">代理到期提醒</strong> <span id="expiryNoticeCount">3</span>个平台代理即将到期，到期后将自动注销且无法恢复，请及时续费。</span>
+        </div>
+        <button id="renewExpiringProxies" type="button" class="btn btn-primary shrink-0">去续费</button>
       </div>
-      <button id="closeExpiryNotice" type="button" class="shrink-0 text-warning" aria-label="关闭到期提醒" title="关闭到期提醒">
-        <i data-lucide="x" class="w-4 h-4" aria-hidden="true"></i>
-      </button>
-    </section>
-    <!-- 筛选区 -->
-    <section class="bg-white rounded-lg p-5 md:p-6 mb-4" aria-label="代理筛选">
+      <!-- 代理来源页签 -->
       <div class="source-tabs" role="tablist" aria-label="代理来源">
         <button type="button" class="source-tab is-active" data-source="platform" role="tab" aria-selected="true">平台代理</button>
         <button type="button" class="source-tab" data-source="owned" role="tab" aria-selected="false">自有代理</button>
         <button type="button" class="source-tab" data-source="api" role="tab" aria-selected="false">代理 API</button>
       </div>
-      <div id="statusFilterRow" class="flex items-center gap-2 mb-4 flex-wrap">
-        <span class="text-[13px] text-ink-sub mr-1">代理状态</span>
-        <div id="statusTabs" class="flex items-center gap-1 flex-wrap" role="group" aria-label="代理状态筛选"></div>
-      </div>
-      <div class="filter-flow">
-        <label class="filter-item">
-          <span id="typeFilterLabel" class="filter-label">平台类型</span>
-          <select id="typeFilter" class="control" aria-label="平台类型"></select>
-        </label>
-        <label id="addressFilterItem" class="filter-item hidden">
-          <span class="filter-label">地址类型</span>
-          <select id="addressFilter" class="control" aria-label="地址类型">
-            <option value="全部">全部</option>
-            <option value="IPv4">IPv4</option>
-            <option value="IPv6">IPv6</option>
-            <option value="域名">域名</option>
-          </select>
-        </label>
-        <label class="filter-item">
-          <span class="filter-label">搜索条件</span>
-          <span class="relative block">
-            <i data-lucide="search" class="absolute left-2 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-muted pointer-events-none" aria-hidden="true"></i>
-            <input id="searchInput" class="control w-full pl-8 pr-8" type="search" autocomplete="off" placeholder="搜索序号、代理名称、IP" aria-label="搜索代理">
-            <button id="clearSearch" type="button" class="hidden absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-muted hover:text-ink-sub" aria-label="清空搜索条件" title="清空搜索条件">
-              <i data-lucide="x" class="w-4 h-4" aria-hidden="true"></i>
+
+      <!-- 工具栏：左侧主操作，右侧搜索框 + 筛选 + 仅图标命令（design.md §5.4.1） -->
+      <div id="proxyToolbar" class="order-management-toolbar">
+        <div id="toolbarLeft" class="order-toolbar-left"></div>
+        <div class="order-search-filter-group">
+          <div id="proxySearchBox" class="order-global-search" role="search"></div>
+          <div class="order-toolbar-icon-group">
+            <button id="proxyFilterBtn" type="button" class="btn btn-default order-filter-button" aria-haspopup="dialog" aria-expanded="false" aria-controls="proxyFilterPanel">
+              <i data-lucide="list-filter" class="w-4 h-4" aria-hidden="true"></i>
+              <span>筛选</span>
+              <span id="proxyFilterCount" class="order-filter-count hidden" aria-live="polite">0</span>
             </button>
-          </span>
-        </label>
-        <div class="filter-actions">
-          <button id="queryButton" type="button" class="btn btn-primary">
-            <i data-lucide="search" class="w-4 h-4" aria-hidden="true"></i>
-            <span>查询</span>
-          </button>
-          <button id="resetButton" type="button" class="btn btn-default">
-            <i data-lucide="rotate-ccw" class="w-4 h-4" aria-hidden="true"></i>
-            <span>重置</span>
-          </button>
+            <button id="toolbarRefresh" type="button" class="btn btn-default btn-icon" data-page-action="refresh" aria-label="刷新列表" title="刷新列表">
+              <i data-lucide="refresh-cw" class="w-4 h-4 refresh-icon" aria-hidden="true"></i>
+            </button>
+            <button id="toolbarSettings" type="button" class="btn btn-default btn-icon" data-page-action="columns" aria-label="字段设置" aria-haspopup="dialog" aria-expanded="false" aria-controls="columnSettings" title="字段设置">
+              <span class="btn-icon-stack">
+                <i data-lucide="hexagon" class="w-4 h-4" aria-hidden="true"></i>
+                <i data-lucide="dot" class="btn-icon-dot" aria-hidden="true"></i>
+              </span>
+            </button>
+          </div>
         </div>
       </div>
-    </section>
-    <!-- 数据区 -->
-    <section class="bg-white rounded-lg p-5 md:p-6" aria-labelledby="proxyListTitle">
-      <div class="flex items-center justify-between flex-wrap gap-3 mb-4">
-        <h2 id="proxyListTitle" class="inline-block text-[18px] font-semibold text-ink-title">
-          <span id="listTitle">平台代理</span>
-          <span id="resultCount" class="ml-1 text-[12px] font-normal text-ink-muted" role="status" aria-live="polite"></span>
-        </h2>
-        <div id="pageActions" class="flex items-center flex-wrap gap-2"></div>
+
+      <!-- 批量操作条：勾选数据项后出现 -->
+      <div id="batchBar" class="hidden mb-3" role="region" aria-label="批量操作">
+        <div id="batchActions" class="flex items-center flex-wrap gap-1"></div>
+        <p class="batch-summary">已选择 <b id="selectedCount" class="mono">0</b> 项 <button id="batchExit" type="button" aria-label="退出批量操作">退出</button></p>
       </div>
-      <div class="mb-3 flex items-center justify-between flex-wrap gap-2 text-[12px] text-ink-sub">
-        <span id="privacyHint" class="inline-flex items-center gap-1.5">
-          <i data-lucide="shield-check" class="w-4 h-4 text-success" aria-hidden="true"></i>
-          代理凭证与提取链接默认脱敏显示
-        </span>
-        <span id="refreshTime" class="mono text-ink-muted">更新于 2026-08-17 17:40:00</span>
-      </div>
-      <div id="batchBar" class="hidden mb-3 min-h-10 px-3 py-2 rounded bg-primary-bg flex items-center justify-between flex-wrap gap-3" role="region" aria-label="批量操作">
-        <span>已选择 <b id="selectedCount" class="mono text-primary">0</b> 个代理</span>
-        <div id="batchActions" class="flex items-center flex-wrap gap-2"></div>
-      </div>
+
+      <!-- 数据表格 -->
       <div id="tableRegion">
         <div id="tableScroller" class="overflow-x-auto">
-          <table id="proxyTable" class="data-table min-w-[1320px]">
+          <table id="proxyTable" class="data-table min-w-[1560px]">
             <caption class="sr-only">代理列表</caption>
             <thead id="tableHead"></thead>
             <tbody id="tableBody"></tbody>
@@ -546,7 +683,7 @@
         </div>
         <!-- 分页行整体与表格保持 20px 间距，说明与翻页控件垂直居中。 -->
         <div class="flex items-center justify-between flex-wrap gap-3 pt-5">
-          <span class="text-[12px] text-ink-muted">默认 20 条/页，跨页选择会保留</span>
+          <span class="text-[12px] text-ink-muted">默认 10 条/页，跨页选择会保留</span>
           <div id="proxyPagination" class="min-w-0" aria-label="代理列表分页"></div>
         </div>
       </div>
@@ -554,6 +691,8 @@
   </main>
   <!-- 行级更多菜单 -->
   <div id="rowMenu" class="row-menu hidden" role="menu" aria-label="代理更多操作"></div>
+  <!-- 列设置气泡弹窗：独立节点，不复用 #rowMenu（行「更多」菜单容器），design.md §5.15 -->
+  <div id="columnSettings" class="cso-panel hidden" role="dialog" aria-label="列设置"></div>
   <!-- 业务表单弹窗 -->
   <div id="formModalOverlay" class="overlay modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="formModalTitle" aria-hidden="true">
     <section id="formModalPanel" class="modal-panel" tabindex="-1">
@@ -570,24 +709,49 @@
       </footer>
     </section>
   </div>
-  <!-- 代理详情抽屉 -->
-  <div id="detailDrawerOverlay" class="overlay drawer-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="detailDrawerTitle" aria-hidden="true">
-    <aside id="detailDrawerPanel" class="drawer-panel" tabindex="-1">
-      <header class="drawer-header">
-        <div>
-          <h3 id="detailDrawerTitle" class="inline-block text-[16px] font-semibold text-ink-title">代理详情与操作日志</h3>
-          <p id="detailDrawerSubtitle" class="mt-1 text-[12px] text-ink-sub"></p>
-        </div>
-        <button type="button" class="drawer-close" data-close-drawer aria-label="关闭详情抽屉" title="关闭">
+  <!-- 「筛选代理」抽屉（design.md §5.4.4） -->
+  <div id="proxyFilterOverlay" class="hidden" role="dialog" aria-modal="true" aria-labelledby="proxyFilterTitle" aria-hidden="true">
+    <aside id="proxyFilterPanel" class="order-filter-drawer-panel" tabindex="-1">
+      <header class="order-filter-drawer-header">
+        <h2 id="proxyFilterTitle" class="text-[16px] font-semibold text-ink-title">筛选代理</h2>
+        <button type="button" class="modal-close" data-close-filter aria-label="关闭筛选抽屉" title="关闭">
           <i data-lucide="x" class="w-5 h-5" aria-hidden="true"></i>
         </button>
       </header>
-      <div id="detailDrawerBody" class="drawer-body flex-1"></div>
-      <footer class="drawer-footer">
-        <button type="button" class="btn btn-default" data-close-drawer>关闭</button>
+      <div class="order-filter-drawer-body">
+        <div id="proxyFilterBody" class="order-filter-flow"></div>
+      </div>
+      <footer class="order-filter-drawer-footer">
+        <button type="button" class="btn btn-default" data-filter-reset>重置</button>
+        <button type="button" class="btn btn-primary" data-filter-apply>确定筛选</button>
       </footer>
     </aside>
   </div>
+  <!-- 「代理详情」弹窗（design.md §5.7） -->
+  <div id="proxyDetailOverlay" class="hidden" role="dialog" aria-modal="true" aria-labelledby="proxyDetailTitle" aria-hidden="true">
+    <section id="proxyDetailPanel" class="proxy-detail-panel" tabindex="-1">
+      <header class="proxy-detail-header">
+        <h2 id="proxyDetailTitle" class="inline-block text-[16px] font-semibold text-ink-title">代理详情</h2>
+        <button type="button" class="modal-close" data-close-proxy-detail aria-label="关闭代理详情" title="关闭">
+          <i data-lucide="x" class="w-5 h-5" aria-hidden="true"></i>
+        </button>
+      </header>
+      <div class="proxy-detail-body">
+        <dl id="proxyDetailGrid" class="proxy-detail-grid"></dl>
+        <div class="proxy-detail-tabs" role="tablist" aria-label="代理详情分组">
+          <button type="button" class="proxy-detail-tab is-active" data-detail-tab="bound" role="tab" aria-selected="true">已绑定环境</button>
+          <button type="button" class="proxy-detail-tab" data-detail-tab="history" role="tab" aria-selected="false">历史绑定记录</button>
+          <button type="button" class="proxy-detail-tab" data-detail-tab="logs" role="tab" aria-selected="false">代理操作日志</button>
+        </div>
+        <div id="proxyDetailTableRegion" class="mt-4 overflow-x-auto"></div>
+        <div class="flex items-center justify-end flex-wrap gap-3 pt-5">
+          <div id="proxyDetailPager" class="min-w-0" aria-label="代理详情分页"></div>
+        </div>
+      </div>
+    </section>
+  </div>
+  <!-- 标签多选下拉 Portal 图层：避免被抽屉滚动容器裁切 -->
+  <div id="proxyTagPortal"></div>
   <!-- 操作确认框 -->
   <div id="confirmDialogOverlay" class="overlay dialog-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="confirmDialogTitle" aria-describedby="confirmDialogDesc" aria-hidden="true">
     <section id="confirmDialogPanel" class="dialog-panel" tabindex="-1">
@@ -640,9 +804,9 @@
       5: {
         title: '关键词搜索与清空',
         desc: [
-          '平台代理支持搜索序号、代理名称和 IP。',
-          '自有代理支持搜索序号、名称、IP 或域名；代理 API 支持搜索序号、名称和脱敏提取链接。',
-          '输入内容后显示清空按钮；清空仅修改当前来源草稿并保持输入焦点。'
+          '输入关键词只更新待提交草稿，不触发查询，也不重绘列表；点选搜索范围（含「全局搜索」）、回车或点击搜索按钮后才生效并回到第 1 页。',
+          '可按序号、代理名称、代理地址、端口、代理类型、所属成员、代理状态与标签限定检索范围。',
+          '清空按钮同时清除已提交关键词与检索范围，只作用于当前代理来源，并保持输入焦点。'
         ]
       },
       6: {
@@ -912,7 +1076,7 @@
         return '<i data-lucide="' + name + '" class="' + (className || 'w-4 h-4') + '" aria-hidden="true"></i>';
       }
       function nowText() {
-        return '2026-08-17 ' + new Date().toLocaleTimeString('zh-CN', { hour12: false });
+        return '2026-10-10 ' + new Date().toLocaleTimeString('zh-CN', { hour12: false });
       }
       function addMonths(dateText, months) {
         var date = new Date(String(dateText).replace(' ', 'T'));
@@ -929,34 +1093,21 @@
           return 'https://proxy.example.test/***';
         }
       }
-      var sourceConfig = {
-        platform: {
-          title: '平台代理',
-          typeLabel: '平台类型',
-          typeOptions: ['全部', '云平台', '全球家庭住宅-静态', '海外动态'],
-          statusOptions: ['全部代理', '运行中', '即将到期', '已过期', '自动续费中'],
-          searchPlaceholder: '搜索序号、代理名称、IP'
-        },
-        owned: {
-          title: '自有代理',
-          typeLabel: '代理类型',
-          typeOptions: ['全部', 'HTTP', 'HTTPS', 'SOCKS5'],
-          statusOptions: [],
-          searchPlaceholder: '搜索序号、名称、IP 或域名'
-        },
-        api: {
-          title: '代理 API',
-          typeLabel: '代理类型',
-          typeOptions: ['全部', 'HTTP', 'HTTPS', 'SOCKS5'],
-          statusOptions: [],
-          searchPlaceholder: '搜索序号、名称、脱敏提取链接'
-        }
-      };
+      /* 三个来源共用同一工具栏 + 「筛选代理」抽屉，仅筛选条件集合不同（design.md §5.4.1 / §5.4.4） */
+      /* 筛选条件初始值：平台代理 8 项、自有代理 5 项、代理 API 4 项共用同一草稿结构（design.md §5.4.4） */
       function defaultFilter(source) {
         return {
           status: source === 'platform' ? '全部代理' : '全部状态',
-          type: '全部',
-          address: '全部',
+          bindEnv: '全部',
+          types: [],
+          auth: '全部',
+          autoRenew: '全部',
+          tags: [],
+          expireStart: '',
+          expireEnd: '',
+          checkStart: '',
+          checkEnd: '',
+          checkStatus: '全部',
           search: ''
         };
       }
@@ -965,28 +1116,53 @@
         owned: { draft: defaultFilter('owned'), applied: defaultFilter('owned') },
         api: { draft: defaultFilter('api'), applied: defaultFilter('api') }
       };
+      /* 代理详情三个分组的 mock 取值域（design.md §5.7） */
+      var PLATFORM_ENV_PLATFORMS = ['TikTok-美国-本土', 'Amazon-美国站', 'Shopee-东南亚-本土', 'TikTok-英国-本土', 'Amazon-德国站', 'Rakuten-日本-本土'];
+      var PLATFORM_ENV_NAMES = ['TikTok-美国-本土-01', 'Amazon-美国站-03', 'Shopee-东南亚-07', 'TikTok-英国-本土-02', 'Amazon-德国站-05', 'Rakuten-日本-04'];
+      var PLATFORM_LOGIN_USERS = ['张三', '李四', '王五', '赵六'];
+      /* 自有代理筛选条件常量（design.md §5.4.4）：绑定环境情况按「已绑定 / 未绑定」口径，代理类型为三种代理协议。
+         注意：必须声明在下方 expandSeeds 调用之前——var 仅提升声明不提升赋值，否则展开自有代理详情分组时会取到 undefined。 */
+      var OWNED_BIND_OPTIONS = ['全部', '已绑定', '未绑定'];
+      var OWNED_TYPE_OPTIONS = ['HTTP', 'HTTPS', 'SOCKS5'];
+      /* 自有代理历史绑定记录的环境池：自有代理绑定的是用户自建环境 */
+      var OWNED_ENV_NAMES = ['3-云登浏览器', '11-指纹测试', '32-HK-Backup', '18-JP-Shop', '24-US-Ads', '41-临时验证'];
+      /* 代理 API 筛选条件常量（design.md §5.4.4）：代理类型为三种代理协议，检测状态取「代理检测结果」口径
+         （检测成功 = 可用、检测失败 = 不可用，待检测不归入任一成功/失败分支），授权成员情况与平台代理口径一致。
+         同样必须声明在下方 expandSeeds 调用之前——var 仅提升声明不提升赋值。 */
+      var API_TYPE_OPTIONS = ['HTTP', 'HTTPS', 'SOCKS5'];
+      var API_CHECK_OPTIONS = ['全部', '检测成功', '检测失败'];
+      var API_AUTH_OPTIONS = ['全部', '未授权', '已授权'];
+      /* 代理 API 详情「历史绑定记录」的环境池：API 提取出的代理同样绑定到用户自建环境 */
+      var API_ENV_NAMES = ['12-云登浏览器', '24-US-Ads', '20-EU-Store', '18-JP-Shop', '32-HK-Backup', '41-临时验证'];
+      /* 平台代理种子：覆盖 运行中 / 已停止 / 即将到期 / 已过期 / 自动续费中 / 非自动续费 / 已下架 / 已删除，
+         并覆盖已绑定与待绑定、已授权与未授权、三种代理类型（design.md §5.4.3 状态口径）。
+         category 为列表「代理类型」列与筛选口径；service 为续费弹窗沿用的旧平台类型字段（列表不可见，仅参与流量套餐判断）。 */
       var platformSeeds = [
-        { name: '美国洛杉矶静态', endpoint: '203.0.113.18:8000', protocol: 'HTTPS', addressType: 'IPv4', service: '云平台', status: '运行中', renew: true, expiresAt: '2026-09-30 23:59', tags: ['美国站'], remark: '主店铺线路', environments: ['14-云登浏览器_1'], authorizedTo: ['张小登'] },
-        { name: '英国伦敦住宅', endpoint: '198.51.100.27:9000', protocol: 'HTTP', addressType: 'IPv4', service: '全球家庭住宅-静态', status: '即将到期', renew: false, expiresAt: '2026-08-20 23:59', tags: ['欧洲站'], remark: '旺季备用', environments: [], authorizedTo: ['李运营'] },
-        { name: '新加坡动态住宅', endpoint: '203.0.113.96:1080', protocol: 'SOCKS5', addressType: 'IPv4', service: '海外动态', status: '自动续费中', renew: true, expiresAt: '2026-08-28 23:59', tags: ['东南亚'], remark: '-', environments: ['16-云登浏览器_3'], authorizedTo: ['1938'], packageTraffic: '10G/月', overageRate: '限时免费', trafficUsed: 6.4, trafficRemaining: 3.6, trafficTotal: 10, trafficResetAt: '2026-09-01', trafficPackage: '10 GB / 90 天' },
-        { name: '德国法兰克福静态', endpoint: '198.51.100.68:8080', protocol: 'HTTPS', addressType: 'IPv4', service: '云平台', status: '已过期', renew: false, expiresAt: '2026-08-14 23:59', tags: ['欧洲站'], remark: '待续费', environments: ['21-DE-Shop'], authorizedTo: ['张小登', '李运营'] },
-        { name: '日本东京家庭住宅', endpoint: '203.0.113.122:8443', protocol: 'HTTPS', addressType: 'IPv4', service: '全球家庭住宅-静态', status: '运行中', renew: false, expiresAt: '2026-10-12 23:59', tags: ['日本站'], remark: '-', environments: [], authorizedTo: ['测试员'] },
-        { name: '巴西圣保罗动态', endpoint: '198.51.100.145:1081', protocol: 'SOCKS5', addressType: 'IPv4', service: '海外动态', status: '运行中', renew: true, expiresAt: '2026-09-18 23:59', tags: ['南美站'], remark: '广告账户', environments: ['27-BR-Ads'], authorizedTo: ['李运营'], packageTraffic: '10G/月', overageRate: '限时免费', trafficUsed: 2.1, trafficRemaining: 7.9, trafficTotal: 10, trafficResetAt: '2026-09-01', trafficPackage: '5 GB / 30 天' }
+        { name: '香港优质静态', endpoint: '38.182.97.171:8000', protocol: 'HTTPS', addressType: 'IPv4', service: '全球家庭住宅-静态', category: '静态住宅-优质', region: '中国-香港', status: '运行中', listed: false, deleted: false, renew: true, renewMonths: 1, expiresAt: '2026-10-19 14:55:39', openedAt: '2026-09-21 16:56:25', tags: ['测试专用'], remark: '主店铺线路', environments: ['14-云登浏览器_1'], authorizedTo: ['张三'] },
+        { name: '美国波士顿住宅', endpoint: '38.179.77.224:9000', protocol: 'HTTPS', addressType: 'IPv4', service: '全球家庭住宅-静态', category: '静态住宅-标准', region: '美国-波士顿', status: '运行中', listed: false, deleted: false, renew: true, renewMonths: 1, expiresAt: '2026-10-19 16:56:25', openedAt: '2026-09-21 16:56:25', tags: ['测试专用', '美国站', '主店铺', '欧洲站', '东南亚', '日本站', '香港站', '备用'], remark: '广告账户专用', environments: ['Amazon-美国站-03'], authorizedTo: ['张三', '李四', '王五', '赵六', '孙七', '周八', '林九'] },
+        { name: '英国伦敦静态', endpoint: '38.75.136.42:8080', protocol: 'HTTP', addressType: 'IPv4', service: '全球家庭住宅-静态', category: '静态住宅-标准', region: '英国-伦敦', status: '即将到期', listed: false, deleted: false, renew: false, renewMonths: 1, expiresAt: '2026-09-25 09:12:00', openedAt: '2026-06-25 09:12:00', tags: ['欧洲站'], remark: '旺季备用', environments: [], authorizedTo: ['李四'] },
+        { name: '德国法兰克福静态', endpoint: '38.61.20.115:8081', protocol: 'HTTPS', addressType: 'IPv4', service: '全球家庭住宅-静态', category: '静态住宅-优质', region: '德国-法兰克福', status: '已过期', listed: false, deleted: false, renew: false, renewMonths: 1, expiresAt: '2026-08-14 23:59:00', openedAt: '2026-05-14 23:59:00', tags: ['欧洲站', '备用'], remark: '待续费', environments: ['21-DE-Shop'], authorizedTo: ['张三', '李四'] },
+        { name: '新加坡云平台', endpoint: '38.90.44.77:1080', protocol: 'SOCKS5', addressType: 'IPv4', service: '云平台', category: '云平台', region: '新加坡', status: '自动续费中', listed: false, deleted: false, renew: true, renewMonths: 3, expiresAt: '2026-11-28 23:59:00', openedAt: '2026-08-28 23:59:00', tags: ['东南亚'], remark: '云平台线路', environments: ['16-云登浏览器_3'], authorizedTo: ['李四'], packageTraffic: '10G/月', overageRate: '限时免费', trafficUsed: 6.4, trafficRemaining: 3.6, trafficTotal: 10, trafficResetAt: '2026-10-01', trafficPackage: '10 GB / 90 天' },
+        { name: '日本东京家庭住宅', endpoint: '38.122.60.19:8443', protocol: 'HTTPS', addressType: 'IPv4', service: '全球家庭住宅-静态', category: '静态住宅-标准', region: '日本-东京', status: '已停止', listed: false, deleted: false, renew: false, renewMonths: 1, expiresAt: '2026-10-12 23:59:00', openedAt: '2026-07-12 23:59:00', tags: ['日本站'], remark: '-', environments: [], authorizedTo: ['王五'] },
+        { name: '巴西圣保罗云平台', endpoint: '38.145.88.203:1081', protocol: 'SOCKS5', addressType: 'IPv4', service: '海外动态', category: '云平台', region: '巴西-圣保罗', status: '非自动续费', listed: false, deleted: false, renew: false, renewMonths: 1, expiresAt: '2026-10-18 23:59:00', openedAt: '2026-06-18 23:59:00', tags: ['南美站'], remark: '广告账户', environments: ['27-BR-Ads'], authorizedTo: ['李四'], packageTraffic: '10G/月', overageRate: '限时免费', trafficUsed: 2.1, trafficRemaining: 7.9, trafficTotal: 10, trafficResetAt: '2026-10-01', trafficPackage: '5 GB / 30 天' },
+        { name: '荷兰阿姆斯特丹静态', endpoint: '38.108.55.61:8090', protocol: 'HTTPS', addressType: 'IPv4', service: '全球家庭住宅-静态', category: '静态住宅-标准', region: '荷兰-阿姆斯特丹', status: '已过期', listed: true, deleted: false, renew: false, renewMonths: 1, expiresAt: '2026-07-30 23:59:00', openedAt: '2026-04-30 23:59:00', tags: ['欧洲站'], remark: '已下架线路', environments: [], authorizedTo: [] },
+        { name: '洛杉矶静态已注销', endpoint: '38.34.10.9:8000', protocol: 'HTTPS', addressType: 'IPv4', service: '全球家庭住宅-静态', category: '静态住宅-优质', region: '美国-洛杉矶', status: '运行中', listed: false, deleted: true, renew: true, renewMonths: 1, expiresAt: '2026-10-19 14:55:39', openedAt: '2026-09-21 14:55:39', tags: [], remark: '供应商已注销', environments: ['14-云登浏览器_1'], authorizedTo: [] }
       ];
+      /* 自有代理种子：region 为详情「所属地区」，protocol 既是列表「代理类型」也是筛选「代理类型」口径 */
       var ownedSeeds = [
-        { name: '洛杉矶本地转发', endpoint: '192.0.2.17:7897', protocol: 'HTTP', addressType: 'IPv4', status: '可用', expiresAt: '2026-10-01 00:00', remark: '开发机转发', environments: ['3-云登浏览器', '11-指纹测试'], authorizedTo: ['***'], tags: ['本地'] },
-        { name: '办公网 SOCKS5', endpoint: 'proxy-office.example.test:1080', protocol: 'SOCKS5', addressType: '域名', status: '可用', expiresAt: '-', remark: '办公网络出口', environments: [], authorizedTo: ['***'], tags: ['办公'] },
-        { name: 'IPv6 测试线路', endpoint: '[2001:db8::e13]:8000', protocol: 'HTTPS', addressType: 'IPv6', status: '不可用', expiresAt: '-', remark: 'IPv6 兼容测试', environments: [], authorizedTo: ['测试员'], tags: ['测试'] },
-        { name: '香港机房备用', endpoint: '192.0.2.45:7897', protocol: 'SOCKS5', addressType: 'IPv4', status: '待检测', expiresAt: '2026-12-31 23:59', remark: '备用线路', environments: ['32-HK-Backup'], authorizedTo: ['***'], tags: ['备用'] },
-        { name: '东京专线出口', endpoint: 'edge-tokyo.example.test:443', protocol: 'HTTPS', addressType: '域名', status: '可用', expiresAt: '2026-11-30 23:59', remark: '日本店铺', environments: ['18-JP-Shop'], authorizedTo: ['李运营'], tags: ['日本站'] },
-        { name: '新加坡临时线路', endpoint: '192.0.2.88:3128', protocol: 'HTTP', addressType: 'IPv4', status: '不可用', expiresAt: '2026-08-31 23:59', remark: '认证失败待处理', environments: [], authorizedTo: ['张小登'], tags: ['临时'] }
+        { name: '洛杉矶本地转发', endpoint: '192.0.2.17:7897', protocol: 'HTTP', addressType: 'IPv4', region: '美国-洛杉矶', status: '可用', expiresAt: '2026-10-01 00:00', remark: '开发机转发', environments: ['3-云登浏览器', '11-指纹测试'], authorizedTo: ['***'], tags: ['本地'] },
+        { name: '办公网 SOCKS5', endpoint: 'proxy-office.example.test:1080', protocol: 'SOCKS5', addressType: '域名', region: '中国-北京', status: '可用', expiresAt: '-', remark: '办公网络出口', environments: [], authorizedTo: ['***'], tags: ['办公'] },
+        { name: 'IPv6 测试线路', endpoint: '[2001:db8::e13]:8000', protocol: 'HTTPS', addressType: 'IPv6', region: '中国-上海', status: '不可用', expiresAt: '-', remark: 'IPv6 兼容测试', environments: [], authorizedTo: ['测试员'], tags: ['测试'] },
+        { name: '香港机房备用', endpoint: '192.0.2.45:7897', protocol: 'SOCKS5', addressType: 'IPv4', region: '中国-香港', status: '待检测', expiresAt: '2026-12-31 23:59', remark: '备用线路', environments: ['32-HK-Backup'], authorizedTo: ['***'], tags: ['备用'] },
+        { name: '东京专线出口', endpoint: 'edge-tokyo.example.test:443', protocol: 'HTTPS', addressType: '域名', region: '日本-东京', status: '可用', expiresAt: '2026-11-30 23:59', remark: '日本店铺', environments: ['18-JP-Shop'], authorizedTo: ['李运营'], tags: ['日本站'] },
+        { name: '新加坡临时线路', endpoint: '192.0.2.88:3128', protocol: 'HTTP', addressType: 'IPv4', region: '新加坡', status: '不可用', expiresAt: '2026-08-31 23:59', remark: '认证失败待处理', environments: [], authorizedTo: ['张小登'], tags: ['临时'] }
       ];
       var apiSeeds = [
-        { name: '动态住宅提取 API', endpoint: 'https://api.example.test/v2/proxy/***', protocol: 'HTTP', addressType: '动态', extractMode: '每次提取', status: '可用', remark: '-', environments: ['12-云登浏览器'], authorizedTo: ['1938'], tags: ['动态'] },
-        { name: '轮换代理 API', endpoint: 'https://proxy.example.test/v1/rotate/***', protocol: 'SOCKS5', addressType: '动态', extractMode: '固定间隔', status: '不可用', remark: '返回格式异常', environments: [], authorizedTo: ['张小登'], tags: [] },
-        { name: '欧洲住宅 API', endpoint: 'https://eu-res.example.test/extract/***', protocol: 'HTTPS', addressType: '动态', extractMode: '每次提取', status: '可用', remark: '欧洲业务', environments: ['20-EU-Store'], authorizedTo: ['李运营'], tags: ['欧洲站'] },
-        { name: '亚太轮换 API', endpoint: 'https://apac.example.test/proxy/***', protocol: 'HTTP', addressType: '动态', extractMode: '固定间隔', status: '待检测', remark: '每 10 分钟轮换', environments: [], authorizedTo: ['测试员'], tags: ['亚太'] },
-        { name: '北美长效 API', endpoint: 'https://na-static.example.test/session/***', protocol: 'HTTPS', addressType: '动态', extractMode: '每次提取', status: '可用', remark: '长会话模式', environments: ['24-US-Ads'], authorizedTo: ['张小登'], tags: ['美国站'] }
+        { name: '动态住宅提取 API', endpoint: 'https://api.example.test/v2/proxy/***', protocol: 'HTTP', addressType: '动态', extractMode: '每次提取', region: '美国-洛杉矶', status: '可用', remark: '-', environments: ['12-云登浏览器'], authorizedTo: ['1938'], tags: ['动态'] },
+        { name: '轮换代理 API', endpoint: 'https://proxy.example.test/v1/rotate/***', protocol: 'SOCKS5', addressType: '动态', extractMode: '固定间隔', region: '新加坡', status: '不可用', remark: '返回格式异常', environments: [], authorizedTo: ['***'], tags: [] },
+        { name: '欧洲住宅 API', endpoint: 'https://eu-res.example.test/extract/***', protocol: 'HTTPS', addressType: '动态', extractMode: '每次提取', region: '德国-法兰克福', status: '可用', remark: '欧洲业务', environments: ['20-EU-Store'], authorizedTo: ['李运营'], tags: ['欧洲站'] },
+        { name: '亚太轮换 API', endpoint: 'https://apac.example.test/proxy/***', protocol: 'HTTP', addressType: '动态', extractMode: '固定间隔', region: '日本-东京', status: '待检测', remark: '每 10 分钟轮换', environments: [], authorizedTo: ['测试员'], tags: ['亚太'] },
+        { name: '北美长效 API', endpoint: 'https://na-static.example.test/session/***', protocol: 'HTTPS', addressType: '动态', extractMode: '每次提取', region: '美国-纽约', status: '可用', remark: '长会话模式', environments: ['24-US-Ads'], authorizedTo: ['张小登'], tags: ['美国站'] }
       ];
       function expandSeeds(source, seeds, total) {
         var prefix = source === 'platform' ? 'PT' : source === 'owned' ? 'OWN' : 'API';
@@ -995,6 +1171,9 @@
           var seed = seeds[index % seeds.length];
           var cycle = Math.floor(index / seeds.length) + 1;
           var id = prefix + '-' + String(index + 1).padStart(3, '0');
+          /* 平台代理的「代理信息」列常态展示最近检测时间，因此不产生待检测空值；自有代理 / 代理 API 保留待检测态 */
+          var neverChecked = source !== 'platform' && index % 4 === 3;
+          var host = seed.endpoint.replace(/:\d+$/, '');
           var copy = Object.assign({}, seed, {
             id: id,
             source: source,
@@ -1002,13 +1181,60 @@
             environments: seed.environments.slice(),
             authorizedTo: seed.authorizedTo.slice(),
             tags: seed.tags.slice(),
-            lastCheckedAt: index % 4 === 3 ? '-' : '2026-08-' + String(17 - (index % 5)).padStart(2, '0') + ' ' + String(9 + (index % 8)).padStart(2, '0') + ':2' + (index % 6),
-            checkDetail: index % 4 === 3
+            lastCheckedAt: neverChecked ? '-' : '2026-10-10 ' + String(15 - (index % 6)).padStart(2, '0') + ':' + String(44 + (index % 10)).padStart(2, '0') + ':' + String(58 - (index % 40)).padStart(2, '0'),
+            checkDetail: neverChecked
               ? { result: '待检测', exitIp: '-', region: '-', latency: '-', reason: '' }
               : seed.status === '不可用'
                 ? { result: '不可用', exitIp: '-', region: '-', latency: '-', reason: index % 2 ? '连接超时' : '认证失败' }
-                : { result: '可用', exitIp: seed.endpoint.replace(/:\d+$/, ''), region: ['美国 洛杉矶', '英国 伦敦', '新加坡', '日本 东京'][index % 4], latency: String(42 + index * 3) + 'ms', reason: '' }
+                : { result: '可用', exitIp: host, region: ['美国 洛杉矶', '英国 伦敦', '新加坡', '日本 东京'][index % 4], latency: String(42 + index * 3) + 'ms', reason: '' }
           });
+          /* 代理详情：已绑定环境 / 历史绑定记录 / 代理操作日志；三个来源共用同一套分组结构（design.md §5.7） */
+          if (source === 'platform' || source === 'owned' || source === 'api') {
+            var isOwned = source === 'owned';
+            var isApi = source === 'api';
+            var envNamePool = isApi ? API_ENV_NAMES : isOwned ? OWNED_ENV_NAMES : PLATFORM_ENV_NAMES;
+            /* 脱敏值 *** 视为未授权，与列表「授权人」列展示的「- -」一致 */
+            var owners = copy.authorizedTo.filter(function (name) { return name && name !== '***'; });
+            copy.boundEnv = copy.deleted ? [] : copy.environments.map(function (envName, envIndex) {
+              return {
+                name: envName,
+                platform: PLATFORM_ENV_PLATFORMS[envIndex % PLATFORM_ENV_PLATFORMS.length],
+                lastUser: owners.length ? owners[envIndex % owners.length] : PLATFORM_LOGIN_USERS[envIndex % PLATFORM_LOGIN_USERS.length],
+                lastLoginAt: '2026-09-21 17:0' + String(2 + (envIndex % 7)) + ':35'
+              };
+            });
+            copy.history = copy.deleted ? [] : [
+              { name: envNamePool[index % envNamePool.length], deleted: true, platform: PLATFORM_ENV_PLATFORMS[index % PLATFORM_ENV_PLATFORMS.length], user: PLATFORM_LOGIN_USERS[index % PLATFORM_LOGIN_USERS.length], at: '2026-09-21 17:02:35' },
+              { name: envNamePool[(index + 2) % envNamePool.length], deleted: false, platform: PLATFORM_ENV_PLATFORMS[(index + 2) % PLATFORM_ENV_PLATFORMS.length], user: PLATFORM_LOGIN_USERS[(index + 1) % PLATFORM_LOGIN_USERS.length], at: '2026-09-18 11:24:08' },
+              { name: envNamePool[(index + 4) % envNamePool.length], deleted: index % 2 === 0, platform: PLATFORM_ENV_PLATFORMS[(index + 4) % PLATFORM_ENV_PLATFORMS.length], user: PLATFORM_LOGIN_USERS[(index + 3) % PLATFORM_LOGIN_USERS.length], at: '2026-09-12 10:05:41' }
+            ];
+            /* 操作日志口径：平台代理为购买 / 续费，自有代理为添加 / 检测，代理 API 为添加 API / 更新提取链接；操作人优先取真实授权成员 */
+            copy.logs = isApi
+              ? [
+                { at: '2026-09-21 17:09:27', type: '检测代理', content: '检测代理 API「' + copy.name + '」，结果为' + copy.checkDetail.result, operator: owners.length ? owners[0] : PLATFORM_LOGIN_USERS[index % PLATFORM_LOGIN_USERS.length] },
+                { at: '2026-09-21 16:56:25', type: '添加代理 API', content: '添加了代理 API「' + copy.name + '」，提取方式为' + copy.extractMode, operator: PLATFORM_LOGIN_USERS[index % PLATFORM_LOGIN_USERS.length] }
+              ]
+              : isOwned
+              ? [
+                { at: '2026-09-21 17:09:27', type: '检测代理', content: '检测自有代理' + host + '，结果为' + copy.checkDetail.result, operator: owners.length ? owners[0] : PLATFORM_LOGIN_USERS[index % PLATFORM_LOGIN_USERS.length] },
+                { at: '2026-09-21 16:56:25', type: '添加代理', content: '添加了自有代理' + host, operator: PLATFORM_LOGIN_USERS[index % PLATFORM_LOGIN_USERS.length] }
+              ]
+              : [
+                { at: '2026-09-21 17:09:27', type: '分配代理', content: '将平台代理' + host + '分配给序号为[' + String(27804 + index) + ']的环境', operator: PLATFORM_LOGIN_USERS[index % PLATFORM_LOGIN_USERS.length] },
+                { at: '2026-09-21 16:56:25', type: '购买代理', content: '购买了平台代理', operator: PLATFORM_LOGIN_USERS[index % PLATFORM_LOGIN_USERS.length] }
+              ];
+            copy.logs.push(isApi
+              ? (index % 3 === 0
+                ? { at: '2026-09-18 09:30:12', type: '更新提取链接', content: '更新了提取链接，检测结果：' + (copy.checkDetail.reason || copy.checkDetail.latency || copy.checkDetail.result), operator: PLATFORM_LOGIN_USERS[(index + 1) % PLATFORM_LOGIN_USERS.length] }
+                : { at: '2026-09-15 20:41:07', type: '授权成员', content: '将代理 API「' + copy.name + '」授权给 ' + (owners.length ? owners.join('、') : '张小登'), operator: PLATFORM_LOGIN_USERS[(index + 2) % PLATFORM_LOGIN_USERS.length] })
+              : isOwned
+              ? (index % 3 === 0
+                ? { at: '2026-09-18 09:30:12', type: '设置备注', content: '将备注修改为「' + copy.remark + '」', operator: PLATFORM_LOGIN_USERS[(index + 1) % PLATFORM_LOGIN_USERS.length] }
+                : { at: '2026-09-15 20:41:07', type: '授权成员', content: '将自有代理' + host + '授权给 ' + (owners.length ? owners.join('、') : '张小登'), operator: PLATFORM_LOGIN_USERS[(index + 2) % PLATFORM_LOGIN_USERS.length] })
+              : (index % 3 === 0
+                ? { at: '2026-09-18 09:30:12', type: '续费代理', content: '续费 ' + Number(copy.renewMonths || 1) + ' 个月', operator: PLATFORM_LOGIN_USERS[(index + 1) % PLATFORM_LOGIN_USERS.length] }
+                : { at: '2026-09-15 20:41:07', type: '解绑环境', content: '从环境[' + PLATFORM_ENV_NAMES[index % PLATFORM_ENV_NAMES.length] + ']解绑代理', operator: PLATFORM_LOGIN_USERS[(index + 2) % PLATFORM_LOGIN_USERS.length] }));
+          }
           records.push(copy);
         }
         return records;
@@ -1043,13 +1269,12 @@
       ];
       var currentSource = 'platform';
       var currentPage = 1;
-      var pageSize = 20;
+      var pageSize = 10;
       var selectedIds = new Set();
       var pager = null;
       var modalMode = '';
       var modalContext = null;
       var modalLastFocus = null;
-      var drawerLastFocus = null;
       var dialogLastFocus = null;
       var dialogCallback = null;
       var activeMenuProxyId = null;
@@ -1058,37 +1283,355 @@
       var checkRunToken = 0;
       var modalOverlay = $('#formModalOverlay');
       var modalPanel = $('#formModalPanel');
-      var drawerOverlay = $('#detailDrawerOverlay');
-      var drawerPanel = $('#detailDrawerPanel');
       var dialogOverlay = $('#confirmDialogOverlay');
       var dialogPanel = $('#confirmDialogPanel');
+      /* ===================== 平台代理筛选条件常量（design.md §5.4.4） ===================== */
+      var PLATFORM_STATUS_OPTIONS = ['全部代理', '运行中', '即将到期', '已过期', '自动续费中', '非自动续费', '已下架'];
+      var PLATFORM_BIND_OPTIONS = ['全部', '待绑定', '已绑定'];
+      var PLATFORM_TYPE_OPTIONS = ['静态住宅-优质', '静态住宅-标准', '云平台'];
+      var PLATFORM_AUTH_OPTIONS = ['全部', '未授权', '已授权'];
+      var PLATFORM_RENEW_OPTIONS = ['全部', '已开启', '未开启'];
+      var PLATFORM_TAG_OPTIONS = ['香港站', '主店铺', '测试专用', '美国站', '欧洲站', '东南亚', '日本站', '南美站', '备用'];
+      /* 代理状态列的排序权重与语义色映射（design.md §5.2 line 245 状态纯文本特例） */
+      var PLATFORM_STATUS_ORDER = ['运行中', '自动续费中', '即将到期', '已过期', '非自动续费', '已下架'];
+      /* ===================== 列设置（design.md §5.15）：列显示 + 列顺序 =====================
+         每个来源独立维护「字段顺序 + 勾选态」；切换页签互不影响。
+         - 固定列（序号/ID）：恒定位于字段池首位，默认勾选且不可取消、不可拖拽；
+         - 操作列：固定末列，不进入字段池，不可隐藏或排序。 */
+      var LOCKED_COLUMN_KEY = 'id';
+      var FIXED_LAST_COLUMN_KEY = 'actions';
+      /* 面板显示名与表头文案允许分离（对齐环境管理：面板「序号」/ 表头「序号/ID」） */
+      var COLUMN_PANEL_LABELS = { 'id': '序号' };
+      var SCHEMA_BY_SOURCE = {
+        platform: [
+          ['id', '序号/ID', true, ''],
+          ['name', '代理名称', false, ''],
+          ['proxyInfo', '代理信息', false, ''],
+          ['boundEnv', '绑定环境', false, ''],
+          ['authList', '授权人', false, ''],
+          ['tagList', '标签', false, ''],
+          ['statusText', '代理状态', true, ''],
+          ['listed', '是否下架', false, '下架后的代理不可用于环境绑定，且不支持续费。'],
+          ['autoRenew', '自动续费', false, '开启后，代理到期自动续费(请确认扣款账户余额充足)'],
+          ['expiresMulti', '到期时间', true, ''],
+          ['actions', '操作', false, '']
+        ],
+        owned: [
+          ['id', '序号', false, ''],
+          ['name', '代理名称', false, ''],
+          ['endpoint', '代理信息', false, ''],
+          ['protocol', '代理类型', false, ''],
+          ['addressType', '地址类型', false, ''],
+          ['environments', '绑定环境', false, ''],
+          ['authorizedTo', '授权人', false, ''],
+          ['expiresAt', '到期时间', false, ''],
+          ['remark', '备注', false, ''],
+          ['status', '状态', false, ''],
+          ['actions', '操作', false, '']
+        ],
+        api: [
+          ['id', '序号/ID', false, ''],
+          ['name', '代理名称', false, ''],
+          ['protocol', '代理类型', false, ''],
+          ['extractMode', '提取方式', false, ''],
+          ['endpoint', '提取链接', false, ''],
+          ['authorizedTo', '授权人', false, ''],
+          ['checkResult', '代理检测结果', false, ''],
+          ['actions', '操作', false, '']
+        ]
+      };
+      var columnStateBySource = {};
+      function schemaForSource(source) {
+        return SCHEMA_BY_SOURCE[source || currentSource] || SCHEMA_BY_SOURCE.platform;
+      }
+      function columnLabelsForSource(source) {
+        var labels = {};
+        schemaForSource(source).forEach(function (column) { labels[column[0]] = column[1]; });
+        return labels;
+      }
+      /* 状态惰性派生：字段池顺序默认同表头顺序，默认全部勾选（操作列不入池） */
+      function columnStateForSource(source) {
+        var key = source || currentSource;
+        if (!columnStateBySource[key]) {
+          var pool = schemaForSource(key).map(function (column) { return column[0]; }).filter(function (columnKey) {
+            return columnKey !== FIXED_LAST_COLUMN_KEY;
+          });
+          columnStateBySource[key] = { order: pool, checked: new Set(pool) };
+        }
+        return columnStateBySource[key];
+      }
+      function columnPanelLabel(key) {
+        return COLUMN_PANEL_LABELS[key] || columnLabelsForSource(currentSource)[key] || key;
+      }
+      /* 表格实际列：勾选字段按字段池顺序排列，操作列恒定收尾 */
+      function visibleColumnsForSource(source) {
+        var state = columnStateForSource(source);
+        return state.order.filter(function (key) { return state.checked.has(key); }).concat([FIXED_LAST_COLUMN_KEY]);
+      }
+      function copyFilter(filter) {
+        return {
+          status: filter.status,
+          bindEnv: filter.bindEnv,
+          types: (filter.types || []).slice(),
+          auth: filter.auth,
+          autoRenew: filter.autoRenew,
+          tags: (filter.tags || []).slice(),
+          expireStart: filter.expireStart || '',
+          expireEnd: filter.expireEnd || '',
+          checkStart: filter.checkStart || '',
+          checkEnd: filter.checkEnd || '',
+          checkStatus: filter.checkStatus || '全部',
+          search: filter.search
+        };
+      }
       function currentDraft() {
         return filterState[currentSource].draft;
       }
       function currentApplied() {
         return filterState[currentSource].applied;
       }
-      function copyFilter(filter) {
-        return {
-          status: filter.status,
-          type: filter.type,
-          address: filter.address,
-          search: filter.search
-        };
+      /* 已提交条件的数量：仅用于「筛选」按钮角标（design.md §5.4.4） */
+      function activeFilterCount() {
+        var applied = currentApplied();
+        /* 自有代理与平台代理共用「筛选代理」抽屉，仅条件集合不同（design.md §5.4.4） */
+        if (currentSource === 'owned') {
+          var ownedCount = 0;
+          if (applied.bindEnv !== '全部') ownedCount += 1;
+          if (applied.types.length) ownedCount += 1;
+          if (applied.auth !== '全部') ownedCount += 1;
+          if (applied.expireStart || applied.expireEnd) ownedCount += 1;
+          if (applied.checkStart || applied.checkEnd) ownedCount += 1;
+          return ownedCount;
+        }
+        /* 代理 API 4 项筛选条件：代理类型 / 检测状态 / 授权成员情况 / 最近检测时间（design.md §5.4.4） */
+        if (currentSource === 'api') {
+          var apiCount = 0;
+          if (applied.types.length) apiCount += 1;
+          if (applied.checkStatus !== '全部') apiCount += 1;
+          if (applied.auth !== '全部') apiCount += 1;
+          if (applied.checkStart || applied.checkEnd) apiCount += 1;
+          return apiCount;
+        }
+        var count = 0;
+        if (applied.status !== '全部代理') count += 1;
+        if (applied.bindEnv !== '全部') count += 1;
+        if (applied.types.length) count += 1;
+        if (applied.auth !== '全部') count += 1;
+        if (applied.autoRenew !== '全部') count += 1;
+        if (applied.tags.length) count += 1;
+        if (applied.expireStart || applied.expireEnd) count += 1;
+        if (applied.checkStart || applied.checkEnd) count += 1;
+        return count;
       }
+      /* 平台代理状态：已下架优先于运营状态（design.md §5.4.3 代理状态口径） */
+      function platformStatusOf(item) {
+        if (item.listed) return '已下架';
+        return item.status || '-';
+      }
+      function statusToneClass(item) {
+        var status = platformStatusOf(item);
+        if (status === '运行中' || status === '自动续费中') return 'is-running';
+        if (status === '即将到期') return 'is-warning';
+        if (status === '已过期') return 'is-expired';
+        if (status === '已下架') return 'text-ink-muted';
+        return 'is-stopped';
+      }
+      function endpointHost(item) {
+        var endpoint = String(item.endpoint || '');
+        var portMatch = endpoint.match(/:(\d+)$/);
+        return portMatch ? endpoint.slice(0, -portMatch[0].length) : endpoint;
+      }
+      function proxyTypeText(item) {
+        if (item.category === '云平台') return '平台代理 | 云平台';
+        return '平台代理 | 静态住宅';
+      }
+      /* 剩余天数：按自然日计算，已过期返回负数（design.md §5.4.3 到期时间列） */
+      function daysLeft(dateText) {
+        var target = new Date(String(dateText || '').replace(' ', 'T'));
+        if (Number.isNaN(target.getTime())) return null;
+        var today = new Date('2026-09-21T00:00:00');
+        return Math.ceil((target.getTime() - today.getTime()) / 86400000);
+      }
+      /* 到期风险提示：仅统计未注销、剩余 0～7 天的平台代理（design.md §5.4.1 顶部风险提示） */
+      function isPlatformExpiringSoon(item) {
+        if (!item || item.source !== 'platform' || item.deleted) return false;
+        var left = daysLeft(item.expiresAt);
+        return left !== null && left >= 0 && left <= 7;
+      }
+      function platformExpiringSoonItems() {
+        return proxyData.filter(isPlatformExpiringSoon);
+      }
+      /* 仅在平台代理页且确有 7 天内到期数据时展示；自有代理与代理 API 页始终隐藏 */
+      function syncExpiryNoticeVisibility() {
+        var notice = $('#expiryNotice');
+        if (!notice) return;
+        var expiringItems = platformExpiringSoonItems();
+        var visible = currentSource === 'platform' && expiringItems.length > 0;
+        $('#expiryNoticeCount').textContent = String(expiringItems.length);
+        notice.classList.toggle('hidden', !visible);
+      }
+      function expiresRestHtml(item) {
+        var left = daysLeft(item.expiresAt);
+        if (left === null) return '<div class="proxy-expire-rest">-</div>';
+        if (left < 0) return '<div class="proxy-expire-rest text-danger">已过期</div>';
+        return '<div class="proxy-expire-rest">剩余' + left + '天</div>';
+      }
+      /* 日期范围比较：精确到年月日（design.md §5.4.4 到期时间 / 最近检测时间） */
+      function withinDateRange(value, start, end) {
+        if (!start && !end) return true;
+        var day = String(value || '').slice(0, 10);
+        if (!day || day === '-') return false;
+        if (start && day < start) return false;
+        if (end && day > end) return false;
+        return true;
+      }
+      /* ===================== 搜索框：平台代理 7 个可检索字段（design.md §5.4.2） ===================== */
+      var proxySearchSource = null;
+      function proxySearchValues(item) {
+        var boundNames = (item.boundEnv || []).map(function (row) { return row.name; });
+        var values = {
+          id: [item.id],
+          name: [item.name],
+          host: [endpointHost(item)],
+          env: (item.environments || []).concat(boundNames),
+          owner: item.authorizedTo,
+          tags: item.tags
+        };
+        /* 自有代理的第 6 个检索字段为「备注」，与平台代理的「标签」互斥 */
+        if (item.source === 'owned') values.remark = [item.remark];
+        /* 代理 API 仅检索「代理名称 / 提取链接 / 授权人 / 序号 ID」四项（design.md §5.4.2） */
+        if (item.source === 'api') return { id: [item.id], name: [item.name], link: [item.endpoint], owner: item.authorizedTo };
+        return values;
+      }
+      /* 可检索字段：平台代理第 6 项为「标签」，自有代理为「备注」，代理 API 为「提取链接」（design.md §5.4.2） */
+      function proxySearchScopes(source) {
+        if (source === 'api') {
+          return [
+            { key: 'all', label: '全局搜索' },
+            { key: 'name', label: '代理名称' },
+            { key: 'link', label: '提取链接' },
+            { key: 'owner', label: '授权人' },
+            { key: 'id', label: '序号/ID' }
+          ];
+        }
+        var isOwned = source === 'owned';
+        return [
+          { key: 'all', label: '全局搜索' },
+          { key: 'name', label: '代理名称' },
+          { key: 'host', label: '代理IP' },
+          { key: 'env', label: '绑定环境' },
+          { key: 'owner', label: '授权人' },
+          { key: isOwned ? 'remark' : 'tags', label: isOwned ? '备注' : '标签' },
+          { key: 'id', label: '序号/ID' }
+        ];
+      }
+      function initProxySearchBox() {
+        if (!window.YDSearchBox) return;
+        window.YDSearchBox.init('#proxySearchBox', {
+          label: '代理',
+          inputId: 'proxyKeyword',
+          value: currentApplied().search || '',
+          scopes: proxySearchScopes(currentSource),
+          values: proxySearchValues,
+          /* 公共层在输入、切换范围、提交、清空时都会回调；仅当关键词已提交（或已被清空）时才写入已应用条件，
+             避免逐字符输入即触发重绘（design.md §5.4.2 B）。 */
+          onChange: function (instance) {
+            var value = instance.value();
+            if (value && !instance.committed()) return;
+            currentDraft().search = value;
+            currentApplied().search = value;
+            setCurrentPageToOne();
+            render();
+          }
+        });
+      }
+      /* 公共层 init 对已存在的实例只做同步、不替换范围；切换来源时须清空容器重挂（design.md §5.4.2） */
+      function rebuildProxySearchBox() {
+        var container = $('#proxySearchBox');
+        if (!container || !window.YDSearchBox) return;
+        container.innerHTML = '';
+        initProxySearchBox();
+        /* 关键词按来源独立保存，重挂后回填当前来源已提交的关键词 */
+        window.YDSearchBox.setValue('#proxySearchBox', currentApplied().search || '');
+      }
+      /* ===================== 数据过滤：平台代理 8 项条件 ===================== */
       function filteredData() {
         var applied = currentApplied();
-        var query = applied.search.trim().toLowerCase();
-        return proxyData.filter(function (item) {
+        var rows = proxyData.filter(function (item) {
           if (item.source !== currentSource) return false;
-          if (currentSource === 'platform' && applied.status !== '全部代理' && item.status !== applied.status) return false;
-          if (applied.type !== '全部') {
-            var value = currentSource === 'platform' ? item.service : item.protocol;
-            if (value !== applied.type) return false;
+          if (currentSource === 'platform') {
+            if (applied.status !== '全部代理') {
+              if (platformStatusOf(item) !== applied.status) return false;
+              /* 「即将到期」统一口径：不展示已过期数据，且严格限制在 7 天内到期。 */
+              if (applied.status === '即将到期' && !isPlatformExpiringSoon(item)) return false;
+            }
+            if (applied.bindEnv !== '全部') {
+              var bound = (item.environments || []).length > 0;
+              if (applied.bindEnv === '已绑定' && !bound) return false;
+              if (applied.bindEnv === '待绑定' && bound) return false;
+            }
+            if (applied.types.length && !applied.types.includes(item.category)) return false;
+            if (applied.auth !== '全部') {
+              var authorized = (item.authorizedTo || []).length > 0;
+              if (applied.auth === '已授权' && !authorized) return false;
+              if (applied.auth === '未授权' && authorized) return false;
+            }
+            if (applied.autoRenew !== '全部') {
+              if (applied.autoRenew === '已开启' && !item.renew) return false;
+              if (applied.autoRenew === '未开启' && item.renew) return false;
+            }
+            if (applied.tags.length && !applied.tags.some(function (tag) { return (item.tags || []).includes(tag); })) return false;
+            if (!withinDateRange(item.expiresAt, applied.expireStart, applied.expireEnd)) return false;
+            if (!withinDateRange(item.lastCheckedAt, applied.checkStart, applied.checkEnd)) return false;
+          } else if (currentSource === 'owned') {
+            /* 自有代理 5 项筛选条件（design.md §5.4.4） */
+            if (applied.bindEnv !== '全部') {
+              var ownedBound = (item.environments || []).length > 0;
+              if (applied.bindEnv === '已绑定' && !ownedBound) return false;
+              if (applied.bindEnv === '未绑定' && ownedBound) return false;
+            }
+            if (applied.types.length && !applied.types.includes(item.protocol)) return false;
+            if (applied.auth !== '全部') {
+              var ownedAuthorized = (item.authorizedTo || []).some(function (name) { return name && name !== '***'; });
+              if (applied.auth === '已授权' && !ownedAuthorized) return false;
+              if (applied.auth === '未授权' && ownedAuthorized) return false;
+            }
+            if (!withinDateRange(item.expiresAt, applied.expireStart, applied.expireEnd)) return false;
+            if (!withinDateRange(item.lastCheckedAt, applied.checkStart, applied.checkEnd)) return false;
+          } else {
+            /* 代理 API 4 项筛选条件（design.md §5.4.4） */
+            if (applied.types.length && !applied.types.includes(item.protocol)) return false;
+            if (applied.checkStatus !== '全部') {
+              var checkResult = item.checkDetail.result;
+              if (applied.checkStatus === '检测成功' && checkResult !== '可用') return false;
+              if (applied.checkStatus === '检测失败' && checkResult !== '不可用') return false;
+            }
+            if (applied.auth !== '全部') {
+              var apiAuthorized = (item.authorizedTo || []).some(function (name) { return name && name !== '***'; });
+              if (applied.auth === '已授权' && !apiAuthorized) return false;
+              if (applied.auth === '未授权' && apiAuthorized) return false;
+            }
+            if (!withinDateRange(item.lastCheckedAt, applied.checkStart, applied.checkEnd)) return false;
           }
-          if (currentSource === 'owned' && applied.address !== '全部' && item.addressType !== applied.address) return false;
-          if (!query) return true;
-          return [item.id, item.name, item.endpoint].join(' ').toLowerCase().includes(query);
+          return !window.YDSearchBox || window.YDSearchBox.matches('#proxySearchBox', item);
+        });
+        return currentSource === 'platform' ? sortPlatformRows(rows) : rows;
+      }
+      /* 表头排序：序号/ID、代理状态、到期时间（design.md §5.4.3） */
+      var platformSortState = { key: '', direction: 'none' };
+      function sortPlatformRows(rows) {
+        var key = platformSortState.key;
+        var direction = platformSortState.direction;
+        if (!key || direction === 'none') return rows;
+        var factor = direction === 'asc' ? 1 : -1;
+        return rows.slice().sort(function (left, right) {
+          var a, b;
+          if (key === 'id') { a = left.id; b = right.id; }
+          else if (key === 'statusText') { a = PLATFORM_STATUS_ORDER.indexOf(platformStatusOf(left)); b = PLATFORM_STATUS_ORDER.indexOf(platformStatusOf(right)); }
+          else { a = String(left.expiresAt || ''); b = String(right.expiresAt || ''); }
+          if (a < b) return -1 * factor;
+          if (a > b) return 1 * factor;
+          return 0;
         });
       }
       function visibleRows() {
@@ -1100,49 +1643,6 @@
         return proxyData.filter(function (item) {
           return item.source === currentSource && selectedIds.has(item.id);
         });
-      }
-      function schemaForSource() {
-        if (currentSource === 'platform') {
-          return [
-            ['id', '序号'],
-            ['name', '代理名称'],
-            ['endpoint', '代理信息'],
-            ['environments', '绑定环境'],
-            ['authorizedTo', '授权人'],
-            ['service', '服务信息'],
-            ['tags', '标签'],
-            ['status', '代理状态'],
-            ['renew', '自动续费'],
-            ['expiresAt', '到期时间'],
-            ['actions', '操作']
-          ];
-        }
-        if (currentSource === 'owned') {
-          return [
-            ['id', '序号'],
-            ['name', '代理名称'],
-            ['endpoint', '代理信息'],
-            ['protocol', '代理类型'],
-            ['addressType', '地址类型'],
-            ['environments', '绑定环境'],
-            ['authorizedTo', '授权人'],
-            ['expiresAt', '到期时间'],
-            ['remark', '备注'],
-            ['status', '状态'],
-            ['actions', '操作']
-          ];
-        }
-        return [
-          ['id', '序号'],
-          ['name', '代理名称'],
-          ['protocol', '代理类型'],
-          ['extractMode', '提取方式'],
-          ['endpoint', '提取链接'],
-          ['checkResult', '检测结果'],
-          ['environments', '绑定环境'],
-          ['authorizedTo', '授权人'],
-          ['actions', '操作']
-        ];
       }
       function statusBadge(value) {
         var successValues = ['运行中', '可用', '自动续费中'];
@@ -1157,101 +1657,113 @@
               : 'badge-muted';
         return '<span class="badge ' + tone + '">' + escapeHtml(value || '-') + '</span>';
       }
-      function syncFilterUI() {
-        var config = sourceConfig[currentSource];
-        var draft = currentDraft();
-        $$('.source-tab').forEach(function (button) {
-          var active = button.dataset.source === currentSource;
-          button.classList.toggle('is-active', active);
-          button.setAttribute('aria-selected', String(active));
-          button.tabIndex = active ? 0 : -1;
-        });
-        $('#typeFilterLabel').textContent = config.typeLabel;
-        $('#typeFilter').setAttribute('aria-label', config.typeLabel);
-        $('#typeFilter').innerHTML = config.typeOptions.map(function (option) {
-          return '<option value="' + escapeHtml(option) + '">' + escapeHtml(option) + '</option>';
-        }).join('');
-        $('#typeFilter').value = config.typeOptions.includes(draft.type) ? draft.type : '全部';
-        draft.type = $('#typeFilter').value;
-        $('#addressFilterItem').classList.toggle('hidden', currentSource !== 'owned');
-        $('#addressFilter').value = draft.address;
-        $('#searchInput').value = draft.search;
-        $('#searchInput').placeholder = config.searchPlaceholder;
-        $('#clearSearch').classList.toggle('hidden', !draft.search);
-        var hasStatuses = config.statusOptions.length > 0;
-        $('#statusFilterRow').classList.toggle('hidden', !hasStatuses);
-        $('#statusTabs').innerHTML = config.statusOptions.map(function (status, index) {
-          var active = draft.status === status;
-          return '<button type="button" class="status-tab' + (active ? ' is-active' : '') + '" data-status="' + escapeHtml(status) + '"' + (index === 0 ? '' : '') + ' aria-pressed="' + active + '">' + escapeHtml(status) + '</button>';
-        }).join('');
+      /* 授权人单元格：超出 1 人折叠为「+n」，hover 气泡显示全部（design.md §5.4.3） */
+      function authListHtml(items, limit) {
+        var list = (items || []).filter(function (name) { return name && name !== '***'; });
+        if (!list.length) return '<span class="text-ink-muted">- -</span>';
+        var max = limit || 1;
+        if (list.length <= max) return escapeHtml(list.join(','));
+        return escapeHtml(list.slice(0, max).join(',')) +
+          '<span class="proxy-more-pill" data-tip="' + escapeHtml(list.join('、')) + '">+' + (list.length - max) + '</span>';
       }
-      function pageActionsHtml() {
-        var parts = [];
-        if (currentSource === 'owned') {
-          parts.push('<button type="button" class="btn btn-primary" data-page-action="add-owned">' + icon('plus') + '<span>添加代理</span></button>');
-          parts.push('<button type="button" class="btn btn-default" data-page-action="check">' + icon('scan-line') + '<span>检测代理</span></button>');
-        }
-        if (currentSource === 'api') {
-          parts.push('<button type="button" class="btn btn-primary" data-page-action="add-api">' + icon('plus') + '<span>添加代理 API</span></button>');
-          parts.push('<button type="button" class="btn btn-default" data-page-action="check">' + icon('scan-line') + '<span>检测代理</span></button>');
-        }
-        if (currentSource === 'platform') {
-          parts.push('<button type="button" class="btn btn-default" data-page-action="store">' + icon('shopping-bag') + '<span>购买代理</span></button>');
-        }
-        parts.push('<button type="button" class="btn btn-default" data-page-action="refresh">' + icon('refresh-cw', 'w-4 h-4 refresh-icon') + '<span>刷新</span></button>');
-        return parts.join('');
+      /* 标签单元格：展示 pill，超出折叠为「+n」（design.md §5.4.3） */
+      function tagListHtml(tags, limit) {
+        var list = tags || [];
+        if (!list.length) return '<span class="text-ink-muted">- -</span>';
+        var max = limit || 1;
+        var visible = list.slice(0, max).map(function (tag) {
+          return '<span class="proxy-tag">' + escapeHtml(tag) + '</span>';
+        }).join('');
+        if (list.length <= max) return visible;
+        return visible + '<span class="proxy-more-pill" data-tip="' + escapeHtml(list.join('、')) + '">+' + (list.length - max) + '</span>';
       }
-      function batchActionsHtml() {
-        if (!selectedIds.size) return '';
-        if (currentSource === 'platform') {
-          return [
-            '<button type="button" class="btn btn-primary" data-batch-action="renew">' + icon('calendar-plus') + '<span>续费</span></button>',
-            '<button type="button" class="btn btn-default" data-batch-action="auto-renew">' + icon('repeat-2') + '<span>自动续费</span></button>',
-            '<button type="button" class="btn btn-default" data-batch-action="tag">' + icon('tags') + '<span>设置标签</span></button>',
-            '<button type="button" class="btn btn-default" data-batch-action="auth">' + icon('user-round-check') + '<span>授权</span></button>'
-          ].join('');
-        }
-        if (currentSource === 'owned') {
-          return [
-            '<button type="button" class="btn btn-default" data-batch-action="check">' + icon('scan-line') + '<span>检测</span></button>',
-            '<button type="button" class="btn btn-default" data-batch-action="remark">' + icon('message-square-text') + '<span>设置备注</span></button>',
-            '<button type="button" class="btn btn-default" data-batch-action="auth">' + icon('user-round-check') + '<span>授权</span></button>',
-            '<button type="button" class="btn btn-danger-outline" data-batch-action="delete">' + icon('trash-2') + '<span>删除</span></button>'
-          ].join('');
-        }
-        return [
-          '<button type="button" class="btn btn-default" data-batch-action="check">' + icon('scan-line') + '<span>检测</span></button>',
-          '<button type="button" class="btn btn-default" data-batch-action="auth">' + icon('user-round-check') + '<span>授权</span></button>',
-          '<button type="button" class="btn btn-danger-outline" data-batch-action="delete">' + icon('trash-2') + '<span>删除</span></button>'
-        ].join('');
+      /* 代理信息单元格：IP + 刷新、类型标识 + 所属地区、最近检测时间三行展示（design.md §5.2 平台代理列表特例） */
+      function proxyInfoCellHtml(item) {
+        if (item.deleted) return '<td><span class="proxy-deleted">代理已删除</span></td>';
+        var chip = item.category === '云平台' ? '云' : '静';
+        return '<td>' +
+          '<div class="proxy-ip"><span class="mono">' + escapeHtml(endpointHost(item)) + '</span>' +
+            '<button type="button" data-refresh-ip="' + escapeHtml(item.id) + '" title="刷新代理信息" aria-label="刷新代理信息">' + icon('refresh-cw', 'w-3 h-3') + '</button>' +
+          '</div>' +
+          '<div class="proxy-net-chips"><span class="proxy-chip">平</span><span class="proxy-chip">' + chip + '</span>' +
+            '<span class="text-[12px] text-ink-sub">' + escapeHtml(item.region || '-') + '</span>' +
+          '</div>' +
+          '<div class="proxy-check-line">' +
+            '<span class="mono">' + escapeHtml(item.lastCheckedAt || '-') + '</span>' +
+          '</div>' +
+          '</td>';
+      }
+      /* 绑定环境单元格：已绑定显示数量并跳转详情，未绑定引导分配（design.md §5.4.3） */
+      function boundEnvCellHtml(item) {
+        var count = (item.environments || []).length;
+        var label = count ? '查看详情' : '分配环境';
+        return '<td><button type="button" class="proxy-env-btn" data-bind-proxy="' + escapeHtml(item.id) + '" aria-label="' + label + ' ' + escapeHtml(item.name) + '">' +
+          icon('circle-plus', 'w-3.5 h-3.5') + '<span>' + label + '</span>' +
+          '</button></td>';
+      }
+      /* 自动续费单元格：开关 + 续费月数（design.md §5.4.3） */
+      function autoRenewCellHtml(item) {
+        return '<td><div class="flex items-center">' +
+          '<button type="button" class="switch" data-auto-renew="' + escapeHtml(item.id) + '" role="switch" aria-checked="' + item.renew + '" aria-label="' + (item.renew ? '关闭' : '开启') + escapeHtml(item.name) + '自动续费"></button>' +
+          (item.renew ? '<span class="proxy-renew-months">| ' + Number(item.renewMonths || 1) + '个月</span>' : '') +
+          '</div></td>';
+      }
+      /* 到期时间单元格：日期 / 时间 / 剩余天数三行（design.md §5.4.3） */
+      function expiresCellHtml(item) {
+        var parts = String(item.expiresAt || '').split(' ');
+        return '<td>' +
+          '<div class="mono">' + escapeHtml(parts[0] || '-') + '</div>' +
+          '<div class="mono text-[12px] text-ink-muted">' + escapeHtml(parts[1] || '') + '</div>' +
+          expiresRestHtml(item) +
+          '</td>';
       }
       function renderEnvironmentCell(item, rowIndex) {
-        return '<td><button type="button" class="action-link" data-bind-proxy="' + escapeHtml(item.id) + '">' + (item.environments.length ? '查看详情（' + item.environments.length + '）' : '分配环境') + '</button></td>';
+        return '<td><button type="button" class="action-link" data-bind-proxy="' + escapeHtml(item.id) + '">' + ((item.environments || []).length ? '查看详情（' + item.environments.length + '）' : '分配环境') + '</button></td>';
       }
+      /* 操作列：平台代理为「查看 + 续费 + 更多」；自有代理 / 代理 API 保留原「查看 / 编辑 / 更多」（design.md §5.4.3） */
       function renderActionCell(item, rowIndex) {
-        var viewAnnotation = rowIndex === 0 ? '' : '';
-        var editAnnotation = rowIndex === 0 ? '' : '';
-        var moreAnnotation = rowIndex === 0 ? '' : '';
+        if (currentSource === 'platform') {
+          return '<td><div class="flex items-center gap-2">' +
+            '<button type="button" class="btn btn-primary btn-xs" data-view-proxy="' + escapeHtml(item.id) + '">查看</button>' +
+            '<button type="button" class="btn btn-default btn-xs" data-renew-proxy="' + escapeHtml(item.id) + '">续费</button>' +
+            '<button type="button" class="proxy-more-btn" data-more-proxy="' + escapeHtml(item.id) + '" aria-haspopup="menu" aria-expanded="false" aria-label="更多操作">' + icon('ellipsis-vertical', 'w-4 h-4') + '</button>' +
+            '</div></td>';
+        }
         return '<td><div class="flex items-center gap-3">' +
-          '<button type="button" class="action-link" data-view-proxy="' + escapeHtml(item.id) + '"' + viewAnnotation + '>查看</button>' +
-          '<button type="button" class="action-link" data-edit-proxy="' + escapeHtml(item.id) + '"' + editAnnotation + '>编辑</button>' +
-          '<button type="button" class="action-link" data-more-proxy="' + escapeHtml(item.id) + '" aria-haspopup="menu" aria-expanded="false"' + moreAnnotation + '>更多</button>' +
+          '<button type="button" class="action-link" data-view-proxy="' + escapeHtml(item.id) + '">查看</button>' +
+          '<button type="button" class="action-link" data-edit-proxy="' + escapeHtml(item.id) + '">编辑</button>' +
+          '<button type="button" class="action-link" data-more-proxy="' + escapeHtml(item.id) + '" aria-haspopup="menu" aria-expanded="false">更多</button>' +
           '</div></td>';
       }
       function renderCell(item, key, rowIndex) {
         if (key === 'id') return '<td class="mono">' + escapeHtml(item.id) + '</td>';
         if (key === 'name') {
-          return '<td><strong class="font-medium text-ink-title">' + escapeHtml(item.name) + '</strong></td>';
+          var nameText = item.deleted
+            ? escapeHtml(item.name)
+            : '<button type="button" class="proxy-name-link" data-view-proxy="' + escapeHtml(item.id) + '">' + escapeHtml(item.name) + '</button>';
+          return '<td><strong class="font-medium text-ink-title">' + nameText + '</strong></td>';
         }
+        if (key === 'proxyInfo') return proxyInfoCellHtml(item);
+        if (key === 'boundEnv') return boundEnvCellHtml(item);
+        if (key === 'authList') return '<td>' + authListHtml(item.authorizedTo) + '</td>';
+        if (key === 'tagList') return '<td>' + tagListHtml(item.tags) + '</td>';
+        if (key === 'statusText') return '<td><span class="proxy-status ' + statusToneClass(item) + '">' + escapeHtml(platformStatusOf(item)) + '</span></td>';
+        if (key === 'listed') return '<td>' + (item.listed ? '<span class="text-ink-muted">已下架</span>' : '未下架') + '</td>';
+        if (key === 'autoRenew') return autoRenewCellHtml(item);
+        if (key === 'expiresMulti') return expiresCellHtml(item);
         if (key === 'endpoint') {
+          /* 代理 API 的「提取链接」默认脱敏，超宽截断并保留 title 悬停查看；自有代理的「代理信息」附带最近检测时间 */
+          if (item.source === 'api') {
+            return '<td title="' + escapeHtml(item.endpoint || '-') + '"><span class="mono inline-block max-w-[240px] truncate align-middle">' + escapeHtml(item.endpoint || '-') + '</span></td>';
+          }
           return '<td><span class="mono">' + escapeHtml(item.endpoint) + '</span><div class="text-[11px] text-ink-muted">检测于 <span class="mono">' + escapeHtml(item.lastCheckedAt) + '</span></div></td>';
         }
         if (key === 'environments') return renderEnvironmentCell(item, rowIndex);
-        if (key === 'authorizedTo') return '<td>' + escapeHtml(item.authorizedTo.join('、') || '-') + '</td>';
+        if (key === 'authorizedTo') return '<td>' + escapeHtml((item.authorizedTo || []).join('、') || '-') + '</td>';
         if (key === 'service') return '<td>' + escapeHtml(item.service || '-') + '</td>';
         if (key === 'extractMode') return '<td>' + escapeHtml(item.extractMode || '-') + '</td>';
         if (key === 'tags') {
-          return '<td>' + (item.tags.length ? item.tags.map(function (tag) { return '<span class="tag mr-1">' + escapeHtml(tag) + '</span>'; }).join('') : '-') + '</td>';
+          return '<td>' + ((item.tags || []).length ? item.tags.map(function (tag) { return '<span class="tag mr-1">' + escapeHtml(tag) + '</span>'; }).join('') : '-') + '</td>';
         }
         if (key === 'status') return '<td>' + statusBadge(item.status) + '</td>';
         if (key === 'checkResult') return '<td>' + statusBadge(item.checkDetail.result) + '<div class="mt-1 text-[11px] text-ink-muted">' + escapeHtml(item.checkDetail.reason || item.checkDetail.latency || '-') + '</div></td>';
@@ -1264,12 +1776,35 @@
         if (key === 'actions') return renderActionCell(item, rowIndex);
         return '<td>' + escapeHtml(item[key] || '-') + '</td>';
       }
+      /* 表头：排序按钮 + 字段说明图标（design.md §5.4.3） */
+      function renderTableHeadHtml(schema) {
+        var cells = schema.map(function (column) {
+          var key = column[0];
+          var label = column[1];
+          var html = escapeHtml(label);
+          if (column[2]) {
+            var direction = platformSortState.key === key ? platformSortState.direction : 'none';
+            html = '<button type="button" class="order-sort-button" data-sort-key="' + escapeHtml(key) + '" data-sort-direction="' + escapeHtml(direction) + '" aria-label="按' + escapeHtml(label) + '排序">' +
+              '<span>' + escapeHtml(label) + '</span>' +
+              '<span class="order-sort-icon" aria-hidden="true"><i class="order-sort-caret is-up"></i><i class="order-sort-caret is-down"></i></span>' +
+              '</button>';
+          }
+          if (column[3]) {
+            html += '<i data-lucide="circle-help" class="proxy-help w-4 h-4" title="' + escapeHtml(column[3]) + '" aria-label="' + escapeHtml(column[3]) + '"></i>';
+          }
+          return '<th>' + html + '</th>';
+        }).join('');
+        return '<tr><th class="w-10"><input id="checkAllCurrentPage" type="checkbox" class="checkbox" aria-label="全选当前页代理"></th>' + cells + '</tr>';
+      }
       function renderTable(rows) {
-        var schema = schemaForSource();
-        $('#tableHead').innerHTML = '<tr>' +
-          '<th class="w-10"><input id="checkAllCurrentPage" type="checkbox" class="checkbox" aria-label="全选当前页代理"></th>' +
-          schema.map(function (column) { return '<th>' + escapeHtml(column[1]) + '</th>'; }).join('') +
-          '</tr>';
+        /* 列显示与列顺序统一由列设置状态派生（design.md §5.15） */
+        var visibleKeys = visibleColumnsForSource();
+        var schema = schemaForSource().filter(function (column) {
+          return visibleKeys.indexOf(column[0]) > -1;
+        }).sort(function (left, right) {
+          return visibleKeys.indexOf(left[0]) - visibleKeys.indexOf(right[0]);
+        });
+        $('#tableHead').innerHTML = renderTableHeadHtml(schema);
         $('#tableBody').innerHTML = rows.map(function (item, rowIndex) {
           return '<tr data-proxy-row="' + escapeHtml(item.id) + '">' +
             '<td><input type="checkbox" class="checkbox" data-select-proxy="' + escapeHtml(item.id) + '" aria-label="选择代理 ' + escapeHtml(item.id) + '"' + (selectedIds.has(item.id) ? ' checked' : '') + '></td>' +
@@ -1299,22 +1834,124 @@
           }
         });
       }
+      /* 工具栏左侧主操作：平台代理「购买代理」跳转「商城-代理」，自有代理「添加代理」、代理 API「添加 API」
+         打开对应录入弹窗（design.md §5.4.1 左侧命令区）。 */
+      function renderToolbarLeft() {
+        var host = $('#toolbarLeft');
+        if (currentSource === 'platform') {
+          host.innerHTML = '<button type="button" class="btn btn-primary" data-page-action="store">' + icon('shopping-cart') + '<span>购买代理</span></button>';
+          return;
+        }
+        if (currentSource === 'owned') {
+          host.innerHTML = '<button type="button" class="btn btn-primary" data-page-action="add-owned">' + icon('plus') + '<span>添加代理</span></button>';
+          return;
+        }
+        host.innerHTML = '<button type="button" class="btn btn-primary" data-page-action="add-api">' + icon('plus') + '<span>添加 API</span></button>';
+      }
+      /* 列设置面板内容（design.md §5.15）：固定列置顶 + 可排序字段 + 「恢复默认」 */
+      function csoRowHtml(key) {
+        var checked = columnStateForSource().checked.has(key) ? ' checked' : '';
+        var label = columnPanelLabel(key);
+        return '<div class="cso-row" data-cso-row data-cso-key="' + escapeHtml(key) + '" role="listitem">' +
+          '<input type="checkbox" id="cso-' + escapeHtml(key) + '" class="checkbox" data-column-key="' + escapeHtml(key) + '"' + checked + ' aria-label="' + escapeHtml(label) + '">' +
+          '<label class="cso-label" for="cso-' + escapeHtml(key) + '">' + escapeHtml(label) + '</label>' +
+          '<span class="cso-grip" aria-hidden="true"><i></i><i></i><i></i></span>' +
+        '</div>';
+      }
+      /* 固定列行（序号）：勾选态禁用、无拖拽把手、不参与排序 */
+      function csoLockedRowHtml() {
+        var label = columnPanelLabel(LOCKED_COLUMN_KEY);
+        return '<div class="cso-row is-locked" role="listitem">' +
+          '<input type="checkbox" class="checkbox" checked disabled aria-label="' + escapeHtml(label) + '（固定列，不可取消）">' +
+          '<span class="cso-label">' + escapeHtml(label) + '</span>' +
+        '</div>';
+      }
+      /* 拖拽幽灵行：与面板行视觉一致，仅把手加深提示正在拖拽 */
+      function csoGhostHtml(key) {
+        return '<input type="checkbox" tabindex="-1" aria-hidden="true"' + (columnStateForSource().checked.has(key) ? ' checked' : '') + '>' +
+          '<span class="cso-label">' + escapeHtml(columnPanelLabel(key)) + '</span>' +
+          '<span class="cso-grip" aria-hidden="true"><i></i><i></i><i></i></span>';
+      }
+      function renderColumnSettings() {
+        var panel = $('#columnSettings');
+        if (!panel) return;
+        var rows = columnStateForSource().order.filter(function (key) {
+          return key !== LOCKED_COLUMN_KEY;
+        }).map(csoRowHtml).join('');
+        panel.innerHTML = '<div class="cso-list" id="csoList">' + csoLockedRowHtml() + rows + '</div>' +
+          '<button type="button" id="restoreColumns" class="cso-restore">' + icon('rotate-ccw', 'w-4 h-4') + '恢复默认</button>';
+        window.lucide && window.lucide.createIcons();
+        /* 切换来源会改变字段数量与面板高度：面板已打开时重新收敛定位，避免溢出模块视口 */
+        if (!panel.classList.contains('hidden')) positionColumnSettings();
+      }
+      function syncFilterUI() {
+        $$('.source-tab').forEach(function (button) {
+          var active = button.dataset.source === currentSource;
+          button.classList.toggle('is-active', active);
+          button.setAttribute('aria-selected', String(active));
+          button.tabIndex = active ? 0 : -1;
+        });
+        /* 三个来源共用同一工具栏结构：搜索、筛选、刷新、列设置（design.md §5.4.1 / §5.4.4） */
+        closeColumnSettings();
+        var activeCount = activeFilterCount();
+        var filterCount = $('#proxyFilterCount');
+        filterCount.textContent = String(activeCount);
+        filterCount.classList.toggle('hidden', activeCount === 0);
+        $('#proxyFilterBtn').classList.toggle('has-active-filters', activeCount > 0);
+        /* 各来源的可检索字段不同：切换来源时重建搜索框并回填该来源已提交的关键词（design.md §5.4.2）。 */
+        if (proxySearchSource !== currentSource) {
+          proxySearchSource = currentSource;
+          rebuildProxySearchBox();
+        }
+      }
+      /* 批量操作条：平台代理 5 项操作 + 分隔线（design.md §5.4.5） */
+      function batchActionsHtml() {
+        if (!selectedIds.size) return '';
+        var actions;
+        if (currentSource === 'platform') {
+          actions = [
+            ['renew', 'circle-plus', '批量续费'],
+            ['auto-renew', 'rotate-cw', '自动续费'],
+            ['tag', 'tag', '设置标签'],
+            ['auth', 'user-round-plus', '批量授权'],
+            ['delete', 'trash-2', '批量删除']
+          ];
+        } else if (currentSource === 'owned') {
+          actions = [
+            ['check', 'scan-line', '检测代理'],
+            ['remark', 'message-square-text', '设置备注'],
+            ['auth', 'user-round-check', '批量授权'],
+            ['delete', 'trash-2', '批量删除']
+          ];
+        } else {
+          /* 代理 API：检测代理 / 批量授权 / 批量删除 */
+          actions = [
+            ['check', 'scan-line', '检测代理'],
+            ['auth', 'user-round-check', '批量授权'],
+            ['delete', 'trash-2', '批量删除']
+          ];
+        }
+        return actions.map(function (action, index) {
+          var divider = index === 0 ? '' : '<span class="batch-divider" aria-hidden="true"></span>';
+          return divider + '<button type="button" class="batch-action" data-batch-action="' + escapeHtml(action[0]) + '">' + icon(action[1], 'w-4 h-4') + '<span>' + action[2] + '</span></button>';
+        }).join('');
+      }
       function render(syncPager) {
         if (syncPager === undefined) syncPager = true;
         syncFilterUI();
+        syncExpiryNoticeVisibility();
+        renderToolbarLeft();
         var allRows = filteredData();
         var totalPages = Math.max(1, Math.ceil(allRows.length / pageSize));
         currentPage = Math.min(Math.max(1, currentPage), totalPages);
         var rows = visibleRows();
-        var config = sourceConfig[currentSource];
-        $('#listTitle').textContent = config.title;
-        $('#resultCount').textContent = '共 ' + allRows.length + ' 条';
-        $('#pageActions').innerHTML = pageActionsHtml();
         $('#selectedCount').textContent = selectedCurrentItems().length;
         $('#batchBar').classList.toggle('hidden', selectedCurrentItems().length === 0);
         $('#batchActions').innerHTML = batchActionsHtml();
-        $('#proxyTable').classList.toggle('min-w-[1320px]', currentSource !== 'api');
+        $('#proxyTable').classList.toggle('min-w-[1560px]', currentSource === 'platform');
+        $('#proxyTable').classList.toggle('min-w-[1320px]', currentSource === 'owned');
         $('#proxyTable').classList.toggle('min-w-[1120px]', currentSource === 'api');
+        renderColumnSettings();
         renderTable(rows);
         var empty = allRows.length === 0;
         $('#tableScroller').classList.toggle('hidden', empty);
@@ -1333,6 +1970,398 @@
       }
       function setCurrentPageToOne() {
         currentPage = 1;
+      }
+      /* ===================== 「筛选代理」抽屉：草稿 / 提交（design.md §5.4.4） ===================== */
+      var tagPortalElement = null;
+      var openTagSelectTrigger = null;
+      function pfChoiceHtml(field, value, label, checked, type) {
+        return '<label class="pf-choice"><input type="' + type + '" name="pf-' + escapeHtml(field) + '" data-pf-' + type + '="' + escapeHtml(field) + '" value="' + escapeHtml(value) + '"' + (checked ? ' checked' : '') + '><span>' + escapeHtml(label) + '</span></label>';
+      }
+      function pfRadioGroupHtml(label, field, options, current) {
+        return '<div class="order-filter-item">' +
+          '<span class="order-filter-label">' + escapeHtml(label) + '</span>' +
+          '<div class="pf-choice-grid3">' + options.map(function (option) {
+            return pfChoiceHtml(field, option.value, option.label, current === option.value, 'radio');
+          }).join('') + '</div>' +
+          '</div>';
+      }
+      /* 触发器内容单独返回：按钮内部含「移除标签」按钮，必须通过 button.innerHTML 注入，
+         直接拼进抽屉 innerHTML 会被解析器判定为 button 嵌套并提前闭合（design.md §5.4.4）。 */
+      function tagTriggerContentHtml(draft) {
+        var selected = draft.tags || [];
+        var body = selected.length
+          ? selected.map(function (tag) {
+              return '<span class="em-pill"><span>' + escapeHtml(tag) + '</span><button type="button" data-remove-tag="' + escapeHtml(tag) + '" aria-label="移除标签 ' + escapeHtml(tag) + '">' + icon('x', 'w-2.5 h-2.5') + '</button></span>';
+            }).join('')
+          : '<span class="em-placeholder">请选择代理标签</span>';
+        return body + '<span class="em-caret">' + icon('chevron-down', 'w-4 h-4') + '</span>';
+      }
+      function renderTagTriggerHtml() {
+        return '<button type="button" class="em-trigger" id="proxyTagTrigger" aria-haspopup="listbox" aria-expanded="false"></button>';
+      }
+      /* 日期区间控件：单框承载「开始时间 ~ 结束时间」，右侧日历图标唤起原生日期选择器（精确到年月日） */
+      function pfDateFieldHtml(field, label, placeholder) {
+        var value = currentDraft()[field] || '';
+        return '<span class="em-range-field">' +
+          '<input type="date" data-pf-date="' + escapeHtml(field) + '" value="' + escapeHtml(value) + '"' + (value ? '' : ' class="is-empty"') + ' aria-label="' + escapeHtml(label) + '">' +
+          '<span class="em-range-ph" aria-hidden="true">' + escapeHtml(placeholder) + '</span>' +
+          '</span>';
+      }
+      function pfDateRangeHtml(label, startField, endField, draft) {
+        return '<div class="order-filter-item">' +
+          '<span class="order-filter-label">' + escapeHtml(label) + '</span>' +
+          '<div class="em-range">' +
+            pfDateFieldHtml(startField, label + '开始时间', '开始时间') +
+            '<span class="em-range-sep" aria-hidden="true">~</span>' +
+            pfDateFieldHtml(endField, label + '结束时间', '结束时间') +
+            '<button type="button" class="em-range-icon" data-pf-picker="' + escapeHtml(startField) + '" aria-label="打开' + escapeHtml(label) + '日期选择器">' + icon('calendar', 'w-4 h-4') + '</button>' +
+          '</div>' +
+          '<p class="em-field-error" id="' + escapeHtml(endField) + 'Error">结束时间需晚于开始时间</p>' +
+          '</div>';
+      }
+      /* 抽屉条件项：平台代理 8 项、自有代理 5 项、代理 API 4 项（design.md §5.4.4） */
+      function renderProxyFilterBody() {
+        var draft = currentDraft();
+        if (currentSource === 'api') {
+          renderApiFilterBody(draft);
+          return;
+        }
+        var isPlatform = currentSource === 'platform';
+        var bindOptions = (isPlatform ? PLATFORM_BIND_OPTIONS : OWNED_BIND_OPTIONS).map(function (value) { return { value: value, label: value }; });
+        var authOptions = PLATFORM_AUTH_OPTIONS.map(function (value) { return { value: value, label: value }; });
+        var typeOptions = isPlatform ? PLATFORM_TYPE_OPTIONS : OWNED_TYPE_OPTIONS;
+        var parts = [];
+        if (isPlatform) {
+          var statusOptions = PLATFORM_STATUS_OPTIONS.map(function (status) {
+            return { value: status, label: status === '全部代理' ? '全部' : status };
+          });
+          parts.push(pfRadioGroupHtml('代理状态', 'status', statusOptions, draft.status));
+        }
+        parts.push(pfRadioGroupHtml('绑定环境情况', 'bindEnv', bindOptions, draft.bindEnv));
+        parts.push('<div class="order-filter-item">' +
+            '<span class="order-filter-label">代理类型</span>' +
+            '<div class="pf-choice-grid2">' + typeOptions.map(function (type) {
+              return pfChoiceHtml('types', type, type, draft.types.includes(type), 'checkbox');
+            }).join('') + '</div>' +
+          '</div>');
+        parts.push(pfRadioGroupHtml('授权成员情况', 'auth', authOptions, draft.auth));
+        if (isPlatform) {
+          var renewOptions = PLATFORM_RENEW_OPTIONS.map(function (value) { return { value: value, label: value }; });
+          parts.push(pfRadioGroupHtml('自动续费状态', 'autoRenew', renewOptions, draft.autoRenew));
+          parts.push('<div class="order-filter-item">' +
+            '<span class="order-filter-label">标签</span>' +
+            '<div class="em-select" id="proxyTagSelect">' + renderTagTriggerHtml(draft) + '</div>' +
+          '</div>');
+        }
+        parts.push(pfDateRangeHtml('到期时间', 'expireStart', 'expireEnd', draft));
+        parts.push(pfDateRangeHtml('最近检测时间', 'checkStart', 'checkEnd', draft));
+        $('#proxyFilterBody').innerHTML = parts.join('');
+        var tagTrigger = $('#proxyTagTrigger');
+        if (tagTrigger) tagTrigger.innerHTML = tagTriggerContentHtml(draft);
+        window.lucide && window.lucide.createIcons();
+      }
+      /* 代理 API 抽屉条件：代理类型（复选）/ 检测状态 / 授权成员情况 / 最近检测时间（design.md §5.4.4） */
+      function renderApiFilterBody(draft) {
+        var parts = [];
+        parts.push('<div class="order-filter-item">' +
+            '<span class="order-filter-label">代理类型</span>' +
+            '<div class="pf-choice-grid2">' + API_TYPE_OPTIONS.map(function (type) {
+              return pfChoiceHtml('types', type, type, draft.types.includes(type), 'checkbox');
+            }).join('') + '</div>' +
+          '</div>');
+        parts.push(pfRadioGroupHtml('检测状态', 'checkStatus', API_CHECK_OPTIONS.map(function (value) { return { value: value, label: value }; }), draft.checkStatus));
+        parts.push(pfRadioGroupHtml('授权成员情况', 'auth', API_AUTH_OPTIONS.map(function (value) { return { value: value, label: value }; }), draft.auth));
+        parts.push(pfDateRangeHtml('最近检测时间', 'checkStart', 'checkEnd', draft));
+        $('#proxyFilterBody').innerHTML = parts.join('');
+        window.lucide && window.lucide.createIcons();
+      }
+      function openProxyFilterDrawer() {
+        filterState[currentSource].draft = copyFilter(filterState[currentSource].applied);
+        closeTagSelectPanel();
+        renderProxyFilterBody();
+        var overlay = $('#proxyFilterOverlay');
+        overlay.classList.remove('hidden');
+        overlay.setAttribute('aria-hidden', 'false');
+        $('#proxyFilterBtn').setAttribute('aria-expanded', 'true');
+        $('#proxyFilterPanel').focus();
+      }
+      function closeProxyFilterDrawer() {
+        closeTagSelectPanel();
+        var overlay = $('#proxyFilterOverlay');
+        overlay.classList.add('hidden');
+        overlay.setAttribute('aria-hidden', 'true');
+        $('#proxyFilterBtn').setAttribute('aria-expanded', 'false');
+      }
+      /* 标签多选下拉：面板挂到 Portal 图层，避免被抽屉滚动容器裁切（design.md §5.4.4） */
+      function ensureTagPortal() {
+        if (!tagPortalElement) tagPortalElement = $('#proxyTagPortal');
+        return tagPortalElement;
+      }
+      function renderTagOptionPanel() {
+        var portal = ensureTagPortal();
+        var selected = currentDraft().tags || [];
+        var options = PLATFORM_TAG_OPTIONS.map(function (tag) {
+          return '<label class="em-option"><input type="checkbox" data-tag-option="' + escapeHtml(tag) + '"' + (selected.includes(tag) ? ' checked' : '') + '><span>' + escapeHtml(tag) + '</span></label>';
+        }).join('');
+        portal.innerHTML = '<div class="em-panel" role="listbox" aria-multiselectable="true" aria-label="代理标签">' + options + '</div>';
+        window.lucide && window.lucide.createIcons();
+      }
+      function positionTagPortal() {
+        var portal = ensureTagPortal();
+        if (!openTagSelectTrigger || !portal.classList.contains('is-open')) return;
+        var rect = openTagSelectTrigger.getBoundingClientRect();
+        portal.style.left = rect.left + 'px';
+        portal.style.top = (rect.bottom + 4) + 'px';
+        portal.style.width = rect.width + 'px';
+      }
+      function openTagSelectPanel(trigger) {
+        openTagSelectTrigger = trigger;
+        var portal = ensureTagPortal();
+        renderTagOptionPanel();
+        portal.classList.add('is-open');
+        trigger.setAttribute('aria-expanded', 'true');
+        positionTagPortal();
+      }
+      function closeTagSelectPanel() {
+        var portal = ensureTagPortal();
+        if (portal) {
+          portal.classList.remove('is-open');
+          portal.innerHTML = '';
+        }
+        if (openTagSelectTrigger) openTagSelectTrigger.setAttribute('aria-expanded', 'false');
+        openTagSelectTrigger = null;
+      }
+      /* 标签触发器局部刷新：只替换按钮内容，保留原节点与展开状态，避免 Portal 定位参考失效 */
+      function syncTagTrigger(refreshPanel) {
+        var trigger = $('#proxyTagTrigger');
+        if (!trigger) return;
+        trigger.innerHTML = tagTriggerContentHtml(currentDraft());
+        if (openTagSelectTrigger) {
+          openTagSelectTrigger = trigger;
+          trigger.setAttribute('aria-expanded', 'true');
+          if (refreshPanel) renderTagOptionPanel();
+          positionTagPortal();
+        }
+        window.lucide && window.lucide.createIcons();
+      }
+      /* 日期范围校验：开始时间不得晚于结束时间（design.md §5.4.4） */
+      function validateFilterRange(startField, endField) {
+        var draft = currentDraft();
+        var error = $('#' + endField + 'Error');
+        var valid = !(draft[startField] && draft[endField] && draft[startField] > draft[endField]);
+        if (error) error.classList.toggle('is-shown', !valid);
+        return valid;
+      }
+      function applyProxyFilterDraft() {
+        if (!validateFilterRange('expireStart', 'expireEnd') || !validateFilterRange('checkStart', 'checkEnd')) {
+          toast('结束时间需晚于开始时间', 'warning');
+          return;
+        }
+        filterState[currentSource].applied = copyFilter(currentDraft());
+        setCurrentPageToOne();
+        closeProxyFilterDrawer();
+        render();
+        toast('筛选条件已应用', 'success');
+      }
+      /* ===================== 「代理详情」弹窗（design.md §5.7） ===================== */
+      var proxyDetailState = { id: '', tab: 'bound' };
+      var detailTabState = { bound: { page: 1, size: 10 }, history: { page: 1, size: 10 }, logs: { page: 1, size: 10 } };
+      var detailPager = null;
+      var DETAIL_TAB_COLUMNS = {
+        bound: ['环境', '所属平台', '最近登录用户', '最近登录时间'],
+        history: ['环境', '所属平台', '解绑用户', '解绑时间'],
+        logs: ['操作时间', '操作类型', '操作内容', '操作人']
+      };
+      function detailNameHtml(item) {
+        return '<span class="text-ink-title">' + escapeHtml(item.name) + '</span>' +
+          '<button type="button" class="proxy-name-edit" data-edit-proxy-name aria-label="编辑代理名称" title="编辑代理名称">' + icon('pencil', 'w-3.5 h-3.5') + '</button>';
+      }
+      /* 到期时间：完整时间 + 剩余天数，已过期取负（design.md §5.7） */
+      function expiresValueHtml(item) {
+        var left = daysLeft(item.expiresAt);
+        return '<span class="mono">' + escapeHtml(item.expiresAt || '-') + '</span>' +
+          (left === null ? '' : left < 0 ? '<span class="proxy-expire-rest text-danger">| 已过期</span>' : '<span class="proxy-expire-rest">| 剩余' + left + '天</span>');
+      }
+      /* 弹窗字段：平台代理 13 项、自有代理 8 项、代理 API 8 项；「序号/ID」固定在末行第二列，不跨列（design.md §5.7） */
+      function detailGridHtml(item) {
+        var nameCell = '<span id="proxyDetailName" class="inline-flex items-center">' + detailNameHtml(item) + '</span>';
+        var rows;
+        if (item.source === 'owned') {
+          rows = [
+            ['代理名称', nameCell, false],
+            ['代理网络', '<span class="mono">' + escapeHtml(item.endpoint || '-') + '</span>', false],
+            ['代理类型', escapeHtml(item.protocol || '-'), false],
+            ['所属地区', escapeHtml(item.region || '-'), false],
+            ['最近检测时间', '<span class="mono">' + escapeHtml(item.lastCheckedAt || '-') + '</span>', false],
+            ['到期时间', expiresValueHtml(item), false],
+            ['授权人', authListHtml(item.authorizedTo, 2), false],
+            ['序号/ID', '<span class="mono">' + escapeHtml(item.id) + '</span>', false]
+          ];
+        } else if (item.source === 'api') {
+          /* 代理 API 8 项字段：以「检测状态」替代平台代理的续费 / 下架类字段，无「到期时间」（design.md §5.7） */
+          rows = [
+            ['代理名称', nameCell, false],
+            ['代理网络', '<span class="mono">' + escapeHtml(item.endpoint || '-') + '</span>', false],
+            ['代理类型', escapeHtml(item.protocol || '-'), false],
+            ['所属地区', escapeHtml(item.region || '-'), false],
+            ['检测状态', statusBadge(item.checkDetail.result), false],
+            ['最近检测时间', '<span class="mono">' + escapeHtml(item.lastCheckedAt || '-') + '</span>', false],
+            ['授权人', authListHtml(item.authorizedTo, 2), false],
+            ['序号/ID', '<span class="mono">' + escapeHtml(item.id) + '</span>', false]
+          ];
+        } else {
+          var renewValue = (item.renew ? '已开启' : '未开启') + (item.renew ? '<span class="proxy-renew-months">| ' + Number(item.renewMonths || 1) + '个月</span>' : '');
+          rows = [
+            ['代理名称', nameCell, false],
+            ['代理状态', '<span class="proxy-status ' + statusToneClass(item) + '">' + escapeHtml(platformStatusOf(item)) + '</span>', false],
+            ['是否下架', item.listed ? '<span class="text-ink-muted">已下架</span>' : '未下架', false],
+            ['自动续费', renewValue, false],
+            ['代理网络', '<span class="mono">' + escapeHtml(endpointHost(item)) + '</span>', false],
+            ['代理类型', escapeHtml(proxyTypeText(item)), false],
+            ['所属地区', escapeHtml(item.region || '-'), false],
+            ['最近检测时间', '<span class="mono">' + escapeHtml(item.lastCheckedAt || '-') + '</span>', false],
+            ['开通时间', '<span class="mono">' + escapeHtml(item.openedAt || '-') + '</span>', false],
+            ['到期时间', expiresValueHtml(item), false],
+            ['授权人', authListHtml(item.authorizedTo, 2), false],
+            ['标签', tagListHtml(item.tags, 3), false],
+            ['序号/ID', '<span class="mono">' + escapeHtml(item.id) + '</span>', true]
+          ];
+        }
+        return rows.map(function (row) {
+          return '<div class="proxy-detail-item' + (row[2] ? ' is-wide' : '') + '"><dt>' + escapeHtml(row[0]) + '</dt><dd>' + row[1] + '</dd></div>';
+        }).join('');
+      }
+      function detailRowsFor(item, tab) {
+        if (tab === 'bound') return item.boundEnv || [];
+        if (tab === 'history') return item.history || [];
+        return item.logs || [];
+      }
+      function detailRowHtml(tab, row) {
+        if (tab === 'bound') {
+          return '<td>' + escapeHtml(row.name) + '</td><td>' + escapeHtml(row.platform) + '</td><td>' + escapeHtml(row.lastUser) + '</td><td class="mono">' + escapeHtml(row.lastLoginAt) + '</td>';
+        }
+        if (tab === 'history') {
+          var name = (row.deleted ? '【已删除】' : '') + row.name;
+          return '<td>' + escapeHtml(name) + '</td><td>' + escapeHtml(row.platform) + '</td><td>' + escapeHtml(row.user) + '</td><td class="mono">' + escapeHtml(row.at) + '</td>';
+        }
+        return '<td class="mono">' + escapeHtml(row.at) + '</td><td>' + escapeHtml(row.type) + '</td><td>' + escapeHtml(row.content) + '</td><td>' + escapeHtml(row.operator) + '</td>';
+      }
+      function renderProxyDetailTable() {
+        var item = proxyById(proxyDetailState.id);
+        if (!item) return;
+        var tab = proxyDetailState.tab;
+        var tabState = detailTabState[tab];
+        var allRows = detailRowsFor(item, tab);
+        var totalPages = Math.max(1, Math.ceil(allRows.length / tabState.size));
+        tabState.page = Math.min(Math.max(1, tabState.page), totalPages);
+        var start = (tabState.page - 1) * tabState.size;
+        var rows = allRows.slice(start, start + tabState.size);
+        var columns = DETAIL_TAB_COLUMNS[tab];
+        var body = rows.length
+          ? rows.map(function (row) { return '<tr>' + detailRowHtml(tab, row) + '</tr>'; }).join('')
+          : '<tr><td colspan="' + columns.length + '"><p class="em-empty">暂无数据</p></td></tr>';
+        $('#proxyDetailTableRegion').innerHTML = '<table class="proxy-detail-table">' +
+          '<caption class="sr-only">' + escapeHtml(columns.join('、')) + '</caption>' +
+          '<thead><tr>' + columns.map(function (label) { return '<th>' + escapeHtml(label) + '</th>'; }).join('') + '</tr></thead>' +
+          '<tbody>' + body + '</tbody></table>';
+        $$('.proxy-detail-tab').forEach(function (button) {
+          var active = button.dataset.detailTab === tab;
+          button.classList.toggle('is-active', active);
+          button.setAttribute('aria-selected', String(active));
+        });
+        if (typeof window.YDPager === 'function') {
+          if (!detailPager) {
+            detailPager = new window.YDPager('#proxyDetailPager', {
+              total_count: allRows.length,
+              current_page: tabState.page,
+              page_size: tabState.size,
+              page_size_options: [10, 20, 50, 100],
+              toast: function (message) { toast(message, 'warning'); },
+              onChange: function (state) {
+                tabState.page = state.current_page;
+                tabState.size = state.page_size;
+                renderProxyDetailTable();
+              }
+            });
+          } else {
+            detailPager.setState({ total_count: allRows.length, current_page: tabState.page, page_size: tabState.size }, { silent: true });
+          }
+        }
+        window.lucide && window.lucide.createIcons();
+      }
+      function openProxyDetail(item, tab) {
+        if (!item) return;
+        proxyDetailState.id = item.id;
+        proxyDetailState.tab = tab || 'bound';
+        detailTabState[proxyDetailState.tab].page = 1;
+        $('#proxyDetailGrid').innerHTML = detailGridHtml(item);
+        var overlay = $('#proxyDetailOverlay');
+        overlay.classList.remove('hidden');
+        overlay.setAttribute('aria-hidden', 'false');
+        renderProxyDetailTable();
+        $('#proxyDetailPanel').focus();
+      }
+      function closeProxyDetail() {
+        var overlay = $('#proxyDetailOverlay');
+        if (overlay.classList.contains('hidden')) return;
+        overlay.classList.add('hidden');
+        overlay.setAttribute('aria-hidden', 'true');
+        proxyDetailState.id = '';
+      }
+      function switchDetailTab(tab) {
+        if (!DETAIL_TAB_COLUMNS[tab] || proxyDetailState.tab === tab) return;
+        proxyDetailState.tab = tab;
+        detailTabState[tab].page = 1;
+        renderProxyDetailTable();
+      }
+      function startProxyNameEdit() {
+        if ($('#proxyNameInput')) return;
+        var item = proxyById(proxyDetailState.id);
+        var host = $('#proxyDetailName');
+        if (!item || !host) return;
+        host.innerHTML = '<input id="proxyNameInput" class="field proxy-name-input" type="text" maxlength="30" value="' + escapeHtml(item.name) + '" aria-label="代理名称">';
+        var input = $('#proxyNameInput');
+        input.focus();
+        input.select();
+        input.addEventListener('keydown', function (event) {
+          if (event.key === 'Enter') { event.preventDefault(); commitProxyNameEdit(); }
+          if (event.key === 'Escape') { event.preventDefault(); host.innerHTML = detailNameHtml(item); }
+        });
+        input.addEventListener('blur', function () {
+          window.setTimeout(function () { if ($('#proxyNameInput')) commitProxyNameEdit(); }, 0);
+        });
+      }
+      function commitProxyNameEdit() {
+        var input = $('#proxyNameInput');
+        if (!input) return;
+        var item = proxyById(proxyDetailState.id);
+        if (!item) return;
+        var next = input.value.trim();
+        if (!next) {
+          toast('代理名称不能为空', 'warning');
+          input.focus();
+          return;
+        }
+        item.name = next;
+        $('#proxyDetailName').innerHTML = detailNameHtml(item);
+        render();
+        toast('代理名称已更新', 'success');
+      }
+      /* 表头排序交互：升序 → 降序 → 取消（design.md §5.4.3） */
+      function toggleSort(key) {
+        if (platformSortState.key !== key) {
+          platformSortState.key = key;
+          platformSortState.direction = 'asc';
+        } else if (platformSortState.direction === 'asc') {
+          platformSortState.direction = 'desc';
+        } else if (platformSortState.direction === 'desc') {
+          platformSortState.key = '';
+          platformSortState.direction = 'none';
+        } else {
+          platformSortState.direction = 'asc';
+        }
+        setCurrentPageToOne();
+        render();
       }
       function formRow(label, controlHtml, required, errorId) {
         return '<div class="form-row">' +
@@ -1956,7 +2985,6 @@
           modalContext.completed = true;
           $('#formModalConfirm').disabled = false;
           $('#formModalConfirm').textContent = '完成';
-          $('#refreshTime').textContent = '更新于 ' + nowText();
           render();
           toast('代理检测完成：成功 ' + successCount + '，失败 ' + failureCount, failureCount ? 'warning' : 'success');
         }, 800);
@@ -2028,78 +3056,6 @@
         if (modalMode === 'remark') return commitRemark();
         if (modalMode === 'tag') return commitTag();
         if (modalMode === 'renew') return commitRenew();
-      }
-      function openDetailDrawer(item) {
-        drawerLastFocus = document.activeElement;
-        $('#detailDrawerSubtitle').textContent = item.name + ' · ' + item.id;
-        var hasTrafficUsage = item.service === '海外动态' || item.packageTraffic;
-        var trafficTotal = Math.max(0, Number(item.trafficTotal == null ? 10 : item.trafficTotal));
-        var trafficUsed = Math.max(0, Math.min(trafficTotal, Number(item.trafficUsed == null ? 0 : item.trafficUsed)));
-        var trafficRemaining = Math.max(0, Number(item.trafficRemaining == null ? trafficTotal - trafficUsed : item.trafficRemaining));
-        var trafficPercent = trafficTotal ? Math.min(100, Math.round(trafficUsed / trafficTotal * 1000) / 10) : 0;
-        var trafficSection = hasTrafficUsage
-          ? '<section class="mt-6">' +
-            '<div class="flex items-center justify-between gap-3"><h4 class="inline-block text-[16px] font-semibold text-ink-title">流量使用</h4><span class="mono text-[12px] text-ink-muted">' + trafficPercent.toFixed(1) + '% 已使用</span></div>' +
-            '<div class="mt-3 p-3 rounded-md border border-line bg-page">' +
-              '<div class="flex items-center justify-between gap-3 text-[12px]"><span class="text-ink-sub">套餐流量</span><b class="mono text-ink-title">' + escapeHtml(item.packageTraffic || '10G/月') + '</b></div>' +
-              '<div class="mt-2 h-2 rounded bg-line-lighter overflow-hidden" role="progressbar" aria-label="套餐流量已使用 ' + trafficUsed.toFixed(1) + 'G，总量 ' + trafficTotal.toFixed(1) + 'G" aria-valuemin="0" aria-valuemax="' + trafficTotal + '" aria-valuenow="' + trafficUsed + '"><div class="h-full rounded bg-primary" style="width:' + trafficPercent + '%"></div></div>' +
-              '<dl class="info-grid mt-3">' +
-                '<div class="info-item"><dt>已使用</dt><dd class="mono">' + trafficUsed.toFixed(1) + 'G</dd></div>' +
-                '<div class="info-item"><dt>剩余流量</dt><dd class="mono">' + trafficRemaining.toFixed(1) + 'G</dd></div>' +
-                '<div class="info-item"><dt>总流量</dt><dd class="mono">' + trafficTotal.toFixed(1) + 'G</dd></div>' +
-                '<div class="info-item"><dt>超出流量资费</dt><dd>' + escapeHtml(item.overageRate || '限时免费') + '</dd></div>' +
-                (item.trafficPackage ? '<div class="info-item"><dt>已购流量包</dt><dd>' + escapeHtml(item.trafficPackage) + '</dd></div>' : '') +
-                '<div class="info-item"><dt>重置时间</dt><dd class="mono">' + escapeHtml(item.trafficResetAt || '-') + '</dd></div>' +
-              '</dl>' +
-            '</div>' +
-          '</section>'
-          : '';
-        $('#detailDrawerBody').innerHTML = '<section>' +
-          '<h4 class="inline-block text-[16px] font-semibold text-ink-title">基础信息</h4>' +
-          '<dl class="info-grid mt-3">' +
-            '<div class="info-item"><dt>代理名称</dt><dd>' + escapeHtml(item.name) + '</dd></div>' +
-            '<div class="info-item"><dt>代理序号</dt><dd class="mono">' + escapeHtml(item.id) + '</dd></div>' +
-            '<div class="info-item"><dt>代理信息</dt><dd class="mono">' + escapeHtml(item.endpoint) + '</dd></div>' +
-            '<div class="info-item"><dt>协议 / 地址类型</dt><dd>' + escapeHtml(item.protocol + ' / ' + item.addressType) + '</dd></div>' +
-            '<div class="info-item"><dt>授权成员</dt><dd>' + escapeHtml(item.authorizedTo.join('、') || '-') + '</dd></div>' +
-            '<div class="info-item"><dt>到期时间</dt><dd class="mono">' + escapeHtml(item.expiresAt || '-') + '</dd></div>' +
-          '</dl>' +
-        '</section>' +
-        trafficSection +
-        '<section class="mt-6">' +
-          '<h4 class="inline-block text-[16px] font-semibold text-ink-title">最近检测</h4>' +
-          '<dl class="info-grid mt-3">' +
-            '<div class="info-item"><dt>检测结果</dt><dd>' + statusBadge(item.checkDetail.result) + '</dd></div>' +
-            '<div class="info-item"><dt>检测时间</dt><dd class="mono">' + escapeHtml(item.lastCheckedAt) + '</dd></div>' +
-            '<div class="info-item"><dt>出口 IP / 地区</dt><dd><span class="mono">' + escapeHtml(item.checkDetail.exitIp) + '</span> · ' + escapeHtml(item.checkDetail.region) + '</dd></div>' +
-            '<div class="info-item"><dt>延迟 / 失败原因</dt><dd>' + escapeHtml(item.checkDetail.reason || item.checkDetail.latency || '-') + '</dd></div>' +
-          '</dl>' +
-        '</section>' +
-        '<section class="mt-6">' +
-          '<div class="flex items-center justify-between gap-3"><h4 class="inline-block text-[16px] font-semibold text-ink-title">绑定环境</h4><span class="mono text-[12px] text-ink-muted">' + item.environments.length + ' 个</span></div>' +
-          '<div class="mt-3 p-3 rounded-md bg-page">' + (item.environments.length ? item.environments.map(function (environment) { return '<span class="tag mr-2 mb-1">' + escapeHtml(environment) + '</span>'; }).join('') : '<span class="text-ink-muted">暂无绑定环境</span>') + '</div>' +
-        '</section>' +
-        '<section class="mt-6">' +
-          '<h4 class="inline-block text-[16px] font-semibold text-ink-title">操作日志</h4>' +
-          '<div class="mt-3 overflow-x-auto border border-line rounded-md"><table class="data-table min-w-[680px]"><thead><tr><th>操作时间</th><th>操作类型</th><th>操作内容</th><th>操作人</th></tr></thead><tbody>' +
-            '<tr><td class="mono">2026-08-17 15:42</td><td>检测代理</td><td>' + escapeHtml(item.checkDetail.result === '不可用' ? '检测失败：' + item.checkDetail.reason : '检测成功，延迟 ' + item.checkDetail.latency) + '</td><td>1938</td></tr>' +
-            '<tr><td class="mono">2026-08-15 10:20</td><td>分配环境</td><td>更新绑定环境，共 ' + item.environments.length + ' 个</td><td>张小登</td></tr>' +
-            '<tr><td class="mono">2026-08-12 09:30</td><td>更新代理</td><td>更新代理备注与授权范围</td><td>李运营</td></tr>' +
-          '</tbody></table></div>' +
-          '<p class="mt-2 text-[12px] text-ink-muted">日志已排除密码、完整账号和完整提取链接。</p>' +
-        '</section>';
-        drawerOverlay.classList.remove('hidden');
-        drawerOverlay.setAttribute('aria-hidden', 'false')
-        window.lucide && window.lucide.createIcons();
-        requestAnimationFrame(function () { $('[data-close-drawer]', drawerPanel).focus(); });
-      }
-      function closeDetailDrawer() {
-        if (drawerOverlay.classList.contains('hidden')) return;
-        drawerOverlay.classList.add('hidden');
-        drawerOverlay.setAttribute('aria-hidden', 'true')
-        var restore = drawerLastFocus;
-        drawerLastFocus = null;
-        requestAnimationFrame(function () { if (restore && document.contains(restore)) restore.focus({ preventScroll: true }); });
       }
       function openConfirmDialog(options) {
         dialogLastFocus = document.activeElement;
@@ -2193,7 +3149,6 @@
         window.setTimeout(function () {
           currentPage = preservedPage;
           selectedIds = preservedSelection;
-          $('#refreshTime').textContent = '更新于 ' + nowText();
           render();
           toast('代理列表已刷新', 'success');
         }, 450);
@@ -2215,7 +3170,7 @@
         activeMenuProxyId = item.id;
         var menuItems = [
           ['view', 'eye', '查看详情', false],
-          ['bind', 'monitor-plus', '分配环境', false],
+          ['bind', 'circle-plus', '分配环境', false],
           ['check', 'scan-line', '检测代理', false]
         ];
         if (item.source === 'owned') menuItems.push(['remark', 'message-square-text', '设置备注', false]);
@@ -2248,7 +3203,8 @@
         closeRowMenu();
         if (!item) return;
         if (trigger) trigger.focus({ preventScroll: true });
-        if (action === 'view') openDetailDrawer(item);
+        /* 查看详情：平台代理 / 自有代理 / 代理 API 统一打开「代理详情」弹窗，默认定位「已绑定环境」（design.md §5.7） */
+        if (action === 'view') openProxyDetail(item, 'bound');
         if (action === 'bind') openFormModal('bind', { item: item });
         if (action === 'check') openCheckFor([item]);
         if (action === 'remark') openFormModal('remark', { items: [item] });
@@ -2260,6 +3216,7 @@
         if (action === 'add-api') openFormModal('add-api', {});
         if (action === 'check') openCheckFor(itemsForOperation());
         if (action === 'store') navigateToStore();
+        if (action === 'columns') toggleColumnSettings(button);
         if (action === 'refresh') refreshList(button);
       }
       function handleBatchAction(action) {
@@ -2283,8 +3240,11 @@
         });
       }
       function activeOverlayPanel() {
+        var detailOverlay = $('#proxyDetailOverlay');
+        var filterOverlay = $('#proxyFilterOverlay');
+        if (detailOverlay && !detailOverlay.classList.contains('hidden')) return $('#proxyDetailPanel');
+        if (filterOverlay && !filterOverlay.classList.contains('hidden')) return $('#proxyFilterPanel');
         if (!dialogOverlay.classList.contains('hidden')) return dialogPanel;
-        if (!drawerOverlay.classList.contains('hidden')) return drawerPanel;
         if (!modalOverlay.classList.contains('hidden')) return modalPanel;
         return null;
       }
@@ -2315,51 +3275,18 @@
           render();
         });
       });
-      $('#statusTabs').addEventListener('click', function (event) {
-        var button = event.target.closest('[data-status]');
-        if (!button) return;
-        currentDraft().status = button.dataset.status;
-        currentApplied().status = button.dataset.status;
+      /* 「去续费」：重置到平台代理的「即将到期」筛选，并回到首屏供用户选择需续费代理 */
+      $('#renewExpiringProxies').addEventListener('click', function () {
+        if (currentSource !== 'platform') return;
+        var renewalFilter = defaultFilter('platform');
+        renewalFilter.status = '即将到期';
+        filterState.platform.draft = copyFilter(renewalFilter);
+        filterState.platform.applied = copyFilter(renewalFilter);
+        selectedIds.clear();
         setCurrentPageToOne();
+        if (window.YDSearchBox) window.YDSearchBox.setValue('#proxySearchBox', '');
         render();
-      });
-      $('#typeFilter').addEventListener('change', function (event) { currentDraft().type = event.target.value; });
-      $('#addressFilter').addEventListener('change', function (event) { currentDraft().address = event.target.value; });
-      $('#searchInput').addEventListener('input', function (event) {
-        currentDraft().search = event.target.value;
-        $('#clearSearch').classList.toggle('hidden', !event.target.value);
-      });
-      $('#searchInput').addEventListener('keydown', function (event) {
-        if (event.key === 'Enter') {
-          event.preventDefault();
-          $('#queryButton').click();
-        }
-      });
-      $('#clearSearch').addEventListener('click', function () {
-        currentDraft().search = '';
-        $('#searchInput').value = '';
-        $('#clearSearch').classList.add('hidden');
-        $('#searchInput').focus();
-      });
-      $('#queryButton').addEventListener('click', function () {
-        filterState[currentSource].applied = copyFilter(currentDraft());
-        setCurrentPageToOne();
-        render();
-      });
-      $('#resetButton').addEventListener('click', function () {
-        var reset = defaultFilter(currentSource);
-        filterState[currentSource].draft = copyFilter(reset);
-        filterState[currentSource].applied = copyFilter(reset);
-        setCurrentPageToOne();
-        render();
-      });
-      $('#closeExpiryNotice').addEventListener('click', function () {
-        $('#expiryNotice').classList.add('hidden');
-        try { sessionStorage.setItem('yundeng-proxy-expiry-notice-closed', 'true'); } catch (_) {}
-      });
-      $('#pageActions').addEventListener('click', function (event) {
-        var button = event.target.closest('[data-page-action]');
-        if (button) handlePageAction(button.dataset.pageAction, button);
+        toast('已筛选出即将到期的平台代理，请选择需要续费的代理', 'info');
       });
       $('#batchActions').addEventListener('click', function (event) {
         var button = event.target.closest('[data-batch-action]');
@@ -2382,19 +3309,45 @@
         }
       });
       $('#tableRegion').addEventListener('click', function (event) {
+        var sortButton = event.target.closest('[data-sort-key]');
+        var refreshProxyButton = event.target.closest('[data-refresh-ip]');
         var bindButton = event.target.closest('[data-bind-proxy]');
         var viewButton = event.target.closest('[data-view-proxy]');
         var editButton = event.target.closest('[data-edit-proxy]');
         var moreButton = event.target.closest('[data-more-proxy]');
-        var renewButton = event.target.closest('[data-auto-renew]');
-        if (bindButton) openFormModal('bind', { item: proxyById(bindButton.dataset.bindProxy) });
-        if (viewButton) openDetailDrawer(proxyById(viewButton.dataset.viewProxy));
+        var switchButton = event.target.closest('[data-auto-renew]');
+        var renewButton = event.target.closest('[data-renew-proxy]');
+        /* 表头排序：升序 → 降序 → 取消（design.md §5.4.3） */
+        if (sortButton) {
+          toggleSort(sortButton.dataset.sortKey);
+          return;
+        }
+        if (refreshProxyButton) {
+          refreshProxyInfo(refreshProxyButton);
+          return;
+        }
+        /* 绑定环境按钮：平台代理已绑定数 > 0 时直达详情「已绑定环境」，未绑定引导分配环境 */
+        if (bindButton) {
+          var bindItem = proxyById(bindButton.dataset.bindProxy);
+          if (!bindItem) return;
+          if (bindItem.source === 'platform' && (bindItem.environments || []).length) openProxyDetail(bindItem, 'bound');
+          else openFormModal('bind', { item: bindItem });
+          return;
+        }
+        /* 查看：平台代理 / 自有代理 / 代理 API 统一打开「代理详情」弹窗（design.md §5.7） */
+        if (viewButton) {
+          var viewItem = proxyById(viewButton.dataset.viewProxy);
+          if (!viewItem) return;
+          openProxyDetail(viewItem, 'bound');
+          return;
+        }
         if (editButton) {
           var editItem = proxyById(editButton.dataset.editProxy);
           openFormModal(editItem.source === 'api' ? 'edit-api' : 'edit', { item: editItem });
         }
         if (moreButton) openRowMenu(moreButton, proxyById(moreButton.dataset.moreProxy));
-        if (renewButton) openAutoRenewConfirmation([proxyById(renewButton.dataset.autoRenew)]);
+        if (switchButton) openAutoRenewConfirmation([proxyById(switchButton.dataset.autoRenew)]);
+        if (renewButton) openFormModal('renew', { items: [proxyById(renewButton.dataset.renewProxy)] });
       });
       $('#emptyAction').addEventListener('click', function () {
         if (currentSource === 'platform') navigateToStore();
@@ -2406,11 +3359,9 @@
       });
       $('#formModalConfirm').addEventListener('click', confirmFormModal);
       $$('[data-close-modal]').forEach(function (button) { button.addEventListener('click', function () { closeFormModal(false); }); });
-      $$('[data-close-drawer]').forEach(function (button) { button.addEventListener('click', closeDetailDrawer); });
       $$('[data-close-dialog]').forEach(function (button) { button.addEventListener('click', closeConfirmDialog); });
       $('#confirmDialogConfirm').addEventListener('click', confirmDialogAction);
       modalOverlay.addEventListener('click', function (event) { if (event.target === modalOverlay) closeFormModal(false); });
-      drawerOverlay.addEventListener('click', function (event) { if (event.target === drawerOverlay) closeDetailDrawer(); });
       dialogOverlay.addEventListener('click', function (event) { if (event.target === dialogOverlay) closeConfirmDialog(); });
       $('#formModalBody').addEventListener('change', function (event) {
         var environmentInput = event.target.closest('[data-environment]');
@@ -2429,12 +3380,27 @@
       });
       document.addEventListener('click', function (event) {
         if (!event.target.closest('#rowMenu,[data-more-proxy]')) closeRowMenu();
+        if (!event.target.isConnected) return;
+        if (!event.target.closest('#columnSettings,[data-page-action="columns"]')) closeColumnSettings();
+        /* 标签面板：点击触发器与面板内部不关闭，其余区域收起 */
+        if (openTagSelectTrigger && !event.target.closest('#proxyTagTrigger') && !event.target.closest('#proxyTagPortal')) closeTagSelectPanel();
       });
       document.addEventListener('keydown', function (event) {
         if (event.key === 'Escape') {
+          /* 列设置：拖拽中只取消本次排序，不关闭面板；否则关闭并回焦触发按钮（§5.15 关闭与焦点） */
+          if (csoDrag) { event.preventDefault(); event.stopImmediatePropagation(); csoCancelDrag(); return; }
+          if (!$('#columnSettings').classList.contains('hidden')) {
+            event.preventDefault();
+            closeColumnSettings();
+            var columnsButton = $('#toolbarSettings');
+            if (columnsButton) columnsButton.focus({ preventScroll: true });
+            return;
+          }
           if (typeof annotationPopup !== 'undefined' && !annotationPopup.classList.contains('hidden')) return;
+          else if (openTagSelectTrigger) closeTagSelectPanel();
+          else if (!$('#proxyDetailOverlay').classList.contains('hidden')) closeProxyDetail();
+          else if (!$('#proxyFilterOverlay').classList.contains('hidden')) closeProxyFilterDrawer();
           else if (!dialogOverlay.classList.contains('hidden')) closeConfirmDialog();
-          else if (!drawerOverlay.classList.contains('hidden')) closeDetailDrawer();
           else if (!modalOverlay.classList.contains('hidden')) closeFormModal(false);
           else if (!$('#rowMenu').classList.contains('hidden')) closeRowMenu(true);
           return;
@@ -2445,11 +3411,324 @@
         }
       }, true);
       window.addEventListener('resize', function () {
-        closeRowMenu()
+        closeRowMenu();
+        positionColumnSettings();
+        positionTagPortal();
       });
-      try {
-        if (sessionStorage.getItem('yundeng-proxy-expiry-notice-closed') === 'true') $('#expiryNotice').classList.add('hidden');
-      } catch (_) {}
+      /* ===================== 平台代理：工具栏 / 表头排序 / 批量条 / 字段设置 ===================== */
+      /* 工具栏命令区：购买代理（跳转商城-代理）、刷新、字段设置（design.md §5.4.1） */
+      $('#proxyToolbar').addEventListener('click', function (event) {
+        var button = event.target.closest('[data-page-action]');
+        if (button) handlePageAction(button.dataset.pageAction, button);
+      });
+      $('#proxyFilterBtn').addEventListener('click', openProxyFilterDrawer);
+      $('#batchExit').addEventListener('click', function () {
+        selectedIds.clear();
+        setCurrentPageToOne();
+        render();
+      });
+      /* ===================== 列设置：开合 / 定位 / 勾选 / 拖拽排序（design.md §5.15） ===================== */
+      var csoDrag = null;     /* 拖拽会话：{key,source,startX,startY,active,ghost,offsetX,offsetY,width} */
+      var csoPreview = null;  /* 落点预览：{index,rest}，index 为「摘除源行后」的插入序号 */
+      function csoRows() {
+        var list = $('#csoList');
+        return list ? $$('[data-cso-row]', list) : [];
+      }
+      /* 面板定位：默认与触发按钮右对齐、下方 4px；空间不足向上翻转，并收敛在视口内（§5.15 打开与定位） */
+      function positionColumnSettings() {
+        var panel = $('#columnSettings');
+        var button = $('#toolbarSettings');
+        if (!panel || !button || panel.classList.contains('hidden')) return;
+        var rect = button.getBoundingClientRect();
+        var box = panel.getBoundingClientRect();
+        var gap = 8;
+        panel.style.left = Math.max(gap, Math.min(window.innerWidth - box.width - gap, rect.right - box.width)) + 'px';
+        var below = rect.bottom + 4;
+        var above = rect.top - box.height - 4;
+        panel.style.top = Math.max(gap, Math.min(window.innerHeight - box.height - gap, below + box.height <= window.innerHeight - gap ? below : above)) + 'px';
+      }
+      function toggleColumnSettings(button) {
+        var panel = $('#columnSettings');
+        if (!panel) return;
+        if (!panel.classList.contains('hidden')) { closeColumnSettings(); return; }
+        closeRowMenu();
+        renderColumnSettings();
+        panel.classList.remove('hidden');
+        positionColumnSettings();
+        if (button) button.setAttribute('aria-expanded', 'true');
+      }
+      function closeColumnSettings() {
+        var panel = $('#columnSettings');
+        if (!panel || panel.classList.contains('hidden')) return;
+        csoCancelDrag();
+        panel.classList.add('hidden');
+        var button = $('#toolbarSettings');
+        if (button) button.setAttribute('aria-expanded', 'false');
+      }
+      /* 「恢复默认」：还原字段池默认顺序与默认勾选列，面板保持打开并给出 info Toast */
+      function resetColumnSettings() {
+        var pool = schemaForSource().map(function (column) { return column[0]; }).filter(function (key) {
+          return key !== FIXED_LAST_COLUMN_KEY;
+        });
+        columnStateBySource[currentSource] = { order: pool, checked: new Set(pool) };
+        renderColumnSettings();
+        renderTable(visibleRows());
+        window.lucide && window.lucide.createIcons();
+        toast('已恢复默认列设置', 'info');
+      }
+      /* 摘出源字段后插入目标序号（固定列恒在字段池首位，操作列不入池） */
+      function csoInsert(key, index) {
+        var state = columnStateForSource();
+        var editable = state.order.filter(function (item) { return item !== LOCKED_COLUMN_KEY; });
+        var from = editable.indexOf(key);
+        if (from > -1) editable.splice(from, 1);
+        editable.splice(Math.max(0, Math.min(index, editable.length)), 0, key);
+        state.order = [LOCKED_COLUMN_KEY].concat(editable);
+      }
+      /* 落点计算：以「摘除源行后的行列表」为基准，指针落在上半区即插到该行之前 */
+      function csoTarget(y) {
+        var list = $('#csoList');
+        if (!list || !csoDrag) return null;
+        var rect = list.getBoundingClientRect();
+        if (y < rect.top + 12) list.scrollTop -= 8;
+        else if (y > rect.bottom - 12) list.scrollTop += 8;
+        var rest = csoRows().filter(function (row) { return row.dataset.csoKey !== csoDrag.key; });
+        var index = rest.length;
+        for (var i = 0; i < rest.length; i += 1) {
+          var box = rest[i].getBoundingClientRect();
+          if (y < box.top + box.height / 2) { index = i; break; }
+        }
+        return { index: index, rest: rest };
+      }
+      /* 落点提示：只改行 class 绘制 2px 插入线，不重建 DOM，避免行高抖动 */
+      function csoPaintDrop(preview) {
+        csoRows().forEach(function (row) { row.classList.remove('drop-before', 'drop-after'); });
+        if (!preview || !preview.rest.length) return;
+        if (preview.index < preview.rest.length) preview.rest[preview.index].classList.add('drop-before');
+        else preview.rest[preview.rest.length - 1].classList.add('drop-after');
+      }
+      function csoResetDrag() {
+        if (csoDrag) {
+          if (csoDrag.ghost) csoDrag.ghost.remove();
+          if (csoDrag.source) csoDrag.source.classList.remove('is-dragging');
+        }
+        document.removeEventListener('pointermove', csoPointerMove, true);
+        document.removeEventListener('pointerup', csoPointerUp, true);
+        document.removeEventListener('pointercancel', csoPointerCancel, true);
+        document.body.classList.remove('cso-dragging');
+        csoDrag = null;
+      }
+      function csoCancelDrag() {
+        if (!csoDrag) return;
+        csoResetDrag();
+        csoPreview = null;
+        csoPaintDrop(null);
+      }
+      function csoPointerDown(event) {
+        if (event.button !== 0) return;
+        var row = event.target.closest('[data-cso-row]');
+        /* 勾选区（复选框与名称）不启动拖拽，避免拖拽结束误触发勾选 */
+        if (!row || !row.closest('#columnSettings') || event.target.closest('input,label')) return;
+        var rect = row.getBoundingClientRect();
+        csoDrag = {
+          key: row.dataset.csoKey, source: row, startX: event.clientX, startY: event.clientY,
+          active: false, ghost: null, offsetX: event.clientX - rect.left, offsetY: event.clientY - rect.top, width: rect.width
+        };
+        document.addEventListener('pointermove', csoPointerMove, true);
+        document.addEventListener('pointerup', csoPointerUp, true);
+        document.addEventListener('pointercancel', csoPointerCancel, true);
+        event.preventDefault();
+      }
+      function csoPointerMove(event) {
+        if (!csoDrag) return;
+        var dx = event.clientX - csoDrag.startX;
+        var dy = event.clientY - csoDrag.startY;
+        if (!csoDrag.active) {
+          if (Math.sqrt(dx * dx + dy * dy) < 4) return; /* 位移阈值：小于 4px 视为点击 */
+          csoDrag.active = true;
+          var ghost = document.createElement('div');
+          ghost.className = 'cso-ghost';
+          ghost.style.width = csoDrag.width + 'px';
+          ghost.innerHTML = csoGhostHtml(csoDrag.key);
+          document.body.appendChild(ghost);
+          csoDrag.ghost = ghost;
+          csoDrag.source.classList.add('is-dragging');
+          document.body.classList.add('cso-dragging');
+        }
+        csoDrag.ghost.style.left = (event.clientX - csoDrag.offsetX) + 'px';
+        csoDrag.ghost.style.top = (event.clientY - csoDrag.offsetY) + 'px';
+        var next = csoTarget(event.clientY);
+        if (!next) return;
+        csoPreview = { index: next.index, rest: next.rest };
+        csoPaintDrop(csoPreview);
+        event.preventDefault();
+      }
+      function csoPointerUp() {
+        if (!csoDrag) return;
+        var active = csoDrag.active;
+        var key = csoDrag.key;
+        var index = active && csoPreview ? csoPreview.index : null;
+        csoResetDrag();
+        if (!active) return; /* 未超过阈值：不改动顺序 */
+        if (index !== null) csoInsert(key, index);
+        csoPreview = null;
+        csoPaintDrop(null);
+        renderColumnSettings();
+        renderTable(visibleRows());
+        window.lucide && window.lucide.createIcons();
+      }
+      function csoPointerCancel() { csoCancelDrag(); }
+      /* 勾选字段：立即更新表格可见列，不提供额外确认步骤；固定列取消被阻止 */
+      $('#columnSettings').addEventListener('change', function (event) {
+        var input = event.target.closest('[data-column-key]');
+        if (!input) return;
+        var key = input.dataset.columnKey;
+        if (key === LOCKED_COLUMN_KEY) { input.checked = true; return; }
+        var set = columnStateForSource().checked;
+        if (input.checked) set.add(key);
+        else set.delete(key);
+        renderTable(visibleRows());
+        window.lucide && window.lucide.createIcons();
+      });
+      $('#columnSettings').addEventListener('click', function (event) {
+        if (event.target.closest('#restoreColumns')) resetColumnSettings();
+      });
+      document.addEventListener('pointerdown', csoPointerDown, true);
+      /* ===================== 「筛选代理」抽屉：开合 / 重置 / 条件项委托（design.md §5.4.4） ===================== */
+      $('#proxyFilterOverlay').addEventListener('click', function (event) {
+        if (event.target === $('#proxyFilterOverlay')) closeProxyFilterDrawer();
+      });
+      $$('[data-close-filter]').forEach(function (button) {
+        button.addEventListener('click', closeProxyFilterDrawer);
+      });
+      $('[data-filter-apply]').addEventListener('click', applyProxyFilterDraft);
+      $('[data-filter-reset]').addEventListener('click', function () {
+        var reset = defaultFilter(currentSource);
+        /* 关键词由公共层 YDSearchBox 独立持有，重置筛选条件不清空搜索框 */
+        reset.search = currentApplied().search || '';
+        filterState[currentSource].draft = copyFilter(reset);
+        filterState[currentSource].applied = copyFilter(reset);
+        closeTagSelectPanel();
+        renderProxyFilterBody();
+        setCurrentPageToOne();
+        render();
+      });
+      /* 标签多选触发：移除标签优先于展开面板 */
+      $('#proxyFilterBody').addEventListener('click', function (event) {
+        var removeButton = event.target.closest('[data-remove-tag]');
+        if (removeButton) {
+          event.preventDefault();
+          event.stopPropagation();
+          var removed = removeButton.dataset.removeTag;
+          var draft = currentDraft();
+          draft.tags = draft.tags.filter(function (tag) { return tag !== removed; });
+          syncTagTrigger(true);
+          return;
+        }
+        /* 日期区间右侧日历图标：唤起同组起始日期的原生选择器（showPicker 不可用时退回聚焦） */
+        var picker = event.target.closest('[data-pf-picker]');
+        if (picker) {
+          event.preventDefault();
+          var pickerInput = picker.closest('.em-range').querySelector('[data-pf-date="' + picker.dataset.pfPicker + '"]');
+          if (pickerInput) {
+            try { if (typeof pickerInput.showPicker === 'function') pickerInput.showPicker(); else pickerInput.focus(); }
+            catch (error) { pickerInput.focus(); }
+          }
+          return;
+        }
+        var trigger = event.target.closest('#proxyTagTrigger');
+        if (!trigger) return;
+        event.preventDefault();
+        if (ensureTagPortal().classList.contains('is-open')) closeTagSelectPanel();
+        else openTagSelectPanel(trigger);
+      });
+      /* 单选项（代理状态 / 绑定环境情况 / 授权成员情况 / 自动续费状态） */
+      $('#proxyFilterBody').addEventListener('change', function (event) {
+        var radio = event.target.closest('[data-pf-radio]');
+        if (radio) {
+          currentDraft()[radio.dataset.pfRadio] = radio.value;
+          return;
+        }
+        /* 复选项（代理类型）/ 标签候选项由 Portal 独立处理 */
+        var checkbox = event.target.closest('[data-pf-checkbox]');
+        if (!checkbox) return;
+        var field = checkbox.dataset.pfCheckbox;
+        var draft = currentDraft();
+        var value = checkbox.value;
+        if (checkbox.checked) {
+          if (!draft[field].includes(value)) draft[field].push(value);
+        } else {
+          draft[field] = draft[field].filter(function (item) { return item !== value; });
+        }
+      });
+      /* 日期区间：写入草稿并实时校验先后顺序 */
+      $('#proxyFilterBody').addEventListener('input', function (event) {
+        var dateInput = event.target.closest('[data-pf-date]');
+        if (!dateInput) return;
+        var field = dateInput.dataset.pfDate;
+        currentDraft()[field] = dateInput.value;
+        dateInput.classList.toggle('is-empty', !dateInput.value);
+        if (field.indexOf('expire') === 0) validateFilterRange('expireStart', 'expireEnd');
+        else validateFilterRange('checkStart', 'checkEnd');
+      });
+      /* 标签多选面板（Portal 图层，避免被抽屉滚动容器裁切） */
+      $('#proxyTagPortal').addEventListener('change', function (event) {
+        var option = event.target.closest('[data-tag-option]');
+        if (!option) return;
+        var tag = option.dataset.tagOption;
+        var draft = currentDraft();
+        if (option.checked) {
+          if (!draft.tags.includes(tag)) draft.tags.push(tag);
+        } else {
+          draft.tags = draft.tags.filter(function (item) { return item !== tag; });
+        }
+        syncTagTrigger(false);
+      });
+      /* ===================== 「代理详情」弹窗：关闭 / tab / 代理名称编辑 ===================== */
+      $('#proxyDetailOverlay').addEventListener('click', function (event) {
+        if (event.target === $('#proxyDetailOverlay')) closeProxyDetail();
+      });
+      $$('[data-close-proxy-detail]').forEach(function (button) {
+        button.addEventListener('click', closeProxyDetail);
+      });
+      $$('[data-detail-tab]').forEach(function (button) {
+        button.addEventListener('click', function () { switchDetailTab(button.dataset.detailTab); });
+      });
+      $('#proxyDetailGrid').addEventListener('click', function (event) {
+        if (event.target.closest('[data-edit-proxy-name]')) {
+          event.preventDefault();
+          startProxyNameEdit();
+        }
+      });
+      /* 行内刷新代理信息：按钮进入加载态后刷新检测时间，口径同环境管理.html */
+      function refreshProxyInfo(button) {
+        var item = proxyById(button.dataset.refreshIp);
+        if (!item) return;
+        button.disabled = true;
+        button.innerHTML = icon('refresh-cw', 'w-3 h-3 animate-spin');
+        window.lucide && window.lucide.createIcons();
+        window.setTimeout(function () {
+          item.lastCheckedAt = nowText();
+          render();
+          toast((item.name || '代理') + ' 的代理信息已刷新', 'success');
+        }, 450);
+      }
+      /* 模块弹层打开时让出右下角操作区域（系统框架 setModuleDialogOpen 协议，口径同环境管理.html）：
+         若不上报，全局智能助手悬浮球会压住筛选抽屉 / 详情弹窗底部的主按钮 */
+      var moduleDialogNodes = ['formModalOverlay', 'proxyFilterOverlay', 'proxyDetailOverlay', 'confirmDialogOverlay']
+        .map(function (id) { return document.getElementById(id); })
+        .filter(Boolean);
+      var reportModuleDialog = function () {
+        if (window.parent === window) return;
+        window.parent.postMessage({
+          type: 'yundeng:module-dialog-state',
+          open: moduleDialogNodes.some(function (node) { return !node.classList.contains('hidden'); })
+        }, '*');
+      };
+      var moduleDialogObserver = new MutationObserver(reportModuleDialog);
+      moduleDialogNodes.forEach(function (node) { moduleDialogObserver.observe(node, { attributes: true, attributeFilter: ['class'] }); });
+      reportModuleDialog();
+      initProxySearchBox();
       render();
       window.lucide && window.lucide.createIcons();
     })();

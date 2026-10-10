@@ -87,7 +87,6 @@
 
 ```text
 SystemFrame
-├─ BrowserChrome
 ├─ TopBar
 ├─ Sidebar
 ├─ GlobalAssistant（如页面存在）
@@ -229,7 +228,6 @@ Figma 组件页已提供：`头部/浏览器1336`、`头部/浏览器1920`、`�
 
 | 区域 | 现行项目规格 |
 | --- | --- |
-| BrowserChrome | 标签行 32px + 工具行 52px，总高 84px |
 | TopBar | 高 56px；桌面左右内边距 24px，平板 12px |
 | Sidebar | 完整态 220px；紧凑态 68px |
 | ModuleFrame | 由公共层提供四边 16px 内边距，业务根不再额外收窄整个页面 |
@@ -237,11 +235,11 @@ Figma 组件页已提供：`头部/浏览器1336`、`头部/浏览器1920`、`�
 #### Figma 结构要求
 
 - Shell 外壳使用独立 Auto Layout Frame；
-- TopBar、Sidebar、BrowserChrome 均使用固定宽/高约束；
+- TopBar、Sidebar 均使用固定宽/高约束；
 - Router Outlet 使用 `Fill container`，不能用手工拉伸的固定宽度；
 - 侧栏折叠应通过组件变体展示，不复制两份完全独立的导航；
 - 页面设计稿需要同时提供至少一个完整态和一个紧凑态样例；
-- 业务模块 Frame 不得包含第二套 BrowserChrome、TopBar 或 Sidebar。
+- 业务模块 Frame 不得包含第二套 TopBar 或 Sidebar。
 
 ### 3.3 侧边导航
 

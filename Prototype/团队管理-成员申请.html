@@ -1,0 +1,3778 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>云登 · 成员申请</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap"
+    />
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: {
+                DEFAULT: "#0066FF",
+                hover: "#0052CC",
+                active: "#0047B3",
+                bg: "#E6F0FF",
+              },
+              ink: {
+                title: "#1A1D24",
+                body: "#3A3F4A",
+                sub: "#6E7685",
+                muted: "#9DA2AC",
+              },
+              line: {
+                DEFAULT: "#DFE1E5",
+                light: "#E8EAED",
+                lighter: "#F0F1F3",
+              },
+              page: "#F7F8FA",
+              card: "#FFFFFF",
+              hover: "#F3F4F6",
+              "block-hover": "#F0F1F3",
+              price: "#FE5416",
+              success: { DEFAULT: "#0FC060", bg: "#E7F9F0" },
+              warning: { DEFAULT: "#E7772D", bg: "#FDF2E9" },
+              danger: { DEFAULT: "#D9001B", bg: "#FFE8EB" },
+              info: { DEFAULT: "#0091D5", bg: "#E4F4FB" },
+            },
+            borderRadius: { DEFAULT: "4px", md: "6px", lg: "8px" },
+            fontFamily: {
+              sans: [
+                "-apple-system",
+                "BlinkMacSystemFont",
+                "PingFang SC",
+                "Hiragino Sans GB",
+                "Microsoft YaHei",
+                "Helvetica Neue",
+                "Helvetica",
+                "Arial",
+                "sans-serif",
+              ],
+              mono: ["JetBrains Mono", "monospace"],
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      /* 布局、颜色和尺寸取自 design.md §2–5；业务树缩进取 20px 间距梯度。 */
+      :root {
+        --primary: #0066ff;
+        --primary-hover: #0052cc;
+        --primary-bg: #e6f0ff;
+        --title: #1a1d24;
+        --body: #3a3f4a;
+        --sub: #6e7685;
+        --muted: #9da2ac;
+        --line: #dfe1e5;
+        --light: #e8eaed;
+        --lighter: #f0f1f3;
+        --page: #f7f8fa;
+        --card: #ffffff;
+        --hover: #f3f4f6;
+        --danger: #d9001b;
+        --success: #0fc060;
+        --warning: #e7772d;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font:
+          13px/1.5 -apple-system,
+          BlinkMacSystemFont,
+          "PingFang SC",
+          "Microsoft YaHei",
+          sans-serif;
+        color: var(--body);
+        background: var(--page);
+      }
+      button,
+      input,
+      select,
+      textarea {
+        font: inherit;
+      }
+      button {
+        cursor: pointer;
+      }
+      button:disabled {
+        cursor: not-allowed;
+        opacity: 0.45;
+      }
+      input,
+      textarea {
+        caret-color: var(--primary);
+      }
+      input[type="checkbox"],
+      input[type="radio"] {
+        accent-color: var(--primary);
+      }
+      ::selection {
+        background: var(--primary-bg);
+        color: var(--primary);
+      }
+      :focus-visible {
+        outline: 2px solid var(--primary);
+        outline-offset: 2px;
+      }
+      svg {
+        width: 16px;
+        height: 16px;
+        flex-shrink: 0;
+      }
+      h2,
+      h3,
+      p {
+        margin: 0;
+      }
+      h2 {
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--title);
+      }
+      h3 {
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--title);
+      }
+      a {
+        color: var(--primary);
+        text-underline-offset: 3px;
+      }
+      [hidden] {
+        display: none !important;
+      }
+      .mono {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 12px;
+        font-variant-numeric: tabular-nums;
+      }
+      .muted {
+        color: var(--sub);
+      }
+      .small {
+        font-size: 12px;
+      }
+      .actions {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .spaced {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+      .btn {
+        height: 32px;
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        background: var(--card);
+        color: var(--body);
+        padding: 0 12px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        white-space: nowrap;
+      }
+      .btn:hover:not(:disabled) {
+        border-color: var(--primary);
+        color: var(--primary);
+      }
+      .btn.primary {
+        background: var(--primary);
+        border-color: var(--primary);
+        color: var(--card);
+      }
+      .btn.primary:hover {
+        background: var(--primary-hover);
+      }
+      .btn.danger {
+        background: var(--danger);
+        border-color: var(--danger);
+        color: var(--card);
+      }
+      .icon-btn {
+        width: 32px;
+        height: 32px;
+        padding: 0;
+        border: 0;
+        border-radius: 4px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: transparent;
+        color: var(--sub);
+      }
+      .icon-btn:hover {
+        background: var(--hover);
+        color: var(--body);
+      }
+      .link {
+        border: 0;
+        background: transparent;
+        color: var(--primary);
+        padding: 0;
+        white-space: nowrap;
+      }
+      .link:hover {
+        text-decoration: underline;
+        text-underline-offset: 3px;
+      }
+      .link.danger {
+        color: var(--danger);
+      }
+      .row-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        white-space: nowrap;
+      }
+      .field {
+        height: 32px;
+        width: 100%;
+        padding: 0 10px;
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        background: var(--card);
+        color: var(--body);
+        min-width: 0;
+      }
+      .field:focus {
+        outline: 0;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 2px var(--primary-bg);
+      }
+      textarea.field {
+        height: 88px;
+        padding: 8px 10px;
+        resize: vertical;
+      }
+      .field[aria-invalid="true"] {
+        border-color: var(--danger);
+      }
+      .error {
+        color: var(--danger);
+        font-size: 12px;
+        margin-top: 4px;
+        min-height: 0;
+      }
+      .required {
+        color: var(--danger);
+        margin-right: 4px;
+      }
+      .workspace {
+        background: var(--card);
+        border-radius: 8px;
+        /* 顶部 20px 即工具栏与区块上方的间距；左右与底部沿用区块内边距。 */
+        padding: 20px 24px 24px;
+        min-height: 100%;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+      }
+      .team-summary {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 16px;
+        padding-bottom: 20px;
+        margin-bottom: 20px;
+        border-bottom: 1px solid var(--light);
+      }
+      .team-summary h2 {
+        margin-right: 4px;
+      }
+      /* 成员申请：状态页签与搜索框放在同一个 div（.application-toolbar）内，
+         两者同一行、按垂直中线对齐；该 div 与上方内容、下方列表各保持 20px 间距。 */
+      .application-toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: nowrap;
+        gap: 0 16px;
+        margin: 0 0 20px;
+      }
+      .application-toolbar .tabs {
+        flex: 0 1 auto;
+        min-width: 0;
+        margin-bottom: 0;
+        border-bottom: 0;
+        overflow-x: auto;
+      }
+      .application-toolbar .order-search-filter-group {
+        flex: 0 1 440px;
+      }
+      /* design.md §5.4.2：搜索框的结构、样式与交互统一由公共层 YDSearchBox 提供，页面只声明容器。 */
+      .application-toolbar .order-global-search {
+        min-width: 0;
+      }
+      .split {
+        display: grid;
+        grid-template-columns: 220px minmax(0, 1fr);
+        gap: 20px;
+        flex: 1;
+        min-width: 0;
+      }
+      .rail {
+        min-width: 0;
+        border-right: 1px solid var(--light);
+        padding-right: 20px;
+      }
+      .rail-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 12px;
+      }
+      .rail .field {
+        margin-bottom: 12px;
+      }
+      .detail {
+        min-width: 0;
+      }
+      .tree-row {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        min-height: 36px;
+        border-radius: 4px;
+        padding-right: 4px;
+      }
+      .tree-row:hover {
+        background: var(--hover);
+      }
+      .tree-row.active {
+        background: var(--primary-bg);
+        color: var(--primary);
+      }
+      .tree-row .tree-label {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        text-align: left;
+        border: 0;
+        background: transparent;
+        padding: 6px 0;
+        color: inherit;
+      }
+      .tree-label span:first-child {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .tree-row .icon-btn {
+        width: 24px;
+        height: 24px;
+        flex-shrink: 0;
+      }
+      .tree-row .node-more {
+        opacity: 0;
+      }
+      .tree-row:hover .node-more,
+      .tree-row:focus-within .node-more {
+        opacity: 1;
+      }
+      .table-scroll {
+        width: 100%;
+        overflow-x: auto;
+      }
+      .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+      }
+      .data-table th {
+        text-align: left;
+        font-weight: 600;
+        font-size: 12px;
+        color: var(--sub);
+        padding: 9px 12px;
+        background: var(--lighter);
+        border-bottom: 1px solid var(--line);
+        white-space: nowrap;
+      }
+      .data-table td {
+        text-align: left;
+        padding: 9px 12px;
+        height: 48px;
+        border-bottom: 1px solid var(--lighter);
+        white-space: nowrap;
+      }
+      .data-table tbody tr:hover {
+        background: var(--hover);
+      }
+      .data-table tr.selected {
+        background: var(--primary-bg);
+      }
+      .member-table {
+        min-width: 1150px;
+      }
+      .member-cell {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .avatar {
+        width: 28px;
+        height: 28px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: var(--primary-bg);
+        color: var(--primary);
+        position: relative;
+        font-size: 12px;
+        flex-shrink: 0;
+      }
+      .avatar .owner {
+        position: absolute;
+        right: -4px;
+        top: -4px;
+        width: 12px;
+        height: 12px;
+        color: var(--warning);
+        background: var(--card);
+        border-radius: 50%;
+      }
+      .toggle {
+        position: relative;
+        width: 32px;
+        height: 18px;
+        background: var(--line);
+        border: 0;
+        border-radius: 16px;
+        padding: 0;
+      }
+      .toggle::after {
+        content: "";
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        left: 2px;
+        top: 2px;
+        background: var(--card);
+        border-radius: 50%;
+        transition: transform 0.15s;
+      }
+      .toggle[aria-checked="true"] {
+        background: var(--primary);
+      }
+      .toggle[aria-checked="true"]::after {
+        transform: translateX(14px);
+      }
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        border-radius: 4px;
+        padding: 2px 8px;
+        font-size: 12px;
+        background: var(--page);
+        color: var(--sub);
+      }
+      .badge.success {
+        color: var(--success);
+        background: #e7f9f0;
+      }
+      .badge.warning {
+        color: var(--warning);
+        background: #fdf2e9;
+      }
+      .badge.danger {
+        color: var(--danger);
+        background: #ffe8eb;
+      }
+      .pager {
+        padding-top: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        flex-wrap: wrap;
+        gap: 16px;
+        font-size: 12px;
+      }
+      .page-nav {
+        display: flex;
+        gap: 4px;
+      }
+      .pg-btn {
+        height: 30px;
+        min-width: 30px;
+        border: 1px solid var(--line);
+        background: var(--card);
+        border-radius: 4px;
+      }
+      .pg-btn.current {
+        color: var(--card);
+        background: var(--primary);
+        border-color: var(--primary);
+      }
+      .pager select {
+        height: 30px;
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        background: var(--card);
+      }
+      .jump {
+        width: 44px;
+        height: 30px;
+        text-align: center;
+        border: 1px solid var(--line);
+        border-radius: 4px;
+      }
+      .empty {
+        padding: 56px 16px;
+        text-align: center;
+        color: var(--sub);
+      }
+      .empty svg {
+        display: block;
+        width: 32px;
+        height: 32px;
+        margin: 0 auto 12px;
+        color: var(--muted);
+      }
+      .role-item {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+        padding: 6px 8px;
+        min-height: 40px;
+        border-radius: 4px;
+        margin-bottom: 4px;
+      }
+      .role-item.active {
+        background: var(--primary-bg);
+        color: var(--primary);
+      }
+      .role-item:hover {
+        background: var(--hover);
+      }
+      .role-item button {
+        border: 0;
+        background: none;
+        color: inherit;
+        text-align: left;
+        flex: 1;
+        padding: 4px 0;
+      }
+      .role-item .grip {
+        color: var(--muted);
+        cursor: grab;
+      }
+      .role-item .reorder {
+        width: 24px;
+        flex: 0 0 24px;
+        text-align: center;
+        opacity: 0;
+      }
+      .role-item:hover .reorder,
+      .role-item:focus-within .reorder {
+        opacity: 1;
+      }
+      .role-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px 20px;
+        color: var(--sub);
+        font-size: 12px;
+        margin: 12px 0 8px;
+      }
+      .role-note {
+        color: var(--sub);
+        margin-bottom: 20px;
+        overflow-wrap: anywhere;
+      }
+      .tabs {
+        display: flex;
+        gap: 20px;
+        border-bottom: 1px solid var(--light);
+        margin-bottom: 20px;
+      }
+      .tab {
+        border: 0;
+        border-bottom: 2px solid transparent;
+        background: none;
+        color: var(--sub);
+        padding: 10px 0;
+        white-space: nowrap;
+      }
+      .tab[aria-selected="true"] {
+        border-color: var(--primary);
+        color: var(--primary);
+        font-weight: 600;
+      }
+      .tab:hover {
+        color: var(--primary);
+      }
+      dialog.overlay {
+        padding: 0;
+        border: 0;
+        border-radius: 8px;
+        background: var(--card);
+        color: var(--body);
+        width: 760px;
+        max-width: 92vw;
+        max-height: 90dvh;
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.12);
+      }
+      dialog.overlay::backdrop {
+        background: rgba(0, 0, 0, 0.3);
+      }
+      dialog.overlay[open] {
+        display: flex;
+        flex-direction: column;
+      }
+      /* 弹窗打开时初始焦点落在容器上用于承接 Esc / 读屏上下文，容器本身不是可交互控件，
+         去掉浏览器默认的蓝色聚焦描边；弹窗内部控件仍保留各自的 focus-visible 描边。 */
+      dialog.overlay:focus {
+        outline: none;
+      }
+      .dialog-head {
+        padding: 0 20px;
+        height: 56px;
+        min-height: 56px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        border-bottom: 1px solid var(--light);
+      }
+      .dialog-body {
+        padding: 24px;
+        overflow-y: auto;
+        min-height: 0;
+        flex: 1;
+      }
+      .dialog-foot {
+        height: 64px;
+        min-height: 64px;
+        border-top: 1px solid var(--light);
+        padding: 0 20px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 12px;
+      }
+      .form {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+      .form-row {
+        display: grid;
+        grid-template-columns: 96px minmax(0, 400px);
+        gap: 6px 12px;
+        justify-content: center;
+        align-items: start;
+      }
+      .form-row > label {
+        padding-top: 6px;
+        text-align: right;
+      }
+      .form-row .field-wrap {
+        min-width: 0;
+      }
+      .counter {
+        text-align: right;
+        color: var(--sub);
+        font-size: 12px;
+        margin-top: 4px;
+      }
+      .form-section {
+        padding-top: 20px;
+        margin-top: 20px;
+        border-top: 1px solid var(--light);
+      }
+      .form-section h3 {
+        margin-bottom: 16px;
+      }
+      .choice-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        max-height: 240px;
+        overflow: auto;
+      }
+      .check-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-height: 32px;
+      }
+      .picker {
+        position: relative;
+        border: 1px solid var(--line);
+        border-radius: 4px;
+      }
+      .picker > summary {
+        list-style: none;
+        min-height: 30px;
+        padding: 5px 10px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+      }
+      .picker > summary::-webkit-details-marker {
+        display: none;
+      }
+      .picker-content {
+        border-top: 1px solid var(--light);
+        padding: 8px;
+        max-height: 260px;
+        overflow: auto;
+      }
+      .picker-content > .field {
+        margin-bottom: 8px;
+      }
+      .picker-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      .picker-row:hover {
+        background: var(--hover);
+      }
+      .chips {
+        display: flex;
+        gap: 4px;
+        flex-wrap: wrap;
+      }
+      .chip {
+        background: var(--primary-bg);
+        color: var(--primary);
+        border-radius: 4px;
+        padding: 2px 6px;
+        font-size: 12px;
+        display: inline-flex;
+        gap: 4px;
+        align-items: center;
+      }
+      .chip button {
+        border: 0;
+        background: transparent;
+        color: inherit;
+        padding: 0;
+        display: flex;
+      }
+      .chip svg {
+        width: 12px;
+        height: 12px;
+      }
+      .notice {
+        padding: 12px;
+        background: var(--page);
+        border-radius: 4px;
+        color: var(--sub);
+        margin-bottom: 16px;
+      }
+      .notice.warning {
+        color: var(--warning);
+        background: #fdf2e9;
+      }
+      .toast {
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 20000;
+        max-width: calc(100% - 32px);
+        padding: 10px 16px;
+        border-radius: 4px;
+        background: var(--title);
+        color: var(--card);
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.12);
+      }
+      .permission-node {
+        border-bottom: 1px solid var(--lighter);
+        padding: 6px 0;
+      }
+      .permission-head {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-height: 32px;
+      }
+      .permission-ops {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px 20px;
+        padding: 4px 0 8px 32px;
+      }
+      .selector-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+      }
+      .selector-side {
+        min-width: 0;
+        max-height: 400px;
+        overflow: auto;
+      }
+      .selector-side + .selector-side {
+        border-left: 1px solid var(--light);
+        padding-left: 20px;
+      }
+      .selected-person {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 6px 0;
+      }
+      .dropdown {
+        position: relative;
+      }
+      .dropdown > summary {
+        list-style: none;
+      }
+      .dropdown > summary::-webkit-details-marker {
+        display: none;
+      }
+      .menu {
+        position: absolute;
+        top: 36px;
+        left: 0;
+        z-index: 20;
+        min-width: 160px;
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        padding: 4px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      }
+      .menu button {
+        display: block;
+        border: 0;
+        border-radius: 4px;
+        background: transparent;
+        width: 100%;
+        text-align: left;
+        padding: 8px 12px;
+        color: var(--body);
+      }
+      .menu button:hover {
+        background: var(--hover);
+      }
+      .import-upload {
+        padding: 32px;
+        text-align: center;
+        border: 1px dashed var(--line);
+        border-radius: 8px;
+        margin: 16px 0;
+      }
+      .import-upload.dragover {
+        border-color: var(--primary);
+        background: var(--primary-bg);
+      }
+      .wrap {
+        white-space: normal !important;
+        overflow-wrap: anywhere;
+      }
+      @media (max-width: 1000px) {
+        .split {
+          grid-template-columns: 180px minmax(0, 1fr);
+          gap: 16px;
+        }
+        .rail {
+          padding-right: 16px;
+        }
+        .workspace {
+          padding: 20px;
+        }
+        .application-toolbar .tabs {
+          flex-basis: auto;
+        }
+        .application-toolbar .order-search-filter-group {
+          flex-basis: auto;
+        }
+      }
+      @media (max-width: 900px) {
+        /* 本页结构要求页签与搜索框始终同排，因此覆盖 design.md §5.4.2 E 在小屏下的默认换行，让搜索框改为弹性收缩。 */
+        .application-toolbar .order-search-filter-group {
+          width: auto;
+          flex: 0 1 auto;
+          margin-left: auto;
+          justify-content: flex-end;
+        }
+        .application-toolbar .order-global-search {
+          width: auto;
+          flex: 1 1 auto;
+        }
+      }
+      @media (max-width: 720px) {
+        .split {
+          grid-template-columns: minmax(0, 1fr);
+        }
+        .rail {
+          border-right: 0;
+          border-bottom: 1px solid var(--light);
+          padding: 0 0 16px;
+        }
+        .rail-tree,
+        .role-list {
+          max-height: 200px;
+          overflow: auto;
+        }
+        .workspace {
+          padding: 16px;
+        }
+        .application-toolbar .order-search-filter-group {
+          gap: 12px;
+        }
+        .form-row {
+          grid-template-columns: 1fr;
+        }
+        .form-row > label {
+          text-align: left;
+          padding: 0;
+        }
+        .selector-grid {
+          grid-template-columns: 1fr;
+        }
+        .selector-side + .selector-side {
+          border-left: 0;
+          border-top: 1px solid var(--light);
+          padding: 16px 0 0;
+        }
+        .dialog-body {
+          padding: 20px;
+        }
+        /* 窄屏下拒绝理由卡片改为单列，避免文案与图标挤压。 */
+        .reject-reasons {
+          grid-template-columns: minmax(0, 1fr);
+        }
+        .team-summary {
+          gap: 8px 12px;
+        }
+        .tabs {
+          gap: 16px;
+          overflow-x: auto;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          scroll-behavior: auto !important;
+          transition: none !important;
+        }
+      }
+      /* CDN 的基础样式异步注入；明确业务标题选择器，保持 design.md 的 16px/600 层级。 */
+      .workspace h2,
+      .overlay h2,
+      .workspace h3,
+      .overlay h3 {
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--title);
+      }
+      .form-section h3 {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .form-section h3 > span {
+        display: inline-flex;
+        color: var(--sub);
+      }
+      /* 宽成员表格固定操作列，滚动时仍可编辑和删除。 */
+      .member-table th:last-child,
+      .member-table td:last-child {
+        position: sticky;
+        right: 0;
+        min-width: 96px;
+        border-left: 1px solid var(--light);
+        background: var(--card);
+      }
+      .member-table th:last-child {
+        background: var(--lighter);
+      }
+      .member-table tbody tr:hover td:last-child {
+        background: var(--hover);
+      }
+      .member-table tr.selected td:last-child {
+        background: var(--primary-bg);
+      }
+      @media (min-width: 721px) {
+        .role-rail {
+          display: flex;
+          flex-direction: column;
+          height: calc(100dvh - 80px);
+        }
+        .role-rail > .field {
+          flex-shrink: 0;
+        }
+        .role-list {
+          flex: 1;
+          min-height: 0;
+          overflow: auto;
+        }
+        #roleDetail {
+          height: calc(100dvh - 80px);
+          overflow-y: auto;
+          padding-right: 4px;
+        }
+      }
+      /* design.md §5.3：高密度列表状态使用纯语义色文本。 */
+      .data-table .badge {
+        background: none;
+        border: 0;
+        border-radius: 0;
+        padding: 0;
+        font-size: 13px;
+        font-weight: 500;
+      }
+      /* ---------- 审批成员弹窗（design.md §5.6 Modal / §2 语义色） ----------
+         通过 / 拒绝共用同一弹窗壳：按参考图去掉标题栏与底部操作区的分隔线，控件填浅灰并铺满控件列。 */
+      #businessDialog.approval-dialog .dialog-head {
+        border-bottom: 0;
+      }
+      #businessDialog.approval-dialog .dialog-foot {
+        border-top: 0;
+      }
+      .approval-form {
+        gap: 20px;
+      }
+      /* 标签列 96px 右对齐（末尾中文全角冒号），控件列固定 400px、各字段起点一致。 */
+      .approval-form .form-row {
+        grid-template-columns: 96px minmax(0, 400px);
+        gap: 6px 16px;
+        justify-content: center;
+      }
+      /* 空校验占位不参与排版，保证相邻「字段 + 组件」行间距恒为 20px。 */
+      .approval-form .error:empty {
+        margin-top: 0;
+      }
+      .approval-form .form-row > label {
+        white-space: nowrap;
+      }
+      /* 申请人信息回显（真实姓名 / 账号 / 联系方式）：禁用输入框置灰，与控件列同一左边界。 */
+      .approval-info {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+      .approval-form .field.is-readonly {
+        background: var(--page);
+        border-color: var(--light);
+        color: var(--muted);
+        cursor: not-allowed;
+      }
+      /* 浅灰填充控件：参考图的日期 / 时间子控件为浅灰底 + 浅描边，
+         就近取 design.md 梯度（bg-page 填充 + line-light 描边），不自造色值。 */
+      .approval-form .order-date-trigger,
+      .approval-form .time-range-trigger {
+        background: var(--page);
+        border-color: var(--light);
+      }
+      .approval-form .field[aria-invalid="true"] {
+        border-color: var(--danger);
+      }
+      /* 自定义下拉（角色多选 / 部门树 / 联系方式）：白底控件，规格取 design.md §5.9（32px 高 / 4px 圆角 / 1px line 描边）。 */
+      .ap-select {
+        position: relative;
+        width: 100%;
+        min-width: 0;
+      }
+      .ap-trigger {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        width: 100%;
+        min-height: 32px;
+        padding: 4px 10px;
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        background: var(--card);
+        color: var(--body);
+        font: inherit;
+        text-align: left;
+        cursor: pointer;
+        transition:
+          border-color 0.15s ease,
+          box-shadow 0.15s ease;
+      }
+      .ap-trigger:hover {
+        border-color: var(--muted);
+      }
+      .ap-trigger:focus-visible,
+      .ap-trigger[aria-expanded="true"] {
+        outline: 0;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 2px var(--primary-bg);
+      }
+      .ap-trigger[aria-invalid="true"] {
+        border-color: var(--danger);
+      }
+      .ap-value {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 4px;
+        flex: 1;
+        min-width: 0;
+      }
+      .ap-placeholder {
+        color: var(--muted);
+      }
+      .ap-affix {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        flex: 0 0 auto;
+        color: var(--muted);
+      }
+      .ap-affix > svg {
+        width: 16px;
+        height: 16px;
+        transition: transform 0.15s;
+      }
+      .ap-trigger[aria-expanded="true"] .ap-affix > svg {
+        transform: rotate(180deg);
+      }
+      /* 全部清空入口：仅在有已选角色时出现。 */
+      .ap-clear {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 16px;
+        height: 16px;
+        padding: 0;
+        border: 0;
+        border-radius: 2px;
+        background: transparent;
+        color: var(--muted);
+        cursor: pointer;
+      }
+      .ap-clear:hover {
+        background: var(--primary-bg);
+        color: var(--primary);
+      }
+      .ap-clear.is-hidden {
+        display: none;
+      }
+      .ap-clear svg {
+        width: 12px;
+        height: 12px;
+      }
+      .chip-remove {
+        opacity: 0.55;
+        border-radius: 2px;
+      }
+      .chip-remove:hover {
+        opacity: 1;
+        background: var(--primary-bg);
+      }
+      .chip-remove:focus-visible {
+        opacity: 1;
+        outline: 2px solid var(--primary);
+        outline-offset: 1px;
+      }
+      /* 下拉面板：fixed 浮层脱离文档流，展开时只遮挡下方字段、不推动弹窗内其它字段。 */
+      .ap-panel {
+        position: fixed;
+        inset: auto;
+        margin: 0;
+        z-index: 1200;
+        max-height: 260px;
+        overflow: auto;
+        padding: 8px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--card);
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.12);
+      }
+      .ap-panel > .ap-search {
+        margin-bottom: 8px;
+        background: var(--card);
+      }
+      .ap-option,
+      .ap-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 8px;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      .ap-option:hover,
+      .ap-row:hover {
+        background: var(--hover);
+      }
+      .ap-option.is-selected,
+      .ap-row.is-selected {
+        color: var(--primary);
+        font-weight: 600;
+      }
+      .ap-option {
+        width: 100%;
+        border: 0;
+        background: transparent;
+        color: inherit;
+        font: inherit;
+        text-align: left;
+      }
+      .ap-option input[type="checkbox"] {
+        margin: 0;
+        flex-shrink: 0;
+        accent-color: var(--primary);
+      }
+      /* 组织树行：只保留展开 / 收起箭头与部门名，去掉单选按钮与结构图标。 */
+      .ap-caret {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 16px;
+        width: 16px;
+        height: 16px;
+        padding: 0;
+        border: 0;
+        border-radius: 2px;
+        background: transparent;
+        color: var(--sub);
+        cursor: pointer;
+      }
+      .ap-caret:hover {
+        color: var(--primary);
+      }
+      .ap-caret svg {
+        width: 12px;
+        height: 12px;
+        transition: transform 0.15s;
+      }
+      .ap-caret[aria-expanded="true"] svg {
+        transform: rotate(90deg);
+      }
+      .ap-caret-ph {
+        flex: 0 0 16px;
+        width: 16px;
+      }
+      .ap-node {
+        flex: 1;
+        min-width: 0;
+        padding: 0;
+        border: 0;
+        background: transparent;
+        color: inherit;
+        font: inherit;
+        text-align: left;
+        cursor: pointer;
+      }
+      /* 登录时间：单选行 + 勾选后启用的「可登录日期 / 可登录时间」子行。 */
+      .radio-row {
+        display: flex;
+        align-items: center;
+        gap: 28px;
+        min-height: 32px;
+      }
+      .radio-opt,
+      .approval-check {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--body);
+        white-space: nowrap;
+        cursor: pointer;
+      }
+      .radio-opt input,
+      .approval-check input {
+        width: 16px;
+        height: 16px;
+        margin: 0;
+        accent-color: var(--primary);
+      }
+      .approval-fixed-list {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+      /* 子行勾选框落在控件列起点，字段名与控件依次跟随（参考图布局）。 */
+      .approval-subrow .field-wrap {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        flex-wrap: wrap;
+      }
+      .approval-subfield {
+        position: relative;
+        flex: 1 1 262px;
+        max-width: 100%;
+        min-width: 0;
+      }
+      .approval-subfield .order-date-trigger {
+        color: var(--muted);
+      }
+      .approval-subfield .order-date-trigger-value.is-selected {
+        color: var(--body);
+      }
+      /* 日期范围控件与日历浮层（与登录请求页授权设置同源）。 */
+      .order-date-control-wrap {
+        position: relative;
+        display: block;
+        width: 100%;
+        max-width: 100%;
+      }
+      .order-date-trigger {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        max-width: 100%;
+        height: 32px;
+        padding: 0 10px 0 12px;
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        background: var(--card);
+        color: var(--muted);
+        font: 14px/1.5 inherit;
+        text-align: left;
+        cursor: pointer;
+        outline: none;
+        transition:
+          border-color 0.15s ease,
+          box-shadow 0.15s ease,
+          background 0.15s ease;
+      }
+      .order-date-trigger:hover {
+        background: var(--hover);
+      }
+      .order-date-trigger:focus-visible {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 2px var(--primary-bg);
+      }
+      .order-date-trigger-values {
+        display: flex;
+        align-items: center;
+        min-width: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .order-date-trigger-value {
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .order-date-trigger-value.is-selected {
+        color: var(--body);
+        font-family: "JetBrains Mono", monospace;
+        font-variant-numeric: tabular-nums;
+      }
+      .order-date-trigger-separator {
+        margin: 0 10px;
+        color: var(--muted);
+        flex: 0 0 auto;
+      }
+      .order-date-trigger .order-date-icon {
+        width: 16px;
+        height: 16px;
+        flex: 0 0 16px;
+        color: var(--muted);
+        pointer-events: none;
+      }
+      /* 浮层提升为 popover 后以 fixed 定位锚定触发器：展开不推动其它字段，允许遮挡下方内容。 */
+      .order-date-picker {
+        position: fixed;
+        inset: auto;
+        margin: 0;
+        width: 620px;
+        max-width: min(620px, calc(100vw - 80px));
+        z-index: 1200;
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.12);
+        padding: 16px;
+      }
+      .order-calendar-months {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+      .order-calendar-month {
+        min-width: 0;
+      }
+      .order-calendar-month + .order-calendar-month {
+        border-left: 1px solid var(--light);
+        padding-left: 12px;
+      }
+      .order-calendar-month-head {
+        display: grid;
+        grid-template-columns: 58px minmax(0, 1fr) 58px;
+        align-items: center;
+        margin-bottom: 8px;
+      }
+      .order-calendar-nav-group {
+        display: flex;
+        align-items: center;
+        gap: 2px;
+      }
+      .order-calendar-nav {
+        width: 28px;
+        height: 28px;
+        border: 0;
+        border-radius: 4px;
+        color: var(--sub);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: transparent;
+        cursor: pointer;
+      }
+      .order-calendar-nav:hover {
+        background: var(--hover);
+        color: var(--primary);
+      }
+      .order-calendar-nav-spacer {
+        width: 58px;
+        height: 28px;
+        display: block;
+      }
+      .order-calendar-title {
+        margin: 0;
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 28px;
+        text-align: center;
+        color: var(--body);
+      }
+      @media (max-width: 720px) {
+        .order-calendar-month-head {
+          grid-template-columns: 48px minmax(0, 1fr) 48px;
+        }
+        .order-calendar-title {
+          font-size: 13px;
+          white-space: nowrap;
+        }
+        .order-calendar-nav {
+          width: 22px;
+          height: 26px;
+        }
+      }
+      .order-calendar-week {
+        display: grid;
+        grid-template-columns: repeat(7, minmax(0, 1fr));
+        gap: 2px;
+        margin-bottom: 4px;
+        color: var(--muted);
+        font-size: 11px;
+        text-align: center;
+      }
+      .order-calendar-grid {
+        display: grid;
+        grid-template-columns: repeat(7, minmax(0, 1fr));
+        gap: 2px;
+      }
+      .order-calendar-day {
+        height: 30px;
+        border: 0;
+        border-radius: 4px;
+        background: var(--card);
+        color: var(--body);
+        font: 12px "JetBrains Mono", monospace;
+        cursor: pointer;
+        position: relative;
+      }
+      .order-calendar-day:hover {
+        background: var(--hover);
+        color: var(--primary);
+      }
+      .order-calendar-day:disabled {
+        color: var(--muted);
+        cursor: not-allowed;
+        background: transparent;
+      }
+      /* 非本月日期沿用 design.md 的 muted 梯度（降透明度），避免引入规范外色值。 */
+      .order-calendar-day.is-other {
+        color: var(--muted);
+        opacity: 0.72;
+      }
+      .order-calendar-day.is-range {
+        background: var(--primary-bg);
+      }
+      .order-calendar-day.is-start,
+      .order-calendar-day.is-end {
+        background: var(--primary);
+        color: var(--card);
+        border-radius: 4px;
+        font-weight: 600;
+      }
+      .order-calendar-day.is-start:not(.is-end) {
+        border-radius: 4px 0 0 4px;
+      }
+      .order-calendar-day.is-end:not(.is-start) {
+        border-radius: 0 4px 4px 0;
+      }
+      .order-calendar-day.is-start.is-end {
+        border-radius: 4px;
+      }
+      .order-calendar-foot {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-top: 1px solid var(--light);
+        margin-top: 14px;
+        padding-top: 12px;
+      }
+      .order-calendar-value {
+        font-size: 12px;
+        color: var(--sub);
+        font-family: "JetBrains Mono", monospace;
+      }
+      .order-calendar-actions {
+        display: flex;
+        gap: 8px;
+      }
+      /* 时间范围控件与滚轮浮层（与登录请求页授权设置同源）。 */
+      .time-range-control {
+        position: relative;
+        width: 100%;
+      }
+      .time-range-trigger {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        height: 32px;
+        padding: 0 12px;
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        background: var(--card);
+        color: var(--muted);
+        font: 14px/1.5 inherit;
+        cursor: pointer;
+      }
+      .time-range-trigger:hover {
+        background: var(--hover);
+      }
+      .time-range-trigger:focus-visible {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 2px var(--primary-bg);
+      }
+      .time-range-value {
+        font-family: "JetBrains Mono", monospace;
+        font-variant-numeric: tabular-nums;
+      }
+      .time-range-value.is-selected {
+        color: var(--body);
+      }
+      .time-range-separator {
+        color: var(--muted);
+        margin: 0 6px;
+      }
+      .time-range-picker {
+        position: fixed;
+        inset: auto;
+        margin: 0;
+        z-index: 1200;
+        width: 360px;
+        max-width: calc(100vw - 80px);
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.12);
+        padding: 12px 0 0;
+      }
+      .time-range-picker[hidden] {
+        display: none;
+      }
+      .time-cols {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+      }
+      .time-col + .time-col {
+        border-left: 1px solid var(--light);
+      }
+      .time-col h4 {
+        margin: 0 0 8px;
+        text-align: center;
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--body);
+      }
+      .time-wheels {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2px;
+        height: 168px;
+        overflow: hidden;
+        padding: 0 6px;
+      }
+      .time-wheel {
+        height: 100%;
+        overflow-y: auto;
+        scrollbar-width: none;
+        text-align: center;
+        padding: 72px 0;
+      }
+      .time-wheel::-webkit-scrollbar {
+        display: none;
+      }
+      .time-wheel button {
+        display: block;
+        width: 100%;
+        height: 24px;
+        border: 0;
+        background: transparent;
+        color: var(--sub);
+        font: 13px "JetBrains Mono", monospace;
+        font-variant-numeric: tabular-nums;
+        cursor: pointer;
+      }
+      .time-wheel button[aria-selected="true"] {
+        color: var(--title);
+        font-weight: 700;
+      }
+      .time-wheel button:hover {
+        color: var(--primary);
+      }
+      .time-picker-foot {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 24px;
+        border-top: 1px solid var(--light);
+        margin-top: 12px;
+        padding: 10px 16px;
+      }
+      .text-btn {
+        border: 0;
+        background: transparent;
+        color: var(--sub);
+        font: 13px inherit;
+        cursor: pointer;
+      }
+      .text-btn:hover {
+        color: var(--primary);
+      }
+      .text-btn.primary {
+        color: var(--primary);
+        font-weight: 600;
+      }
+      /* ---------- 拒绝审批：选择拒绝理由（单选卡片 2×2 网格） ----------
+         design.md 未覆盖「复选卡片」组件，按下述梯度就近取值：白底卡片 + line 描边 +
+         8px 圆角（borderRadius.lg），hover 取 block-hover，选中态取 primary 描边 + primary-bg 填充；
+         理由图标使用 32px 圆形底，配色取 §2 语义色（warning / danger / info / ink-muted）。 */
+      .reject-form {
+        gap: 0;
+        margin: 24px 0 40px;
+      }
+      .reject-reasons {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 24px 20px;
+      }
+      .reject-reasons:focus {
+        outline: none;
+      }
+      .reject-reasons[aria-invalid="true"] .reject-reason {
+        border-color: var(--danger);
+      }
+      .reject-reason {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-height: 64px;
+        padding: 0 20px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--card);
+        cursor: pointer;
+        transition: border-color 0.15s, background-color 0.15s;
+      }
+      .reject-reason:hover {
+        border-color: var(--primary);
+        background: var(--lighter);
+      }
+      .reject-reason.is-selected {
+        border-color: var(--primary);
+        background: var(--primary-bg);
+      }
+      /* 选择框：原生 radio 视觉隐藏但保留键盘可达，选中态由相邻 .reject-check 呈现。 */
+      .reject-reason input {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        margin: 0;
+        opacity: 0;
+        pointer-events: none;
+      }
+      .reject-check {
+        width: 18px;
+        height: 18px;
+        flex: 0 0 18px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 1.5px solid var(--primary);
+        border-radius: 4px;
+        background: var(--card);
+        color: #fff;
+      }
+      .reject-check svg {
+        width: 12px;
+        height: 12px;
+        opacity: 0;
+      }
+      .reject-reason input:checked + .reject-check {
+        background: var(--primary);
+      }
+      .reject-reason input:checked + .reject-check svg {
+        opacity: 1;
+      }
+      .reject-reason input:focus-visible + .reject-check {
+        box-shadow: 0 0 0 2px var(--primary-bg);
+      }
+      .reject-label {
+        font-size: 14px;
+        color: var(--title);
+      }
+      .reject-icon {
+        width: 32px;
+        height: 32px;
+        flex: 0 0 32px;
+        margin-left: auto;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        color: #fff;
+      }
+      .reject-icon svg {
+        width: 18px;
+        height: 18px;
+      }
+      /* 图标圆底取 design.md §2 语义色：warning / danger / info / 中性灰。 */
+      .reject-icon[data-tone="warning"] {
+        background: var(--warning);
+      }
+      .reject-icon[data-tone="danger"] {
+        background: var(--danger);
+      }
+      .reject-icon[data-tone="info"] {
+        background: #0091d5; /* design.md §2 info */
+      }
+      .reject-icon[data-tone="muted"] {
+        background: var(--muted);
+      }
+      .reject-form .error {
+        margin-top: 8px;
+      }
+      /* 弹窗内浮层面板：放开裁剪，允许日历 / 时间面板遮挡下方内容。 */
+      #businessDialog.has-floating-panel,
+      #businessDialog.has-floating-panel .dialog-body {
+        overflow: visible;
+      }
+    </style>
+    <link rel="stylesheet" href="公共导航.css?v=20261008a" />
+    <script src="公共导航.js?v=20261008a"></script>
+  </head>
+  <body>
+    <!-- 业务工作区：唯一系统框架由公共导航承载 -->
+    <main id="mainContent">
+      <div class="page-content">
+        <section class="workspace" id="workspace" aria-label="成员申请">
+          <p class="muted" role="status">正在加载团队数据…</p>
+        </section>
+      </div>
+    </main>
+    <!-- 模块内表单与确认弹层 -->
+    <dialog class="overlay" id="businessDialog" aria-labelledby="dialogTitle">
+      <header class="dialog-head">
+        <h2 id="dialogTitle"></h2>
+        <button id="dialogClose" class="icon-btn" aria-label="关闭">
+          <i data-lucide="x"></i>
+        </button>
+      </header>
+      <div id="dialogBody" class="dialog-body"></div>
+      <footer class="dialog-foot">
+        <button class="btn" id="dialogCancel">取消</button
+        ><button class="btn primary" id="dialogSave">确定</button>
+      </footer>
+    </dialog>
+    <dialog
+      class="overlay"
+      id="confirmDialog"
+      aria-labelledby="confirmTitle"
+      style="width: 480px"
+    >
+      <header class="dialog-head">
+        <h2 id="confirmTitle"></h2>
+        <button id="confirmClose" class="icon-btn" aria-label="关闭确认">
+          <i data-lucide="x"></i>
+        </button>
+      </header>
+      <div class="dialog-body"><p id="confirmBody"></p></div>
+      <footer class="dialog-foot">
+        <button class="btn" id="confirmCancel">取消</button
+        ><button class="btn primary" id="confirmSave">确定</button>
+      </footer>
+    </dialog>
+    <script>
+      const PAGE = "applications";
+      ("use strict");
+      // 内联团队数据与业务工具；五个模块通过 SystemFrame 保存同一份本地演示数据。
+      const $ = (s, root = document) => root.querySelector(s);
+      const $$ = (s, root = document) => [...root.querySelectorAll(s)];
+      const esc = (value) =>
+        String(value ?? "").replace(
+          /[&<>"']/g,
+          (c) =>
+            ({
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              '"': "&quot;",
+              "'": "&#39;",
+            })[c],
+        );
+      const icon = (name) => `<i data-lucide="${name}" aria-hidden="true"></i>`;
+      const icons = () => window.lucide?.createIcons();
+      const button = (label, action, id = "", kind = "") =>
+        `<button type="button" class="btn ${kind}" data-action="${action}" data-id="${esc(id)}">${esc(label)}</button>`;
+      const link = (label, action, id = "", danger = false) =>
+        `<button type="button" class="link${danger ? " danger" : ""}" data-action="${action}" data-id="${esc(id)}">${esc(label)}</button>`;
+      const empty = (text) =>
+        `<div class="empty">${icon("inbox")}<p>${esc(text)}</p></div>`;
+      const dateTime = () => new Date().toLocaleString("sv-SE");
+      const uid = (prefix) =>
+        prefix +
+        "-" +
+        Date.now().toString(36) +
+        "-" +
+        Math.random().toString(36).slice(2, 7);
+      const maskPhone = (phone) =>
+        String(phone).replace(/^(\d{3})\d{4}(\d{4})$/, "$1****$2");
+      const badge = (status) =>
+        `<span class="badge ${["启用", "已允许", "已通过"].includes(status) ? "success" : ["禁用", "已拒绝", "不通过"].includes(status) ? "danger" : "warning"}">${esc(status)}</span>`;
+      const permissionGroups = [
+        {
+          name: "环境管理",
+          children: [
+            { name: "新建环境", ops: ["查看", "单个创建", "批量创建", "导入"] },
+            {
+              name: "环境列表",
+              ops: ["查看", "启动", "编辑", "删除", "分配", "导出"],
+            },
+          ],
+        },
+        {
+          name: "代理管理",
+          ops: ["查看", "添加", "编辑", "删除", "检测", "授权"],
+        },
+        {
+          name: "费用管理",
+          children: [
+            { name: "云币交易流水", ops: ["查看", "导出"] },
+            { name: "订单管理", ops: ["查看", "支付", "取消", "导出"] },
+            { name: "开票管理", ops: ["查看", "申请开票", "管理抬头"] },
+            { name: "优惠券", ops: ["查看"] },
+          ],
+        },
+        {
+          name: "团队管理",
+          children: [
+            {
+              name: "成员管理",
+              ops: [
+                "查看",
+                "添加",
+                "邀请",
+                "编辑",
+                "删除",
+                "导入",
+                "导出",
+                "调岗",
+              ],
+            },
+            { name: "部门管理", ops: ["查看", "添加", "编辑", "删除"] },
+            {
+              name: "角色管理",
+              ops: ["查看", "添加", "编辑", "删除", "配置成员"],
+            },
+            { name: "成员申请", ops: ["查看", "审批"] },
+            { name: "登录请求", ops: ["查看", "审批"] },
+          ],
+        },
+        ...[
+          "商城",
+          "账号管理",
+          "分享转移",
+          "日志管理",
+          "账号设置",
+          "安全策略",
+          "插件管理",
+          "API",
+          "RPA",
+          "回收站",
+        ].map((name) => ({
+          name,
+          ops: name === "日志管理" ? ["查看", "导出"] : ["查看", "管理"],
+        })),
+      ];
+      function permissionLeaves(nodes = permissionGroups, path = "") {
+        return nodes.flatMap((n) =>
+          n.children
+            ? permissionLeaves(n.children, path + n.name + "/")
+            : n.ops.map((op) => path + n.name + "/" + op),
+        );
+      }
+      const allPermissions = permissionLeaves();
+      const seedDepartments = [
+        { id: "d0", name: "云登运营团队", parent: null, leaders: ["m1"] },
+        { id: "d1", name: "默认部门", parent: "d0", leaders: ["m1"] },
+        { id: "d2", name: "跨境运营", parent: "d0", leaders: ["m2"] },
+        { id: "d3", name: "北美运营组", parent: "d2", leaders: ["m3"] },
+        { id: "d4", name: "欧洲运营组", parent: "d2", leaders: ["m4"] },
+        { id: "d5", name: "内容增长", parent: "d0", leaders: ["m5"] },
+        { id: "d6", name: "内容策划组", parent: "d5", leaders: ["m6"] },
+        { id: "d7", name: "客户成功", parent: "d0", leaders: ["m7"] },
+        { id: "d8", name: "财务部", parent: "d0", leaders: ["m8"] },
+      ];
+      const seedRoles = [
+        "超级管理员",
+        "经理",
+        "财务",
+        "环境配置员",
+        "环境操作员",
+        "内容审核员",
+        "客户支持",
+        "临时协作者",
+      ].map((name, i) => ({
+        id: "r" + i,
+        name,
+        enabled: i !== 7,
+        note:
+          i === 0
+            ? "系统自动生成"
+            : [
+                "",
+                "负责日常团队运营",
+                "维护订单与开票信息",
+                "创建和维护环境配置",
+                "操作已授权的浏览器环境",
+                "审核账号与内容资料",
+                "处理客户协作事项",
+                "短期项目协作",
+              ][i],
+        scope: i === 0 ? "全部数据" : i === 1 ? "本部门及下级部门" : "仅本人",
+        creator: i === 0 ? "系统" : "张小登",
+        created: "2026-08-01 10:00:00",
+        permissions:
+          i === 0
+            ? [...allPermissions]
+            : allPermissions.filter((p) =>
+                i === 2
+                  ? p.startsWith("费用管理/")
+                  : i === 1
+                    ? !p.startsWith("账号设置/")
+                    : p.startsWith("环境管理/") &&
+                      (i === 3 || p.endsWith("/查看") || p.endsWith("/启动")),
+              ),
+      }));
+      const seedMembers = [
+        "张小登",
+        "李运营",
+        "王蕾",
+        "陈凯",
+        "周内容",
+        "孙悦",
+        "郑客服",
+        "林财务",
+        "赵明",
+        "吴晨",
+        "郑岩",
+        "冯欣",
+        "褚宁",
+        "卫晴",
+        "蒋越",
+        "杨支持",
+      ].map((name, i) => ({
+        id: "m" + (i + 1),
+        name,
+        phone: "1990000" + String(1000 + i),
+        dept: ["d1", "d2", "d3", "d4", "d5", "d6", "d7", "d8"][i % 8],
+        roles:
+          i === 0
+            ? ["r0"]
+            : i === 1
+              ? ["r1", "r4"]
+              : i === 7
+                ? ["r2"]
+                : ["r" + (3 + (i % 4))],
+        enabled: i !== 9 && i !== 13,
+        joined: "2026-08-" + String(i + 1).padStart(2, "0"),
+        entry: i % 4 === 0 ? "" : "2026-07-01",
+        updated: "2026-09-28 09:30:00",
+        note: "",
+        owner: i === 0,
+      }));
+      const seed = {
+        version: 1,
+        departments: seedDepartments,
+        roles: seedRoles,
+        members: seedMembers,
+        // 成员申请：联系方式支持手机号或邮箱，按业务要求展示原始值、不做脱敏。
+        applications: Object.values({
+          待审批: [
+            {
+              time: "2026-09-30 09:16",
+              name: "黄云",
+              account: "hy001@cl.test",
+              contact: "19342316028",
+              contacts: ["19342316028", "hy001@cl.test"],
+              status: "待审批",
+            },
+            {
+              time: "2026-09-29 14:02",
+              name: "苏晴",
+              account: "sq002@cl.test",
+              contact: "su.qing@yunlogin.cn",
+              status: "待审批",
+            },
+            {
+              time: "2026-09-28 11:47",
+              name: "邓浩然",
+              account: "dhr003@cl.test",
+              contact: "18655209137",
+              contacts: ["18655209137", "dhr003@cl.test"],
+              status: "待审批",
+            },
+            {
+              time: "2026-09-27 16:23",
+              name: "韩雨桐",
+              account: "hyt004@cl.test",
+              contact: "hanyutong@163.com",
+              status: "待审批",
+            },
+            {
+              time: "2026-09-26 10:05",
+              name: "邵伟",
+              account: "sw005@cl.test",
+              contact: "15922338761",
+              status: "待审批",
+            },
+          ],
+          已通过: [
+            {
+              time: "2026-09-20 13:42",
+              name: "林可",
+              contact: "15677314408",
+              dept: "d2",
+              role: "r4",
+              operator: "张小登",
+              operated: "2026-09-20 15:08",
+              status: "已通过",
+            },
+            {
+              time: "2026-09-18 09:25",
+              name: "何川",
+              contact: "18011462873",
+              dept: "d3",
+              role: "r3",
+              operator: "张小登",
+              operated: "2026-09-18 10:12",
+              status: "已通过",
+            },
+            {
+              time: "2026-09-15 15:10",
+              name: "罗莹",
+              contact: "luoying@yunlogin.cn",
+              dept: "d5",
+              role: "r5",
+              operator: "李运营",
+              operated: "2026-09-15 16:40",
+              status: "已通过",
+            },
+            {
+              time: "2026-09-12 17:36",
+              name: "谢俊",
+              contact: "13599240715",
+              dept: "d7",
+              role: "r6",
+              operator: "李运营",
+              operated: "2026-09-13 09:05",
+              status: "已通过",
+            },
+          ],
+          已拒绝: [
+            {
+              time: "2026-09-23 15:37",
+              name: "曹宁",
+              contact: "13380216914",
+              reason: "资料填写有误",
+              operator: "张小登",
+              operated: "2026-09-23 16:20",
+              status: "已拒绝",
+            },
+            {
+              time: "2026-09-21 10:48",
+              name: "张苇",
+              contact: "zhangwei@outlook.com",
+              reason: "非团队成员",
+              operator: "张小登",
+              operated: "2026-09-21 11:02",
+              status: "已拒绝",
+            },
+            {
+              time: "2026-09-19 08:52",
+              name: "齐阳",
+              contact: "15833702964",
+              reason: "其它原因",
+              operator: "李运营",
+              operated: "2026-09-19 10:15",
+              status: "已拒绝",
+            },
+          ],
+        })
+          .flat()
+          .map((a, i) => ({ ...a, id: "a" + i })),
+        logins: [
+          {
+            user: "177****0832",
+            name: "李宁",
+            device: "DEV-8F2A-9012",
+            mac: "A4:83:E7:2B:1C:09",
+            network: "192.168.8.18",
+            time: "2026-08-14 09:36",
+            status: "待处理",
+          },
+          {
+            user: "193****0832",
+            name: "周敏",
+            device: "DEV-72BD-3418",
+            mac: "34:6F:24:10:5D:A2",
+            network: "192.168.8.21",
+            time: "2026-08-14 08:52",
+            status: "待处理",
+          },
+          {
+            user: "186****2719",
+            name: "王蕾",
+            device: "DEV-C18E-2204",
+            mac: "58:11:22:9A:76:03",
+            network: "10.10.2.16",
+            time: "2026-08-13 18:21",
+            status: "已允许",
+          },
+          {
+            user: "155****6280",
+            name: "陈凯",
+            device: "DEV-390F-7712",
+            mac: "B0:41:6A:18:2C:7E",
+            network: "192.168.3.42",
+            time: "2026-08-13 16:08",
+            status: "已拒绝",
+          },
+          {
+            user: "133****9051",
+            name: "赵明",
+            device: "DEV-68CE-1209",
+            mac: "80:7D:3A:66:20:14",
+            network: "172.16.0.31",
+            time: "2026-08-13 13:44",
+            status: "已允许",
+          },
+          {
+            user: "188****4421",
+            name: "孙悦",
+            device: "DEV-A026-5517",
+            mac: "44:8A:5B:01:77:C0",
+            network: "192.168.1.64",
+            time: "2026-08-12 20:17",
+            status: "已拒绝",
+          },
+          {
+            user: "159****3708",
+            name: "周岚",
+            device: "DEV-F77D-0083",
+            mac: "9C:2F:9D:03:6A:21",
+            network: "10.2.8.17",
+            time: "2026-08-12 15:30",
+            status: "已允许",
+          },
+          {
+            user: "137****1196",
+            name: "吴晨",
+            device: "DEV-110C-8390",
+            mac: "20:4E:7F:88:13:2A",
+            network: "192.168.8.76",
+            time: "2026-08-11 11:26",
+            status: "待处理",
+          },
+          {
+            user: "181****5602",
+            name: "郑岩",
+            device: "DEV-42AE-7621",
+            mac: "E8:31:CD:4A:20:9B",
+            network: "172.16.4.22",
+            time: "2026-08-10 17:48",
+            status: "已允许",
+          },
+          {
+            user: "136****7741",
+            name: "冯欣",
+            device: "DEV-B8A1-3007",
+            mac: "68:39:22:AB:70:14",
+            network: "192.168.6.33",
+            time: "2026-08-09 09:14",
+            status: "已拒绝",
+          },
+          {
+            user: "189****2285",
+            name: "褚宁",
+            device: "DEV-5E20-9174",
+            mac: "18:7A:93:4D:2A:60",
+            network: "10.8.3.19",
+            time: "2026-08-08 14:32",
+            status: "已允许",
+          },
+          {
+            user: "158****3914",
+            name: "卫晴",
+            device: "DEV-90C4-2268",
+            mac: "7C:8B:CA:14:39:22",
+            network: "192.168.2.58",
+            time: "2026-08-07 19:05",
+            status: "待处理",
+          },
+          {
+            user: "187****6033",
+            name: "蒋越",
+            device: "DEV-76A9-4301",
+            mac: "38:21:10:FA:82:64",
+            network: "172.18.0.12",
+            time: "2026-08-06 10:42",
+            status: "已允许",
+          },
+          {
+            user: "132****8470",
+            name: "沈安",
+            device: "DEV-E305-1182",
+            mac: "50:11:92:6A:8C:07",
+            network: "192.168.9.15",
+            time: "2026-08-05 08:18",
+            status: "已拒绝",
+          },
+        ].map((r, i) => ({ ...r, id: "l" + i })),
+        inviteVersion: 1,
+      };
+      let data = structuredClone(seed);
+      let ui = {
+        keyword: "",
+        page: 1,
+        size: 10,
+        dept: "d0",
+        role: "r0",
+        tab: "members",
+        applicationStatus: "待审批",
+        selected: [],
+      };
+      try {
+        ui = {
+          ...ui,
+          ...JSON.parse(
+            sessionStorage.getItem("yunlogin-team-ui-" + PAGE) || "{}",
+          ),
+        };
+      } catch {}
+      // 兼容历史会话：旧页签名「不通过」统一迁移为「已拒绝」。
+      if (ui.applicationStatus === "不通过") ui.applicationStatus = "已拒绝";
+      if (!["待审批", "已通过", "已拒绝"].includes(ui.applicationStatus))
+        ui.applicationStatus = "待审批";
+      let expanded = new Set(seedDepartments.map((d) => d.id));
+      let loaded = false;
+      const STORAGE = "yunlogin-team-prototype-v1";
+      function remember() {
+        try {
+          sessionStorage.setItem(
+            "yunlogin-team-ui-" + PAGE,
+            JSON.stringify(ui),
+          );
+        } catch {}
+      }
+      function readLocal() {
+        try {
+          return JSON.parse(localStorage.getItem(STORAGE) || "null");
+        } catch {
+          return null;
+        }
+      }
+      function saveData() {
+        if (window.parent !== window)
+          window.parent.postMessage(
+            { type: "yundeng:team-store-set", value: data },
+            "*",
+          );
+        else {
+          try {
+            localStorage.setItem(STORAGE, JSON.stringify(data));
+          } catch {
+            toast("本次修改仅在当前页面保留");
+          }
+        }
+      }
+      // 将待审批成员申请数上报给 SystemFrame，用于左侧菜单「成员申请」数字角标。
+      function reportNavBadge() {
+        if (window.parent === window) return;
+        window.parent.postMessage(
+          {
+            type: "yundeng:nav-badge",
+            key: "team-applications",
+            count: data.applications.filter((a) => a.status === "待审批")
+              .length,
+          },
+          "*",
+        );
+      }
+      function commit(message) {
+        saveData();
+        remember();
+        render();
+        if (message) toast(message);
+      }
+      // 存量演示数据迁移：旧版申请数据（联系方式脱敏、状态「不通过」）刷新为当前样例。
+      function migrateApplications() {
+        const legacy = (data.applications || []).some(
+          (a) => a.status === "不通过" || String(a.contact).includes("*"),
+        );
+        if (!Array.isArray(data.applications) || legacy)
+          data.applications = structuredClone(seed.applications);
+      }
+      function initData(value) {
+        if (loaded) return;
+        loaded = true;
+        if (value?.version === 1 && Array.isArray(value.members)) data = value;
+        migrateApplications();
+        render();
+      }
+      window.addEventListener("message", (event) => {
+        if (event.source !== window.parent) return;
+        if (event.data?.type === "yundeng:team-store") {
+          initData(event.data.value);
+        }
+        if (event.data?.type === "yundeng:team-store-error")
+          toast("本地存储不可用，当前修改在本次会话内保留");
+      });
+      function start() {
+        if (window.parent !== window) {
+          window.parent.postMessage({ type: "yundeng:team-store-get" }, "*");
+          setTimeout(() => initData(readLocal()), 1500);
+        } else initData(readLocal());
+      }
+      function deptBy(id) {
+        return data.departments.find((d) => d.id === id);
+      }
+      function roleBy(id) {
+        return data.roles.find((r) => r.id === id);
+      }
+      function memberBy(id) {
+        return data.members.find((m) => m.id === id);
+      }
+      function descendants(id) {
+        let ids = [id];
+        for (const d of data.departments.filter((d) => d.parent === id))
+          ids.push(...descendants(d.id));
+        return ids;
+      }
+      function deptCount(id) {
+        const ids = descendants(id);
+        return data.members.filter((m) => ids.includes(m.dept)).length;
+      }
+      function flatDepartments(parent = null, level = 0) {
+        return data.departments
+          .filter((d) => d.parent === parent)
+          .flatMap((d) => [
+            { ...d, level },
+            ...flatDepartments(d.id, level + 1),
+          ]);
+      }
+      function matches(text, query = ui.keyword) {
+        const parts = query
+          .trim()
+          .toLowerCase()
+          .split("，")
+          .map((s) => s.trim())
+          .filter(Boolean);
+        return (
+          !parts.length ||
+          parts.some((p) => String(text).toLowerCase().includes(p))
+        );
+      }
+      function memberSearch(m) {
+        return [
+          m.name,
+          maskPhone(m.phone),
+          m.phone,
+          deptBy(m.dept)?.name,
+          m.roles.map((id) => roleBy(id)?.name).join(" "),
+        ].join(" ");
+      }
+      function memberCell(m) {
+        return `<div class="member-cell"><span class="avatar">${esc(m.name.slice(-2))}${m.owner ? '<i data-lucide="crown" class="owner" aria-label="主账号"></i>' : ""}</span><span>${esc(m.name)}${m.owner ? '<span class="muted small">（主账号）</span>' : ""}</span></div>`;
+      }
+      // design.md §5.4.2：页面只声明搜索容器、可检索字段与重绘回调，结构/样式/交互全部来自公共层 YDSearchBox。
+      function searchBar() {
+        return `<div class="order-search-filter-group"><div id="memberSearchBox" class="order-global-search" role="search"></div></div>`;
+      }
+      // 成员申请搜索字段按状态页签区分（联系方式为手机号或邮箱原始值，不脱敏）：
+      // 待审批「真实姓名、联系方式」；已通过「真实姓名、联系方式、所在部门、角色、操作人」；
+      // 已拒绝「真实姓名、联系方式、拒绝原因、操作人」。
+      const APPLICATION_SCOPE_LABELS = {
+        name: "真实姓名",
+        contact: "联系方式",
+        dept: "所在部门",
+        role: "角色",
+        operator: "操作人",
+        reason: "拒绝原因",
+      };
+      const APPLICATION_SCOPE_KEYS = {
+        待审批: ["name", "contact"],
+        已通过: ["name", "contact", "dept", "role", "operator"],
+        已拒绝: ["name", "contact", "reason", "operator"],
+      };
+      // 角色支持多选：列表与检索统一按「、」拼接角色名，缺省文案同表格单元。
+      const applicationRoleNames = (a) =>
+        (a.roles?.length ? a.roles : [a.role])
+          .map((id) => roleBy(id)?.name)
+          .filter(Boolean)
+          .join("、") || "环境操作员";
+      // 取值与列表展示保持一致：部门 / 角色按当前团队数据解析，缺省文案同表格单元。
+      const APPLICATION_SCOPE_VALUES = {
+        name: (a) => a.name,
+        contact: (a) => a.contact,
+        dept: (a) => deptBy(a.dept)?.name || "默认部门",
+        role: (a) => applicationRoleNames(a),
+        operator: (a) => a.operator || "—",
+        reason: (a) => a.reason || "申请信息不完整",
+      };
+      function applicationScopeKeys(status) {
+        return APPLICATION_SCOPE_KEYS[status] || APPLICATION_SCOPE_KEYS["待审批"];
+      }
+      function applicationScopes(status) {
+        return [
+          { key: "all", label: "全局搜索" },
+          ...applicationScopeKeys(status).map((key) => ({
+            key,
+            label: APPLICATION_SCOPE_LABELS[key],
+          })),
+        ];
+      }
+      // 字段映射只暴露当前页签字段：全局搜索的并集范围与页签可检索字段一致。
+      function applicationScopeValues(status, a) {
+        return applicationScopeKeys(status).reduce((acc, key) => {
+          acc[key] = APPLICATION_SCOPE_VALUES[key](a);
+          return acc;
+        }, {});
+      }
+      let applicationSearchBox = null;
+      function initApplicationSearchBox() {
+        const status = ui.applicationStatus;
+        applicationSearchBox =
+          window.YDSearchBox?.init("#memberSearchBox", {
+            label: "成员申请",
+            inputId: "keyword",
+            value: ui.keyword || "",
+            scopes: applicationScopes(status),
+            values: (a) => applicationScopeValues(status, a),
+            onChange: (instance) => {
+              ui.keyword = instance.value();
+              ui.page = 1;
+              ui.selected = [];
+              remember();
+              renderResults();
+            },
+          }) || null;
+      }
+      function pager(total) {
+        const pages = Math.max(1, Math.ceil(total / ui.size));
+        ui.page = Math.min(Math.max(1, ui.page), pages);
+        return `<nav class="pager" aria-label="分页"><div class="page-nav"><button class="pg-btn" data-action="page" data-id="${ui.page - 1}" aria-label="上一页" ${ui.page === 1 ? "disabled" : ""}>${icon("chevron-left")}</button>${Array.from(
+          { length: pages },
+          (_, i) => i + 1,
+        )
+          .filter(
+            (n) =>
+              pages <= 7 ||
+              n === 1 ||
+              n === pages ||
+              Math.abs(n - ui.page) <= 1,
+          )
+          .map(
+            (n, i, a) =>
+              (i && n - a[i - 1] > 1 ? '<span class="muted">…</span>' : "") +
+              `<button class="pg-btn ${ui.page === n ? "current" : ""}" data-action="page" data-id="${n}" ${ui.page === n ? 'aria-current="page"' : ""}>${n}</button>`,
+          )
+          .join(
+            "",
+          )}<button class="pg-btn" data-action="page" data-id="${ui.page + 1}" aria-label="下一页" ${ui.page === pages ? "disabled" : ""}>${icon("chevron-right")}</button></div><select id="pageSize" aria-label="每页条数">${[10, 20, 50].map((n) => `<option value="${n}" ${ui.size === n ? "selected" : ""}>${n} 条/页</option>`).join("")}</select><label>跳至 <input class="jump" id="jumpPage" type="number" min="1" max="${pages}" value="1" aria-label="跳转页码"> 页</label><span class="muted">共 <span class="mono">${total}</span> 条记录　第 ${ui.page}/${pages} 页</span></nav>`;
+      }
+      function sliceRows(rows) {
+        ui.page = Math.min(
+          Math.max(1, ui.page),
+          Math.max(1, Math.ceil(rows.length / ui.size)),
+        );
+        return rows.slice((ui.page - 1) * ui.size, ui.page * ui.size);
+      }
+      function toast(message) {
+        let el = $("#teamToast");
+        if (!el) {
+          el = document.createElement("div");
+          el.id = "teamToast";
+          el.className = "toast";
+          el.setAttribute("role", "status");
+          document.body.append(el);
+        }
+        const host = $("#confirmDialog").open
+          ? $("#confirmDialog")
+          : $("#businessDialog").open
+            ? $("#businessDialog")
+            : document.body;
+        host.append(el);
+        el.textContent = message;
+        el.hidden = false;
+        clearTimeout(toast.timer);
+        toast.timer = setTimeout(() => (el.hidden = true), 3500);
+      }
+      function formRow(label, id, control, required = false) {
+        return `<div class="form-row"><label for="${id}">${required ? '<span class="required">*</span>' : ""}${label}：</label><div class="field-wrap">${control}<p class="error" id="${id}Error" role="alert"></p></div></div>`;
+      }
+      function field(id, value = "", extra = "") {
+        return `<input id="${id}" class="field" value="${esc(value)}" ${extra}>`;
+      }
+      function select(id, options, value = "") {
+        return `<select id="${id}" class="field">${options
+          .map((o) => {
+            const [v, l] = Array.isArray(o) ? o : [o, o];
+            return `<option value="${esc(v)}" ${v === value ? "selected" : ""}>${esc(l)}</option>`;
+          })
+          .join("")}</select>`;
+      }
+      function error(id, message) {
+        // 自定义下拉的校验态挂在触发器上（隐藏域无法呈现描边与聚焦）。
+        const el = $(`[data-field-error="${id}"]`) || $("#" + id);
+        el?.setAttribute("aria-invalid", message ? "true" : "false");
+        const text = $("#" + id + "Error");
+        if (text) text.textContent = message;
+        if (message) el?.focus();
+        return !message;
+      }
+      function countField(id, max) {
+        return `<div class="counter" data-count-for="${id}"><span>0</span>/${max}</div>`;
+      }
+      function updateCounters() {
+        $$("[data-count-for]").forEach((el) => {
+          $("span", el).textContent = (
+            $("#" + el.dataset.countFor)?.value || ""
+          ).length;
+        });
+      }
+      let dialogConfirm = null,
+        returnFocus = null;
+      function openDialog(
+        title,
+        body,
+        onSave = null,
+        { confirm = "确定", cancel = "取消", variant = "" } = {},
+      ) {
+        const dialog = $("#businessDialog");
+        if (dialog.open) dialog.close();
+        returnFocus = document.activeElement;
+        // variant 为弹窗壳风格类名前缀：审批成员弹窗用 approval-dialog 去掉标题 / 底部分隔线。
+        dialog.className = variant ? `overlay ${variant}-dialog` : "overlay";
+        $("#dialogTitle").textContent = title;
+        $("#dialogBody").innerHTML = body;
+        $("#dialogSave").textContent = confirm;
+        // cancel 传空串表示该弹窗只有主操作（如审批通过仅有「通过」按钮）。
+        $("#dialogCancel").textContent = cancel || "取消";
+        $("#dialogCancel").hidden = cancel === "";
+        $("#dialogSave").hidden = !onSave;
+        $("#dialogSave").disabled = false;
+        dialogConfirm = onSave;
+        dialog.showModal();
+        $("#mainContent").style.overflow = "hidden";
+        icons();
+        updateCounters();
+        requestAnimationFrame(() => {
+          (
+            $("input,select,textarea,button", $("#dialogBody")) ||
+            $("#dialogClose")
+          ).focus();
+        });
+      }
+      function closeDialog() {
+        const d = $("#businessDialog");
+        if (d.open) d.close();
+        // 先收回日历 / 时间浮层面板，再清空弹窗内容并还原壳状态，避免残留面板或按钮隐藏态。
+        closeDialogFloatPanels();
+        // 同时清掉壳风格类，避免关闭后残留审批弹窗样式（下次 openDialog 会重设）。
+        d.classList.remove("has-floating-panel", "approval-dialog");
+        $("#dialogBody").innerHTML = "";
+        $("#dialogCancel").hidden = false;
+        $("#mainContent").style.overflow = "";
+        returnFocus?.focus();
+        dialogConfirm = null;
+      }
+      function confirmAction(title, description, callback) {
+        const d = $("#confirmDialog");
+        $("#confirmTitle").textContent = title;
+        $("#confirmBody").textContent = description;
+        $("#confirmSave").onclick = () => {
+          d.close();
+          callback();
+        };
+        d.showModal();
+        $("#confirmCancel").focus();
+      }
+      const dialogObserver = new MutationObserver(() => {
+        if (window.parent !== window)
+          window.parent.postMessage(
+            { type: "yundeng:team-overlay", open: !!$("dialog[open]") },
+            "*",
+          );
+      });
+      ["businessDialog", "confirmDialog"].forEach((id) =>
+        dialogObserver.observe($("#" + id), {
+          attributes: true,
+          attributeFilter: ["open"],
+        }),
+      );
+      $("#dialogClose").onclick = closeDialog;
+      $("#dialogCancel").onclick = closeDialog;
+      $("#dialogSave").onclick = async () => {
+        if (!dialogConfirm) return;
+        const fn = dialogConfirm;
+        $("#dialogSave").disabled = true;
+        try {
+          const result = await fn();
+          if (result !== false && dialogConfirm === fn) closeDialog();
+        } finally {
+          $("#dialogSave").disabled = false;
+        }
+      };
+      $("#businessDialog").addEventListener("cancel", (e) => {
+        e.preventDefault();
+        closeDialog();
+      });
+      $("#businessDialog").addEventListener("click", (e) => {
+        if (e.target === $("#businessDialog")) {
+          const r = e.target.getBoundingClientRect();
+          if (
+            e.clientX < r.left ||
+            e.clientX > r.right ||
+            e.clientY < r.top ||
+            e.clientY > r.bottom
+          )
+            closeDialog();
+        }
+      });
+      $("#confirmCancel").onclick = () => $("#confirmDialog").close();
+      $("#confirmClose").onclick = () => $("#confirmDialog").close();
+      $("#confirmDialog").addEventListener("click", (e) => {
+        if (e.target === $("#confirmDialog")) {
+          const r = e.target.getBoundingClientRect();
+          if (
+            e.clientX < r.left ||
+            e.clientX > r.right ||
+            e.clientY < r.top ||
+            e.clientY > r.bottom
+          )
+            e.target.close();
+        }
+      });
+      async function copyText(text) {
+        try {
+          await navigator.clipboard.writeText(text);
+          toast("复制成功");
+        } catch {
+          const t = document.createElement("textarea");
+          t.value = text;
+          ($("#businessDialog").open ? $("#dialogBody") : document.body).append(
+            t,
+          );
+          t.select();
+          const ok = document.execCommand("copy");
+          t.remove();
+          toast(ok ? "复制成功" : "复制失败，请手动复制");
+        }
+      }
+      function download(name, content, type = "text/csv;charset=utf-8") {
+        const url = URL.createObjectURL(new Blob([content], { type }));
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = name;
+        document.body.append(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+      }
+      // 树形单选与成员多选均在表单内展开，长列表自行滚动，不越出弹层。
+      function deptPicker(id, value = "d0", exclude = []) {
+        const d = deptBy(value);
+        return `<details class="picker" id="${id}Picker"><summary><span id="${id}Label">${esc(d?.name || "请选择部门")}</span>${icon("chevron-down")}</summary><div class="picker-content"><input class="field picker-search" placeholder="搜索部门" aria-label="搜索部门"><div>${flatDepartments()
+          .filter((d) => !exclude.includes(d.id))
+          .map(
+            (d) =>
+              `<label class="picker-row" data-search="${esc(d.name)}" style="padding-left:${8 + d.level * 20}px"><input type="radio" name="${id}" value="${d.id}" ${value === d.id ? "checked" : ""} data-dept-picker="${id}" data-label="${esc(d.name)}">${icon(d.parent ? "folder" : "building-2")}${esc(d.name)}</label>`,
+          )
+          .join(
+            "",
+          )}</div></div></details><input type="hidden" id="${id}" value="${esc(value)}">`;
+      }
+      function multiPicker(id, items, values = []) {
+        return `<details class="picker" id="${id}Picker"><summary><span class="chips" id="${id}Label">${values.length ? values.map((v) => `<span class="chip">${esc(items.find((i) => i.id === v)?.name || v)}</span>`).join("") : "请选择"} </span>${icon("chevron-down")}</summary><div class="picker-content"><input class="field picker-search" placeholder="输入关键词搜索" aria-label="搜索选项">${items.map((i) => `<label class="picker-row" data-search="${esc(i.name)}"><input type="checkbox" name="${id}" value="${i.id}" data-multi-picker="${id}" data-label="${esc(i.name)}" ${values.includes(i.id) ? "checked" : ""}>${esc(i.name)}</label>`).join("")}</div></details>`;
+      }
+      const checkedValues = (name) =>
+        $$(`input[name="${name}"]:checked`).map((e) => e.value);
+      function departmentEditor(id = null, parent = "d0") {
+        const original = id ? deptBy(id) : null;
+        const root = original?.parent === null;
+        const excluded = id ? descendants(id) : [];
+        openDialog(
+          id ? "编辑部门" : "添加部门",
+          `<form class="form" onsubmit="return false">${formRow("部门名称", "deptName", field("deptName", original?.name || "", 'maxlength="20" placeholder="请输入部门名称"') + countField("deptName", 20), true)}${!root ? formRow("上级部门", "deptParent", deptPicker("deptParent", original?.parent || parent, excluded), true) : ""}${formRow("负责人", "deptLeaders", multiPicker("deptLeaders", data.members, original?.leaders || []))}</form>`,
+          () => {
+            const name = $("#deptName").value.trim();
+            if (
+              !error(
+                "deptName",
+                !name
+                  ? "请输入部门名称"
+                  : data.departments.some((d) => d.id !== id && d.name === name)
+                    ? "部门名称已存在"
+                    : "",
+              )
+            )
+              return false;
+            const parentId = root ? null : $("#deptParent").value;
+            if (!root && (!deptBy(parentId) || excluded.includes(parentId))) {
+              error("deptParent", "请选择有效上级部门");
+              return false;
+            }
+            const item = {
+              id: id || uid("d"),
+              name,
+              parent: parentId,
+              leaders: checkedValues("deptLeaders"),
+            };
+            if (id) Object.assign(original, item);
+            else data.departments.push(item);
+            expanded.add(parentId);
+            expanded.add(item.id);
+            commit(id ? "部门已更新" : "部门已添加");
+          },
+        );
+      }
+      function deleteDepartment(id) {
+        const d = deptBy(id);
+        if (!d || d.parent === null) return;
+        const ids = descendants(id);
+        const count = deptCount(id);
+        confirmAction(
+          "确认删除该部门吗？",
+          `将删除“${d.name}”及其 ${ids.length - 1} 个子部门，${count} 名成员将解除部门关联，成员账号保留。`,
+          () => {
+            data.departments = data.departments.filter(
+              (d) => !ids.includes(d.id),
+            );
+            data.members.forEach((m) => {
+              if (ids.includes(m.dept)) {
+                m.dept = "";
+                m.updated = dateTime();
+              }
+            });
+            if (ids.includes(ui.dept)) ui.dept = "d0";
+            commit("部门已删除");
+          },
+        );
+      }
+      function departmentMenu(id) {
+        const d = deptBy(id);
+        openDialog(
+          d.name,
+          `<div class="form">${button("添加子部门", "dept-add-child", id)}${button("编辑部门", "dept-edit", id)}${d.parent !== null ? button("删除部门", "dept-delete", id, "danger") : ""}</div>`,
+        );
+      }
+      function treeRows(query = "", parent = null, level = 0) {
+        return data.departments
+          .filter((d) => d.parent === parent)
+          .map((d) => {
+            const children = data.departments.filter((c) => c.parent === d.id);
+            const visible =
+              !query ||
+              descendants(d.id).some((id) => matches(deptBy(id)?.name, query));
+            if (!visible) return "";
+            return `<div class="tree-row ${ui.dept === d.id ? "active" : ""}" style="padding-left:${level * 20}px">${children.length ? `<button class="icon-btn" data-action="tree-expand" data-id="${d.id}" aria-label="${expanded.has(d.id) ? "收起" : "展开"}${esc(d.name)}" aria-expanded="${expanded.has(d.id)}">${icon(expanded.has(d.id) || query ? "chevron-down" : "chevron-right")}</button>` : '<span style="width:24px;flex-shrink:0"></span>'}<button class="tree-label" data-action="dept-select" data-id="${d.id}" title="${esc(d.name)}"><span>${esc(d.name)}</span><span class="muted small mono">${deptCount(d.id)}</span></button><button class="icon-btn node-more" data-action="dept-menu" data-id="${d.id}" aria-label="管理${esc(d.name)}">${icon("ellipsis")}</button></div>${expanded.has(d.id) || query ? treeRows(query, d.id, level + 1) : ""}`;
+          })
+          .join("");
+      }
+      document.addEventListener("input", (e) => {
+        if (e.target.classList.contains("picker-search"))
+          $$("[data-search]", e.target.parentElement).forEach(
+            (row) =>
+              (row.hidden = !matches(row.dataset.search, e.target.value)),
+          );
+        if (e.target.id === "deptSearch") {
+          const tree = $("#departmentTree");
+          tree.innerHTML = treeRows(e.target.value);
+          icons();
+        }
+        // 输入后立即清除该项的校验红框与提示，避免「已修正但仍提示」。
+        if (e.target.matches('[aria-invalid="true"]')) error(e.target.id, "");
+        updateCounters();
+      });
+      document.addEventListener("change", (e) => {
+        // 下拉 / 单选切换后清除该项校验态。
+        if (e.target.matches('[aria-invalid="true"]')) error(e.target.id, "");
+        if (e.target.id === "pageSize") {
+          ui.size = Number(e.target.value);
+          ui.page = 1;
+          ui.selected = [];
+          remember();
+          renderResults();
+        }
+        if (e.target.dataset.deptPicker) {
+          const id = e.target.dataset.deptPicker;
+          $("#" + id).value = e.target.value;
+          $("#" + id + "Label").textContent = e.target.dataset.label;
+          $("#" + id + "Picker").open = false;
+        }
+        if (e.target.dataset.multiPicker) {
+          const id = e.target.dataset.multiPicker;
+          $("#" + id + "Label").innerHTML =
+            $$(`input[name="${id}"]:checked`)
+              .map((i) => `<span class="chip">${esc(i.dataset.label)}</span>`)
+              .join("") || "请选择";
+        }
+      });
+      document.addEventListener("keydown", (e) => {
+        if (e.target.id === "jumpPage" && e.key === "Enter") {
+          ui.page = Math.max(1, Number(e.target.value) || 1);
+          remember();
+          renderResults();
+        }
+        const tab = e.target.closest("[role=tab]");
+        if (tab && ["ArrowLeft", "ArrowRight", "Home", "End"].includes(e.key)) {
+          e.preventDefault();
+          const tabs = $$("[role=tab]", tab.parentElement);
+          let index = tabs.indexOf(tab);
+          index =
+            e.key === "Home"
+              ? 0
+              : e.key === "End"
+                ? tabs.length - 1
+                : (index + (e.key === "ArrowRight" ? 1 : -1) + tabs.length) %
+                  tabs.length;
+          tabs[index].click();
+          $$("[role=tab]", document)
+            .find((t) => t.dataset.id === tabs[index].dataset.id)
+            ?.focus();
+        }
+      });
+      document.addEventListener("click", (e) => {
+        const target = e.target.closest("[data-action]");
+        if (!target) return;
+        const { action, id } = target.dataset;
+        if (action === "page") {
+          ui.page = Number(id);
+          ui.selected = [];
+          remember();
+          renderResults();
+        }
+        if (action === "dept-add") departmentEditor();
+        if (action === "dept-add-child") {
+          closeDialog();
+          departmentEditor(null, id);
+        }
+        if (action === "dept-edit") {
+          closeDialog();
+          departmentEditor(id);
+        }
+        if (action === "dept-delete") deleteDepartment(id);
+        if (action === "dept-menu") departmentMenu(id);
+        if (action === "tree-expand") {
+          expanded.has(id) ? expanded.delete(id) : expanded.add(id);
+          renderTree();
+        }
+        if (action === "dept-select") {
+          ui.dept = id;
+          ui.page = 1;
+          ui.selected = [];
+          remember();
+          render();
+        }
+      });
+
+      // 成员申请：状态页签（待审批/已通过/已拒绝）居左，关键词搜索框居右，两者同处一行。
+      function render() {
+        $("#workspace").innerHTML =
+          `<div class="application-toolbar"><div class="tabs" role="tablist" aria-label="申请状态">${["待审批", "已通过", "已拒绝"].map((s) => `<button class="tab" role="tab" aria-selected="${ui.applicationStatus === s}" tabindex="${ui.applicationStatus === s ? 0 : -1}" data-action="application-tab" data-id="${s}">${s} <span class="mono">${data.applications.filter((a) => a.status === s).length}</span></button>`).join("")}</div>${searchBar()}</div><div id="results" role="tabpanel"></div>`;
+        initApplicationSearchBox();
+        renderResults();
+        icons();
+        reportNavBadge();
+      }
+      function renderTree() {}
+      // 申请行可检索字段：真实姓名、联系方式（手机号或邮箱，原始值不脱敏）；
+      // 关键词按中文逗号拆分、「或」匹配，范围取值与并集规则由公共层 YDSearchBox 负责。
+      function applicationMatchesSearch(a) {
+        return applicationSearchBox ? applicationSearchBox.matches(a) : true;
+      }
+      function applicationRows() {
+        return data.applications.filter(
+          (a) =>
+            a.status === ui.applicationStatus && applicationMatchesSearch(a),
+        );
+      }
+      function renderResults() {
+        const rows = applicationRows(),
+          approved = ui.applicationStatus === "已通过",
+          rejected = ui.applicationStatus === "已拒绝",
+          // 待审批展示操作列；已通过 / 已拒绝展示处理结果（操作人、操作时间），不再展示状态与操作列。
+          heads = [
+            "申请时间",
+            "真实姓名",
+            "联系方式",
+            ...(approved
+              ? ["所在部门", "角色", "操作人", "操作时间"]
+              : rejected
+                ? ["拒绝原因", "操作人", "操作时间"]
+                : ["操作"]),
+          ],
+          cell = (a) => {
+            const base = `<td class="mono">${a.time}</td><td>${esc(a.name)}</td><td class="mono">${esc(a.contact)}</td>`;
+            if (approved)
+              return (
+                base +
+                `<td>${esc(deptBy(a.dept)?.name || "默认部门")}</td><td>${esc(applicationRoleNames(a))}</td><td>${esc(a.operator || "—")}</td><td class="mono">${esc(a.operated || "—")}</td>`
+              );
+            if (rejected)
+              return (
+                base +
+                `<td class="wrap">${esc(a.reason || "申请信息不完整")}</td><td>${esc(a.operator || "—")}</td><td class="mono">${esc(a.operated || "—")}</td>`
+              );
+            return (
+              base +
+              `<td><div class="row-actions">${link("通过", "application-approve", a.id)}${link("拒绝", "application-reject", a.id, true)}</div></td>`
+            );
+          };
+        $("#results").innerHTML =
+          `<div class="table-scroll"><table class="data-table" style="min-width:720px"><thead><tr>${heads.map((t) => `<th>${t}</th>`).join("")}</tr></thead><tbody>${
+            rows.length
+              ? sliceRows(rows)
+                  .map((a) => `<tr>${cell(a)}</tr>`)
+                  .join("")
+              : `<tr><td colspan="${heads.length}">${empty(ui.keyword ? "未搜索到相关成员申请" : "暂无该状态的成员申请")}</td></tr>`
+          }</tbody></table></div>${pager(rows.length)}`;
+        icons();
+      }
+      /* ---------- 审批成员弹窗：浮层工具 + 可登录日期 / 时间控件（与登录请求页授权设置同源） ---------- */
+      // 展开：面板脱离文档流固定定位在触发器下方（空间不足时翻到上方）；关闭：收回并隐藏。
+      function openFloatPanel(panel, trigger, align = "left") {
+        if (!panel || !trigger) return;
+        panel.hidden = false;
+        if (typeof panel.showPopover === "function" && !panel.matches(":popover-open")) {
+          try {
+            panel.showPopover();
+          } catch (err) {
+            /* 旧内核不支持时降级为普通固定定位浮层 */
+          }
+        }
+        const rect = trigger.getBoundingClientRect(),
+          width = panel.offsetWidth,
+          height = panel.offsetHeight,
+          pad = 12;
+        let left = align === "right" ? rect.right - width : rect.left;
+        let top = rect.bottom + 8;
+        left = Math.max(pad, Math.min(left, window.innerWidth - width - pad));
+        if (height && top + height > window.innerHeight - pad) {
+          const above = rect.top - height - 8;
+          top = above >= pad ? above : Math.max(pad, window.innerHeight - height - pad);
+        }
+        panel.style.top = Math.round(top) + "px";
+        panel.style.left = Math.round(left) + "px";
+      }
+      function closeFloatPanel(panel) {
+        if (!panel) return;
+        if (typeof panel.hidePopover === "function" && panel.matches(":popover-open")) {
+          try {
+            panel.hidePopover();
+          } catch (err) {
+            /* 忽略重复收起 */
+          }
+        }
+        panel.style.top = "";
+        panel.style.left = "";
+        panel.hidden = true;
+      }
+      function closeDialogFloatPanels() {
+        $$(
+          ".order-date-picker, .time-range-picker, .ap-panel",
+          $("#dialogBody"),
+        ).forEach(
+          (panel) => closeFloatPanel(panel),
+        );
+      }
+      const approvalCalState = {
+        view: new Date(2026, 6, 1),
+        start: "",
+        end: "",
+        active: "start",
+      };
+      function approvalDateKey(date) {
+        const y = date.getFullYear(),
+          m = String(date.getMonth() + 1).padStart(2, "0"),
+          d = String(date.getDate()).padStart(2, "0");
+        return `${y}-${m}-${d}`;
+      }
+      function approvalMaxDate() {
+        return approvalDateKey(new Date());
+      }
+      function approvalDateObject(value) {
+        const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value || "");
+        return m ? new Date(+m[1], +m[2] - 1, +m[3]) : null;
+      }
+      function approvalDateCalendarMarkup() {
+        const monthHead = (index, side) => {
+          const nav = (dir, label, ico) =>
+            `<button type="button" class="order-calendar-nav" data-approval-date-nav="${dir}" aria-label="${label}" title="${label}">${icon(ico)}</button>`;
+          const prev = `${nav("prev-year", "上一年", "chevrons-left")}${nav("prev-month", "上个月", "chevron-left")}`;
+          const next = `${nav("next-month", "下个月", "chevron-right")}${nav("next-year", "下一年", "chevrons-right")}`;
+          return `<div class="order-calendar-month-head">${side === "left" ? `<div class="order-calendar-nav-group">${prev}</div>` : '<span class="order-calendar-nav-spacer" aria-hidden="true"></span>'}<h3 id="approvalDateMonth${index}" class="order-calendar-title"></h3>${side === "right" ? `<div class="order-calendar-nav-group">${next}</div>` : '<span class="order-calendar-nav-spacer" aria-hidden="true"></span>'}</div>`;
+        };
+        const month = (index, side) =>
+          `<section class="order-calendar-month">${monthHead(index, side)}<div id="approvalDateWeeks${index}" class="order-calendar-week"></div><div id="approvalDateGrid${index}" class="order-calendar-grid"></div></section>`;
+        return (
+          `<div class="order-calendar-months">${month(1, "left")}${month(2, "right")}</div>` +
+          '<div class="order-calendar-foot"><span id="approvalDateValue" class="order-calendar-value">未选择</span><div class="order-calendar-actions">' +
+          '<button type="button" id="approvalDateClear" class="btn">清空</button><button type="button" id="approvalDateCancel" class="btn">取消</button><button type="button" id="approvalDateConfirm" class="btn primary">确定</button>' +
+          "</div></div>"
+        );
+      }
+      function approvalMonthHtml(year, month) {
+        const first = new Date(year, month, 1),
+          offset = first.getDay(),
+          start = approvalCalState.start,
+          end = approvalCalState.end,
+          validRange = Boolean(start && end && end >= start),
+          max = approvalMaxDate(),
+          cells = [];
+        for (let index = 0; index < 42; index++) {
+          const date = new Date(year, month, index - offset + 1),
+            key = approvalDateKey(date),
+            current = date.getMonth() === month,
+            inRange = validRange && key > start && key < end,
+            isStart = key === start,
+            isEnd = key === end,
+            disabled = key > max;
+          cells.push(
+            `<button type="button" class="order-calendar-day ${current ? "" : "is-other "}${inRange ? "is-range " : ""}${isStart ? "is-start " : ""}${isEnd ? "is-end " : ""}" data-approval-calendar-date="${key}" ${disabled ? 'disabled aria-disabled="true"' : ""} aria-label="${key}">${date.getDate()}</button>`,
+          );
+        }
+        return cells.join("");
+      }
+      function approvalRenderCalendar() {
+        const left = new Date(
+            approvalCalState.view.getFullYear(),
+            approvalCalState.view.getMonth(),
+            1,
+          ),
+          right = new Date(left.getFullYear(), left.getMonth() + 1, 1),
+          weeks =
+            "<span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span>";
+        [left, right].forEach((month, index) => {
+          $("#approvalDateMonth" + (index + 1)).textContent =
+            month.getFullYear() + " 年 " + (month.getMonth() + 1) + " 月";
+          $("#approvalDateWeeks" + (index + 1)).innerHTML = weeks;
+          $("#approvalDateGrid" + (index + 1)).innerHTML = approvalMonthHtml(
+            month.getFullYear(),
+            month.getMonth(),
+          );
+        });
+        $("#approvalDateValue").textContent =
+          approvalCalState.start && approvalCalState.end
+            ? approvalCalState.start + " 至 " + approvalCalState.end
+            : approvalCalState.start || approvalCalState.end || "未选择";
+      }
+      function approvalSyncDateTrigger() {
+        [
+          [$("#approvalDateStartDisplay"), approvalCalState.start, "开始日期"],
+          [$("#approvalDateEndDisplay"), approvalCalState.end, "结束日期"],
+        ].forEach(([node, value, placeholder]) => {
+          if (!node) return;
+          node.textContent = value || placeholder;
+          node.classList.toggle("is-selected", Boolean(value));
+        });
+      }
+      function approvalOpenDatePicker() {
+        const picker = $("#approvalDatePicker");
+        const base =
+          approvalDateObject(approvalCalState.start || approvalCalState.end) ||
+          new Date(2026, 6, 1);
+        approvalCalState.view = new Date(base.getFullYear(), base.getMonth(), 1);
+        // 先渲染日历内容再定位，保证浮层按真实高度判断向上 / 向下展开。
+        approvalRenderCalendar();
+        openFloatPanel(picker, $("#approvalDateTrigger"));
+        $("#approvalDateTrigger").setAttribute("aria-expanded", "true");
+      }
+      function approvalCloseDatePicker(commit = false) {
+        const picker = $("#approvalDatePicker");
+        if (!picker || picker.hidden) return;
+        if (commit) {
+          if (approvalCalState.start && !approvalCalState.end)
+            approvalCalState.end = approvalCalState.start;
+          approvalSyncDateTrigger();
+        }
+        closeFloatPanel(picker);
+        $("#approvalDateTrigger").setAttribute("aria-expanded", "false");
+      }
+      function approvalSetupDatePicker() {
+        const picker = $("#approvalDatePicker"),
+          trigger = $("#approvalDateTrigger");
+        if (!picker || !trigger) return;
+        trigger.onclick = () =>
+          picker.hidden ? approvalOpenDatePicker() : approvalCloseDatePicker(false);
+        picker.onclick = (e) => {
+          e.stopPropagation();
+          const nav = e.target.closest("[data-approval-date-nav]"),
+            day = e.target.closest("[data-approval-calendar-date]");
+          if (nav) {
+            const d = nav.dataset.approvalDateNav,
+              view = approvalCalState.view,
+              y = d === "prev-year" ? -1 : d === "next-year" ? 1 : 0,
+              m = d === "prev-month" ? -1 : d === "next-month" ? 1 : 0;
+            approvalCalState.view = y
+              ? new Date(view.getFullYear() + y, view.getMonth(), 1)
+              : new Date(view.getFullYear(), view.getMonth() + m, 1);
+            approvalRenderCalendar();
+            return;
+          }
+          if (day) {
+            const key = day.dataset.approvalCalendarDate;
+            if (key > approvalMaxDate()) return;
+            if (approvalCalState.active === "start") {
+              approvalCalState.start = key;
+              if (approvalCalState.end && approvalCalState.end < key)
+                approvalCalState.end = "";
+              approvalCalState.active = "end";
+            } else if (!approvalCalState.start) {
+              approvalCalState.start = key;
+              approvalCalState.active = "end";
+            } else {
+              approvalCalState.end = key;
+            }
+            approvalRenderCalendar();
+          }
+        };
+        $("#approvalDateClear").onclick = () => {
+          approvalCalState.start = "";
+          approvalCalState.end = "";
+          approvalCalState.active = "start";
+          approvalSyncDateTrigger();
+          approvalRenderCalendar();
+        };
+        $("#approvalDateCancel").onclick = () => approvalCloseDatePicker(false);
+        $("#approvalDateConfirm").onclick = () => {
+          if (approvalCalState.start && !approvalCalState.end)
+            approvalCalState.end = approvalCalState.start;
+          approvalCloseDatePicker(true);
+        };
+        approvalSyncDateTrigger();
+      }
+      const approvalTimeState = {
+        // 滚轮默认停靠 09:20:27 / 10:20:27；只有用户在面板中确认后才回填到组件。
+        start: { hour: 9, minute: 20, second: 27 },
+        end: { hour: 10, minute: 20, second: 27 },
+        chosen: false,
+      };
+      const approvalPad = (n) => String(n).padStart(2, "0");
+      const approvalTimeString = (t) =>
+        `${approvalPad(t.hour)}:${approvalPad(t.minute)}:${approvalPad(t.second)}`;
+      function approvalTimePickerMarkup() {
+        const col = (side, title) =>
+          `<section class="time-col" data-time-side="${side}"><h4>${title}</h4><div class="time-wheels">${[
+            "hour",
+            "minute",
+            "second",
+          ]
+            .map((unit) => `<div class="time-wheel" data-unit="${unit}"></div>`)
+            .join("")}</div></section>`;
+        return `<div class="time-cols">${col("start", "开始时间")}${col("end", "结束时间")}</div><div class="time-picker-foot"><button type="button" id="approvalTimeCancel" class="text-btn">取消</button><button type="button" id="approvalTimeConfirm" class="text-btn primary">确定</button></div>`;
+      }
+      function approvalHighlightWheel(wheel) {
+        const side = wheel.closest("[data-time-side]").dataset.timeSide,
+          unit = wheel.dataset.unit,
+          value = approvalTimeState[side][unit];
+        $$("button[data-value]", wheel).forEach((b) =>
+          b.setAttribute("aria-selected", String(Number(b.dataset.value) === value)),
+        );
+      }
+      function approvalFillWheels() {
+        $$("#approvalTimePicker .time-wheel").forEach((wheel) => {
+          const side = wheel.closest("[data-time-side]").dataset.timeSide,
+            unit = wheel.dataset.unit,
+            max = unit === "hour" ? 23 : 59;
+          wheel.innerHTML = Array.from(
+            { length: max + 1 },
+            (_, i) =>
+              `<button type="button" data-value="${i}" aria-selected="${i === approvalTimeState[side][unit]}">${approvalPad(i)}</button>`,
+          ).join("");
+          const active = wheel.querySelector('[aria-selected="true"]');
+          if (active)
+            wheel.scrollTop =
+              active.offsetTop - wheel.clientHeight / 2 + active.offsetHeight / 2;
+        });
+      }
+      function approvalSetupTimePicker() {
+        const picker = $("#approvalTimePicker"),
+          trigger = $("#approvalTimeTrigger");
+        if (!picker || !trigger) return;
+        let snapshot = null;
+        const readState = () => {
+          const start = $("#approvalTimeStartDisplay"),
+            end = $("#approvalTimeEndDisplay");
+          // 未确认前组件只显示「开始时间 / 结束时间」灰色占位，不预填具体时间。
+          const chosen = Boolean(approvalTimeState.chosen);
+          start.textContent = chosen
+            ? approvalTimeString(approvalTimeState.start)
+            : "开始时间";
+          end.textContent = chosen
+            ? approvalTimeString(approvalTimeState.end)
+            : "结束时间";
+          start.classList.toggle("is-selected", chosen);
+          end.classList.toggle("is-selected", chosen);
+        };
+        trigger.onclick = () => {
+          if (picker.hidden) {
+            snapshot = JSON.parse(JSON.stringify(approvalTimeState));
+            approvalFillWheels();
+            openFloatPanel(picker, trigger);
+            trigger.setAttribute("aria-expanded", "true");
+          } else {
+            closeFloatPanel(picker);
+            trigger.setAttribute("aria-expanded", "false");
+          }
+        };
+        picker.onclick = (e) => {
+          e.stopPropagation();
+          const wheel = e.target.closest(".time-wheel");
+          const btn = e.target.closest("button[data-value]");
+          if (wheel && btn) {
+            const side = wheel.closest("[data-time-side]").dataset.timeSide;
+            approvalTimeState[side][wheel.dataset.unit] = Number(btn.dataset.value);
+            approvalHighlightWheel(wheel);
+          }
+        };
+        $$("#approvalTimePicker .time-wheel").forEach((wheel) => {
+          wheel.addEventListener("scroll", () => {
+            clearTimeout(wheel._scrollTimer);
+            wheel._scrollTimer = setTimeout(() => {
+              const center = wheel.scrollTop + wheel.clientHeight / 2;
+              let best = null,
+                bestDist = Infinity;
+              $$("button[data-value]", wheel).forEach((b) => {
+                const c = b.offsetTop + b.offsetHeight / 2,
+                  d = Math.abs(c - center);
+                if (d < bestDist) {
+                  bestDist = d;
+                  best = b;
+                }
+              });
+              if (best) {
+                const side = wheel.closest("[data-time-side]").dataset.timeSide;
+                approvalTimeState[side][wheel.dataset.unit] = Number(
+                  best.dataset.value,
+                );
+                approvalHighlightWheel(wheel);
+              }
+            }, 120);
+          });
+        });
+        $("#approvalTimeCancel").onclick = () => {
+          if (snapshot) {
+            approvalTimeState.start = { ...snapshot.start };
+            approvalTimeState.end = { ...snapshot.end };
+          }
+          readState();
+          closeFloatPanel(picker);
+          trigger.setAttribute("aria-expanded", "false");
+        };
+        $("#approvalTimeConfirm").onclick = () => {
+          approvalTimeState.chosen = true;
+          readState();
+          closeFloatPanel(picker);
+          trigger.setAttribute("aria-expanded", "false");
+        };
+        readState();
+      }
+      // 登录时间：默认「不限」；选「固定时间登录」后展开子行，勾选后才启用并作为限制条件，两项均不勾选也可提交。
+      function setupApprovalDialog() {
+        const dialog = $("#businessDialog");
+        dialog.classList.add("has-floating-panel");
+        const fixedWrap = $("#approvalFixedWrap");
+        $$('input[name="approvalLoginMode"]').forEach((el) =>
+          el.addEventListener("change", () => {
+            const mode =
+              $('input[name="approvalLoginMode"]:checked')?.value || "unlimited";
+            fixedWrap.hidden = mode !== "fixed";
+            if (fixedWrap.hidden) {
+              approvalCloseDatePicker(false);
+              closeFloatPanel($("#approvalTimePicker"));
+              $("#approvalTimeTrigger")?.setAttribute("aria-expanded", "false");
+            }
+          }),
+        );
+        const bindEnable = (checkboxId, wrapId) => {
+          const checkbox = $("#" + checkboxId),
+            wrap = $("#" + wrapId);
+          if (!checkbox || !wrap) return;
+          const sync = () => {
+            const on = checkbox.checked;
+            wrap.style.opacity = on ? "1" : "0.5";
+            wrap.style.pointerEvents = on ? "" : "none";
+            const trigger = $("button", wrap);
+            if (trigger) {
+              trigger.setAttribute("aria-disabled", on ? "false" : "true");
+              trigger.tabIndex = on ? 0 : -1;
+            }
+          };
+          checkbox.addEventListener("change", sync);
+          sync();
+        };
+        bindEnable("approvalDateEnabled", "approvalDateWrap");
+        bindEnable("approvalTimeEnabled", "approvalTimeWrap");
+        // 拒绝理由卡片：单选，选中项高亮描边并同步取消其它项，选择后清除校验提示。
+        $$("[data-reject-reason]").forEach((el) =>
+          el.addEventListener("change", () => {
+            $$("[data-reject-reason]").forEach((item) =>
+              item
+                .closest(".reject-reason")
+                ?.classList.toggle("is-selected", item.checked),
+            );
+            error("applicationReason", "");
+          }),
+        );
+        approvalSetupDatePicker();
+        approvalSetupTimePicker();
+        // 参考图首屏不出现单个控件的聚焦描边：初始焦点落在弹窗容器，Tab 仍可依次进入表单。
+        requestAnimationFrame(() => $("#businessDialog").focus());
+      }
+      /* ---------- 审批弹窗自定义下拉：角色多选 / 部门树 / 联系方式（白底控件 + 浮层面板） ---------- */
+      // 组织树节点：level 控制缩进，chain 记录祖先用于展开收起，hasChildren 决定是否显示箭头。
+      function apDeptTree(parent = null, level = 0, chain = []) {
+        return data.departments
+          .filter((d) => d.parent === parent)
+          .flatMap((d) => [
+            {
+              ...d,
+              level,
+              chain,
+              hasChildren: data.departments.some((c) => c.parent === d.id),
+            },
+            ...apDeptTree(d.id, level + 1, [...chain, d.id]),
+          ]);
+      }
+      function apRoleChip(id, roleId) {
+        const label = roleBy(roleId)?.name || roleId;
+        return `<span class="chip">${esc(label)}<button type="button" class="chip-remove" data-ap-chip-remove="${id}" data-ap-chip-value="${esc(roleId)}" aria-label="移除${esc(label)}">${icon("x")}</button></span>`;
+      }
+      function apRoleChips(id, values) {
+        return values.length
+          ? values.map((v) => apRoleChip(id, v)).join("")
+          : '<span class="ap-placeholder">请选择角色</span>';
+      }
+      // 角色：多选下拉；已选角色在组件框内支持单个 [x] 删除与全部 [x] 清空。
+      function approvalRolePicker(id, values = []) {
+        const items = data.roles.filter((r) => r.enabled && r.id !== "r0");
+        return `<div class="ap-select" id="${id}Select">
+          <div class="ap-trigger" id="${id}Trigger" role="button" tabindex="0" aria-haspopup="listbox" aria-expanded="false" aria-controls="${id}Panel" data-ap-toggle="${id}" data-field-error="${id}">
+            <span class="ap-value" id="${id}Label">${apRoleChips(id, values)}</span>
+            <span class="ap-affix"><button type="button" class="ap-clear${values.length ? "" : " is-hidden"}" data-ap-clear="${id}" aria-label="清空已选角色" title="清空已选角色">${icon("x")}</button>${icon("chevron-down")}</span>
+          </div>
+          <div class="ap-panel" id="${id}Panel" role="listbox" aria-multiselectable="true" aria-label="选择角色" popover="manual" hidden>
+            <input class="field ap-search" placeholder="输入关键词搜索" aria-label="搜索角色">
+            <div class="ap-list">${items
+              .map(
+                (r) =>
+                  `<label class="ap-option${values.includes(r.id) ? " is-selected" : ""}" data-search="${esc(r.name)}"><input type="checkbox" name="${id}" value="${esc(r.id)}" data-ap-multi="${id}" ${values.includes(r.id) ? "checked" : ""}>${esc(r.name)}</label>`,
+              )
+              .join("")}</div>
+          </div>
+          <input type="hidden" id="${id}" value="${esc(values.join(","))}">
+        </div>`;
+      }
+      // 部门：组织树下拉，默认选中根目录；行点击即选中，面板为浮层不挤压下方字段。
+      function approvalDeptPicker(id, value = "d0") {
+        const nodes = apDeptTree();
+        const expanded = nodes.filter((n) => n.hasChildren).map((n) => n.id);
+        const current = deptBy(value);
+        return `<div class="ap-select" id="${id}Select" data-expanded="${expanded.join(" ")}">
+          <div class="ap-trigger" id="${id}Trigger" role="button" tabindex="0" aria-haspopup="tree" aria-expanded="false" aria-controls="${id}Panel" data-ap-toggle="${id}" data-field-error="${id}">
+            <span class="ap-value" id="${id}Label">${current ? esc(current.name) : '<span class="ap-placeholder">请选择部门</span>'}</span>
+            <span class="ap-affix">${icon("chevron-down")}</span>
+          </div>
+          <div class="ap-panel" id="${id}Panel" role="tree" aria-label="选择部门" popover="manual" hidden>
+            <input class="field ap-search" placeholder="搜索部门" aria-label="搜索部门">
+            <div class="ap-list">${nodes
+              .map(
+                (n) =>
+                  `<div class="ap-row${value === n.id ? " is-selected" : ""}" data-search="${esc(n.name)}" data-ancestors="${n.chain.join(" ")}" data-value="${esc(n.id)}" style="padding-left:${8 + n.level * 20}px">${
+                    n.hasChildren
+                      ? `<button type="button" class="ap-caret" data-ap-caret="${esc(n.id)}" data-caret-name="${esc(n.name)}" aria-expanded="true" aria-label="收起${esc(n.name)}">${icon("chevron-right")}</button>`
+                      : '<span class="ap-caret-ph" aria-hidden="true"></span>'
+                  }<button type="button" class="ap-node" data-ap-dept="${id}" data-value="${esc(n.id)}" data-label="${esc(n.name)}">${esc(n.name)}</button></div>`,
+              )
+              .join("")}</div>
+          </div>
+          <input type="hidden" id="${id}" value="${esc(value)}">
+        </div>`;
+      }
+      // 联系方式：输入框，默认回显申请人手机号或邮箱（原始值，不脱敏），可编辑。
+      function approvalContactField(id, a) {
+        return `<input id="${id}" class="field mono" type="text" value="${esc(a.contact || "")}" placeholder="请输入手机号或邮箱" autocomplete="off" spellcheck="false" data-field-error="${id}">`;
+      }
+      // 申请人信息回显：真实姓名 / 账号使用禁用置灰输入框（不可修改），与控件列同一左边界。
+      function approvalInfoRows(a, withContact = false) {
+        const row = (label, id, value, mono = false) =>
+          `<div class="form-row"><label for="${id}">${label}：</label><div class="field-wrap"><input id="${id}" class="field is-readonly${mono ? " mono" : ""}" value="${esc(value)}" disabled></div></div>`;
+        return `<div class="approval-info">${[
+          row("真实姓名", "applicationName", a.name),
+          row(
+            "账号",
+            "applicationAccount",
+            a.account || (/@/.test(a.contact || "") ? a.contact : "—"),
+            true,
+          ),
+          withContact
+            ? row("联系方式", "applicationContactInfo", a.contact, true)
+            : "",
+        ].join("")}</div>`;
+      }
+      // 通过审批：角色（多选）/ 部门（组织树）/ 联系方式（输入框）必填，登录时间可配「不限」或「固定时间登录」。
+      function approvalMarkup(a) {
+        return `<form class="form approval-form" onsubmit="return false">
+          ${approvalInfoRows(a)}
+          ${formRow("角色", "applicationRole", approvalRolePicker("applicationRole", []), true)}
+          ${formRow("部门", "applicationDept", approvalDeptPicker("applicationDept", "d0"), true)}
+          ${formRow("联系方式", "applicationContact", approvalContactField("applicationContact", a))}
+          <div class="form-row"><label for="applicationLoginUnlimited"><span class="required">*</span>登录时间：</label><div class="field-wrap"><div class="radio-row"><label class="radio-opt"><input type="radio" id="applicationLoginUnlimited" name="approvalLoginMode" value="unlimited" checked><span>不限</span></label><label class="radio-opt"><input type="radio" id="applicationLoginFixed" name="approvalLoginMode" value="fixed"><span>固定时间登录</span></label></div></div></div>
+          <div id="approvalFixedWrap" class="approval-fixed-list" hidden>
+            <div class="form-row approval-subrow"><span aria-hidden="true"></span><div class="field-wrap"><label class="approval-check" for="approvalDateEnabled"><input type="checkbox" id="approvalDateEnabled"><span>可登录日期</span></label><div id="approvalDateWrap" class="approval-subfield"><div class="order-date-control-wrap" role="group" aria-label="可登录日期"><button id="approvalDateTrigger" type="button" class="order-date-trigger" aria-haspopup="dialog" aria-expanded="false" aria-controls="approvalDatePicker"><span class="order-date-trigger-values"><span id="approvalDateStartDisplay" class="order-date-trigger-value">开始日期</span><span class="order-date-trigger-separator" aria-hidden="true">→</span><span id="approvalDateEndDisplay" class="order-date-trigger-value">结束日期</span></span>${icon("calendar-days")}</button><div id="approvalDatePicker" class="order-date-picker" role="dialog" aria-label="可登录日期范围选择" popover="manual" hidden>${approvalDateCalendarMarkup()}</div></div></div></div></div>
+            <div class="form-row approval-subrow"><span aria-hidden="true"></span><div class="field-wrap"><label class="approval-check" for="approvalTimeEnabled"><input type="checkbox" id="approvalTimeEnabled"><span>可登录时间</span></label><div id="approvalTimeWrap" class="approval-subfield"><div class="time-range-control" role="group" aria-label="可登录时间"><button id="approvalTimeTrigger" type="button" class="time-range-trigger" aria-haspopup="dialog" aria-expanded="false" aria-controls="approvalTimePicker"><span id="approvalTimeStartDisplay" class="time-range-value">开始时间</span><span class="time-range-separator" aria-hidden="true">→</span><span id="approvalTimeEndDisplay" class="time-range-value">结束时间</span></button><div id="approvalTimePicker" class="time-range-picker" role="dialog" aria-label="可登录时间范围选择" popover="manual" hidden>${approvalTimePickerMarkup()}</div></div></div></div></div>
+          </div>
+        </form>`;
+      }
+      // 登录时间设置描述：不限或固定登录时间（含已勾选的维度范围）。
+      function approvalLoginSetting() {
+        const mode =
+          $('input[name="approvalLoginMode"]:checked')?.value || "unlimited";
+        if (mode !== "fixed") return "不限";
+        const dateOn = Boolean($("#approvalDateEnabled").checked),
+          timeOn = Boolean($("#approvalTimeEnabled").checked);
+        return (
+          "固定登录时间" +
+          [
+            dateOn
+              ? `（可登录日期 ${approvalCalState.start} 至 ${approvalCalState.end}）`
+              : "",
+            timeOn && approvalTimeState.chosen
+              ? `（可登录时间 ${approvalTimeString(approvalTimeState.start)} 至 ${approvalTimeString(approvalTimeState.end)}）`
+              : "",
+          ].join("")
+        );
+      }
+      // 拒绝审批可选理由：固定 4 项、单选（选中一项即取消其它项）。
+      const REJECT_REASONS = [
+        { value: "已离职", tone: "warning", icon: "user-x" },
+        { value: "非团队成员", tone: "danger", icon: "x" },
+        { value: "资料填写有误", tone: "info", icon: "clipboard-x" },
+        { value: "其它原因", tone: "muted", icon: "more-horizontal" },
+      ];
+      // 拒绝审批：2×2 单选卡片选择拒绝理由，必选一项，校验提示落在卡片组下方。
+      function rejectApprovalMarkup() {
+        return `<form class="form reject-form" onsubmit="return false">
+          <div class="reject-reasons" id="applicationReason" role="radiogroup" aria-label="选择拒绝理由" tabindex="-1" data-field-error="applicationReason">
+            ${REJECT_REASONS.map(
+              (r) => `<label class="reject-reason">
+              <input type="radio" name="rejectReason" value="${esc(r.value)}" data-reject-reason>
+              <span class="reject-check" aria-hidden="true">${icon("check")}</span>
+              <span class="reject-label">${esc(r.value)}</span>
+              <span class="reject-icon" data-tone="${r.tone}" aria-hidden="true">${icon(r.icon)}</span>
+            </label>`,
+            ).join("")}
+          </div>
+          <p class="error" id="applicationReasonError" role="alert"></p>
+        </form>`;
+      }
+      // 审批成员：通过 / 拒绝共用「审批成员」弹窗壳；通过需选角色、部门与联系方式，拒绝需选择拒绝理由。
+      function reviewApplication(id, approve) {
+        const a = data.applications.find((a) => a.id === id);
+        if (!a || a.status !== "待审批") return;
+        openDialog(
+          approve ? "审批成员" : "选择拒绝理由",
+          approve ? approvalMarkup(a) : rejectApprovalMarkup(),
+          () => {
+            if (approve) {
+              const roleIds = checkedValues("applicationRole"),
+                dept = $("#applicationDept").value;
+              if (!error("applicationRole", roleIds.length ? "" : "请选择角色"))
+                return false;
+              if (!error("applicationDept", deptBy(dept) ? "" : "请选择部门"))
+                return false;
+              const contact = ($("#applicationContact")?.value || "").trim();
+              if (!error("applicationContact", contact ? "" : "请输入联系方式"))
+                return false;
+              const fixed =
+                $('input[name="approvalLoginMode"]:checked')?.value === "fixed";
+              // 勾选「可登录日期 / 可登录时间」时必须给出完整范围，否则不写入设置。
+              if (
+                fixed &&
+                $("#approvalDateEnabled").checked &&
+                !(approvalCalState.start && approvalCalState.end)
+              ) {
+                toast("请选择完整的可登录日期范围");
+                return false;
+              }
+              if (
+                fixed &&
+                $("#approvalTimeEnabled").checked &&
+                !approvalTimeState.chosen
+              ) {
+                toast("请选择完整的可登录时间范围");
+                return false;
+              }
+              a.dept = dept;
+              a.roles = roleIds;
+              a.role = roleIds[0];
+              a.contact = contact;
+              a.loginSetting = approvalLoginSetting();
+              a.status = "已通过";
+              if (!data.members.some((m) => m.phone === a.contact))
+                data.members.push({
+                  id: uid("m"),
+                  name: a.name,
+                  phone: a.contact,
+                  dept,
+                  roles: roleIds,
+                  entry: "",
+                  note: "通过入团申请加入",
+                  enabled: true,
+                  joined: new Date().toISOString().slice(0, 10),
+                  updated: dateTime(),
+                  owner: false,
+                });
+            } else {
+              // 拒绝原因为单选：取中选项写入，列表拒绝原因列与检索同步生效。
+              const [reason = ""] = checkedValues("rejectReason");
+              if (!error("applicationReason", reason ? "" : "请选择拒绝理由"))
+                return false;
+              a.reason = reason;
+              a.status = "已拒绝";
+            }
+            a.operator = "张小登";
+            a.operated = dateTime();
+            commit(approve ? "申请已通过" : "申请已拒绝");
+          },
+          {
+            confirm: approve ? "通过" : "确认",
+            cancel: "取消",
+            variant: "approval",
+          },
+        );
+        setupApprovalDialog();
+      }
+      document.addEventListener("click", (e) => {
+        const t = e.target.closest("[data-action]");
+        if (!t) return;
+        const { action, id } = t.dataset;
+        if (action === "application-tab") {
+          ui.applicationStatus = id;
+          ui.page = 1;
+          remember();
+          render();
+        }
+        if (action === "application-approve") reviewApplication(id, true);
+        if (action === "application-reject") reviewApplication(id, false);
+      });
+      // 点击日期 / 时间面板之外的区域视为取消展开，不影响弹窗内其它字段。
+      document.addEventListener("click", (e) => {
+        const dateWrap = $("#approvalDateWrap"),
+          datePicker = $("#approvalDatePicker");
+        if (dateWrap && datePicker && !datePicker.hidden && !dateWrap.contains(e.target))
+          approvalCloseDatePicker(false);
+        const timeWrap = $("#approvalTimeWrap"),
+          timePicker = $("#approvalTimePicker");
+        if (timeWrap && timePicker && !timePicker.hidden && !timeWrap.contains(e.target)) {
+          closeFloatPanel(timePicker);
+          $("#approvalTimeTrigger").setAttribute("aria-expanded", "false");
+        }
+      });
+
+      /* ---------- 审批弹窗自定义下拉：开关、树形展开、角色多选与联系方式选择 ---------- */
+      function apSelectOf(el) {
+        return el?.closest(".ap-select") || null;
+      }
+      function apCloseSelect(select) {
+        if (!select) return;
+        closeFloatPanel($(".ap-panel", select));
+        $(".ap-trigger", select)?.setAttribute("aria-expanded", "false");
+      }
+      function apCloseSelects(except = null) {
+        $$(".ap-select", $("#dialogBody")).forEach((select) => {
+          if (select !== except) apCloseSelect(select);
+        });
+      }
+      // 面板宽度与触发器对齐（窄列不小于 220px），再按可视空间上下翻转，避免被弹窗裁切。
+      function apOpenSelect(select) {
+        const trigger = $(".ap-trigger", select),
+          panel = $(".ap-panel", select);
+        if (!trigger || !panel) return;
+        apCloseSelects(select);
+        panel.style.width =
+          Math.max(trigger.getBoundingClientRect().width, 220) + "px";
+        openFloatPanel(panel, trigger);
+        trigger.setAttribute("aria-expanded", "true");
+      }
+      function apToggleSelect(select) {
+        apSelectOf(select)?.querySelector(".ap-trigger")?.getAttribute(
+          "aria-expanded",
+        ) === "true"
+          ? apCloseSelect(select)
+          : apOpenSelect(select);
+      }
+      // 部门树：箭头只切换子节点显隐，不改变已选部门。
+      function apSyncDeptRows(select) {
+        const open = new Set(
+          (select.dataset.expanded || "").split(" ").filter(Boolean),
+        );
+        $$(".ap-row", select).forEach((row) => {
+          const chain = (row.dataset.ancestors || "").split(" ").filter(Boolean);
+          row.hidden = chain.some((id) => !open.has(id));
+        });
+      }
+      function apToggleDeptCaret(caret) {
+        const select = apSelectOf(caret),
+          id = caret.dataset.apCaret,
+          open = new Set(
+            (select.dataset.expanded || "").split(" ").filter(Boolean),
+          ),
+          expanded = open.has(id);
+        expanded ? open.delete(id) : open.add(id);
+        select.dataset.expanded = [...open].join(" ");
+        caret.setAttribute("aria-expanded", String(!expanded));
+        caret.setAttribute(
+          "aria-label",
+          `${expanded ? "展开" : "收起"}${caret.dataset.caretName}`,
+        );
+        apSyncDeptRows(select);
+      }
+      function apPickDept(btn) {
+        const id = btn.dataset.apDept,
+          select = $("#" + id + "Select");
+        $("#" + id).value = btn.dataset.value;
+        $("#" + id + "Label").textContent = btn.dataset.label;
+        $$(".ap-row", select).forEach((row) =>
+          row.classList.toggle(
+            "is-selected",
+            row.dataset.value === btn.dataset.value,
+          ),
+        );
+        error(id, "");
+        apCloseSelect(select);
+      }
+      // 角色多选：勾选、单个 [x] 删除、全部 [x] 清空共用一处重绘。
+      function apSyncRoles(values) {
+        const id = "applicationRole",
+          select = $("#" + id + "Select");
+        if (!select) return;
+        $$(`input[name="${id}"]`, select).forEach((input) => {
+          input.checked = values.includes(input.value);
+          input
+            .closest(".ap-option")
+            ?.classList.toggle("is-selected", input.checked);
+        });
+        $("#" + id + "Label").innerHTML = apRoleChips(id, values);
+        $("#" + id).value = values.join(",");
+        $(".ap-clear", select)?.classList.toggle("is-hidden", !values.length);
+        icons();
+        error(id, "");
+      }
+      document.addEventListener("input", (e) => {
+        if (!e.target.classList?.contains("ap-search")) return;
+        const select = apSelectOf(e.target),
+          query = e.target.value.trim().toLowerCase();
+        $$(".ap-row, .ap-option", select).forEach((row) => {
+          row.hidden =
+            Boolean(query) && !(row.dataset.search || "").toLowerCase().includes(query);
+        });
+        if (!query) apSyncDeptRows(select);
+      });
+      document.addEventListener("change", (e) => {
+        if (e.target.dataset.apMulti === "applicationRole")
+          apSyncRoles(checkedValues("applicationRole"));
+      });
+      document.addEventListener("keydown", (e) => {
+        const trigger = e.target.closest?.(".ap-trigger[data-ap-toggle]");
+        if (trigger && (e.key === "Enter" || e.key === " ")) {
+          e.preventDefault();
+          apToggleSelect(trigger.closest(".ap-select"));
+        }
+      });
+      // 点击优先级由内到外：chip 删除 → 全部清空 → 树箭头 → 选中项 → 展开收起 → 点击外部收起。
+      document.addEventListener("click", (e) => {
+        const chip = e.target.closest?.("[data-ap-chip-remove]");
+        if (chip) {
+          apSyncRoles(
+            checkedValues("applicationRole").filter(
+              (value) => value !== chip.dataset.apChipValue,
+            ),
+          );
+          return;
+        }
+        const clear = e.target.closest?.("[data-ap-clear]");
+        if (clear) {
+          apSyncRoles([]);
+          return;
+        }
+        const caret = e.target.closest?.("[data-ap-caret]");
+        if (caret) {
+          apToggleDeptCaret(caret);
+          return;
+        }
+        const deptNode = e.target.closest?.("[data-ap-dept]");
+        if (deptNode) {
+          apPickDept(deptNode);
+          return;
+        }
+        const toggle = e.target.closest?.("[data-ap-toggle]");
+        if (toggle) {
+          apToggleSelect(apSelectOf(toggle));
+          return;
+        }
+        if (!e.target.closest?.(".ap-select")) apCloseSelects();
+      });
+
+      start();
+    </script>
+  </body>
+</html>
