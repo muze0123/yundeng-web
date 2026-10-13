@@ -8,7 +8,7 @@
   <script src="https://unpkg.com/lucide@1.34.0/dist/umd/lucide.min.js"></script>
   <link rel="stylesheet" href="../src/styles/global.css?v=20260821a">
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="公共导航.css?v=20261008a">
+  <link rel="stylesheet" href="公共导航.css?v=20261013e">
   <link rel="stylesheet" href="分页器.css?v=20260814">
   <script>
     if (window.tailwind) tailwind.config = { theme: { extend: { colors: {
@@ -47,9 +47,8 @@
     .data-table-row{border-bottom:1px solid #E8EAED}.data-table-row:hover{background:#F3F4F6}
     @media(max-width:720px){.page-tabs{overflow-x:auto}.coin-summary{grid-template-columns:1fr!important}.responsive-field{width:100%!important}.modal-card{width:min(520px,100%)!important}.toast{min-width:0;width:calc(100vw - 32px)}.coin-filter-item{flex-basis:100%;width:100%}.coin-filter-control{width:calc(100% - 74px)}.coin-filter-actions{width:100%;justify-content:flex-start}}
 
-    /* 覆盖公共 page-content 的整屏最小高度，避免导航高度重复计入。 */
+    /* 覆盖公共 page-content 的整屏最小高度。 */
     #mainContent { display:flex; flex-direction:column; height:100dvh; min-height:0; padding:16px; }
-    #mainContent > nav { flex:none; }
     body[data-yundeng-embedded="true"] #mainContent > .page-content,
     #mainContent > .page-content { display:flex; flex-direction:column; flex:1 0 auto; min-height:0; }
     body[data-yundeng-embedded="true"] #mainContent > .page-content > #coinPanel,
@@ -68,13 +67,6 @@
     .coin-balance-refresh:hover,.coin-balance-refresh:focus-visible{color:#6E7685}
     .coin-balance-refresh svg{width:20px;height:20px}
     .coin-balance-art{position:absolute;right:-20px;top:-2px;width:190px;height:auto;opacity:.46;pointer-events:none}
-    .coin-store-nav{margin-bottom:8px;background:#fff;border-radius:8px;overflow:hidden}
-    .coin-store-tabs{height:44px;display:flex;align-items:stretch;gap:8px;overflow-x:auto;scrollbar-width:none}
-    .coin-store-tabs::-webkit-scrollbar{display:none}
-    .coin-store-tab{min-width:104px;height:44px;padding:0 16px;border:0;border-bottom:2px solid transparent;display:inline-flex;align-items:center;justify-content:center;gap:8px;flex:none;color:#6E7685;background:transparent;cursor:pointer;font-size:14px;line-height:1;white-space:nowrap}
-    .coin-store-tab:hover{color:#0066FF;background:#F3F4F6}
-    .coin-store-tab.active{color:#0066FF;border-bottom-color:#0066FF;font-weight:600;background:#fff}
-    .coin-store-tab svg{width:16px;height:16px}
     .coin-business-card{background:#fff;border-radius:8px;overflow:hidden}
     .coin-tabs{padding:6px 20px 0;border-bottom:1px solid #E8EAED}
     .coin-tabs .subtab{height:40px;padding:0 18px;border-radius:4px}
@@ -280,14 +272,21 @@
     #coinPanel{grid-template-columns:minmax(0,1fr) 320px;gap:12px;align-items:stretch;min-height:calc(100vh - 64px)}
     /* 左侧业务区块：按 design.md 3.1「8px 用于卡片、大容器」设圆角，与右侧订单详情卡保持同一层级。 */
     .coin-form-column{min-width:0;background:#fff;padding:32px 40px;border-radius:8px}
-    .coin-balance-card{min-height:0;height:auto;width:320px;max-width:100%;padding:20px;background:#fff;border:1px solid #E8EAED;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,.08);overflow:visible;margin-bottom:28px}
-    .coin-balance-heading,.coin-balance-bottom{display:flex;align-items:center;gap:8px}
-    .coin-balance-bottom{justify-content:space-between;margin-top:16px}
-    .coin-balance-title{font-size:14px;color:#9DA2AC;font-weight:500}
-    .coin-balance-value{margin:0;font-size:30px;line-height:1.2}
-    .coin-balance-refresh{margin:0;display:inline-flex;align-items:center;gap:8px;color:#6E7685}
+    .coin-notice{display:flex;align-items:flex-start;gap:10px;margin:0 0 20px;padding:12px 16px;border:1px solid #0091D5;border-radius:4px;background:#E4F4FB;color:#1A1D24;font-size:13px;line-height:20px}
+    .coin-notice svg{width:18px;height:18px;flex:none;margin-top:1px;color:#0091D5}
+    .coin-notice p{margin:0}.coin-notice strong{color:#D9001B;font-weight:500}
+    /* 余额卡参考浅蓝背景图，使用 design.md 的信息色与主色浅底。 */
+    .coin-balance-card{position:relative;min-height:150px;height:150px;width:320px;max-width:100%;padding:18px 20px;background:linear-gradient(135deg,#F7F8FA 0%,#E4F4FB 55%,#E6F0FF 100%);border:0;border-radius:8px;box-shadow:none;overflow:visible;margin-bottom:28px}
+    .coin-balance-heading{position:relative;z-index:1;display:flex;align-items:center;gap:6px}
+    .coin-balance-bottom{position:relative;z-index:1;display:flex;flex-direction:column;align-items:flex-start;gap:16px;margin-top:8px}
+    .coin-balance-title{font-size:14px;color:#6E7685;font-weight:400}
+    .coin-balance-value{margin:0;font-size:30px;line-height:1.2;color:#1A1D24}
+    .coin-balance-refresh{margin:0;display:inline-flex;align-items:center;gap:6px;color:#6E7685;font-size:12px}
+    .coin-balance-refresh svg{width:16px;height:16px}
+    .coin-balance-art{position:absolute;right:22px;top:28px;width:86px;height:86px;color:#0091D5;opacity:.24;pointer-events:none}
+    .coin-balance-art svg{width:100%;height:100%;stroke-width:1.3}
     .coin-help{position:relative;display:flex}
-    .coin-help-trigger{display:flex;color:#9DA2AC;padding:0;background:none;border:0;cursor:help}
+    .coin-help-trigger{display:flex;color:#0091D5;padding:2px;background:none;border:0;cursor:help}
     .coin-help-trigger svg{width:14px;height:14px}
     .coin-help-popover{display:none;position:absolute;top:calc(100% + 8px);left:0;padding:16px;width:420px;max-width:calc(100vw - 64px);background:#fff;border:1px solid #E8EAED;border-radius:6px;box-shadow:0 6px 24px rgba(0,0,0,.12);z-index:100}
     .coin-help:hover .coin-help-popover,.coin-help:focus-within .coin-help-popover{display:block}
@@ -296,15 +295,15 @@
     .coin-help-popover li::marker{color:#0066FF}
     .coin-business-card{overflow:visible;border-radius:8px}
     .coin-recharge-body{padding:0;display:flex;flex-direction:column;gap:20px}
-    .coin-recharge-field-label-with-help{position:relative;display:flex;align-items:center;gap:6px;margin-bottom:12px;width:max-content;max-width:100%}
-    .coin-recharge-field-label-with-help .coin-recharge-field-label{margin:0}
+    .coin-recharge-amount-row{display:grid;grid-template-columns:72px minmax(0,1fr);align-items:start;gap:8px}
+    .coin-recharge-amount-row>.coin-recharge-field-label{width:auto;min-width:0;font-size:14px;line-height:32px;white-space:nowrap}
     .coin-recharge-field,.coin-recharge-field + .coin-recharge-field{margin:0}
-    .coin-recharge-amount-options{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-top:20px}
+    .coin-recharge-amount-options{display:grid;grid-template-columns:repeat(auto-fill,280px);gap:12px;margin-top:0}
     .coin-recharge-amount-btn,.coin-recharge-custom-option{position:relative;width:auto;min-width:0;min-height:104px;height:auto;padding:16px;background:#F7F8FA;border:1px solid transparent;border-radius:4px;text-align:left;box-shadow:none}
     .coin-recharge-amount-btn.selected,.coin-recharge-custom-option.selected{border-color:#0066FF;background:#F7F8FA;box-shadow:none}
     .coin-recharge-amount-btn.selected .coin-recharge-amount-check,.coin-recharge-amount-check{display:none}
     .coin-recharge-amount-value{display:block;font-size:20px;line-height:28px;color:#3A3F4A;margin:0 0 8px}
-    .coin-bonus-rate{position:absolute;right:8px;top:20px;display:inline-block;font-size:12px;color:#0066FF;background:#E6F0FF;border-radius:4px;padding:0 2px;margin-bottom:4px}
+    .coin-bonus-rate{position:absolute;top:16px;right:16px;display:inline-block;font-size:12px;color:#0066FF;background:#E6F0FF;border-radius:4px;padding:0 2px;margin:0}
     .coin-recharge-amount-gift,.coin-recharge-amount-total,.coin-recharge-custom-benefit{display:block;font-size:12px;line-height:22px;color:#6E7685;margin:0}
     .coin-custom-stepper{display:flex;align-items:center;gap:4px;margin-bottom:8px;height:28px}
     .coin-custom-stepper button{padding:0;background:none;border:0;color:#3A3F4A;cursor:pointer;flex-shrink:0}
@@ -312,9 +311,9 @@
     #customAmount{width:100%;min-width:0;border:0;background:transparent;text-align:center;font-size:20px;appearance:textfield;padding:0}
     #customAmount::-webkit-inner-spin-button,#customAmount::-webkit-outer-spin-button{appearance:none;margin:0}
     .coin-recharge-control-row,.coin-recharge-more-row{display:flex;align-items:center;gap:8px}
-    .coin-recharge-field-label,.coin-recharge-more-label{width:64px;min-width:64px;flex:none;font-weight:400}
+    .coin-recharge-field-label,.coin-recharge-more-label{width:72px;min-width:72px;flex:none;font-weight:400}
     .coin-recharge-section-label{width:auto}
-    .coin-recharge-select{width:326px;max-width:calc(100% - 72px)}
+    .coin-recharge-select{width:326px;max-width:calc(100% - 80px)}
     .coin-recharge-payment-options{display:flex;flex-wrap:wrap;gap:16px}
     .coin-recharge-payment-btn{flex:0 0 220px;white-space:nowrap;width:220px;height:40px;justify-content:flex-start;padding:0 12px;border:1px solid #DFE1E5;border-radius:4px;gap:8px;box-shadow:none}
     .coin-recharge-payment-btn.selected{background:#fff;color:#0066FF;border-color:#0066FF}
@@ -337,46 +336,42 @@
     .coin-order-actions>#submitRecharge:hover{filter:brightness(.96)}
     .coin-order-support{display:flex;align-items:center;justify-content:center;gap:8px;margin:10px 0 0;color:#9DA2AC;font-size:12px}
     .coin-order-support a{color:#0066FF}
-    @media(min-width:1600px){.coin-form-column{padding:32px 80px}.coin-bonus-rate{position:absolute;right:8px;top:20px}}
-    @media(max-width:1279px){#coinPanel{grid-template-columns:minmax(0,1fr) 300px}.coin-form-column{padding:24px}.coin-recharge-amount-options{grid-template-columns:repeat(3,minmax(0,1fr))}.coin-recharge-payment-btn{width:180px;flex-basis:180px}.coin-recharge-more-row{flex-wrap:wrap}}
-    @media(max-width:900px){#coinPanel{grid-template-columns:1fr}.coin-recharge-amount-options{grid-template-columns:repeat(3,minmax(0,1fr))}.coin-help-popover{width:360px}}
+    @media(min-width:1600px){.coin-form-column{padding:32px 80px}}
+    @media(max-width:1279px){#coinPanel{grid-template-columns:minmax(0,1fr) 300px}.coin-form-column{padding:24px}.coin-recharge-payment-btn{width:180px;flex-basis:180px}.coin-recharge-more-row{flex-wrap:wrap}}
+    @media(max-width:900px){#coinPanel{grid-template-columns:1fr}.coin-help-popover{width:360px}}
+    @media(max-width:600px){.coin-recharge-amount-row{grid-template-columns:1fr;gap:8px}.coin-recharge-amount-options{grid-template-columns:minmax(0,280px)}.coin-help-popover{left:-100px;width:min(360px,calc(100vw - 64px))}}
     #mainContent { min-height:calc(100vh - 16px); }
     #coinPanel { min-height:calc(100vh - 68px); }
   </style>
-  <script src="公共导航.js?v=20261008a"></script>
+  <script src="公共导航.js?v=20261013e"></script>
 </head>
 <body class="bg-page text-ink-body">
   <script>
     // 业务文件直开时回到根索引；iframe 嵌入时由 SystemFrame 承载，不触发跳转。
     (function(){
       if(window===top){
-        try{location.replace(new URL('../index.html?page=store-coin',location.href).href)}catch(_){location.replace('../index.html?page=store-coin')}
+        try{location.replace(new URL('../index.html?page=billing-recharge',location.href).href)}catch(_){location.replace('../index.html?page=billing-recharge')}
       }
     })();
   </script>
   <main id="mainContent" class="min-h-screen">
-    <nav class="coin-store-nav" aria-label="商城业务范围">
-      <div id="storeTabs" class="coin-store-tabs" role="tablist" aria-label="商城业务范围">
-        <button class="coin-store-tab" type="button" role="tab" aria-selected="false" data-store-tab="proxy" tabindex="-1"><i data-lucide="server" aria-hidden="true"></i><span>代理</span></button>
-        <button class="coin-store-tab" type="button" role="tab" aria-selected="false" data-store-tab="plan" tabindex="-1"><i data-lucide="package" aria-hidden="true"></i><span>套餐</span></button>
-        <button class="coin-store-tab active" type="button" role="tab" aria-selected="true" data-store-tab="coin" tabindex="0"><i data-lucide="wallet-cards" aria-hidden="true"></i><span>云币充值</span></button>
-        <button class="coin-store-tab" type="button" role="tab" aria-selected="false" data-store-tab="cart" tabindex="-1"><i data-lucide="shopping-cart" aria-hidden="true"></i><span>购物车</span></button>
-      </div>
-    </nav>
     <div class="page-content">
       <section id="coinPanel" aria-labelledby="coinPageHeading">
         <div class="coin-form-column">
+          <!-- 充值规则提示 -->
+          <div class="coin-notice" role="note" aria-label="充值提示"><i data-lucide="info" aria-hidden="true"></i><p>提示：1、<strong>充值金额不支持退款，请理性充值。</strong>2、企业内所有成员购买/续费设备时可共享账户余额。3、为防止您的临期设备因余额不足而错过自动续费，当您充值完成后，系统会对企业下已开启自动续费且在24小时内即将过期的设备进行续费。</p></div>
           <!-- 余额卡片与悬浮说明 -->
           <div class="coin-balance-card card">
-            <div class="coin-balance-heading"><h1 id="coinPageHeading" class="coin-balance-title">云币余额（元）</h1></div>
+            <div class="coin-balance-heading"><h1 id="coinPageHeading" class="coin-balance-title">云币余额（元）</h1><div class="coin-help"><button type="button" class="coin-help-trigger" aria-label="关于云币" aria-describedby="coinHelp"><i data-lucide="circle-help"></i></button><div id="coinHelp" class="coin-help-popover" role="tooltip"><h2>关于云币</h2><ul><li>云币是云登提供的一种内部结算形式，1元=1云币。</li><li>云币可以用于购买设备与套餐，支付时选择云币支付，用多少扣多少。</li><li>云币充值记录、消费记录可在费用管理–余额明细页面查看，剩余余额可在费用管理–云币充值页面查看。</li></ul></div></div></div>
             <div class="coin-balance-bottom"><div id="coinBalanceAmount" class="coin-balance-value">326.80</div><button data-anno="1" id="refreshBalance" type="button" class="coin-balance-refresh"><i data-lucide="refresh-cw" class="w-4 h-4"></i><span>刷新</span></button></div>
+            <span class="coin-balance-art" aria-hidden="true"><i data-lucide="coins"></i></span>
           </div>
 
           <div class="coin-business-card">
           <div id="rechargeView" class="coin-recharge-view">
             <div class="coin-recharge-body">
-              <div class="coin-recharge-field">
-                <div class="coin-recharge-field-label-with-help"><label class="coin-recharge-field-label coin-recharge-section-label" for="customAmount">充值金额</label><div class="coin-help"><button type="button" class="coin-help-trigger" aria-label="关于云币" aria-describedby="coinHelp"><i data-lucide="circle-help"></i></button><div id="coinHelp" class="coin-help-popover" role="tooltip"><h2>关于云币</h2><ul><li>云币是云登提供的一种内部结算形式，1元=1云币。</li><li>云币可以用于购买代理与套餐，支付时选择云币支付，用多少扣多少。</li><li>云币充值记录、消费记录可在费用管理–云币交易流水页面查看，剩余余额可在商城–云币充值页面查看。</li></ul></div></div></div>
+              <div class="coin-recharge-field coin-recharge-amount-row">
+                <label class="coin-recharge-field-label" for="customAmount">充值金额：</label>
                 <div data-anno="2" class="coin-recharge-amount-options" id="amountChoices">
                   <button type="button" class="coin-recharge-amount-btn selected" data-amount="500"><span class="coin-recharge-amount-check" aria-hidden="true"><i data-lucide="check"></i></span><span class="coin-recharge-amount-value">¥ 500</span><span class="coin-bonus-rate">加赠5%</span><span class="coin-recharge-amount-gift">赠送 25 云币</span><span class="coin-recharge-amount-total">实际到账 525 云币</span></button>
                   <button type="button" class="coin-recharge-amount-btn" data-amount="1000"><span class="coin-recharge-amount-check" aria-hidden="true"><i data-lucide="check"></i></span><span class="coin-recharge-amount-value">¥ 1000</span><span class="coin-bonus-rate">加赠10%</span><span class="coin-recharge-amount-gift">赠送 100 云币</span><span class="coin-recharge-amount-total">实际到账 1,100 云币</span></button>
@@ -475,31 +470,6 @@
       function setShellControlsVisible(visible) {
         if (window.parent !== window) window.parent.postMessage({type:'yundeng:chat-visibility', visible}, '*');
       }
-      const storeRouteFiles = Object.freeze({
-        proxy:'商城-代理.html',
-        plan:'商城-套餐.html',
-        coin:'商城-云币充值.html',
-        cart:'商城-购物车.html'
-      });
-      function navigateToStoreTab(tab) {
-        const file = storeRouteFiles[tab];
-        if (!file) return;
-        const search = `?tab=${tab}`;
-        if (window.parent !== window) {
-          window.parent.postMessage({type:'yundeng:route',file,search,hash:''}, '*');
-          return;
-        }
-        location.assign(new URL('../index.html?page=store&module=' + encodeURIComponent(file) + '&moduleSearch=' + encodeURIComponent(search.slice(1)), location.href).href);
-      }
-      document.querySelectorAll('[data-store-tab]').forEach(button => button.addEventListener('click', () => navigateToStoreTab(button.dataset.storeTab)));
-      document.querySelector('#storeTabs')?.addEventListener('keydown', event => {
-        if (!['ArrowLeft','ArrowRight'].includes(event.key)) return;
-        event.preventDefault();
-        const tabs = [...document.querySelectorAll('[data-store-tab]')];
-        const index = tabs.indexOf(event.target.closest('[data-store-tab]'));
-        const next = (index + (event.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length;
-        navigateToStoreTab(tabs[next].dataset.storeTab);
-      });
       let modalFocus = null;
       let paymentDialogFocus = null;
       let drawerFocus = null;

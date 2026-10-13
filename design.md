@@ -166,9 +166,25 @@
 | 列表标题 | `h2 text-[16px] font-semibold` 左对齐；总条数以 12px 辅助文字紧邻标题 |
 | 数据指标卡 | 有则放在列表标题行下方、表格上方（`mb-4`），无则不显示 |
 | 指标卡样式 | `grid grid-cols-2 lg:grid-cols-4 gap-3`，每卡 `p-3 rounded-md border border-line bg-page` |
-| 表格与分页 | 表格外层横向滚动；分页器在同一区块内，并与表格保持 20px 间距 |
+| 表格与分页 | 表格外层横向滚动；分页器在同一区块内，并与表格保持 20px 间距，且不因内容增多而溢出区块（见下方「单区块高度自适应」） |
 | 筛选抽屉 | 固定在模块视口右侧，筛选草稿确认后才作用于列表，具体规则见 §5.4 |
-| 单区块页面 | `.page-content` 与唯一业务区块纵向拉伸；白色区块填满可用高度，页面根容器与视口四边保持 16px `bg-page` 留白 |
+| 单区块页面 | `.page-content` 与唯一业务区块纵向拉伸；白色区块高度**自适应**——内容不足一屏时填满可用高度，内容超出一屏时随内容增高，数据列表与分页器始终落在区块内、不被裁切；纵向滚动由 `.page-content` 承担；页面根容器与视口四边保持 16px `bg-page` 留白 |
+
+**单区块高度自适应（2026-10-13 确立，禁止 `flex: 1 1 auto`）**：
+
+白色业务区块的高度必须由内容决定：内容不足一屏时撑满可用高度，内容超出一屏时随内容增高。关键在区块的 `flex-shrink` 必须为 `0` —— 写成 `flex: 1 1 auto`（或 Tailwind `flex-1` 一类基数为 0 的简写）时，区块会被压回一屏高度，超出的数据行与分页器会**溢出白色区块之外或被子区块的 `overflow:hidden` 裁掉**，既看不到分页器也无法翻页。
+
+```css
+/* 内容区：既是布局列容器，也是整页纵向滚动容器 */
+#mainContent.page-content { padding-bottom: 20px; min-height: 100%; display: flex; flex-direction: column; }
+/* 唯一业务区块：可增高、不可压缩（flex: 1 0 auto），保证列表与分页器始终在区块内 */
+#mainContent.page-content > section:only-child { min-height: 100%; flex: 1 0 auto; display: flex; flex-direction: column; }
+/* 表格区与分页器保持自身高度，不参与区块内的 flex 增长 */
+#mainContent.page-content > section:only-child > #tableRegion { flex: none; min-height: 0; }
+```
+
+- 区块为收圆角使用 `overflow:hidden` 时，**必须**保证区块高度等于内容高度（同上），否则内容会被裁切。
+- 区块内若设置了每页条数选择（如 100 条/页），切到大条数后分页器仍须可见可点；验收口径：**分页器矩形完全落在区块矩形内**，滚动到底能完整看到分页器。
 
 **页面标题处理**：
 - ❌ **禁止**设置独立的页面标题卡片（如单独的 `<h1>订单管理</h1>` 卡片区块）
@@ -361,7 +377,9 @@
 
 **容器**：`display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:16px;font-size:12px`。
 
-**位置**：分页器放在数据表格所在区块（`.bg-white.rounded-lg`，App Shell 内无外描边）内部，位于表格（`.overflow-x-auto`）的右下方，通过 `pt-5`（20px）与上方表格区域保持间距。该 20px 从**最后一条数据行的下边框底部**量到分页器区域顶部；禁止使用 `pt-4`（16px）、额外 margin 或移除末行边框来制造视觉间距。分页器**不是**独立区块，而应与表格同属数据区。表格和分页控件自身的边线仍保留。
+**位置**：分页器放在数据表格所在区块（`.bg-white.rounded-lg`，App Shell 内无外描边）内部，位于表格（`.overflow-x-auto`）的右下方，通过 `pt-5`（20px）与上方表格区域保持间距。该 20px 从**最后一条数据行的下边框底部**量到分页器区域顶部；禁止使用 `pt-4`（16px）、额外 margin 或移除末行边框来制造视觉间距。分页器**不是**独立区块，而应与表格同属数据区。表格和分页控件自身的边线仍保留。分页器必须始终位于区块内且完整可见（区块高度随内容增高，见 §5.0「单区块高度自适应」），任何每页条数下都不得溢出区块或被裁切。
+
+**默认每页条数**：数据列表默认 **100 条/页**，`page_size_options` 使用 `[10, 20, 50, 100]` 且默认选中 `100`；分页器旁的说明文案（如「默认 100 条/页，跨页选择会保留」）必须与页面实际默认值一致，改默认值时同步改文案。存量页面沿用各自默认值，不做强制回改。
 
 **布局（三区，居右）**：
 
@@ -452,8 +470,8 @@
 | 区域 | 样式 |
 |------|------|
 | 关闭 × | `position:absolute;top:14px;right:18px;font-size:20px;color:#9DA2AC;cursor:pointer;z-index:1`（纯文本 `×`，非 Lucide 图标） |
-| 内容区 | `flex:1;display:flex;align-items:center;padding:0 24px` |
-| ICO | `width:20px;height:20px;border-radius:50%;flex-shrink:0` 圆形图标，颜色随 Dialog 类型变化 |
+| 内容区 | `flex:1;display:flex;align-items:flex-start;padding:0 24px` |
+| ICO | `width:20px;height:20px;border-radius:50%;flex-shrink:0;margin-top:2px` 圆形图标，与标题同行、左对齐且垂直对齐标题文字行（不随内容块垂直居中），颜色随 Dialog 类型变化 |
 | 标题 | `font-size:16px;font-weight:600;color:#1A1D24` |
 | 副标题 | `font-size:14px;color:#6E7685;margin-top:6px` |
 | 底部按钮区 | `padding:0 24px 20px;display:flex;justify-content:flex-end;gap:12px` |

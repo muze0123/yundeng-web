@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>云登 - 商城代理</title>
+  <title>云登 - 商城设备</title>
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <script src="https://unpkg.com/lucide@1.34.0/dist/umd/lucide.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -69,6 +69,17 @@
     .surface { min-width: 0; padding: 20px; border-radius: 8px; background: var(--card); }
     .surface + .surface { margin-top: 16px; }
 
+    /* ===== 设备商城页头（共用片段）：返回按钮 + 页签 =====
+       商城-设备.html 与 商城-购物车.html 的这段样式必须逐字一致：
+       顶部页头是两页共用的区块，切换页签只替换下方内容，页头外观保持不变。
+       返回按钮使用专属类 .back-btn，不依赖各页 .btn 体系、也不继承 body 字号，
+       避免两页基础样式（body 字号等）不同导致的边框与字号差异。
+       返回按钮为普通按钮，不参与页签的左右方向键导航。 */
+    .store-head { height: 44px; padding: 0 16px; display: flex; align-items: center; gap: 16px; }
+    .store-head .store-tabs { flex: 1 1 auto; }
+    .store-head .back-btn { height: 32px; padding: 0 16px; border: 1px solid var(--line); border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; color: var(--ink-body); background: var(--card); font-size: 14px; font-weight: 500; line-height: 1; cursor: pointer; }
+    .store-head .back-btn:hover { color: var(--primary); border-color: var(--primary); }
+    .store-head .back-btn svg { width: 15px; height: 15px; }
     .store-tabs { min-width: 0; height: 44px; display: flex; align-items: stretch; gap: 8px; overflow-x: auto; scrollbar-width: none; }
     .store-tabs::-webkit-scrollbar { display: none; }
     .store-tab { min-width: 104px; height: 44px; padding: 0 16px; border: 0; border-bottom: 2px solid transparent; display: inline-flex; align-items: center; justify-content: center; gap: 8px; flex: none; color: var(--ink-sub); background: transparent; cursor: pointer; font-size: 14px; line-height: 1; }
@@ -156,12 +167,12 @@
     .segment-button:hover { color: var(--primary); border-color: var(--primary); }
     .segment-button[aria-pressed="true"] { color: var(--card); border-color: var(--primary); background: var(--primary); }
     .segment-button .discount-tag { height: 18px; padding: 0 5px; position: absolute; top: -9px; right: 4px; border-radius: 4px; color: var(--card); background: var(--price); font-size: 11px; line-height: 18px; }
-    /* 代理类型选择卡片（.proxy-type-tabs 内分段按钮）宽度固定 100px */
-    .proxy-type-tabs .segment-button { width: 100px; min-width: 100px; flex: 0 0 100px; padding: 0 8px; }
+    /* 类型参数（.proxy-type-tabs 内分段按钮）：固定 150px 宽；高度、底色、圆角沿用 .segment-button */
+    .proxy-type-tabs .segment-button { width: 150px; min-width: 150px; flex: 0 0 150px; padding: 0 12px; }
     /* 购买时长单选框（.duration-options 内分段按钮）宽度固定 100px */
     .duration-options .segment-button { width: 100px; min-width: 100px; flex: 0 0 100px; padding: 0 8px; }
-    /* 代理资源产品卡片（.proxy-type-card 内资源网格）宽度固定 280px */
-    .proxy-type-card .resource-grid { grid-template-columns: repeat(auto-fill, 280px); }
+    /* 套餐资源卡片（.proxy-plan-card 内资源网格）宽度固定 280px，与改造前一致 */
+    .proxy-plan-card .resource-grid { grid-template-columns: repeat(auto-fill, 280px); }
 
     .resource-grid { margin-top: 16px; display: grid; grid-template-columns: repeat(3, minmax(190px, 224px)); gap: 10px; }
     .resource-card { min-width: 0; min-height: 72px; padding: 10px 12px; position: relative; border: 1px solid var(--line); border-radius: 4px; color: var(--ink-body); background: var(--card); text-align: left; cursor: pointer; transition: border-color .15s ease, background-color .15s ease; }
@@ -189,16 +200,16 @@
     .field-control { min-width: 0; min-height: 32px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
     .field-note { color: var(--ink-muted); font-size: 12px; }
     .control { height: 32px; padding: 0 10px; border: 1px solid var(--line); border-radius: 4px; color: var(--ink-body); background: var(--card); outline: none; }
-    .control:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(0, 102, 255, .12); }
+    /* 下拉框焦点态：只保留单条主色描边，去掉阴影环与原生 outline。
+       全局 :where(button, input, select):focus-visible 会再叠一道 2px 蓝边、形成重影蓝边，故在此显式覆盖。 */
+    .control:focus,
+    .control:focus-visible { border-color: var(--primary); outline: 0; outline-offset: 0; box-shadow: none; }
     /* 下拉框：去除原生外观与原生箭头，改用 design.md 的自定义箭头（#9DA2AC） */
     select.control { min-width: 200px; padding-right: 28px; appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%239DA2AC' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; }
     select.control:hover { border-color: var(--primary); }
     /* 优惠券下拉框：未选择时展示占位灰，选中后恢复正文色，宽度 326px */
     #proxyCoupon { width: 326px; max-width: 100%; }
     #proxyCoupon:has(option[value=""]:checked) { color: var(--ink-muted); }
-    /* 优惠券下拉框焦点态：只保留单条主色描边，去掉阴影环与原生 outline，避免出现重影蓝边 */
-    #proxyCoupon:focus,
-    #proxyCoupon:focus-visible { outline: 0!important; outline-offset: 0; box-shadow: none!important; border-color: var(--primary); }
     .stepper { height: 32px; display: inline-grid; grid-template-columns: 32px 52px 32px; border: 1px solid var(--line); border-radius: 4px; overflow: hidden; background: var(--card); }
     .stepper button { width: 32px; height: 30px; padding: 0; border: 0; display: inline-flex; align-items: center; justify-content: center; color: var(--ink-sub); background: var(--card); cursor: pointer; }
     .stepper button:hover { color: var(--primary); background: var(--primary-bg); }
@@ -218,8 +229,6 @@
     .payment-balance-refresh svg { width: 15px; height: 15px; }
     .payment-recharge .link-button { color: var(--primary); font-size: 14px; font-weight: 500; }
     .payment-recharge .link-button:hover { color: var(--primary-hover); text-decoration: underline; text-underline-offset: 3px; }
-    .proxy-type-card .proxy-type-tabs,
-    .proxy-type-card .resource-grid { margin-left: 100px; }
     #proxyPayments input[type="radio"] { appearance: none; width: 14px; height: 14px; position: relative; border: 1px solid var(--line); border-radius: 4px; background: var(--card); }
     #proxyPayments input[type="radio"]:checked { border-color: var(--primary); background: var(--primary); }
     #proxyPayments input[type="radio"]:checked::after { content: ''; width: 7px; height: 4px; position: absolute; top: 3px; left: 3px; border-left: 2px solid var(--card); border-bottom: 2px solid var(--card); transform: rotate(-45deg); }
@@ -443,8 +452,6 @@
       .field-row { grid-template-columns: 1fr; gap: 6px; }
       .field-label { justify-content: flex-start; }
       #proxyPanel { padding-bottom: 224px; }
-      .proxy-type-card .proxy-type-tabs,
-      .proxy-type-card .resource-grid { margin-left: 0; }
       .proxy-checkout-bar { left: 16px; right: 16px; border-radius: 8px 8px 0 0; align-items: stretch; flex-direction: column; }
       .checkout-actions { width: 100%; display: grid; grid-template-columns: 1fr 1fr; }
       .checkout-actions .btn { width: 100%; }
@@ -487,13 +494,29 @@
     .section-heading > p, .current-region { display:none; }
     .section-heading .heading-tools { min-width:0; flex:0 1 250px; grid-template-columns:minmax(0,1fr); }
     .proxy-region-card { min-height:0; }
-    .region-field { display:block; }
-    .region-field > .field-label { display:none; }
-    .region-options { gap:20px; }
-    .region-line { grid-template-columns:88px minmax(0,1fr); gap:12px; }
-    .region-prefix { justify-content:flex-end; color:var(--ink-body); }
-    .chip-grid { display:flex; flex-wrap:wrap; gap:10px; }
-    .option-chip { min-width:100px; background:var(--page); }
+    /* 类型 / 地区 / 套餐：字段名右对齐（.field-label 已 flex-end），参数左对齐 */
+    .proxy-type-tabs { min-height:32px; align-items:center; gap:10px; }
+    /* 地区：字段名与「大陆」行同行；大陆/国家/城市行整列居中，前缀与 chips 紧凑排列；搜索框居区块右端与首行同行 */
+    .region-head { display:flex; align-items:flex-start; gap:12px; }
+    .region-head > .field-label { flex:0 0 88px; min-height:32px; display:flex; align-items:center; }
+    .region-head .region-options { flex:1 1 auto; min-width:0; margin:0; }
+    .region-head .region-tools { flex:0 0 auto; margin-left:0; display:flex; align-items:flex-start; gap:10px; }
+    .region-head .region-search { width:150px; }
+    /* 地区行：前缀列紧凑（36px 左对齐），chips 紧随其后，三行 chips 共用同一左缘 */
+    .region-line { grid-template-columns:36px minmax(0,1fr); gap:8px; }
+    .region-prefix { justify-content:flex-start; color:var(--ink-body); }
+    /* 套餐区：必须 nowrap —— 继承 .field-control 的 flex-wrap:wrap 会把网格容器撑高并在底部留大片空白 */
+    .plan-control { flex-direction:column; flex-wrap:nowrap; align-content:flex-start; align-items:stretch; gap:12px; }
+    /* 套餐卡片固定 280×80（列宽 280、行高 80）；网格随容器宽度自适应列数，行从顶部排列不留白 */
+    .plan-control .resource-grid { margin-top:0; grid-auto-rows:80px; align-content:start; }
+    /* 本地类型：卡片下方灰色提示区块 */
+    .local-tip { padding:12px 16px; border-radius:4px; color:var(--ink-sub); background:var(--page); }
+    .local-tip strong { display:block; margin-bottom:6px; color:var(--ink-title); font-weight:600; }
+    .local-tip p { margin:0; }
+    .region-empty { margin-left:44px; }
+    .chip-grid { display:flex; flex-wrap:wrap; gap:8px; }
+    /* chips 紧凑自适应宽度（去 100px 最小宽），与截图口径一致 */
+    .option-chip { min-width:0; padding:0 12px; background:var(--page); }
     .segment-button { min-width:280px; background:var(--page); }
     .resource-grid { grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; }
     .resource-card { min-height:80px; padding:16px 12px; background:var(--page); white-space:normal; }
@@ -526,7 +549,7 @@
     .config-form .control { height:32px; border-radius:4px; }
     .config-form .checkbox-line { min-height:32px; align-items:center; }
     .config-form .payment-option { border-radius:4px; }
-    @media(max-width:1199px) { .resource-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } .proxy-type-card .proxy-type-tabs,.proxy-type-card .resource-grid { margin-left:0; } }
+    @media(max-width:1199px) { .resource-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
     @media(max-width:850px) { .section-heading .heading-tools { flex:none; } #proxyPanel { grid-template-columns:1fr; } .order-summary-content { position:static; } .region-line { grid-template-columns:44px minmax(0,1fr); } .notice-strip { flex-wrap:wrap; } .notice-strip p { flex-basis:75%; } .field-row { grid-template-columns:88px minmax(0,1fr); } }
     @media(min-width:851px) and (max-width:1199px) { #proxyPanel { grid-template-columns:minmax(0,1fr) 300px; } }
     /* 主业务区延伸至视口底部，并保留 16px 页面底部留白。 */
@@ -540,49 +563,69 @@
     .proxy-config-column > * { flex-shrink:0; }
     .proxy-config-column > .proxy-purchase-card { flex-grow:1; }
     #proxyPanel > .proxy-checkout-bar { align-self:stretch; }
+    /* 窄屏：字段名与搜索框允许换行堆叠 */
+    @media (max-width: 850px) { .region-head { align-items:flex-start; flex-wrap:wrap; } .region-head .region-tools { width:100%; justify-content:flex-start; } .region-empty { margin-left:44px; } }
   </style>
-  <link rel="stylesheet" href="公共导航.css?v=20261008a">
-  <script src="公共导航.js?v=20261008a"></script>
+  <link rel="stylesheet" href="公共导航.css?v=20261013e">
+  <script src="公共导航.js?v=20261013e"></script>
 </head>
 <body class="overflow-hidden">
   <main id="mainContent" class="store-page" tabindex="-1">
-    <h1 class="sr-only">商城代理</h1>
+    <h1 class="sr-only">设备商城</h1>
     <span id="dirtyBadge" class="hidden" aria-hidden="true"></span>
-    <nav class="surface !p-0 mb-2" aria-label="商城业务范围">
-      <div id="storeTabs" class="store-tabs" role="tablist" aria-label="商城业务范围">
-        <button class="store-tab" type="button" role="tab" aria-selected="true" data-tab="proxy" tabindex="0"><i data-lucide="server"></i><span>代理</span></button>
-        <button class="store-tab" type="button" role="tab" aria-selected="false" data-tab="plan" tabindex="-1"><i data-lucide="package"></i><span>套餐</span></button>
-        <button class="store-tab" type="button" role="tab" aria-selected="false" data-tab="coin" tabindex="-1"><i data-lucide="wallet-cards"></i><span>云币充值</span></button>
-        <button class="store-tab" type="button" role="tab" aria-selected="false" data-tab="cart" tabindex="-1"><i data-lucide="shopping-cart"></i><span>购物车</span></button>
+    <!-- 设备商城子页面页头：左上角返回 + 页签（购买设备 / 购物车，套餐与云币充值已迁出本页） -->
+    <nav class="surface mb-2 store-head" aria-label="设备商城页头">
+      <button id="backBtn" type="button" class="back-btn" aria-label="返回设备管理">
+        <i data-lucide="arrow-left" aria-hidden="true"></i>
+        <span>返回</span>
+      </button>
+      <div id="storeTabs" class="store-tabs" role="tablist" aria-label="设备商城业务范围">
+        <button class="store-tab" type="button" role="tab" aria-selected="true" data-tab="proxy" tabindex="0"><span>购买设备</span></button>
+        <button class="store-tab" type="button" role="tab" aria-selected="false" data-tab="cart" tabindex="-1"><span>购物车</span></button>
       </div>
     </nav>
 
-    <!-- 代理购买 -->
+    <!-- 设备购买 -->
     <section id="proxyPanel" role="tabpanel">
       <div class="proxy-config-column">
       <div class="notice-strip" role="note">
-        <i data-lucide="info" aria-hidden="true"></i><strong>重要提示：</strong><p>云登提供的代理皆受国家网络监管，您在使用过程中应遵守相关法律法规。我们不提供任何翻墙服务；购买后不支持退换，请根据实际需求选购。</p>
+        <i data-lucide="info" aria-hidden="true"></i><strong>重要提示：</strong><p>云登提供的设备皆受国家网络监管，您在使用过程中应遵守相关法律法规。我们不提供任何翻墙服务；购买后不支持退换，请根据实际需求选购。</p>
         <button id="toggleCompliance" class="text-button" type="button" aria-expanded="false" aria-controls="purchaseNoticeDialog" aria-haspopup="dialog"><span>查看购买须知</span><i data-lucide="chevron-right"></i></button>
       </div>
-      <!-- 地域选择 -->
-      <section id="proxyRegionCard" class="surface proxy-region-card" aria-labelledby="regionTitle">
-        <div class="section-heading"><h2 id="regionTitle">代理地区</h2><p>选择代理所在的国家与城市</p><div class="heading-tools"><label class="region-search"><span class="sr-only">搜索国家或城市</span><input id="regionSearch" type="search" placeholder="搜索地区" autocomplete="off"><i data-lucide="search" aria-hidden="true"></i></label><span id="currentRegion" class="current-region">当前选择：美国-洛杉矶</span></div></div>
-        <div class="field-row region-field">
-          <span class="field-label">代理地区</span>
+      <!-- 类型：字段名右对齐，参数（全部平台设备/静态住宅/云平台/本地）左对齐 -->
+      <section id="proxyTypeCard" class="surface proxy-type-card">
+        <div class="field-row">
+          <span class="field-label">类型</span>
+          <div id="proxyTypeOptions" class="field-control proxy-type-tabs" role="group" aria-label="设备类型"></div>
+        </div>
+      </section>
+
+      <!-- 地区：字段名与「大陆」参数同行，国家/城市依次排列；搜索框与首行同行居右 -->
+      <section id="proxyRegionCard" class="surface proxy-region-card">
+        <div class="region-head">
+          <span class="field-label">地区</span>
           <div class="region-options">
             <div class="region-line"><span class="region-prefix">大陆</span><div id="continentOptions" class="chip-grid" aria-label="大洲"></div></div>
             <div class="region-line"><span class="region-prefix">国家</span><div id="countryOptions" class="chip-grid" aria-label="国家"></div></div>
             <div class="region-line"><span class="region-prefix">城市</span><div id="cityOptions" class="chip-grid" aria-label="城市"></div></div>
             <div id="regionEmpty" class="region-empty hidden" role="status">未找到匹配地区，请更换关键词。</div>
           </div>
+          <div class="region-tools">
+            <label class="region-search"><span class="sr-only">搜索国家或城市</span><input id="regionSearch" type="search" placeholder="搜索地区" autocomplete="off"><i data-lucide="search" aria-hidden="true"></i></label>
+            <span id="currentRegion" class="current-region">当前选择：美国-洛杉矶</span>
+          </div>
         </div>
       </section>
 
-      <!-- 代理资源 -->
-      <section id="proxyResourceCard" class="surface proxy-type-card" aria-labelledby="proxyTypeTitle">
-        <div class="section-heading"><h2 id="proxyTypeTitle">代理类型</h2><p>请选择购买的代理类型</p></div>
-        <div id="proxyTypeOptions" class="proxy-type-tabs" role="group" aria-label="代理类型"></div>
-        <div id="resourceGrid" class="resource-grid" aria-live="polite"></div>
+      <!-- 套餐：字段名右对齐，资源卡片左对齐；本地类型下额外显示特别提示 -->
+      <section id="proxyPlanCard" class="surface proxy-plan-card">
+        <div class="field-row">
+          <span class="field-label">套餐</span>
+          <div class="field-control plan-control">
+            <div id="resourceGrid" class="resource-grid" aria-live="polite"></div>
+            <div id="localTip" class="local-tip hidden" role="note"></div>
+          </div>
+        </div>
       </section>
 
       <!-- 动态住宅流量包 -->
@@ -593,21 +636,20 @@
         </div>
       </section>
 
-      <!-- 购买配置 -->
-      <section class="surface proxy-purchase-card" aria-labelledby="proxyConfigTitle">
-        <div class="section-heading"><h2 id="proxyConfigTitle">购买配置</h2><p>确认服务周期、数量与优惠</p></div>
+      <!-- 购买配置：按要求去掉区块标题与说明文案，仅保留配置项 -->
+      <section class="surface proxy-purchase-card">
         <form id="proxyForm" class="config-form" novalidate>
-          <div id="proxyDurationRow" class="field-row"><span class="field-label">购买时长</span><div id="proxyDurationOptions" class="field-control duration-options" role="group" aria-label="代理购买时长"></div></div>
-          <div id="proxyQtyRow" class="field-row"><label class="field-label" for="proxyQty">购买数量</label><div class="field-control"><div class="stepper"><button type="button" data-step="proxyQty" data-delta="-1" aria-label="减少代理购买数量"><i data-lucide="minus"></i></button><input id="proxyQty" class="mono" type="number" min="1" max="50" value="1" aria-describedby="proxyQtyNote"><button type="button" data-step="proxyQty" data-delta="1" aria-label="增加代理购买数量"><i data-lucide="plus"></i></button></div><i data-lucide="arrow-up" class="w-4 h-4 text-ink-sub hidden"></i><span>个</span><span id="proxyQtyNote" class="sr-only">单次最多购买 50 个</span></div></div>
+          <div id="proxyDurationRow" class="field-row"><span class="field-label">购买时长</span><div id="proxyDurationOptions" class="field-control duration-options" role="group" aria-label="设备购买时长"></div></div>
+          <div id="proxyQtyRow" class="field-row"><label class="field-label" for="proxyQty">购买数量</label><div class="field-control"><div class="stepper"><button type="button" data-step="proxyQty" data-delta="-1" aria-label="减少设备购买数量"><i data-lucide="minus"></i></button><input id="proxyQty" class="mono" type="number" min="1" max="50" value="1" aria-describedby="proxyQtyNote"><button type="button" data-step="proxyQty" data-delta="1" aria-label="增加设备购买数量"><i data-lucide="plus"></i></button></div><i data-lucide="arrow-up" class="w-4 h-4 text-ink-sub hidden"></i><span>个</span><span id="proxyQtyNote" class="sr-only">单次最多购买 50 个</span></div></div>
         <div class="field-row"><label class="field-label" for="proxyCoupon">优惠券</label><div class="field-control"><select id="proxyCoupon" class="control"><option value="" selected>请选择优惠券</option><option value="10">新客专享减 10 元</option><option value="20">满 100 减 20 元</option></select><span class="field-note">可与资源优惠叠加使用</span></div></div>
           <div id="proxyRenewRow" class="field-row"><span class="field-label">自动续费</span><div class="field-control"><label class="checkbox-line"><input id="proxyRenew" type="checkbox"><span>到期自动续费（请确认扣款账户余额充足）</span></label></div></div>
-          <div class="field-row"><span class="field-label">支付方式</span><div id="proxyPayments" class="field-control payment-options" role="radiogroup" aria-label="代理支付方式"></div></div>
+          <div class="field-row"><span class="field-label">支付方式</span><div id="proxyPayments" class="field-control payment-options" role="radiogroup" aria-label="设备支付方式"></div></div>
         </form>
       </section>
 
       </div>
       <!-- 订单详情与结算 -->
-      <aside class="proxy-checkout-bar" aria-label="代理订单结算">
+      <aside class="proxy-checkout-bar" aria-label="设备订单结算">
         <div class="order-summary-content">
           <h2>订单详情</h2>
           <dl id="orderSummary" class="summary-lines" aria-live="polite"></dl>
@@ -621,7 +663,7 @@
           <div class="checkout-actions">
             <button id="addCart" type="button" class="btn btn-default">加入购物车</button>
             <button id="buyProxy" type="button" class="btn btn-primary">立即支付</button>
-            <label class="checkout-consent checkbox-line"><input id="proxyNotice" type="checkbox" checked><span>我已阅读并同意<button id="purchaseNoticeLink" class="purchase-notice-link" type="button" aria-haspopup="dialog" aria-controls="purchaseNoticeDialog">《代理购买须知》</button></span></label>
+            <label class="checkout-consent checkbox-line"><input id="proxyNotice" type="checkbox" checked><span>我已阅读并同意<button id="purchaseNoticeLink" class="purchase-notice-link" type="button" aria-haspopup="dialog" aria-controls="purchaseNoticeDialog">《设备购买须知》</button></span></label>
           </div>
         </div>
       </aside>
@@ -634,7 +676,7 @@
     <section class="modal-panel purchase-notice-panel" tabindex="-1">
       <header class="modal-header"><h2 id="purchaseNoticeTitle">购买须知</h2><button id="closePurchaseNotice" class="icon-button" type="button" aria-label="关闭购买须知"><i data-lucide="x"></i></button></header>
       <div class="purchase-notice-body">
-        <div class="purchase-notice-alert"><i data-lucide="circle-alert" aria-hidden="true"></i><span>请在充分理解并接受以下内容后使用代理资源</span></div>
+        <div class="purchase-notice-alert"><i data-lucide="circle-alert" aria-hidden="true"></i><span>请在充分理解并接受以下内容后使用设备资源</span></div>
         <section class="purchase-notice-section"><h3>1. 合法合规使用</h3><p>本产品不提供任何形式的翻墙服务，亦不具备支持或实现翻墙行为的功能设计。用户应自行遵守适用的法律法规，不得利用本产品从事违法网络活动。</p></section>
         <section class="purchase-notice-section"><h3>2. 第三方网络资源</h3><p>用户通过本产品采购或使用的 IP 等网络资源，系由第三方供应商提供，仅作为本产品功能运行的技术资源使用，平台无法对用户的具体网络访问对象、访问内容或使用方式进行有效控制或审查。用户承诺不得将相关资源用于任何损害他人合法权益的行为，亦不得用于实施任何违法犯罪活动。</p></section>
         <section class="purchase-notice-section"><h3>3. 用户行为责任</h3><p>本产品系面向电商营销场景的工具型软件。用户基于本产品从事的任何操作及行为，均由用户自行决定并实施，并不代表本产品或平台的任何意志、立场或观点，与平台无关。平台严禁用户利用本产品的任何服务从事违法犯罪活动。</p></section>
@@ -661,7 +703,7 @@
       </header>
       <div class="recharge-dialog-body">
         <div class="recharge-field">
-          <div class="recharge-field-label-with-help"><label class="recharge-field-label">充值金额</label><div class="recharge-help"><button type="button" class="recharge-help-trigger" aria-label="关于云币" aria-describedby="rechargeCoinHelp"><i data-lucide="circle-help"></i></button><div id="rechargeCoinHelp" class="recharge-help-popover" role="tooltip"><h3>关于云币</h3><ul class="recharge-info-list"><li>云币是云登提供的一种内部结算形式，1元=1云币。</li><li>云币可以用于购买代理与套餐，支付时选择云币支付，用多少扣多少。</li><li>云币充值记录、消费记录、剩余余额，可在商城-云币充值页面查看。</li></ul></div></div></div>
+          <div class="recharge-field-label-with-help"><label class="recharge-field-label">充值金额</label><div class="recharge-help"><button type="button" class="recharge-help-trigger" aria-label="关于云币" aria-describedby="rechargeCoinHelp"><i data-lucide="circle-help"></i></button><div id="rechargeCoinHelp" class="recharge-help-popover" role="tooltip"><h3>关于云币</h3><ul class="recharge-info-list"><li>云币是云登提供的一种内部结算形式，1元=1云币。</li><li>云币可以用于购买设备与套餐，支付时选择云币支付，用多少扣多少。</li><li>云币充值记录、消费记录、剩余余额，可在商城-云币充值页面查看。</li></ul></div></div></div>
           <div class="recharge-amount-options" id="rechargeAmountOptions">
             <button type="button" class="recharge-amount-btn selected" data-amount="500" data-coins="500"><span class="recharge-amount-check" aria-hidden="true"><i data-lucide="check"></i></span><span class="recharge-amount-value mono">¥ 500</span><span class="recharge-amount-gift">赠送 25 云币</span><span class="recharge-amount-total">到账 525 云币</span></button>
             <button type="button" class="recharge-amount-btn" data-amount="1000" data-coins="1000"><span class="recharge-amount-check" aria-hidden="true"><i data-lucide="check"></i></span><span class="recharge-amount-value mono">¥ 1000</span><span class="recharge-amount-gift">赠送 100 云币</span><span class="recharge-amount-total">到账 1,100 云币</span></button>
@@ -736,7 +778,12 @@
         '巴西': ['圣保罗', '里约热内卢'], '阿联酋': ['迪拜', '阿布扎比'], '南非': ['约翰内斯堡', '开普敦']
       }
     };
-    const proxyTypes = [{ id: 'all', label: '全部' }, { id: 'static', label: '静态住宅' }, { id: 'cloud', label: '云平台' }];
+    const proxyTypes = [{ id: 'all', label: '全部平台设备' }, { id: 'static', label: '静态住宅' }, { id: 'cloud', label: '云平台' }, { id: 'local', label: '本地' }];
+    /* 本地类型：仅提供本地动态 / 本地静态两种，选中后在套餐卡片下方展示对应特别提示。 */
+    const localTips = {
+      'local-dynamic': '本地动态网络适用于本地设备为动态网络，使用本地网络访问店铺，我们只提供店铺环境，不提供网络。需注意，动态网络不适用对网络地址稳定性有较高要求的店铺平台。mac版本暂不支持shopee本土店铺。每个动态设备同时最多支持绑定5个账号。同时，以购买之日起，30天为一个周期；每个周期内，每个动态设备支持5次绑定账号操作；绑定次数超过5次后，将限制绑定账号，下一个周期更新绑定次数。',
+      'local-static': '本地静态网络适用于本地设备为静态网络，使用本地网络访问店铺，我们只提供店铺环境，不提供网络。需注意，首次绑定设备后可变更1次网络地址，首次变更后每7天可再次变更一次；若您网络变更后，7天内再次发生网络变化，会导致无法访问店铺；需等待变更7天周期到了，才能变更网络，进行店铺访问。不支持shopee本土店铺。'
+    };
     const trafficPacks = [
       { id: 'traffic-1g-30', capacity: '1 GB', days: 30, unit: 3.99, price: 3.99, original: 3.99 },
       { id: 'traffic-5g-30', capacity: '5 GB', days: 30, unit: 3.40, price: 16.99, original: 19.99, discount: '8.5折' },
@@ -751,7 +798,9 @@
       ...['华为云', '谷歌云', '阿里云', '亚马逊云', '微软云', '腾讯云', '甲骨文云', 'DigitalOcean'].map((name, index) => ({
         id:['huawei','google','aliyun','aws','azure','tencent','oracle','digitalocean'][index], type:'cloud', name:`云平台 · ${name}`, price:55.55, original:55.55, stock:50,
         info:`${name}固定出口资源，适合自动化任务、开发测试与服务部署。`
-      }))
+      })),
+      { id:'local-dynamic', type:'local', name:'本地动态', price:20, original:20, stock:99, info:'本地动态网络：使用本地网络访问店铺，我们只提供店铺环境，不提供网络。' },
+      { id:'local-static', type:'local', name:'本地静态', price:20, original:20, stock:99, info:'本地静态网络：使用本地网络访问店铺，我们只提供店铺环境，不提供网络。' }
     ];
     const paymentMethods = [
       { id: 'alipay', label: '支付宝支付', icon: 'badge-dollar-sign' }, { id: 'wechat', label: '微信支付', icon: 'message-circle' },
@@ -762,7 +811,7 @@
     const pageParams = new URLSearchParams(location.search);
     const state = {
       lastFocus: null, pendingOrder: null, regionExpanded: false,
-      proxy: { continent: '北美洲', country: '美国', city: '洛杉矶', type: 'all', productId: 's28', duration: 1, qty: 1, coupon: 0, renew: true, renewCycle: 1, payment: 'alipay', notice: true, trafficPackId: 'traffic-10g-90', purchaseKind: 'proxy_order' },
+      proxy: { continent: '北美洲', country: '美国', city: '洛杉矶', type: 'all', productId: '', duration: 1, qty: 1, coupon: 0, renew: true, renewCycle: 1, payment: 'alipay', notice: true, trafficPackId: 'traffic-10g-90', purchaseKind: 'proxy_order' },
       recharge: { amount: 500, coins: 525, payment: 'alipay', balance: 300 }
     };
     const paymentIconData = {
@@ -802,7 +851,7 @@
       toastEl.classList.remove('hidden'); lucide.createIcons(); clearTimeout(toastTimer); toastTimer = setTimeout(() => toastEl.classList.add('hidden'), 3000);
     }
 
-    // ---------- 地区与代理 ----------
+    // ---------- 地区与设备 ----------
     function recommended(label) { return ['美国', '洛杉矶'].includes(label) ? '推荐' : ''; }
     function optionChip(label, selected, dataName) { const tag = recommended(label); return `<button type="button" class="option-chip" data-${dataName}="${label}" aria-pressed="${selected}">${label}${tag ? `<span class="corner-tag">${tag}</span>` : ''}</button>`; }
     function renderRegions(filter = '') {
@@ -821,18 +870,40 @@
       lucide.createIcons();
     }
     function isDynamicProxy() { return state.proxy.type === 'dynamic'; }
+    function isLocalProxy() { return state.proxy.type === 'local'; }
+    /* 订单摘要与明细中的地区文案：动态按流量包全球可用，本地走本地网络，其余按所选国家-城市。 */
+    function regionSummaryText() {
+      if (isDynamicProxy()) return '全球地区';
+      if (isLocalProxy()) return '本地网络';
+      return `${state.proxy.country}-${state.proxy.city || '待选择'}`;
+    }
     function currentTrafficPack() { return trafficPacks.find(item => item.id === state.proxy.trafficPackId) || trafficPacks.find(item => !item.custom); }
     function renderProxyTypes() { $('#proxyTypeOptions').innerHTML = proxyTypes.map(type => `<button type="button" class="segment-button" data-proxy-type="${type.id}" aria-pressed="${state.proxy.type === type.id}">${type.label}</button>`).join(''); }
-    function currentProduct() { return proxyProducts.find(item => item.id === state.proxy.productId) || proxyProducts.find(item => item.type === state.proxy.type && item.stock > 0); }
-    function regionHasResources() { return state.proxy.country !== '安哥拉'; }
+    /* 套餐默认不选中：仅当用户点选（或外部带入）指定 productId 时才存在当前套餐。 */
+    function currentProduct() { return proxyProducts.find(item => item.id === state.proxy.productId); }
+    function regionHasResources() { return isLocalProxy() || state.proxy.country !== '安哥拉'; }
+    /* 套餐卡片来源：全部平台设备 = 静态住宅 + 云平台；本地类型 = 本地动态 / 本地静态。 */
+    function planProducts() {
+      return isLocalProxy()
+        ? proxyProducts.filter(item => item.type === 'local')
+        : proxyProducts.filter(item => item.type !== 'local' && (state.proxy.type === 'all' || item.type === state.proxy.type));
+    }
+    /* 本地类型：在套餐卡片下方灰色区块展示所选本地网络的特别提示。 */
+    function renderLocalTip() {
+      const box = $('#localTip'); const product = currentProduct();
+      const text = isLocalProxy() && product ? localTips[product.id] : '';
+      box.classList.toggle('hidden', !text);
+      box.innerHTML = text ? `<strong>特别提示：</strong><p>${text}</p>` : '';
+    }
     function renderResources() {
+      renderLocalTip();
       if (isDynamicProxy()) {
         $('#resourceGrid').innerHTML = '';
         $('#resourceGrid').classList.add('hidden');
         return;
       }
       $('#resourceGrid').classList.remove('hidden');
-      const items = proxyProducts.filter(item => state.proxy.type === 'all' || item.type === state.proxy.type);
+      const items = planProducts();
       if (!regionHasResources()) { $('#resourceGrid').innerHTML = '<p class="text-ink-sub">当前地区暂无可用资源，请选择其他地区。</p>'; return; }
       $('#resourceGrid').innerHTML = items.map(item => `<button type="button" class="resource-card" data-product="${item.id}" aria-pressed="${state.proxy.productId === item.id}" ${item.stock ? '' : 'disabled'}><span class="resource-title">${item.name}<i data-lucide="info"></i></span><span class="resource-price">${money(item.price)}<span class="price-unit">/月</span></span><span class="selected-mark"><i data-lucide="check"></i></span><span class="resource-tooltip" role="tooltip"><strong>${item.name}</strong>${item.info}</span></button>`).join('');
       lucide.createIcons();
@@ -851,7 +922,10 @@
     }
     function syncProxyMode() {
       const dynamic = isDynamicProxy();
-      $('#proxyRegionCard').classList.toggle('hidden', dynamic);
+      const local = isLocalProxy();
+      // 本地网络不涉及地区选择；动态住宅按流量包购买，两者都不显示地区与套餐区块。
+      $('#proxyRegionCard').classList.toggle('hidden', dynamic || local);
+      $('#proxyPlanCard').classList.toggle('hidden', dynamic);
       $('#resourceGrid').classList.toggle('hidden', dynamic);
       $('#proxyDurationRow').classList.toggle('hidden', dynamic);
       $('#proxyQtyRow').classList.toggle('hidden', dynamic);
@@ -895,8 +969,8 @@
       const dynamic = isDynamicProxy();
       const pack = quote.trafficPack;
       const resourceGroup = dynamic
-        ? `<div class="detail-group"><h4>流量包</h4><div class="detail-row"><span>流量包规格</span><span>${pack ? `${pack.capacity} / ${pack.days}天` : '待选择'}</span></div><div class="detail-row"><span>代理类型</span><span>动态代理（住宅）</span></div><div class="detail-row"><span class="detail-help-label">套餐流量<button type="button" class="detail-help" aria-label="查看套餐流量说明"><i data-lucide="circle-help"></i><span class="detail-help-tip" role="tooltip">该套餐可每月使用 10GB 高速流量。限时福利：活动期间不限流量！</span></button></span><span class="mono">10G/月</span></div><div class="detail-row"><span>超出流量资费</span><span>限时免费</span></div></div>`
-        : `<div class="detail-group"><h4>代理资源</h4><div class="detail-row"><span>资源名称</span><span>${quote.product?.name || '待选择'}</span></div><div class="detail-row"><span>代理地区</span><span>${state.proxy.country || '待选择'}${state.proxy.city ? `-${state.proxy.city}` : ''}</span></div><div class="detail-row"><span>购买数量</span><span class="mono">${state.proxy.qty} 个</span></div><div class="detail-row"><span>购买时长</span><span class="mono">${state.proxy.duration} 个月</span></div><div class="detail-row"><span class="detail-help-label">套餐流量<button type="button" class="detail-help" aria-label="查看套餐流量说明"><i data-lucide="circle-help"></i><span class="detail-help-tip" role="tooltip">该套餐可每月使用 10GB 高速流量。限时福利：活动期间不限流量！</span></button></span><span class="mono">10G/月</span></div><div class="detail-row"><span>超出流量资费</span><span>限时免费</span></div></div>`;
+        ? `<div class="detail-group"><h4>流量包</h4><div class="detail-row"><span>流量包规格</span><span>${pack ? `${pack.capacity} / ${pack.days}天` : '待选择'}</span></div><div class="detail-row"><span>设备类型</span><span>动态代理（住宅）</span></div><div class="detail-row"><span class="detail-help-label">套餐流量<button type="button" class="detail-help" aria-label="查看套餐流量说明"><i data-lucide="circle-help"></i><span class="detail-help-tip" role="tooltip">该套餐可每月使用 10GB 高速流量。限时福利：活动期间不限流量！</span></button></span><span class="mono">10G/月</span></div><div class="detail-row"><span>超出流量资费</span><span>限时免费</span></div></div>`
+        : `<div class="detail-group"><h4>设备资源</h4><div class="detail-row"><span>资源名称</span><span>${quote.product?.name || '待选择'}</span></div><div class="detail-row"><span>设备地区</span><span>${regionSummaryText()}</span></div><div class="detail-row"><span>购买数量</span><span class="mono">${state.proxy.qty} 个</span></div><div class="detail-row"><span>购买时长</span><span class="mono">${state.proxy.duration} 个月</span></div><div class="detail-row"><span class="detail-help-label">套餐流量<button type="button" class="detail-help" aria-label="查看套餐流量说明"><i data-lucide="circle-help"></i><span class="detail-help-tip" role="tooltip">该套餐可每月使用 10GB 高速流量。限时福利：活动期间不限流量！</span></button></span><span class="mono">10G/月</span></div><div class="detail-row"><span>超出流量资费</span><span>限时免费</span></div></div>`;
       $('#priceDetailPopover').innerHTML = `<h3 id="priceDetailTitle">订单信息</h3>${resourceGroup}<div class="detail-group"><div class="detail-row"><span>${dynamic ? '流量包金额' : '资源金额'}</span><span class="mono">${money(quote.original)}</span></div><div class="detail-row"><span>${dynamic ? '流量包优惠' : '资源优惠'}</span><span class="mono">-${money(quote.packageDiscount)}</span></div><div class="detail-row"><span>优惠券抵扣金额</span><span class="mono">-${money(quote.coupon)}</span></div></div>`;
       lucide.createIcons();
     }
@@ -907,7 +981,7 @@
       $('#buyProxy').disabled = !quote.available; $('#addCart').disabled = !quote.available;
       if (Number(state.proxy.coupon) === 20 && quote.coupon === 0) { state.proxy.coupon = 0; $('#proxyCoupon').value = ''; }
       $('#orderSummary').innerHTML = [
-        ['代理类型', quote.product?.name || '待选择'], ['代理地区', isDynamicProxy() ? '全球地区' : `${state.proxy.country}-${state.proxy.city || '待选择'}`],
+        ['设备类型', quote.product?.name || '待选择'], ['设备地区', regionSummaryText()],
         ['地址类型', 'IPv4'], ['购买时长', isDynamicProxy() ? `${quote.trafficPack?.days || 0}天` : `${state.proxy.duration}个月`], ['购买数量', `${state.proxy.qty}个`]
       ].map(([label,value]) => `<div class="summary-line"><dt>${label}</dt><dd>${value}</dd></div>`).join('');
       renderPriceDetail(quote); renderPayments();
@@ -934,15 +1008,23 @@
         state.proxy.renewCycle = 1;
         state.proxy.purchaseKind = 'dynamic_proxy';
         state.proxy.trafficPackId = state.proxy.trafficPackId || 'traffic-10g-90';
+      } else if (typeId === 'local') {
+        // 本地网络不涉及地区与大洲；套餐默认不选中，需用户自行点选。
+        state.proxy.continent = '';
+        state.proxy.country = '';
+        state.proxy.city = '';
+        state.proxy.productId = '';
+        state.proxy.qty = 1;
+        state.proxy.purchaseKind = 'proxy_order';
       } else if (wasDynamic || !state.proxy.country) {
         state.proxy.continent = '北美洲';
         state.proxy.country = '美国';
         state.proxy.city = '洛杉矶';
-        state.proxy.productId = proxyProducts.find(item => (typeId === 'all' || item.type === typeId) && item.stock > 0)?.id || 's28';
+        state.proxy.productId = '';
         state.proxy.qty = 1;
         state.proxy.purchaseKind = 'proxy_order';
       } else {
-        state.proxy.productId = proxyProducts.find(item => (typeId === 'all' || item.type === typeId) && item.stock > 0)?.id || '';
+        state.proxy.productId = '';
         state.proxy.purchaseKind = 'proxy_order';
       }
       clearIncomingProduct();
@@ -957,7 +1039,8 @@
     }
 
     function addToSharedCart(quote) {
-      const storageKey = 'yundeng-store-cart-v1';
+      /* 与 商城-购物车.html 共用购物车存储：v2 起字段口径统一为 region/segment/原价。 */
+      const storageKey = 'yundeng-store-cart-v2';
       let stored = [];
       try {
         const parsed = JSON.parse(localStorage.getItem(storageKey) || '[]');
@@ -968,7 +1051,7 @@
       const item = isDynamicProxy()
         ? {
           id: `traffic-${Date.now()}`,
-          type: isTrafficPackage ? '流量包' : '代理',
+          type: isTrafficPackage ? '流量包' : '设备',
           orderTypeCode: isTrafficPackage ? 'traffic_package' : 'dynamic_proxy',
           name: isTrafficPackage ? `动态住宅流量包 · ${pack.capacity} / ${pack.days} 天` : '动态代理（住宅）',
           spec: `${pack.capacity} · ${pack.days}天`,
@@ -985,13 +1068,13 @@
           discount: quote.packageDiscount,
           baseDiscount: quote.packageDiscount,
           couponDiscount: 0,
-          couponLabel: '未选择优惠券',
+          couponLabel: '选择优惠券',
           status: 'valid',
           checked: true
         }
         : {
           id: `proxy-${Date.now()}`,
-          type: '代理',
+          type: '设备',
           orderTypeCode: 'proxy_order',
           name: quote.product.name,
           spec: `${state.proxy.country}-${state.proxy.city} · ${state.proxy.duration}个月`,
@@ -1006,7 +1089,7 @@
           discount: quote.packageDiscount,
           baseDiscount: quote.packageDiscount,
           couponDiscount: quote.coupon,
-          couponLabel: state.proxy.coupon ? '已选优惠券' : '未选择优惠券',
+          couponLabel: state.proxy.coupon ? '已选优惠券' : '选择优惠券',
           status: quote.available ? 'valid' : 'sold-out',
           checked: true
         };
@@ -1051,14 +1134,14 @@
       }, 1000);
     }
     function openOrderDialog() {
-      if (!state.proxy.notice) { toast('请先阅读并同意《代理购买须知》', 'warning'); $('#proxyNotice').focus(); return; }
+      if (!state.proxy.notice) { toast('请先阅读并同意《设备购买须知》', 'warning'); $('#proxyNotice').focus(); return; }
       const quote = proxyQuote();
-      if (!quote.available) { toast(isDynamicProxy() ? '请选择可用流量包' : '当前代理库存不足，请重新选择', 'danger'); return; }
+      if (!quote.available) { toast(isDynamicProxy() ? '请选择可用流量包' : (currentProduct() ? '当前设备库存不足，请重新选择' : '请先选择套餐'), 'danger'); return; }
       const createdAt = new Date();
       const orderNo = createPendingOrderNumber(createdAt);
       const pack = quote.trafficPack;
       const isTrafficPackage = isDynamicProxy() && state.proxy.purchaseKind === 'traffic_package';
-      const typeLabel = isDynamicProxy() ? (isTrafficPackage ? '流量包' : '动态代理（住宅）') : ({ static: '静态住宅', cloud: '云平台-静态', niche: '小众代理' })[state.proxy.type] || '代理资源';
+      const typeLabel = isDynamicProxy() ? (isTrafficPackage ? '流量包' : '动态代理（住宅）') : ({ static: '静态住宅', cloud: '云平台-静态', niche: '小众设备' })[state.proxy.type] || '设备资源';
       const scanApp = state.proxy.payment === 'wechat' ? '微信' : state.proxy.payment === 'coin' ? '云登客户端' : '支付宝';
       state.pendingOrder = { kind: quote.orderType || 'proxy_order', orderTypeCode: quote.orderType || 'proxy_order', total: quote.total, orderNo, createdAt, remainingSeconds: 29 * 60 + 49 };
       state.lastFocus = document.activeElement;
@@ -1253,9 +1336,20 @@
         else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
       }
     });
+    /* 返回设备管理：嵌入态交给壳层软导航，独立打开时回退 index.html 的 page key。 */
+    function navigateBackToDevice() {
+      if (window.parent !== window) {
+        window.parent.postMessage({ type: 'yundeng:route', file: '设备管理.html', search: '', hash: '' }, '*');
+        return;
+      }
+      location.replace('../index.html?page=proxy');
+    }
+    $('#backBtn').addEventListener('click', navigateBackToDevice);
+    /* 设备商城子页面页签：仅「购物车」需要跳转到独立子页面，「购买设备」即当前页。 */
     function navigateToStoreTab(tab) {
-      const search = `?tab=${tab}`;
-      const file = tab === 'plan' ? '商城-套餐.html' : tab === 'coin' ? '商城-云币充值.html' : tab === 'cart' ? '商城-购物车.html' : '商城-代理.html';
+      if (tab !== 'cart') return;
+      const file = '商城-购物车.html';
+      const search = '?tab=cart';
       if (window.parent !== window) {
         window.parent.postMessage({ type: 'yundeng:route', file, search, hash: '' }, '*');
         return;
@@ -1308,7 +1402,7 @@
     $('#togglePriceDetail').addEventListener('click', () => { if ($('#priceDetailPopover').classList.contains('hidden')) openPriceDetail(); else closePriceDetail(); });
     $('#addCart').addEventListener('click', () => {
       const quote = proxyQuote();
-      if (!quote.available) { toast(isDynamicProxy() ? '请选择可用流量包' : '当前代理库存不足，请重新选择', 'danger'); return; }
+      if (!quote.available) { toast(isDynamicProxy() ? '请选择可用流量包' : (currentProduct() ? '当前设备库存不足，请重新选择' : '请先选择套餐'), 'danger'); return; }
       addToSharedCart(quote);
       markDirty();
       toast(isDynamicProxy() ? '流量包已加入购物车' : '已加入购物车');
@@ -1347,7 +1441,7 @@
     // ---------- 初始化 ----------
     function applyIncomingSelection() {
       const preset = incomingPresets[pageParams.get('product_id')];
-      if (preset) { Object.assign(state.proxy, preset); toast(`已带入热门代理：${preset.name}`, 'info'); }
+      if (preset) { Object.assign(state.proxy, preset); toast(`已带入热门设备：${preset.name}`, 'info'); }
       if (pageParams.get('purchase') === 'traffic_package' || pageParams.get('proxy_type') === 'dynamic') {
         selectProxyType('dynamic');
         state.proxy.purchaseKind = pageParams.get('purchase') === 'traffic_package' ? 'traffic_package' : 'dynamic_proxy';

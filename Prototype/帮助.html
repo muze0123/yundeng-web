@@ -19,8 +19,8 @@
   <style>
     *{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden}body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei','Hiragino Sans GB','Segoe UI',system-ui,sans-serif;color:#3A3F4A;letter-spacing:0}button,input,select,textarea{font:inherit;letter-spacing:0}.mono{font-family:'JetBrains Mono',monospace;font-variant-numeric:tabular-nums}.category-tab{height:32px;padding:0 12px;border-radius:4px;color:#6E7685;white-space:nowrap}.category-tab:hover{background:#F3F4F6;color:#3A3F4A}.category-tab.active{background:#E6F0FF;color:#0066FF;font-weight:600}.article-card{min-height:132px;border:1px solid #E8EAED;border-radius:8px;padding:16px;background:#fff;text-align:left;transition:border-color .15s,box-shadow .15s}.article-card:hover{border-color:#0066FF;box-shadow:0 4px 14px rgba(26,29,36,.08)}.faq-trigger{width:100%;min-height:48px;padding:12px 0;display:flex;align-items:center;gap:12px;text-align:left;color:#1A1D24}.faq-trigger:hover{color:#0066FF}.faq-chevron{transition:transform .18s}.faq-trigger[aria-expanded="true"] .faq-chevron{transform:rotate(180deg)}.field{width:100%;height:36px;border:1px solid #DFE1E5;border-radius:4px;padding:0 10px;background:#fff;outline:none}.field:focus,textarea.field:focus{border-color:#0066FF;box-shadow:0 0 0 2px #E6F0FF}textarea.field{height:112px;padding:9px 10px;resize:vertical}.btn{height:32px;padding:0 14px;border-radius:4px;display:inline-flex;align-items:center;justify-content:center;gap:6px;font-weight:500}.btn-primary{background:#0066FF;color:#fff}.btn-primary:hover{background:#0052CC}.btn-secondary{background:#fff;color:#3A3F4A;border:1px solid #DFE1E5}.btn-secondary:hover{background:#F3F4F6}@media(max-width:767px){.article-grid{grid-template-columns:1fr!important}.help-heading{align-items:flex-start!important;flex-direction:column}.support-strip{align-items:flex-start!important;flex-direction:column}}@media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important}}
   </style>
-  <link rel="stylesheet" href="公共导航.css?v=20261008a">
-  <script src="公共导航.js?v=20261008a"></script>
+  <link rel="stylesheet" href="公共导航.css?v=20261013e">
+  <script src="公共导航.js?v=20261013e"></script>
 </head>
 <body class="bg-page text-[13px]">
   <div class="flex h-screen min-w-0">
@@ -54,16 +54,16 @@
   <div id="supportModal" class="hidden fixed inset-0 z-[1000] bg-black/30 p-4 items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="supportModalTitle">
     <form id="supportForm" class="w-[520px] max-w-full bg-card rounded-lg shadow-[0_6px_24px_rgba(0,0,0,.12)]" novalidate>
       <header class="px-5 py-4 border-b border-line flex items-center justify-between"><h2 id="supportModalTitle" class="inline-block text-[16px] font-semibold text-ink-title">联系支持</h2><button id="closeSupport" type="button" class="w-8 h-8 rounded flex items-center justify-center text-ink-muted hover:bg-hover" aria-label="关闭"><i data-lucide="x" class="w-5 h-5"></i></button></header>
-      <div class="p-5 space-y-4"><label class="block"><span class="block text-[13px] text-ink-title mb-1.5">问题类型 <span class="text-danger">*</span></span><select id="supportType" class="field"><option value="">请选择</option><option>环境与代理</option><option>团队与账号</option><option>费用与订单</option><option>自动化与插件</option><option>其他问题</option></select><span id="typeError" class="hidden text-[12px] text-danger mt-1">请选择问题类型</span></label><label class="block"><span class="block text-[13px] text-ink-title mb-1.5">问题描述 <span class="text-danger">*</span></span><textarea id="supportDetail" class="field" maxlength="500" placeholder="请描述操作路径、实际结果和期望结果"></textarea><span class="flex justify-between mt-1"><span id="detailError" class="hidden text-[12px] text-danger">至少填写 10 个字</span><span id="detailCount" class="ml-auto text-[12px] text-ink-muted mono">0/500</span></span></label><label class="block"><span class="block text-[13px] text-ink-title mb-1.5">联系方式</span><input class="field" value="138****4821" aria-describedby="contactHint"><span id="contactHint" class="block text-[12px] text-ink-muted mt-1">默认使用账号绑定手机号，可直接修改。</span></label></div>
+      <div class="p-5 space-y-4"><label class="block"><span class="block text-[13px] text-ink-title mb-1.5">问题类型 <span class="text-danger">*</span></span><select id="supportType" class="field"><option value="">请选择</option><option>环境与设备</option><option>团队与账号</option><option>费用与订单</option><option>自动化与插件</option><option>其他问题</option></select><span id="typeError" class="hidden text-[12px] text-danger mt-1">请选择问题类型</span></label><label class="block"><span class="block text-[13px] text-ink-title mb-1.5">问题描述 <span class="text-danger">*</span></span><textarea id="supportDetail" class="field" maxlength="500" placeholder="请描述操作路径、实际结果和期望结果"></textarea><span class="flex justify-between mt-1"><span id="detailError" class="hidden text-[12px] text-danger">至少填写 10 个字</span><span id="detailCount" class="ml-auto text-[12px] text-ink-muted mono">0/500</span></span></label><label class="block"><span class="block text-[13px] text-ink-title mb-1.5">联系方式</span><input class="field" value="138****4821" aria-describedby="contactHint"><span id="contactHint" class="block text-[12px] text-ink-muted mt-1">默认使用账号绑定手机号，可直接修改。</span></label></div>
       <footer class="px-5 py-4 border-t border-line flex justify-end gap-2"><button id="cancelSupport" type="button" class="btn btn-secondary">取消</button><button id="submitSupport" type="submit" class="btn btn-primary">提交问题</button></footer>
     </form>
   </div>
   <div id="toast" class="hidden fixed top-4 left-1/2 -translate-x-1/2 z-[1100] px-4 py-2.5 rounded bg-success text-white shadow-[0_4px_16px_rgba(0,0,0,.12)]" role="status"></div></div></div>
   <script>
     const articles=[
-      {id:'how-to-add-environment',categoryKey:'getting-started',category:'新手入门',title:'如何添加环境',desc:'从账号信息、代理选择到浏览器指纹，完成独立环境创建。',icon:'circle-plus'},
-      {id:'how-to-configure-proxy',categoryKey:'environment-proxy',category:'环境与代理',title:'如何为环境配置代理',desc:'理解出口 IP、地区、线路与连接检测的配置方法。',icon:'network'},
-      {id:'how-to-edit-fingerprint',categoryKey:'environment-proxy',category:'环境与代理',title:'如何配置浏览器指纹',desc:'配置内核、系统、WebRTC、Canvas 与硬件参数。',icon:'fingerprint'},
+      {id:'how-to-add-environment',categoryKey:'getting-started',category:'新手入门',title:'如何添加环境',desc:'从账号信息、设备选择到浏览器指纹，完成独立环境创建。',icon:'circle-plus'},
+      {id:'how-to-configure-proxy',categoryKey:'environment-proxy',category:'环境与设备',title:'如何为环境配置设备',desc:'理解出口 IP、地区、线路与连接检测的配置方法。',icon:'network'},
+      {id:'how-to-edit-fingerprint',categoryKey:'environment-proxy',category:'环境与设备',title:'如何配置浏览器指纹',desc:'配置内核、系统、WebRTC、Canvas 与硬件参数。',icon:'fingerprint'},
       {id:'how-to-manage-team-members',categoryKey:'team-collaboration',category:'团队协作',title:'如何邀请和管理团队成员',desc:'设置部门、角色权限与成员可访问的环境范围。',icon:'users-round'},
       {id:'how-to-share-or-transfer-environment',categoryKey:'team-collaboration',category:'团队协作',title:'如何分享或转移环境',desc:'将环境安全分享给成员，或完成跨团队资源交接。',icon:'arrow-right-left'},
       {id:'view-billing-records',categoryKey:'billing-security',category:'费用与安全',title:'查看订单与云币流水',desc:'核对充值、消费、退款和套餐订单记录。',icon:'wallet-cards'},
@@ -71,8 +71,8 @@
       {id:'install-and-assign-plugins',categoryKey:'automation-plugins',category:'自动化与插件',title:'安装与分配插件',desc:'从插件市场安装插件并配置团队环境范围。',icon:'blocks'}
     ];
     const faqs=[
-      {q:'环境启动失败时应该先检查什么？',a:'先在代理管理中检测对应线路，再确认浏览器内核已下载且当前账号拥有该环境的使用权限。'},
-      {q:'修改代理后为什么出口 IP 没有变化？',a:'代理修改需要在编辑浏览器页面保存后重新启动环境；已运行环境不会在会话中途切换出口。'},
+      {q:'环境启动失败时应该先检查什么？',a:'先在设备管理中检测对应线路，再确认浏览器内核已下载且当前账号拥有该环境的使用权限。'},
+      {q:'修改设备后为什么出口 IP 没有变化？',a:'设备修改需要在编辑浏览器页面保存后重新启动环境；已运行环境不会在会话中途切换出口。'},
       {q:'被删除的环境可以恢复吗？',a:'可以。在回收站保留期内可恢复环境及其基础配置；彻底删除后不可恢复。'},
       {q:'如何控制成员能访问哪些环境？',a:'在成员管理或角色权限中设置环境范围。最终权限取成员、角色与部门规则的交集。'},
       {q:'RPA 任务运行时可以关闭云登吗？',a:'本地执行的任务需要客户端保持运行；任务开始前请确认设备网络与目标环境均可用。'}

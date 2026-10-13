@@ -234,41 +234,41 @@
     const ASSET_ROOT='../src/assets/新手引导/';
     const steps=[
       {
-        title:'新建环境',subtitle:'创建专属运营环境',description:'环境用于独立保存浏览器指纹、Cookie、平台账号和使用偏好。先创建环境，再按业务需要购买并绑定代理。',tip:'环境名称必填；运营前请绑定与业务地区匹配的代理。',cta:'去添加环境',route:{page:'create',file:'新建浏览器.html'},operations:[
+        title:'新建环境',subtitle:'创建专属运营环境',description:'环境用于独立保存浏览器指纹、Cookie、平台账号和使用偏好。先创建环境，再按业务需要购买并绑定设备。',tip:'环境名称必填；运营前请绑定与业务地区匹配的设备。',cta:'去添加环境',route:{page:'create',file:'新建浏览器.html'},operations:[
           {title:'进入新建环境',description:'在侧栏点击“新建环境”，进入单个添加页面',asset:'create_enter.png',alt:'云登侧栏新建浏览器入口与单个添加页面',focus:[0.5,2.5,22,25],position:'center top'},
-          {title:'填写环境信息',description:'填写环境名称，并按需配置账号平台、指纹和使用偏好',asset:'create_form.png',alt:'新建环境页面的名称、代理信息和账号平台表单',focus:[3,2,62,89],fit:'contain',position:'left center'},
+          {title:'填写环境信息',description:'填写环境名称，并按需配置账号平台、指纹和使用偏好',asset:'create_form.png',alt:'新建环境页面的名称、设备信息和账号平台表单',focus:[3,2,62,89],fit:'contain',position:'left center'},
           {title:'确认创建',description:'核对配置后点击“确定”，创建成功后返回环境管理',asset:'create_confirm.png',alt:'新建环境表单底部的确定、确定并新建下一条和取消按钮',focus:[0.5,84,31,13],position:'center bottom'}
         ]
       },
       {
-        title:'购买代理',subtitle:'获取匹配业务的网络出口',description:'代理为环境提供网络出口。请根据业务地区、线路类型、数量和使用周期选择合适的代理资源。',tip:'支付前请核对地区、线路、数量和有效期；结果以订单状态为准。',cta:'购买代理',route:{page:'store',file:'商城-代理.html'},operations:[
-          {title:'进入代理商城',description:'进入“商城”，选择“代理购买”分类',asset:'proxy_purchase_enter.png',alt:'云登商城代理购买页面与代理分类选中状态',focus:[0.5,0.5,25,22],position:'center top'},
-          {title:'选择代理方案',description:'选择代理类型、地区、资源、数量和使用时长',asset:'proxy_purchase_config.png',alt:'代理类型、地区、资源和购买时长配置区域',focus:[2,5,58,78],position:'center center'},
-          {title:'核对订单并支付',description:'阅读购买须知，选择支付方式后提交订单',asset:'proxy_purchase_pay.png',alt:'代理订单信息、支付方式、购买须知与立即购买按钮',focus:[78,2,21,64],position:'center center'}
+        title:'购买设备',subtitle:'获取匹配业务的网络出口',description:'设备为环境提供网络出口。请根据业务地区、线路类型、数量和使用周期选择合适的设备资源。',tip:'支付前请核对地区、线路、数量和有效期；结果以订单状态为准。',cta:'购买设备',route:{page:'store',file:'商城-设备.html'},operations:[
+          {title:'进入设备商城',description:'进入“商城”，选择“设备购买”分类',asset:'proxy_purchase_enter.png',alt:'云登设备商城购买页面与设备分类选中状态',focus:[0.5,0.5,25,22],position:'center top'},
+          {title:'选择设备方案',description:'选择设备类型、地区、资源、数量和使用时长',asset:'proxy_purchase_config.png',alt:'设备类型、地区、资源和购买时长配置区域',focus:[2,5,58,78],position:'center center'},
+          {title:'核对订单并支付',description:'阅读购买须知，选择支付方式后提交订单',asset:'proxy_purchase_pay.png',alt:'设备订单信息、支付方式、购买须知与立即购买按钮',focus:[78,2,21,64],position:'center center'}
         ]
       },
       {
-        title:'绑定代理',subtitle:'为环境配置代理网络',description:'将已购买的代理绑定到目标环境，用于为该环境配置网络出口。',tip:'绑定前请确认代理状态和地区；换绑结果以客户端提示为准。',cta:'去绑定代理',route:{page:'environment',file:'环境管理.html'},operations:[
-          {title:'选择目标环境',description:'在环境管理找到目标环境，通过行级操作进入“修改代理”',asset:'proxy_bind_target.png',alt:'环境管理列表中的目标环境与行级更多操作',focus:[86,10,13,19],position:'center top',inset:'proxy_bind_menu.png',insetAlt:'环境行级操作菜单中的修改代理入口'},
-          {title:'选择可用代理',description:'在代理选择弹窗中选择已购买的平台代理',asset:'proxy_bind_select.png',alt:'选择代理弹窗的平台代理分类与代理列表区域',focus:[11,16,82,69],fit:'contain',position:'center center'},
-          {title:'检测并保存',description:'检查代理网络，确认信息后保存',asset:'proxy_bind_save.png',alt:'选择代理弹窗底部的检测、取消与确定操作区域',focus:[72,78,26,18],fit:'contain',position:'center center'}
+        title:'绑定设备',subtitle:'为环境配置设备网络',description:'将已购买的设备绑定到目标环境，用于为该环境配置网络出口。',tip:'绑定前请确认设备状态和地区；换绑结果以客户端提示为准。',cta:'去绑定设备',route:{page:'environment',file:'环境管理.html'},operations:[
+          {title:'选择目标环境',description:'在环境管理找到目标环境，通过行级操作进入“修改设备”',asset:'proxy_bind_target.png',alt:'环境管理列表中的目标环境与行级更多操作',focus:[86,10,13,19],position:'center top',inset:'proxy_bind_menu.png',insetAlt:'环境行级操作菜单中的修改设备入口'},
+          {title:'选择可用设备',description:'在设备选择弹窗中选择已购买的平台设备',asset:'proxy_bind_select.png',alt:'选择设备弹窗的平台设备分类与设备列表区域',focus:[11,16,82,69],fit:'contain',position:'center center'},
+          {title:'检测并保存',description:'检查设备网络，确认信息后保存',asset:'proxy_bind_save.png',alt:'选择设备弹窗底部的检测、取消与确定操作区域',focus:[72,78,26,18],fit:'contain',position:'center center'}
         ]
       },
       {
-        title:'启动环境',subtitle:'开始使用独立浏览器',description:'从环境管理启动环境后，云登会按已保存的指纹、代理、账号和启动页配置打开独立浏览器窗口。',tip:'首次启动需初始化内核；长时间未启动请检查网络、代理和权限。',cta:'去启动环境',route:{page:'environment',file:'环境管理.html'},operations:[
+        title:'启动环境',subtitle:'开始使用独立浏览器',description:'从环境管理启动环境后，云登会按已保存的指纹、设备、账号和启动页配置打开独立浏览器窗口。',tip:'首次启动需初始化内核；长时间未启动请检查网络、设备和权限。',cta:'去启动环境',route:{page:'environment',file:'环境管理.html'},operations:[
           {title:'定位目标环境',description:'通过分组或搜索找到需要使用的环境',asset:'environment_locate.png',alt:'环境管理筛选结果中的目标环境与启动按钮',focus:[83,4,15,20],position:'center top'},
           {title:'启动并等待',description:'点击“启动”，等待状态更新为最终结果',asset:'environment_starting.png',alt:'环境管理目标行进入启动中的等待状态',focus:[83,4,15,20],position:'center top',status:'正在启动'},
-          {title:'开始使用环境',description:'启动成功后进入独立浏览器窗口',asset:'environment_running.png',alt:'独立浏览器窗口已打开并显示环境、代理和网络检测通过',focus:[31,12,39,27],position:'center top'}
+          {title:'开始使用环境',description:'启动成功后进入独立浏览器窗口',asset:'environment_running.png',alt:'独立浏览器窗口已打开并显示环境、设备和网络检测通过',focus:[31,12,39,27],position:'center top'}
         ]
       }
     ];
     const annotations={
       1:{title:'主步骤切换',desc:['点击左侧四个步骤切换引导主题。','切换后右侧从该主题的第一个操作开始，并重新计时。']},
       2:{title:'操作步骤轮播',desc:['当前主题的三个操作每 3 秒循环切换。','手动点击后从完整 3 秒重新计时；鼠标悬停、键盘焦点或窗口失焦时暂停。']},
-      3:{title:'产品截图联动',desc:['操作卡片与真实 YunLogin 产品截图同步更新。','截图保持完整清晰；涉及账号、IP 或代理端点的素材区域使用不可逆像素化脱敏。']},
+      3:{title:'产品截图联动',desc:['操作卡片与真实 YunLogin 产品截图同步更新。','截图保持完整清晰；涉及账号、IP 或设备端点的素材区域使用不可逆像素化脱敏。']},
       4:{title:'查看完整指南',desc:['在新标签页打开云登帮助中心文章。','当前引导保持打开，窗口失焦期间自动轮播暂停。']},
       5:{title:'前后步骤',desc:['上一步与下一步切换左侧主步骤。','第一项不显示上一步，最后一项不显示下一步。']},
-      6:{title:'业务入口',desc:['关闭引导后在当前标签页进入对应业务页面。','新建环境进入新建浏览器，购买代理进入商城，绑定和启动进入环境管理。']},
+      6:{title:'业务入口',desc:['关闭引导后在当前标签页进入对应业务页面。','新建环境进入新建浏览器，购买设备进入商城，绑定和启动进入环境管理。']},
       7:{title:'关闭与再次打开',desc:['关闭后保留当前业务页面状态。','首次自动展示资格消费后不再自动弹出，顶部导航仍可随时重新打开。']}
     };
     const state={mainIndex:0,operationIndex:0,intervalMs:3000,remainingMs:3000,timerId:null,timerStartedAt:0,pauseReasons:new Set(),shotToken:0};

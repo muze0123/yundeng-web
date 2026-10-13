@@ -17,10 +17,10 @@
     } } };
   </script>
   <link rel="stylesheet" href="../src/styles/global.css?v=20260821a">
-  <link rel="stylesheet" href="公共导航.css?v=20261008a">
+  <link rel="stylesheet" href="公共导航.css?v=20261013e">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap">
   <script src="https://unpkg.com/lucide@latest"></script>
-  <script src="公共导航.js?v=20261008a"></script>
+  <script src="公共导航.js?v=20261013e"></script>
   <style>
     :root{--primary:#0066FF;--primary-hover:#0052CC;--primary-bg:#E6F0FF;--title:#1A1D24;--body:#3A3F4A;--sub:#6E7685;--muted:#9DA2AC;--line:#DFE1E5;--line-light:#E8EAED;--line-lighter:#F0F1F3;--page:#F7F8FA;--card:#fff;--hover:#F3F4F6;--price:#FE5416;--success:#0FC060;--success-bg:#E7F9F0;--warning:#E7772D;--warning-bg:#FDF2E9;--danger:#D9001B;--danger-bg:#FFE8EB;--info:#0091D5;--info-bg:#E4F4FB}
     *{box-sizing:border-box} html,body{margin:0;min-height:100%;background:var(--page);color:var(--body);font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei','Helvetica Neue',Arial,sans-serif;-webkit-font-smoothing:antialiased} button,input{font:inherit} button{cursor:pointer}.mono{font-family:'JetBrains Mono',monospace}
@@ -71,7 +71,7 @@
     <!-- 周期同时控制佣金榜与邀请榜 -->
     <section class="page-section" aria-labelledby="rank-title"><h2 id="rank-title">推广达人排行榜</h2><div class="panel rank-panel"><div class="rank-toolbar"><div class="segmented" role="tablist" aria-label="排行周期"><button role="tab" aria-selected="true" data-rank-period="week">周榜</button><button role="tab" aria-selected="false" data-rank-period="month">月榜</button></div><div class="rank-meta" id="rankMeta"></div></div><div class="rank-columns"><div><table class="rank-table" aria-label="佣金排行榜"><thead><tr><th>排名</th><th>用户</th><th>佣金</th></tr></thead><tbody id="commissionRankRows"></tbody></table><div id="commissionSelfRank"></div></div><div><table class="rank-table" aria-label="邀请用户排行榜"><thead><tr><th>排名</th><th>用户</th><th>邀请用户数</th></tr></thead><tbody id="inviteRankRows"></tbody></table><div id="inviteSelfRank"></div></div></div></div></section>
     <!-- 行业图：使用图标与几何环形，不引入本地图片依赖 -->
-    <section class="page-section" aria-labelledby="industry-title"><h2 id="industry-title">各行各业均可成为推广者</h2><div class="panel industry-panel"><p class="industry-copy">无论您是个人推广者，或您的公司正从事代理IP、电商培训、运营媒体论坛、软件工具、知识产权财税相关服务、跨境物流、跨境支付等业务，我们诚邀您成为推广合作者，创造丰厚又持久的推广奖励。</p><div class="industry-orbit"><div class="orbit-ring" aria-hidden="true"></div><div class="orbit-center" aria-hidden="true"></div><div id="industryTags"></div></div></div></section>
+    <section class="page-section" aria-labelledby="industry-title"><h2 id="industry-title">各行各业均可成为推广者</h2><div class="panel industry-panel"><p class="industry-copy">无论您是个人推广者，或您的公司正从事设备IP、电商培训、运营媒体论坛、软件工具、知识产权财税相关服务、跨境物流、跨境支付等业务，我们诚邀您成为推广合作者，创造丰厚又持久的推广奖励。</p><div class="industry-orbit"><div class="orbit-ring" aria-hidden="true"></div><div class="orbit-center" aria-hidden="true"></div><div id="industryTags"></div></div></div></section>
     <!-- 常见问题默认全部展示 -->
     <section class="page-section" aria-labelledby="rules-title"><h2 id="rules-title">规则说明</h2><div class="panel rules-panel"><h3>常见问题</h3><dl class="faq" id="faqList"></dl><details class="rules-more"><summary aria-label="展开或收起更多规则"></summary><div class="rules-body"><section><h3>消费返佣</h3><p>好友通过专属链接注册并完成首单付费，返还实际支付金额的 15%。单个被推荐人累计佣金封顶 2,500 元；邀请人数和次数不限。更高比例请联系商务经理，最高 30%。</p></section><section><h3>结算与提现</h3><p>订单满 14 天且无退款，自动解冻。每月 5 日、20 日统一结算，结算后预计 7 个工作日内到账。现金单次提现至少 100 元，也可转入账户余额。</p></section><section><h3>退款处理</h3><p>14 天内全额退款，对应佣金取消；部分退款按比例核减佣金，同时恢复该被推荐人的可返佣额度。</p></section><section><h3>参与说明</h3><p>注册即可参与。不得通过不正当手段或舞弊行为获取奖励，平台有权撤销奖励并追究责任。如有疑问，可联系官方客服。</p></section></div></details></div></section>
   </div></main>
@@ -104,19 +104,19 @@
       { id:'U-09', name:'郑**', registeredAt:'2026-08-22' }, { id:'U-10', name:'何**', registeredAt:'2026-08-28' }
     ];
     const commissionOrders = [
-      { id:'CM-20260825-01', userId:'U-01', type:'购买代理', orderAmount:960, rebateRate:REBATE_RATE, accumulatedValidCommission:0, refundAmount:0, paidAt:'2026-08-25T10:20:00+08:00' },
+      { id:'CM-20260825-01', userId:'U-01', type:'购买设备', orderAmount:960, rebateRate:REBATE_RATE, accumulatedValidCommission:0, refundAmount:0, paidAt:'2026-08-25T10:20:00+08:00' },
       { id:'CM-20260625-02', userId:'U-01', type:'购买套餐', orderAmount:2400, rebateRate:REBATE_RATE, accumulatedValidCommission:144, refundAmount:0, paidAt:'2026-06-25T14:10:00+08:00', statusOverride:'settled' },
       { id:'CM-20260710-03', userId:'U-02', type:'余额充值', orderAmount:4800, rebateRate:REBATE_RATE, accumulatedValidCommission:0, refundAmount:0, paidAt:'2026-07-10T09:30:00+08:00', statusOverride:'settled' },
-      { id:'CM-20260827-04', userId:'U-03', type:'购买代理', orderAmount:680, rebateRate:REBATE_RATE, accumulatedValidCommission:0, refundAmount:0, paidAt:'2026-08-27T16:40:00+08:00' },
+      { id:'CM-20260827-04', userId:'U-03', type:'购买设备', orderAmount:680, rebateRate:REBATE_RATE, accumulatedValidCommission:0, refundAmount:0, paidAt:'2026-08-27T16:40:00+08:00' },
       { id:'CM-20260826-05', userId:'U-04', type:'购买套餐', orderAmount:1000, rebateRate:REBATE_RATE, accumulatedValidCommission:2499.5, refundAmount:0, paidAt:'2026-08-26T11:15:00+08:00' },
-      { id:'CM-20260801-06', userId:'U-05', type:'购买代理', orderAmount:800, rebateRate:REBATE_RATE, accumulatedValidCommission:0, refundAmount:200, paidAt:'2026-08-01T13:00:00+08:00' },
+      { id:'CM-20260801-06', userId:'U-05', type:'购买设备', orderAmount:800, rebateRate:REBATE_RATE, accumulatedValidCommission:0, refundAmount:200, paidAt:'2026-08-01T13:00:00+08:00' },
       { id:'CM-20260718-07', userId:'U-06', type:'余额充值', orderAmount:300, rebateRate:REBATE_RATE, accumulatedValidCommission:0, refundAmount:0, paidAt:'2026-07-18T08:45:00+08:00', statusOverride:'settled' },
       { id:'CM-20260801-08', userId:'U-07', type:'购买套餐', orderAmount:600, rebateRate:REBATE_RATE, accumulatedValidCommission:0, refundAmount:0, paidAt:'2026-08-01T17:25:00+08:00' },
-      { id:'CM-20260828-09', userId:'U-05', type:'购买代理', orderAmount:1280, rebateRate:REBATE_RATE, accumulatedValidCommission:90, refundAmount:0, paidAt:'2026-08-28T09:18:00+08:00' },
+      { id:'CM-20260828-09', userId:'U-05', type:'购买设备', orderAmount:1280, rebateRate:REBATE_RATE, accumulatedValidCommission:90, refundAmount:0, paidAt:'2026-08-28T09:18:00+08:00' },
       { id:'CM-20260824-10', userId:'U-06', type:'购买套餐', orderAmount:720, rebateRate:REBATE_RATE, accumulatedValidCommission:45, refundAmount:0, paidAt:'2026-08-24T11:32:00+08:00' },
       { id:'CM-20260823-11', userId:'U-07', type:'购买套餐', orderAmount:900, rebateRate:REBATE_RATE, accumulatedValidCommission:90, refundAmount:0, paidAt:'2026-08-23T15:42:00+08:00' },
       { id:'CM-20260822-12', userId:'U-08', type:'余额充值', orderAmount:1080, rebateRate:REBATE_RATE, accumulatedValidCommission:0, refundAmount:0, paidAt:'2026-08-22T10:06:00+08:00' },
-      { id:'CM-20260820-13', userId:'U-01', type:'购买代理', orderAmount:500, rebateRate:REBATE_RATE, accumulatedValidCommission:504, refundAmount:0, paidAt:'2026-08-20T16:09:00+08:00' }
+      { id:'CM-20260820-13', userId:'U-01', type:'购买设备', orderAmount:500, rebateRate:REBATE_RATE, accumulatedValidCommission:504, refundAmount:0, paidAt:'2026-08-20T16:09:00+08:00' }
     ];
     const withdrawalRecords = [
       { id:'WD-20260812-01', amount:500, method:'alipay', status:'success', account:'13****8021', balance:625.5, time:'2026-08-12', completedTime:'2026-08-14' },
@@ -193,12 +193,12 @@
       commission:{
         title:'累计佣金记录', emptyColspan:8,
         columns:[{label:'序号',key:'index'},{label:'邀请人',key:'inviter'},{label:'返佣类型',key:'type'},{label:'消费金额',key:'consumption'},{label:'返佣比例',key:'rate'},{label:'返佣金额',key:'rebate'},{label:'返佣状态',key:'status'},{label:'返佣时间',key:'time'}],
-        typeOptions:[['','全部'],['购买代理','购买代理'],['购买套餐','购买套餐'],['余额充值','余额充值']]
+        typeOptions:[['','全部'],['购买设备','购买设备'],['购买套餐','购买套餐'],['余额充值','余额充值']]
       },
       frozen:{
         title:'冻结佣金详情', emptyColspan:8, queryLabel:'查询',
         columns:[{label:'序号',key:'index'},{label:'邀请人',key:'inviter'},{label:'返佣类型',key:'type'},{label:'消费金额',key:'consumption'},{label:'返佣比例',key:'rate'},{label:'返佣金额',key:'rebate'},{label:'交易完成时间',key:'freezeTime'},{label:'预计解冻时间',key:'unfreezeTime'}],
-        typeOptions:[['','全部'],['购买代理','购买代理'],['购买套餐','购买套餐'],['余额充值','余额充值']]
+        typeOptions:[['','全部'],['购买设备','购买设备'],['购买套餐','购买套餐'],['余额充值','余额充值']]
       },
       withdrawn:{
         title:'累计提现记录', emptyColspan:8,
@@ -488,7 +488,7 @@
       const mobile=posterSize==='mobile',w=mobile?375:1440,h=mobile?812:900;posterCanvas.width=w;posterCanvas.height=h;
       const ctx=posterCanvas.getContext('2d');ctx.fillStyle='#FFFFFF';ctx.fillRect(0,0,w,h);
       const text=(value,x,y,size,weight=400)=>{ctx.fillStyle='#444444';ctx.font=`${weight} ${size}px "PingFang SC","Microsoft YaHei",sans-serif`;ctx.fillText(value,x,y);};
-      const features=['隔离指纹环境','代理IP绑定','多账号批量管控','本地数据隔离','团队协同运营','保障账号资产安全'];
+      const features=['隔离指纹环境','设备IP绑定','多账号批量管控','本地数据隔离','团队协同运营','保障账号资产安全'];
       // 原图使用灰色图片占位，保留该视觉；二维码生成可扫码的真实邀请链接。
       const placeholder=(x,y,width,height)=>{ctx.fillStyle='#666666';ctx.fillRect(x,y,width,height);ctx.fillStyle='#CCCCCC';ctx.beginPath();ctx.moveTo(x+width*.22,y+height*.69);ctx.lineTo(x+width*.37,y+height*.45);ctx.lineTo(x+width*.44,y+height*.58);ctx.lineTo(x+width*.59,y+height*.31);ctx.lineTo(x+width*.82,y+height*.69);ctx.closePath();ctx.fill();};
       if(mobile){

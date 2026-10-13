@@ -7,7 +7,7 @@
   <title>云登 · 系统框架</title>
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <script src="https://unpkg.com/lucide@1.34.0/dist/umd/lucide.min.js"></script>
-  <link rel="stylesheet" href="公共导航.css?v=20261008a">
+  <link rel="stylesheet" href="公共导航.css?v=20261013e">
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
   <script>
     window.lucide = window.lucide || { createIcons() {} };
@@ -92,7 +92,7 @@
     .status-dot { width:8px; height:8px; border-radius:50%; display:inline-block; }
     @media (max-width: 767px) { .sidebar { position:fixed; z-index:50; height:100vh; box-shadow:0 6px 24px rgba(0,0,0,.12); } .sidebar.compact { width:0; overflow:hidden; } .module-global-drawer-panel { width:100%; } .module-global-drawer-info { grid-template-columns:1fr; } }
   </style>
-  <script src="公共导航.js?v=20261008a"></script>
+  <script src="公共导航.js?v=20261013e"></script>
 </head>
 <body class="bg-page text-[13px]">
   <div id="yundeng-app-frame">
@@ -172,7 +172,7 @@
   <div id="assistantDrawer" class="hidden fixed inset-0 z-50 bg-black/30">
     <section id="assistantPanel" class="drawer-panel ml-auto h-full w-[800px] max-w-full bg-card shadow-[-4px_0_24px_rgba(0,0,0,.1)] flex flex-col" role="dialog" aria-modal="true" aria-labelledby="assistantTitle" aria-describedby="assistantDescription" tabindex="-1">
       <header class="h-14 px-6 border-b border-line flex items-center justify-between"><div class="flex items-center gap-2"><span class="w-7 h-7 rounded bg-primary-bg text-primary flex items-center justify-center"><i data-lucide="sparkles" class="w-4 h-4"></i></span><h2 id="assistantTitle" class="inline-block text-[16px] font-semibold text-ink-title">云登智能助手</h2></div><button class="text-ink-muted hover:text-ink-body" data-close="assistantDrawer" aria-label="关闭"><i data-lucide="x" class="w-5 h-5"></i></button></header>
-      <div class="flex-1 p-6 overflow-auto"><div class="max-w-lg"><p class="text-ink-title font-medium">我可以帮你快速定位环境、代理与团队设置。</p><p id="assistantDescription" class="mt-2 text-ink-sub leading-relaxed">当前为框架原型，问答引擎不在本期范围内。你仍可通过下方快捷问题验证入口、关闭与焦点恢复行为。</p><div class="mt-5 flex flex-wrap gap-2"><button class="quick-question">如何新建浏览器？</button><button class="quick-question">在哪里管理团队成员？</button><button class="quick-question">如何查看 API？</button></div><div id="assistantReply" class="hidden mt-5 p-3 border border-info bg-info-bg rounded text-info" aria-live="polite"></div></div></div>
+      <div class="flex-1 p-6 overflow-auto"><div class="max-w-lg"><p class="text-ink-title font-medium">我可以帮你快速定位环境、设备与团队设置。</p><p id="assistantDescription" class="mt-2 text-ink-sub leading-relaxed">当前为框架原型，问答引擎不在本期范围内。你仍可通过下方快捷问题验证入口、关闭与焦点恢复行为。</p><div class="mt-5 flex flex-wrap gap-2"><button class="quick-question">如何新建浏览器？</button><button class="quick-question">在哪里管理团队成员？</button><button class="quick-question">如何查看 API？</button></div><div id="assistantReply" class="hidden mt-5 p-3 border border-info bg-info-bg rounded text-info" aria-live="polite"></div></div></div>
       <form id="assistantForm" class="p-4 border-t border-line flex gap-2"><input id="assistantInput" maxlength="120" class="h-8 flex-1 rounded border border-line px-2 outline-none focus:border-primary focus:ring-2 focus:ring-primary-bg" placeholder="输入问题（演示入口）" aria-label="向智能助手提问"><button class="h-8 px-4 rounded bg-primary text-white hover:bg-primary-hover">发送</button></form>
     </section>
   </div>
@@ -185,10 +185,9 @@
     const session = { user:'张小登', role:'团队管理员', workspace:'云登团队', language:'简体中文' };
     const navItems = [
       { id:'environment', label:'环境管理', icon:'monitor-cog', description:'管理浏览器环境、标签与运行状态', state:'ready', href:'环境管理.html' },
-      { id:'proxy', label:'代理管理', icon:'network', description:'管理代理资源与绑定关系', state:'ready', href:'代理管理.html' },
-      { id:'store', label:'商城', icon:'shopping-bag', description:'购买云登代理资源', state:'loading', href:'商城-代理.html' },
+      { id:'proxy', label:'设备管理', icon:'network', description:'管理设备资源与绑定关系', state:'ready', href:'设备管理.html' },
       { id:'billing', label:'费用管理', icon:'wallet-cards', description:'查看套餐、账单与费用明细', state:'ready', expanded:true, group:true, children:[
-        { id:'billing-coin-transactions', label:'云币交易流水', icon:'list', description:'查看和导出云币交易流水', state:'ready', href:'系统框架.html?page=billing-coin-transactions' },
+        { id:'billing-recharge', label:'云币充值', icon:'wallet-cards', description:'查看云币余额并完成在线充值', state:'ready', href:'系统框架.html?page=billing-recharge' },
         { id:'billing-orders', label:'订单管理', icon:'receipt-text', description:'查看订单与订单状态', state:'ready', href:'系统框架.html?page=billing-orders' },
         { id:'billing-invoice', label:'开票管理', icon:'file-text', description:'管理开票订单、记录与常用抬头', state:'ready', href:'系统框架.html?page=billing-invoice' },
         { id:'billing-coupons', label:'优惠券', icon:'ticket-percent', description:'查看优惠券使用范围与状态', state:'ready', href:'系统框架.html?page=billing-coupons' }

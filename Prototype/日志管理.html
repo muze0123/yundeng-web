@@ -15,8 +15,8 @@
   <style>
     *{box-sizing:border-box}body{margin:0;font:13px/1.5 -apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei','Segoe UI',system-ui,sans-serif}.mono{font-family:'JetBrains Mono',monospace;font-variant-numeric:tabular-nums}.field{height:32px;border:1px solid #DFE1E5;border-radius:4px;padding:0 10px;background:#fff;outline:none}.field:focus{border-color:#0066FF;box-shadow:0 0 0 2px #E6F0FF}.field[aria-invalid="true"]{border-color:#D9001B}.btn{height:32px;padding:0 12px;border-radius:4px;display:inline-flex;align-items:center;justify-content:center;gap:6px;font-weight:500}.btn-primary{background:#0066FF;color:#fff}.btn-primary:hover{background:#0052CC}.btn-default{background:#fff;border:1px solid #DFE1E5;color:#3A3F4A}.btn-default:hover{background:#F3F4F6}.card{background:#fff;border-radius:8px}.data-table{width:100%;border-collapse:collapse;font-size:13px}.data-table th{background:#F0F1F3;color:#6E7685;font-size:12px;font-weight:600;padding:9px 12px;border-bottom:1px solid #DFE1E5;text-align:left;white-space:nowrap}.data-table td{padding:9px 12px;border-bottom:1px solid #F0F1F3;color:#3A3F4A;vertical-align:middle;line-height:20px}.data-table tbody tr:hover{background:#F3F4F6}.tag{height:22px;padding:0 8px;border-radius:4px;display:inline-flex;align-items:center;font-size:12px}.date-range{display:flex;align-items:center;gap:4px}.date-range .field{min-width:0;flex:1}.date-sep{margin:0 2px;color:#9DA2AC;font-size:14px;flex:none}.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:1100;display:flex;align-items:center;justify-content:center;padding:16px}.hidden{display:none!important}.toast{position:fixed;right:24px;top:72px;z-index:1300;background:#1A1D24;color:#fff;padding:10px 16px;border-radius:4px;box-shadow:0 4px 18px #0003}th,td{white-space:nowrap}
   </style>
-  <link rel="stylesheet" href="公共导航.css?v=20261008a">
-  <script src="公共导航.js?v=20261008a"></script>
+  <link rel="stylesheet" href="公共导航.css?v=20261013e">
+  <script src="公共导航.js?v=20261013e"></script>
 </head>
 <body class="bg-page text-ink-body overflow-hidden">
   <div class="h-screen flex">
@@ -28,7 +28,7 @@
           <section class="card p-5 md:p-6 mb-4">
             <div class="filter-flow">
               <label class="filter-item"><span class="filter-label">操作时间</span><span class="date-range"><input id="startDate" type="text" class="field" placeholder="开始日期" aria-label="开始时间"><span class="date-sep">至</span><input id="endDate" type="text" class="field" placeholder="结束日期" aria-label="结束时间"></span></label>
-              <label class="filter-item"><span class="block text-ink-sub mb-1">操作模块</span><select id="moduleFilter" class="field w-full"><option value="">全部模块</option><option>环境管理</option><option>代理管理</option><option>账号管理</option><option>团队管理</option><option>费用管理</option></select></label>
+              <label class="filter-item"><span class="block text-ink-sub mb-1">操作模块</span><select id="moduleFilter" class="field w-full"><option value="">全部模块</option><option>环境管理</option><option>设备管理</option><option>账号管理</option><option>团队管理</option><option>费用管理</option></select></label>
               <label class="filter-item"><span class="block text-ink-sub mb-1">成员 / 内容</span><input id="keyword" class="field w-full" placeholder="搜索成员、对象或操作内容"></label>
               <div class="filter-actions"><button id="searchBtn" class="btn btn-primary"><i data-lucide="search" class="w-4"></i>查询</button><button id="resetBtn" class="btn btn-default">重置</button></div>
             </div>
@@ -59,16 +59,16 @@
   <script>
     const logs=[
       {time:'2026-08-13 10:32:18',user:'张小登',module:'环境管理',action:'编辑环境',target:'YL-000014 / 云登浏览器_1',result:'成功',ip:'120.229.**.71',detail:'更新环境名称、备注与浏览器指纹配置'},
-      {time:'2026-08-13 09:48:07',user:'李运营',module:'代理管理',action:'分配代理',target:'香港-住宅代理-08',result:'成功',ip:'14.153.**.88',detail:'将代理分配给 3 个浏览器环境'},
+      {time:'2026-08-13 09:48:07',user:'李运营',module:'设备管理',action:'分配设备',target:'香港-住宅代理-08',result:'成功',ip:'14.153.**.88',detail:'将设备分配给 3 个浏览器环境'},
       {time:'2026-08-12 21:16:05',user:'张小登',module:'账号管理',action:'新增账号',target:'Facebook / 账号 A-019',result:'成功',ip:'120.229.**.71',detail:'创建账号并绑定到默认账号分组'},
       {time:'2026-08-12 18:42:33',user:'王财务',module:'费用管理',action:'导出流水',target:'2026-08-01 至 2026-08-12',result:'成功',ip:'113.87.**.54',detail:'导出当前团队云币流水 CSV'},
       {time:'2026-08-12 15:10:21',user:'李运营',module:'团队管理',action:'修改角色',target:'环境操作员',result:'失败',ip:'14.153.**.88',detail:'缺少角色管理权限，未产生数据变更'},
-      {time:'2026-08-11 16:08:29',user:'陈配置',module:'环境管理',action:'批量启动',target:'环境 6 个',result:'部分成功',ip:'183.6.**.109',detail:'5 个环境启动成功，1 个环境因代理不可用启动失败'},
+      {time:'2026-08-11 16:08:29',user:'陈配置',module:'环境管理',action:'批量启动',target:'环境 6 个',result:'部分成功',ip:'183.6.**.109',detail:'5 个环境启动成功，1 个环境因设备不可用启动失败'},
       {time:'2026-08-10 14:22:11',user:'赵执行',module:'环境管理',action:'停止环境',target:'YL-000009 / 店铺客服',result:'成功',ip:'14.215.**.62',detail:'正常停止浏览器环境并释放本次会话'},
       {time:'2026-08-09 11:35:48',user:'周内容',module:'账号管理',action:'编辑账号',target:'TikTok / 内容账号 07',result:'成功',ip:'183.3.**.41',detail:'更新账号分组和运营备注'},
       {time:'2026-08-08 19:06:17',user:'张小登',module:'团队管理',action:'邀请成员',target:'内容增长 / 郭客服',result:'成功',ip:'120.229.**.71',detail:'创建成员邀请并分配环境操作员角色'},
-      {time:'2026-08-07 13:44:09',user:'李运营',module:'代理管理',action:'检测代理',target:'美国-住宅代理-12',result:'失败',ip:'14.153.**.88',detail:'代理连通性检测超时，未修改绑定关系'},
-      {time:'2026-08-05 17:20:36',user:'王财务',module:'费用管理',action:'查看订单',target:'YL2026080514251806',result:'成功',ip:'113.87.**.54',detail:'查看代理订单详情和支付状态'},
+      {time:'2026-08-07 13:44:09',user:'李运营',module:'设备管理',action:'检测设备',target:'美国-住宅代理-12',result:'失败',ip:'14.153.**.88',detail:'设备连通性检测超时，未修改绑定关系'},
+      {time:'2026-08-05 17:20:36',user:'王财务',module:'费用管理',action:'查看订单',target:'YL2026080514251806',result:'成功',ip:'113.87.**.54',detail:'查看设备订单详情和支付状态'},
       {time:'2026-08-03 08:52:14',user:'陈配置',module:'环境管理',action:'导入环境',target:'环境 4 个',result:'部分成功',ip:'183.6.**.109',detail:'3 个环境导入成功，1 个环境名称重复'}
     ];
     const $=id=>document.getElementById(id);

@@ -1,0 +1,1657 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>云登 · 添加设备</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: { DEFAULT: '#0066FF', hover: '#0052CC', active: '#0047B3', bg: '#E6F0FF' },
+            ink:     { title: '#1A1D24', body: '#3A3F4A', sub: '#6E7685', muted: '#9DA2AC' },
+            line:    { DEFAULT: '#DFE1E5', light: '#E8EAED', lighter: '#F0F1F3' },
+            page: '#F7F8FA', card: '#FFFFFF', hover: '#F3F4F6',
+            success: { DEFAULT: '#0FC060', bg: '#E7F9F0' },
+            warning: { DEFAULT: '#E7772D', bg: '#FDF2E9' },
+            danger:  { DEFAULT: '#D9001B', bg: '#FFE8EB' },
+            info:    { DEFAULT: '#0091D5', bg: '#E4F4FB' },
+          },
+          borderRadius: { DEFAULT: '4px', md: '6px', lg: '8px' },
+          fontFamily: {
+            sans: ['-apple-system','BlinkMacSystemFont','PingFang SC','Hiragino Sans GB','Microsoft YaHei','Helvetica Neue','Helvetica','Arial','sans-serif'],
+            mono: ['JetBrains Mono','monospace'],
+          },
+        }
+      }
+    };
+  </script>
+  <link rel="stylesheet" href="公共导航.css?v=20261013e">
+  <style>
+    /* 添加设备为单区块表单页（design.md §5.0 单区块）：页面四边保持 16px bg-page 留白；
+       业务区块纵向撑满视口，表单区独立滚动、底部操作栏固定在区块底部
+       （与 环境管理-编辑环境.html 的「业务页面固定操作栏」同一承载结构）。 */
+    html, body { height: 100%; }
+    #mainContent.page-content { display: flex; flex-direction: column; min-height: 0; }
+    #mainContent.page-content > section:only-child { flex: 1 1 auto; min-height: 0; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', 'Hiragino Sans GB', 'Segoe UI', system-ui, sans-serif;
+      font-size: 13px;
+      color: #3A3F4A;
+      background: #F7F8FA;
+    }
+    .mono { font-family: 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums; }
+    .hidden { display: none !important; }
+    button, input, select, textarea { font: inherit; }
+    button { outline: none; }
+    button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, [tabindex]:focus-visible {
+      outline: 2px solid rgba(0,102,255,.18);
+      outline-offset: 2px;
+    }
+    /* ===== 按钮（design.md §5.1）：主按钮 primary 实底 + 白字、高 32px、圆角 4px；次按钮白底 + line 描边 + ink-body 字 ===== */
+    .btn { min-width: 32px; height: 32px; padding: 0 12px; border: 1px solid transparent; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; color: #3A3F4A; font-size: 13px; font-weight: 500; line-height: 1; white-space: nowrap; transition: background-color .15s ease, border-color .15s ease, color .15s ease; }
+    .btn:hover:not(:disabled) { cursor: pointer; }
+    .btn:disabled { color: #9DA2AC; background: #F7F8FA; border-color: #DFE1E5; cursor: not-allowed; }
+    .btn-primary { color: #FFFFFF; background: #0066FF; }
+    .btn-primary:hover:not(:disabled) { background: #0052CC; }
+    .btn-primary:active:not(:disabled) { background: #0047B3; }
+    .btn-secondary { color: #3A3F4A; background: #FFFFFF; border-color: #DFE1E5; }
+    .btn-secondary:hover:not(:disabled) { color: #0066FF; border-color: #0066FF; }
+    /* 描边主按钮：蓝色字体 + 蓝色描边（批量添加的「检测设备」） */
+    .btn-outline-primary { color: #0066FF; background: #FFFFFF; border-color: #0066FF; }
+    .btn-outline-primary:hover:not(:disabled) { color: #0052CC; border-color: #0052CC; background: #E6F0FF; }
+    /* ===== 表单控件（design.md §5.9）：配置型表单控件宽 500px、高 32px、圆角 4px、1px line 边框 ===== */
+    .control { width: 500px; max-width: 100%; height: 32px; padding: 0 10px; border: 1px solid #DFE1E5; border-radius: 4px; color: #3A3F4A; background: #FFFFFF; outline: none; transition: border-color .15s ease, box-shadow .15s ease; }
+    .control::placeholder { color: #9DA2AC; }
+    .control:focus { border-color: #0066FF; box-shadow: 0 0 0 2px rgba(0,102,255,.12); }
+    select.control { appearance: none; -webkit-appearance: none; padding-right: 28px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239DA2AC' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 8px center; }
+    textarea.control { height: auto; min-height: 80px; padding: 8px 10px; line-height: 1.6; resize: vertical; }
+    textarea.control.lines-lg { min-height: var(--entry-height, 240px); }
+    .control-sm { width: 140px; }
+    .control-md { width: 160px; }
+    input.control.has-count { padding-right: 48px; }
+    .control.is-error { border-color: #D9001B; box-shadow: 0 0 0 2px rgba(217,0,27,.08); }
+    .checkbox { width: 14px; height: 14px; margin: 0; accent-color: #0066FF; flex: none; }
+    /* ===== 表单栅格（design.md §5.9 配置型长表单）：一个字段占一行、标签列 120px 右对齐、字段间距 16px ===== */
+    .form-row { display: grid; grid-template-columns: 120px minmax(0, 1fr); gap: 12px; align-items: start; margin-top: 16px; }
+    .form-row:first-child { margin-top: 0; }
+    /* 网络属性联动出的字段组与批量导入区同属一个字段序列，与上一字段保持 16px 间距 */
+    #staticGroup, #dynamicGroup, #batchStatic, #batchDynamic { margin-top: 16px; }
+    .form-label { display: flex; align-items: center; justify-content: flex-end; gap: 4px; min-height: 32px; margin: 0; color: #3A3F4A; font-size: 13px; font-weight: 500; line-height: 18px; text-align: right; white-space: nowrap; }
+    .required { color: #D9001B; }
+    .form-control { width: 500px; max-width: 100%; min-width: 0; }
+    .form-control.is-composite { width: auto; }
+    .field-error { min-height: 18px; margin-top: 4px; color: #D9001B; font-size: 12px; line-height: 18px; }
+    /* 无错误文案时不占位：否则「预留错误位」的字段行会比其它行多出 22px，
+       表现为字段上下间距忽大忽小（design.md §5.9「字段间距垂直 16px」要求等距）。
+       只归零高度与外边距、不用 display:none，保证 aria-live 区域始终可被朗读。 */
+    .field-error:empty { min-height: 0; margin-top: 0; }
+    .field-hint { margin: 6px 0 0; color: #9DA2AC; font-size: 12px; line-height: 18px; }
+    /* 字符计数器（design.md §5.9）：单行输入框在控件内右侧并预留 48px；
+       多行文本域的计数器按产品要求「放在组件内右下角」，故改用叠加在文本域内部的方式（并预留底部空间避免压字）。 */
+    .count-inline { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: #9DA2AC; font: 12px/18px 'JetBrains Mono', monospace; pointer-events: none; }
+    .count-wrap { position: relative; }
+    /* 文本域默认为 inline-block，行盒会多出约 6px 的基线间隙；改块级让备注行高度等于文本域自身高度 */
+    .count-wrap > .control { display: block; }
+
+    /* 密码显隐：输入框右侧内嵌图标按钮（与 .count-inline 同一右侧留白口径） */
+    .pwd-wrap { position: relative; }
+    .pwd-wrap > .control { padding-right: 36px; }
+    .pwd-toggle { position: absolute; top: 50%; right: 8px; display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; padding: 0; border: 0; background: transparent; color: #9DA2AC; cursor: pointer; transform: translateY(-50%); }
+    .pwd-toggle:hover { color: #6E7685; }
+    .pwd-toggle:focus-visible { outline: 2px solid #0066FF; outline-offset: 2px; }
+    .pwd-toggle svg { width: 16px; height: 16px; }
+    .count-inside { position: absolute; right: 10px; bottom: 6px; color: #9DA2AC; font: 12px/18px 'JetBrains Mono', monospace; pointer-events: none; }
+    textarea.control.has-counter { padding-bottom: 24px; }
+    .count-hint { display: flex; justify-content: space-between; gap: 12px; margin-top: 4px; color: #9DA2AC; font-size: 12px; line-height: 18px; }
+    /* ===== 网络属性卡片式单选（design.md §3.1 卡片圆角 8px；选中态取 primary 描边 + primary 浅底）===== */
+    .net-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; width: 500px; max-width: 100%; }
+    .net-card { position: relative; display: flex; flex-direction: column; gap: 6px; min-height: 64px; padding: 12px; border: 1px solid #DFE1E5; border-radius: 8px; background: #FFFFFF; cursor: pointer; transition: border-color .15s ease, background-color .15s ease, box-shadow .15s ease; }
+    .net-card:hover { border-color: #0066FF; }
+    .net-card-input { position: absolute; width: 1px; height: 1px; margin: 0; padding: 0; opacity: 0; pointer-events: none; }
+    .net-card-title { color: #3A3F4A; font-size: 13px; font-weight: 500; line-height: 18px; }
+    .net-card-desc { color: #6E7685; font-size: 12px; line-height: 18px; }
+    .net-card.is-selected { border-color: #0066FF; background: #E6F0FF; }
+    .net-card.is-selected .net-card-title { color: #0066FF; }
+    .net-card:has(.net-card-input:focus-visible) { box-shadow: 0 0 0 2px rgba(102,153,255,.35); }
+    /* 错误态优先于焦点环：否则蓝环 + 红描边叠加成混色（danger 色环同时保留焦点可见性） */
+    .net-card.is-error, .net-card.is-error:has(.net-card-input:focus-visible) { border-color: #D9001B; box-shadow: 0 0 0 2px rgba(217,0,27,.08); }
+    /* ===== 日期下拉（沿用系统 em-date-trigger / em-calendar-* 视觉语言，单选日期版本）===== */
+    .date-wrap { position: relative; }
+    .date-trigger { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; height: 32px; padding: 0 10px 0 12px; border: 1px solid #DFE1E5; border-radius: 4px; background: #FFFFFF; color: #9DA2AC; font-size: 13px; line-height: 20px; text-align: left; cursor: pointer; }
+    .date-trigger:hover { border-color: rgba(102,153,255,.45); }
+    .date-trigger:focus-visible { border-color: #0066FF; box-shadow: 0 0 0 2px #E6F0FF; }
+    .date-value.is-selected { color: #3A3F4A; font-family: 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums; }
+    .date-trigger .date-icon { flex: none; width: 16px; height: 16px; color: #9DA2AC; pointer-events: none; }
+    .date-picker { position: absolute; top: calc(100% + 6px); left: 0; z-index: 30; width: 260px; padding: 12px; border: 1px solid #DFE1E5; border-radius: 8px; background: #FFFFFF; box-shadow: 0 6px 24px rgba(0,0,0,.12); }
+    /* 表单区是滚动容器，下方空间不足时向上翻转，避免日历被裁切 */
+    .date-picker.is-drop-up { top: auto; bottom: calc(100% + 6px); }
+    .calendar-head { display: grid; grid-template-columns: 28px minmax(0,1fr) 28px; align-items: center; margin-bottom: 8px; }
+    .calendar-nav { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; padding: 0; border: 0; border-radius: 4px; background: transparent; color: #6E7685; cursor: pointer; }
+    .calendar-nav:hover { background: #F3F4F6; color: #0066FF; }
+    .calendar-title { margin: 0; color: #3A3F4A; font-size: 13px; font-weight: 500; line-height: 28px; text-align: center; white-space: nowrap; }
+    .calendar-week, .calendar-grid { display: grid; grid-template-columns: repeat(7, minmax(0,1fr)); gap: 2px; text-align: center; }
+    .calendar-week { margin-bottom: 4px; color: #9DA2AC; font-size: 11px; }
+    .calendar-day { display: inline-flex; align-items: center; justify-content: center; height: 30px; padding: 0; border: 0; border-radius: 4px; background: transparent; color: #3A3F4A; font: 12px 'JetBrains Mono', monospace; cursor: pointer; }
+    .calendar-day:hover { background: #F3F4F6; color: #0066FF; }
+    .calendar-day.is-other { color: #C7CAD1; }
+    .calendar-day.is-selected { background: #0066FF; color: #FFFFFF; font-weight: 600; }
+    /* ===== 检测结果表格（design.md §5.2：表头 line-lighter 底 + ink-sub 字 + 12px/600，数据行 13px ink-body）===== */
+    .data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .data-table th { padding: 9px 12px; background: #F0F1F3; color: #6E7685; font-size: 12px; font-weight: 600; text-align: left; white-space: nowrap; border-bottom: 1px solid #DFE1E5; }
+    .data-table td { padding: 9px 12px; color: #3A3F4A; white-space: nowrap; border-bottom: 1px solid #F0F1F3; }
+    .detect-panel { border: 1px solid #DFE1E5; border-radius: 8px; overflow: hidden; }
+    .detect-panel-head { padding: 10px 12px; border-bottom: 1px solid #F0F1F3; color: #1A1D24; font-size: 13px; font-weight: 500; line-height: 18px; }
+    .detect-verdict { display: inline-flex; align-items: center; gap: 6px; }
+    .detect-verdict svg { width: 16px; height: 16px; flex: none; }
+    .detect-check { display: inline-flex; align-items: center; gap: 8px; color: #3A3F4A; font-size: 13px; line-height: 18px; cursor: pointer; }
+
+    /* 操作栏内的「校验重复项」：悬浮展示判定说明气泡（沿用页面 .field-help-tip 的视觉 token） */
+    .dup-option { position: relative; display: flex; align-items: center; }
+    .dup-tip { display: none; position: absolute; left: 0; bottom: calc(100% + 8px); z-index: 30; width: 320px; padding: 8px 12px; border: 1px solid #DFE1E5; border-radius: 4px; background: #FFFFFF; color: #3A3F4A; font-size: 12px; font-weight: 400; line-height: 18px; text-align: left; white-space: normal; box-shadow: 0 2px 8px rgba(0,0,0,.06); }
+    .dup-option:hover .dup-tip, .dup-option:focus-within .dup-tip { display: block; }
+
+    /* 动态网络提醒区块（灰底 + 提醒图标，仅选择「动态」时展示） */
+    .notice-block { display: flex; align-items: flex-start; gap: 8px; margin-top: 12px; padding: 12px; border-radius: 8px; background: #F7F8FA; }
+    .notice-icon { flex: none; width: 16px; height: 16px; margin-top: 1px; color: #9DA2AC; }
+    .notice-body { min-width: 0; }
+    .notice-title { margin: 0 0 2px; color: #3A3F4A; font-size: 13px; font-weight: 500; line-height: 18px; }
+    .notice-line { margin: 0; color: #6E7685; font-size: 12px; line-height: 20px; }
+
+    /* 「联系客服」链接 + 悬浮气泡（hover / 键盘聚焦均可见） */
+    .kf-wrap { position: relative; display: inline-block; }
+    .kf-link { color: #0066FF; font-size: 12px; text-decoration: underline; text-underline-offset: 2px; cursor: pointer; }
+    .kf-link:hover { color: #0052CC; }
+    .kf-link:focus-visible { outline: 2px solid #0066FF; outline-offset: 2px; }
+    .kf-pop { position: absolute; bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%) translateY(4px); z-index: 40; display: flex; flex-direction: column; align-items: center; gap: 8px; width: 144px; padding: 12px; border: 1px solid #DFE1E5; border-radius: 8px; background: #FFFFFF; box-shadow: 0 6px 24px rgba(0,0,0,.12); opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .15s ease, transform .15s ease; }
+    .kf-wrap:hover .kf-pop, .kf-wrap:focus-within .kf-pop { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); pointer-events: auto; }
+    .kf-pop-title { color: #3A3F4A; font-size: 12px; font-weight: 500; line-height: 18px; white-space: nowrap; }
+    .kf-qr { display: block; width: 120px; height: 120px; }
+    /* 字段帮助入口（design.md §5.9）：18×18px 低对比度灰色圆形图标，Popover 支持 hover 与键盘 focus */
+    .field-help { position: relative; flex: none; width: 18px; height: 18px; padding: 0; border: 0; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; color: #9DA2AC; background: transparent; cursor: help; }
+    .field-help svg { width: 18px; height: 18px; }
+    .field-help:hover, .field-help:focus-visible { color: #6E7685; }
+    .field-help-tip { display: none; position: absolute; right: 0; bottom: calc(100% + 8px); width: 260px; padding: 8px 12px; border: 1px solid #DFE1E5; border-radius: 4px; background: #FFFFFF; color: #3A3F4A; font-size: 12px; font-weight: 400; line-height: 18px; text-align: left; white-space: normal; box-shadow: 0 2px 8px rgba(0,0,0,.06); z-index: 10; }
+    .field-help:hover .field-help-tip, .field-help:focus-visible .field-help-tip { display: block; }
+    /* 「IP查询渠道」行（单个添加静态/动态、批量添加静态/动态共 4 处）：下拉须与其他控件同为 500px
+       （design.md §5.9 配置型表单控件宽），18px 帮助图标排在下拉右侧、不占用下拉宽度。
+       历史实现给 .field-inline 加了 max-width:100%，容器被 .form-control 的 500px 夹住，
+       500px 下拉只能与 8px 间隙 + 18px 图标挤在同一个 500px 里 → 实际只有 474px，
+       右边缘比上方「设备类型」等下拉短 26px。去掉 max-width 后容器按内容宽 526px 自然展开，
+       下拉用 flex:none 固定 500px 不再参与收缩。窄屏由媒体查询回退（≤900px 跟随容器宽度）。 */
+    .field-inline { display: flex; align-items: center; gap: 8px; width: max-content; }
+    .field-inline > .control { flex: none; }
+    .host-row { display: flex; align-items: center; gap: 8px; width: 500px; max-width: 100%; }
+    .host-row .control:first-child { flex: 1 1 auto; width: auto; min-width: 0; }
+    .host-row .control:last-child { flex: none; width: 120px; }
+    /* ===== 页头：返回按钮 + 添加方式页签（design.md §5.0 同类组件全站外观一致） =====
+       结构和视觉对齐 商城-设备.html 的「返回 + 页签」页头：返回按钮在左、页签紧随其右，
+       页签沿用设备商城「购买设备 / 购物车」的规格 —— 44px 高、min-width 104px、间距 8px、
+       选中态 2px primary 下划线 + 600 字重 + 白底、hover 浅灰底 + primary 字色，
+       不再给页签行加底部分隔线（商城页头也是仅靠选中页签的下划线指示）。
+       类名用本页专属 .add-head / .add-tabs / .add-mode-tab，不复用 .source-tab：
+       设备管理.html 的「设备来源页签」是另一套视觉（4px 间距 + ::after 内缩下划线），
+       同名不同样会让后续改动互相踩踏。 */
+    .add-head { height: 44px; display: flex; align-items: center; gap: 16px; }
+    .add-head .add-tabs { flex: 1 1 auto; }
+    /* 返回按钮与设备商城子页同款：专属类 .back-btn，写死 14px 字号与边框色，
+       不继承本页 body 的 13px 字号（design.md §5.1 次按钮规格，两页视觉必须一致）。 */
+    .add-head .back-btn { flex: none; height: 32px; padding: 0 16px; border: 1px solid #DFE1E5; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; color: #3A3F4A; background: #FFFFFF; font-size: 14px; font-weight: 500; line-height: 1; cursor: pointer; }
+    .add-head .back-btn:hover { color: #0066FF; border-color: #0066FF; }
+    .add-head .back-btn svg { width: 15px; height: 15px; }
+    .add-tabs { min-width: 0; height: 44px; display: flex; align-items: stretch; gap: 8px; overflow-x: auto; scrollbar-width: none; }
+    .add-tabs::-webkit-scrollbar { display: none; }
+    .add-mode-tab { min-width: 104px; height: 44px; padding: 0 16px; border: 0; border-bottom: 2px solid transparent; display: inline-flex; align-items: center; justify-content: center; flex: none; color: #6E7685; background: transparent; cursor: pointer; font-size: 14px; line-height: 1; }
+    .add-mode-tab:hover { color: #0066FF; background: #F3F4F6; }
+    .add-mode-tab[aria-selected="true"], .add-mode-tab.is-active { color: #0066FF; border-bottom-color: #0066FF; font-weight: 600; background: #FFFFFF; }
+    /* 页头右侧辅助说明：位于页签之后、flex:none 不参与收缩（剩余宽度已被页签区占满） */
+    .add-hint { flex: none; color: #9DA2AC; font-size: 12px; line-height: 18px; }
+    /* 批量导入区：左侧录入区 500px（design.md §5.9 控件区标准宽）+ 右侧填写说明。
+       左侧输入框与右侧说明区块共用 --entry-height，保证两个区块等高对齐。
+       说明区块加宽到 490px 并整体收缩字号/行距（正文 11/15、格式示例 10/12），
+       使「静态 4 条规则 + 7 行格式示例」也能收进 240px，不再出现卡内滚动条。 */
+    .device-entry-grid { --entry-height: 240px; display: grid; grid-template-columns: minmax(0, 500px) minmax(0, 490px); gap: 16px; align-items: start; }
+    /* 文本域默认 inline-block，行盒会多出约 6px 基线间隙，会让「设备列表 / 提取链接列表」行凭空高 6px */
+    .device-entry-grid textarea.control { display: block; }
+    .guide-panel { height: var(--entry-height, 240px); overflow-y: auto; scrollbar-width: thin; overscroll-behavior: contain; padding: 12px; border: 1px solid #DFE1E5; border-radius: 8px; background: #F7F8FA; font-size: 11px; line-height: 15px; }
+    .guide-panel h4 { margin: 0; color: #1A1D24; font-size: 12px; font-weight: 500; line-height: 15px; }
+    /* 填写说明：有序规则 + 等宽字体格式示例（静态 / 动态同构） */
+    .guide-steps { margin: 6px 0 0; padding-left: 18px; list-style: decimal; color: #6E7685; }
+    .guide-steps li + li { margin-top: 4px; }
+    .guide-sub { margin: 6px 0 0; color: #1A1D24; font-size: 11px; font-weight: 500; line-height: 15px; }
+    .guide-fmt { margin: 6px 0 0; padding: 0; list-style: none; color: #6E7685; font-size: 10px; line-height: 12px; white-space: nowrap; overflow-x: auto; }
+    .guide-fmt li + li { margin-top: 1px; }
+    /* 批量添加：检测设备按钮右侧的检测概览（上次检测时间 + 已添加 / 成功 / 失败三个计数）。
+       无检测结果时时间显示 `--`、计数全为 0；输入变化作废结果时同步重置。 */
+    .detect-bar { display: flex; align-items: center; flex-wrap: wrap; gap: 16px; }
+    .detect-meta { display: flex; align-items: center; flex-wrap: wrap; gap: 16px; margin: 0; color: #6E7685; font-size: 12px; line-height: 18px; }
+    .detect-meta-item { display: inline-flex; align-items: center; white-space: nowrap; }
+    .detect-meta-value { color: #3A3F4A; }
+    /* ===== 检测结果表行内编辑：设备名称带常驻编辑铅笔，账号/密码/备注悬停显示铅笔、点击原位变输入框 ===== */
+    .cell-edit { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 20px; margin-left: 6px; padding: 0; border: 0; border-bottom: 1px solid #0066FF; background: transparent; color: #0066FF; cursor: pointer; vertical-align: middle; }
+    .cell-edit:hover { color: #0052CC; border-bottom-color: #0052CC; }
+    .cell-edit svg { width: 14px; height: 14px; }
+    .cell-editable { position: relative; cursor: text; min-width: 88px; }
+    .cell-name { position: relative; }
+    /* 动态检测结果表「提取链接」列：链接长度不可控，限制单列展示宽度并省略，完整值挂在 title 上 */
+    .cell-clip { display: block; max-width: 240px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .cell-editable .cell-hint { width: 14px; height: 14px; margin-left: 6px; color: #9DA2AC; opacity: 0; transition: opacity .15s ease; }
+    .cell-editable:hover .cell-hint { opacity: 1; }
+    /* 编辑态：铅笔图标改为「不可见但保留占位」（不能 display:none，否则该列内容宽度变小会牵动全表列宽） */
+    .cell-editable.is-editing .cell-hint { visibility: hidden; }
+    /* 原值文本同理：用 visibility 隐藏，宽度贡献保持不变 */
+    .cell-value.is-veiled { visibility: hidden; }
+    /* 行内编辑输入框：绝对定位覆盖在原值位置上，宽度取 min(300px, 单元格内容宽)——宽列封顶 300px、窄列贴合列宽。
+       两条前提缺一不可，都是为了让「显示输入框」不移动任何列：
+       ① 必须移出文档流：<input> 在表格 auto 布局下会带出固有 min-content 宽度（默认 size=20 约 240px），
+          留在流里会把所在列直接撑宽（设备名称列 163 → 264）并连带挤动其余 7 列；
+       ② 原值文本必须保占位（见上面的 .is-veiled / .cell-hint）：display:none 会让该列内容宽度变小，
+          同样触发全表重新分配（动态表备注列 144 → 114）。
+       left/right 的 12px 对齐 .data-table td 的水平内边距（§5.2），使输入框落在原文字位置。 */
+    .cell-input { position: absolute; top: 50%; left: 12px; transform: translateY(-50%); width: calc(100% - 24px); max-width: 300px; height: 28px; padding: 0 8px; border: 1px solid #0066FF; border-radius: 4px; color: #3A3F4A; font: inherit; outline: none; box-shadow: 0 0 0 2px rgba(0,102,255,.12); }
+    /* 轻提示 Toast（design.md §5.8.1）：业务视口顶部 24px 水平居中、白底、8px 圆角、无描边、中层阴影 */
+    .device-toast { position: fixed; top: 24px; left: 50%; transform: translateX(-50%); z-index: 9999; min-width: 320px; max-width: min(480px, calc(100vw - 32px)); min-height: 44px; padding: 10px 14px; border: 0; border-radius: 8px; display: flex; align-items: center; gap: 10px; color: #3A3F4A; background: #FFFFFF; font-size: 13px; line-height: 18px; box-shadow: 0 6px 24px rgba(0,0,0,.12); animation: device-toast-in .15s ease-out; }
+    .device-toast svg { width: 18px; height: 18px; flex: none; }
+    .device-toast.is-leaving { animation: device-toast-out .18s ease-in forwards; }
+    @keyframes device-toast-in { from { opacity: 0; transform: translate(-50%, -8px); } to { opacity: 1; transform: translate(-50%, 0); } }
+    @keyframes device-toast-out { from { opacity: 1; } to { opacity: 0; } }
+    @media (prefers-reduced-motion: reduce) {
+      .device-toast, .device-toast.is-leaving { animation: none; }
+    }
+    /* 两栏并排需要 500 + 16 + 490 ≈ 1006px；窄于 1080px 时提前改为上下堆叠，
+       避免说明区块被压窄后规则行回折、又出现卡内滚动。 */
+    @media (max-width: 1080px) {
+      .device-entry-grid { grid-template-columns: minmax(0, 1fr); }
+    }
+    @media (max-width: 900px) {
+      .host-row, .field-inline { width: 100%; }
+    }
+    /* design.md §5.9：移动端标签移至控件上方并左对齐，控件占满可用宽度 */
+    @media (max-width: 767px) {
+      .form-row { display: block; }
+      .form-label { justify-content: flex-start; min-height: 0; margin-bottom: 6px; text-align: left; white-space: normal; }
+      .form-label:empty { display: none; }
+      .form-control, .host-row, .field-inline, .form-control.is-composite { width: 100%; }
+      .field-inline > .control { flex: 1 1 auto; }
+      .host-row .control:last-child { width: 100px; }
+      /* 网络属性卡片在窄屏改为单列纵向排列，避免描述文案被压成多行 */
+      .net-cards { grid-template-columns: minmax(0, 1fr); width: 100%; }
+    }
+  </style>
+  <script src="公共导航.js?v=20261013e"></script>
+</head>
+<body class="bg-page text-ink-body">
+  <main id="mainContent" class="page-content flex min-h-0 flex-col p-4" aria-label="添加设备业务内容">
+    <section class="bg-white rounded-lg flex flex-1 min-h-0 flex-col overflow-hidden" aria-label="添加设备">
+      <!-- 表单区：区块内独立滚动，底部操作栏固定在区块底部 -->
+      <div id="formArea" class="flex-1 min-h-0 overflow-auto p-5 md:p-6">
+        <!-- 页头：返回按钮 + 添加方式页签同一行（页签在返回按钮右侧，样式对齐「购买设备」页的购买设备 / 购物车）。
+             页面标题「添加设备」与标题下分割线已按要求去掉，模块名由外层框架标题承载。 -->
+        <div class="add-head mb-4">
+          <button id="backBtn" type="button" class="back-btn" aria-label="返回设备管理">
+            <i data-lucide="arrow-left" aria-hidden="true"></i>
+            <span>返回</span>
+          </button>
+          <div class="add-tabs" role="tablist" aria-label="添加方式">
+            <button class="add-mode-tab is-active" type="button" role="tab" data-add-mode="single" aria-selected="true">单个添加</button>
+            <button class="add-mode-tab" type="button" role="tab" data-add-mode="batch" aria-selected="false">批量添加</button>
+          </div>
+          <span class="add-hint">静态设备填写连接信息，动态设备填写提取链接</span>
+        </div>
+
+        <!-- 单个添加 -->
+        <div id="singlePane" role="tabpanel" aria-label="单个添加">
+          <div class="form-row">
+            <label class="form-label" for="deviceName"><span class="required">*</span>设备名称</label>
+            <div class="form-control">
+              <div class="relative">
+                <input id="deviceName" class="control has-count w-full" maxlength="100" autocomplete="off" placeholder="请输入设备名称">
+                <span id="deviceNameCount" class="count-inline">0/100</span>
+              </div>
+              <p id="deviceNameError" class="field-error" aria-live="polite"></p>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <label class="form-label" for="deviceType"><span class="required">*</span>设备类型</label>
+            <div class="form-control">
+              <select id="deviceType" class="control w-full">
+                <option>HTTP</option>
+                <option>HTTPS</option>
+                <option>SOCKS5</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <span class="form-label" id="networkLabel"><span class="required">*</span>网络属性</span>
+            <div class="form-control">
+              <div id="networkRadio" class="net-cards" role="radiogroup" aria-labelledby="networkLabel">
+                <label class="net-card">
+                  <input type="radio" name="network" value="静态" class="net-card-input" checked>
+                  <span class="net-card-title">静态</span>
+                  <span class="net-card-desc">静态网络使用固定地址连接</span>
+                </label>
+                <label class="net-card">
+                  <input type="radio" name="network" value="动态" class="net-card-input">
+                  <span class="net-card-title">动态</span>
+                  <span class="net-card-desc">动态网络通过提取链接按规则获取IP</span>
+                </label>
+              </div>
+              <p id="networkError" class="field-error" aria-live="polite"></p>
+            </div>
+          </div>
+
+          <!-- 静态联动字段 -->
+          <div id="staticGroup">
+            <div class="form-row">
+              <label class="form-label" for="addressType">地址类型</label>
+              <div class="form-control">
+                <select id="addressType" class="control w-full">
+                  <option>IPv4</option>
+                  <option>IPv6</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <label class="form-label" for="deviceHost"><span class="required">*</span>设备/域名</label>
+              <div class="form-control">
+                <div class="host-row">
+                  <input id="deviceHost" class="control mono" placeholder="请输入地址或域名" spellcheck="false" autocomplete="off">
+                  <span class="text-ink-muted">:</span>
+                  <input id="devicePort" class="control mono" inputmode="numeric" placeholder="端口" autocomplete="off">
+                </div>
+                <p id="deviceHostError" class="field-error" aria-live="polite"></p>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <label class="form-label" for="deviceAccount">设备账号</label>
+              <div class="form-control">
+                <input id="deviceAccount" class="control w-full" autocomplete="off" placeholder="请输入设备账号">
+              </div>
+            </div>
+
+            <div class="form-row">
+              <label class="form-label" for="devicePassword">设备密码</label>
+              <div class="form-control">
+                <div class="pwd-wrap">
+                  <input id="devicePassword" class="control w-full" type="password" autocomplete="new-password" placeholder="请输入设备密码">
+                  <button id="devicePasswordToggle" type="button" class="pwd-toggle" aria-label="显示设备密码" aria-pressed="false" aria-controls="devicePassword">
+                    <i data-lucide="eye" aria-hidden="true"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <label class="form-label" for="deviceRemark">备注</label>
+              <div class="form-control">
+                <div class="count-wrap">
+                  <textarea id="deviceRemark" class="control has-counter w-full" maxlength="40" placeholder="请输入备注说明"></textarea>
+                  <span id="deviceRemarkCount" class="count-inside">0/40</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <span class="form-label" id="deviceExpiresLabel">到期时间</span>
+              <div class="form-control">
+                <div class="date-wrap">
+                  <input id="deviceExpires" type="hidden" value="">
+                  <button id="deviceExpiresTrigger" type="button" class="date-trigger" aria-haspopup="dialog" aria-expanded="false" aria-controls="deviceExpiresPicker" aria-labelledby="deviceExpiresLabel">
+                    <span id="deviceExpiresDisplay" class="date-value">请选择</span>
+                    <i data-lucide="calendar-days" class="date-icon" aria-hidden="true"></i>
+                  </button>
+                  <!-- 到期时间为单选日期，沿用系统 em-calendar-* 日历视觉的单月版本 -->
+                  <div id="deviceExpiresPicker" class="date-picker hidden" role="dialog" aria-label="到期时间选择">
+                    <div class="calendar-head">
+                      <button type="button" id="expiresPrevMonth" class="calendar-nav" aria-label="上个月" title="上个月"><i data-lucide="chevron-left" class="w-4 h-4" aria-hidden="true"></i></button>
+                      <h3 id="expiresMonthTitle" class="calendar-title"></h3>
+                      <button type="button" id="expiresNextMonth" class="calendar-nav" aria-label="下个月" title="下个月"><i data-lucide="chevron-right" class="w-4 h-4" aria-hidden="true"></i></button>
+                    </div>
+                    <div id="expiresWeek" class="calendar-week"></div>
+                    <div id="expiresGrid" class="calendar-grid"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <label class="form-label" for="deviceIpProvider">IP查询渠道</label>
+              <div class="form-control">
+                <div class="field-inline">
+                  <select id="deviceIpProvider" class="control">
+                    <option>IPInfo</option>
+                    <option>IP2Location</option>
+                    <option>IPData</option>
+                  </select>
+                  <button type="button" class="field-help" aria-label="IP查询渠道说明">
+                    <i data-lucide="circle-help" aria-hidden="true"></i>
+                    <span class="field-help-tip" role="tooltip">不同 IP查询渠道的检测结果可能存在差异，若与实际情况不符可切换渠道。</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 动态联动字段 -->
+          <div id="dynamicGroup" class="hidden">
+            <div class="form-row">
+              <label class="form-label" for="extractMode"><span class="required">*</span>提取方式</label>
+              <div class="form-control">
+                <select id="extractMode" class="control w-full">
+                  <option selected>每次打开浏览器都提取新IP</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <label class="form-label" for="extractUrl"><span class="required">*</span>提取链接</label>
+              <div class="form-control">
+                <input id="extractUrl" class="control w-full mono" type="url" spellcheck="false" autocomplete="off" placeholder="https://api.example.test/proxy/token">
+                <p id="extractUrlError" class="field-error" aria-live="polite"></p>
+              </div>
+            </div>
+
+            <!-- 备注：动态与静态保持一致（组件、提示语、0/40 计数器），位于「IP查询渠道」上方 -->
+            <div class="form-row">
+              <label class="form-label" for="dynamicRemark">备注</label>
+              <div class="form-control">
+                <div class="count-wrap">
+                  <textarea id="dynamicRemark" class="control has-counter w-full" maxlength="40" placeholder="请输入备注说明"></textarea>
+                  <span id="dynamicRemarkCount" class="count-inside">0/40</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <label class="form-label" for="dynamicIpProvider">IP查询渠道</label>
+              <div class="form-control">
+                <div class="field-inline">
+                  <select id="dynamicIpProvider" class="control">
+                    <option>IPInfo</option>
+                    <option>IP2Location</option>
+                    <option>IPData</option>
+                  </select>
+                  <button type="button" class="field-help" aria-label="IP查询渠道说明">
+                    <i data-lucide="circle-help" aria-hidden="true"></i>
+                    <span class="field-help-tip" role="tooltip">不同 IP查询渠道的检测结果可能存在差异，若与实际情况不符可切换渠道。</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 检测：默认随网络属性联动显示；「校验重复项」在静态与动态网络下都提供（位于底部操作栏左侧） -->
+          <div class="form-row hidden" id="detectRow">
+            <span class="form-label" aria-hidden="true"></span>
+            <div class="form-control">
+              <div class="flex items-center gap-3 flex-wrap">
+                <button id="detectSingle" type="button" class="btn btn-outline-primary">
+                  <i data-lucide="activity" class="w-4 h-4" aria-hidden="true"></i>
+                  <span>检测设备</span>
+                </button>
+              </div>
+              <!-- 动态网络提醒：仅选择「动态」时展示 -->
+              <div id="dynamicNotice" class="notice-block hidden" role="note">
+                <i data-lucide="circle-alert" class="notice-icon" aria-hidden="true"></i>
+                <div class="notice-body">
+                  <p class="notice-title">注意：</p>
+                  <p class="notice-line">1. 部分代理平台需先将本机IP加入白名单，才能正常提取代理。</p>
+                  <p class="notice-line">2. 如返回格式暂不支持，请
+                    <span class="kf-wrap"><a href="javascript:void(0)" class="kf-link" id="kefuLink">联系客服</a><span class="kf-pop" role="tooltip"><span class="kf-pop-title">扫码添加专属客服</span><img src="assets/kefu-qr.png" alt="专属客服二维码" class="kf-qr" width="120" height="120"></span></span>
+                  处理。</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 检测结果：点击「检测设备」后在按钮下方展示 -->
+          <div class="form-row hidden" id="detectResultRow">
+            <span class="form-label" aria-hidden="true"></span>
+            <div class="form-control is-composite">
+              <div class="detect-panel">
+                <div class="detect-panel-head">检测结果</div>
+                <div class="overflow-x-auto">
+                  <table class="data-table">
+                    <thead>
+                      <tr><th>设备名称</th><th>设备/域名</th><th>端口</th><th>归属地</th><th>检测结果</th></tr>
+                    </thead>
+                    <tbody id="singleDetectBody"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 批量添加 -->
+        <div id="batchPane" class="hidden" role="tabpanel" aria-label="批量添加">
+          <div class="form-row">
+            <label class="form-label" for="batchDeviceType"><span class="required">*</span>设备类型</label>
+            <div class="form-control">
+              <select id="batchDeviceType" class="control w-full">
+                <option>HTTP</option>
+                <option>HTTPS</option>
+                <option>SOCKS5</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <span class="form-label" id="batchNetworkLabel"><span class="required">*</span>网络属性</span>
+            <div class="form-control">
+              <div id="batchNetworkRadio" class="net-cards" role="radiogroup" aria-labelledby="batchNetworkLabel">
+                <label class="net-card">
+                  <input type="radio" name="batchNetwork" value="静态" class="net-card-input" checked>
+                  <span class="net-card-title">静态</span>
+                  <span class="net-card-desc">静态网络使用固定地址连接</span>
+                </label>
+                <label class="net-card">
+                  <input type="radio" name="batchNetwork" value="动态" class="net-card-input">
+                  <span class="net-card-title">动态</span>
+                  <span class="net-card-desc">动态网络通过提取链接按规则获取IP</span>
+                </label>
+              </div>
+              <p id="batchNetworkError" class="field-error" aria-live="polite"></p>
+            </div>
+          </div>
+
+          <!-- 批量导入（静态）：每行 主机:端口{备注}，格式错误逐行红字提示 -->
+          <div id="batchStatic" class="hidden">
+            <div class="form-row">
+              <label class="form-label" for="staticLines"><span class="required">*</span>设备列表</label>
+              <div class="form-control is-composite">
+                <div class="device-entry-grid">
+                  <div class="min-w-0">
+                    <textarea id="staticLines" class="control lines-lg w-full mono" spellcheck="false" placeholder="每行一个设备，例如：&#10;192.168.0.1:8000{备注}&#10;socks5://192.168.0.1:8000{备注}&#10;https://[2001:db8:2de:0:0:0:0:e13]:8000{备注}"></textarea>
+                    <p id="staticLinesError" class="field-error" aria-live="polite"></p>
+                  </div>
+                  <aside class="guide-panel">
+                    <h4>说明：</h4>
+                    <ol class="guide-steps">
+                      <li>不填写设备类型时，将默认为HTTP类型</li>
+                      <li>仅支持HTTP、HTTPS、SOCKS5三种设备类型</li>
+                      <li>每一行一个设备，一次最多添加500个设备</li>
+                      <li>主机支持IPv4、IPv6，IPv6的主机需填写在 [] 内（IPv6需使用客户端3.0.0.8及以上版本）</li>
+                    </ol>
+                    <p class="guide-sub">填写格式 (支持IPv4、IPv6):</p>
+                    <ul class="guide-fmt mono">
+                      <li>192.168.0.1:8000{备注不超过40字}</li>
+                      <li>192.168.0.1:8000:设备账号:设备密码{备注}</li>
+                      <li>www.baidu.com:8000:设备账号:设备密码{备注}</li>
+                      <li>[www.baidu.com]:8000:设备账号:设备密码{备注}</li>
+                      <li>socks5://192.168.0.1:8000{备注}</li>
+                      <li>https://[2001:db8:2de:0:0:0:0:e13]:8000{备注}</li>
+                      <li>socks5://[2001:db8:2de:0:0:0:0:e13]:8000{备注}</li>
+                    </ul>
+                  </aside>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <label class="form-label" for="staticIpProvider">IP查询渠道</label>
+              <div class="form-control">
+                <div class="field-inline">
+                  <select id="staticIpProvider" class="control">
+                    <option>IPInfo</option>
+                    <option>IP2Location</option>
+                    <option>IPData</option>
+                  </select>
+                  <button type="button" class="field-help" aria-label="IP查询渠道说明">
+                    <i data-lucide="circle-help" aria-hidden="true"></i>
+                    <span class="field-help-tip" role="tooltip">不同 IP查询渠道的检测结果可能存在差异，若与实际情况不符可切换渠道。</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <span class="form-label" aria-hidden="true"></span>
+              <div class="form-control is-composite">
+                <div class="detect-bar">
+                  <button id="detectStatic" type="button" class="btn btn-outline-primary">
+                    <i data-lucide="activity" class="w-4 h-4" aria-hidden="true"></i>
+                    <span>检测设备</span>
+                  </button>
+                  <div class="detect-meta" id="staticDetectMeta" role="status" aria-live="polite">
+                    <span class="detect-meta-item">上次检测时间：<span class="detect-meta-value mono" id="staticDetectTime">--</span></span>
+                    <span class="detect-meta-item">已添加设备数量：<span class="detect-meta-value" id="staticAddedCount">0</span></span>
+                    <span class="detect-meta-item">检测成功数：<span class="detect-meta-value" id="staticSuccessCount">0</span></span>
+                    <span class="detect-meta-item">检测失败数：<span class="detect-meta-value" id="staticFailCount">0</span></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 检测结果：点击「检测设备」后在按钮下方展示（静态 11 列：设备类型右侧为「地址类型」、设备端口右侧为「归属地」、备注左侧为「到期时间」），
+                 名称/账号/密码/到期时间/备注支持行内编辑 -->
+            <div class="form-row hidden" id="staticDetectRow">
+              <span class="form-label" aria-hidden="true"></span>
+              <div class="form-control is-composite">
+                <div class="detect-panel" id="staticDetectPanel">
+                  <div class="detect-panel-head flex items-center justify-between gap-3">
+                    <span>检测结果</span>
+                    <span id="staticDetectStats" class="mono text-[12px] text-ink-sub"></span>
+                  </div>
+                  <div class="overflow-x-auto">
+                    <table class="data-table">
+                      <thead>
+                        <tr><th>设备名称</th><th>设备类型</th><th>地址类型</th><th>设备IP</th><th>设备端口</th><th>归属地</th><th>设备账号</th><th>设备密码</th><th>检测结果</th><th>到期时间</th><th>备注</th></tr>
+                      </thead>
+                      <tbody id="staticDetectBody"></tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 批量导入（动态）：每行一条提取链接{备注} -->
+          <div id="batchDynamic" class="hidden">
+            <div class="form-row">
+              <label class="form-label" for="dynamicLines"><span class="required">*</span>提取链接列表</label>
+              <div class="form-control is-composite">
+                <div class="device-entry-grid">
+                  <div class="min-w-0">
+                    <textarea id="dynamicLines" class="control lines-lg w-full mono" spellcheck="false" placeholder="每行一条提取链接，例如：&#10;https://api.example.test/token{备注}&#10;https://proxy.test/rotate/secret{备注}&#10;http://127.0.0.1:8080/get?token=abc{备注}"></textarea>
+                    <p id="dynamicLinesError" class="field-error" aria-live="polite"></p>
+                  </div>
+                  <aside class="guide-panel">
+                    <h4>说明：</h4>
+                    <ol class="guide-steps">
+                      <li>每行一条提取链接，需以 http:// 或 https:// 开头</li>
+                      <li>每一行一条提取链接，一次最多添加500条</li>
+                      <li>备注写在花括号内，最多 40 字</li>
+                      <li>提取方式与设备类型统一作用于本批全部链接</li>
+                      <li>链接与令牌加密存储，列表与日志只显示脱敏值</li>
+                      <li>提取前请确认本机IP已在代理平台白名单内</li>
+                    </ol>
+                    <p class="guide-sub">填写格式 (支持 HTTP、HTTPS):</p>
+                    <ul class="guide-fmt mono">
+                      <li>https://api.example.test/token{备注}</li>
+                      <li>https://proxy.test/rotate/secret{备注}</li>
+                      <li>http://127.0.0.1:8080/get?token=abc{备注}</li>
+                    </ul>
+                  </aside>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <label class="form-label" for="dynamicExtractMode"><span class="required">*</span>提取方式</label>
+              <div class="form-control">
+                <select id="dynamicExtractMode" class="control w-full">
+                  <option selected>每次打开浏览器都提取新IP</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <label class="form-label" for="dynamicBatchIpProvider">IP查询渠道</label>
+              <div class="form-control">
+                <div class="field-inline">
+                  <select id="dynamicBatchIpProvider" class="control">
+                    <option>IPInfo</option>
+                    <option>IP2Location</option>
+                    <option>IPData</option>
+                  </select>
+                  <button type="button" class="field-help" aria-label="IP查询渠道说明">
+                    <i data-lucide="circle-help" aria-hidden="true"></i>
+                    <span class="field-help-tip" role="tooltip">不同 IP查询渠道的检测结果可能存在差异，若与实际情况不符可切换渠道。</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <span class="form-label" aria-hidden="true"></span>
+              <div class="form-control is-composite">
+                <div class="detect-bar">
+                  <button id="detectDynamic" type="button" class="btn btn-outline-primary">
+                    <i data-lucide="activity" class="w-4 h-4" aria-hidden="true"></i>
+                    <span>检测设备</span>
+                  </button>
+                  <div class="detect-meta" id="dynamicDetectMeta" role="status" aria-live="polite">
+                    <span class="detect-meta-item">上次检测时间：<span class="detect-meta-value mono" id="dynamicDetectTime">--</span></span>
+                    <span class="detect-meta-item">已添加设备数量：<span class="detect-meta-value" id="dynamicAddedCount">0</span></span>
+                    <span class="detect-meta-item">检测成功数：<span class="detect-meta-value" id="dynamicSuccessCount">0</span></span>
+                    <span class="detect-meta-item">检测失败数：<span class="detect-meta-value" id="dynamicFailCount">0</span></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 检测结果（动态 8 列：设备名称、设备类型、提取链接、设备IP、设备端口、归属地、检测结果、备注），
+                 名称/备注支持行内编辑；提取链接列过长时省略展示，完整值见 title -->
+            <div class="form-row hidden" id="dynamicDetectRow">
+              <span class="form-label" aria-hidden="true"></span>
+              <div class="form-control is-composite">
+                <div class="detect-panel" id="dynamicDetectPanel">
+                  <div class="detect-panel-head flex items-center justify-between gap-3">
+                    <span>检测结果</span>
+                    <span id="dynamicDetectStats" class="mono text-[12px] text-ink-sub"></span>
+                  </div>
+                  <div class="overflow-x-auto">
+                    <table class="data-table">
+                      <thead>
+                        <tr><th>设备名称</th><th>设备类型</th><th>提取链接</th><th>设备IP</th><th>设备端口</th><th>归属地</th><th>检测结果</th><th>备注</th></tr>
+                      </thead>
+                      <tbody id="dynamicDetectBody"></tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 业务页面固定操作栏：样式与 环境管理-编辑环境.html 的底部操作栏一致 -->
+      <footer class="h-16 shrink-0 bg-card border-t border-line z-20 flex items-center justify-end gap-4 px-4 md:px-6">
+        <!-- 校验重复项：操作栏左侧，「单个添加」的静态与动态网络都提供；悬浮展示判定说明 -->
+        <div id="duplicateOptionWrap" class="dup-option mr-auto hidden">
+          <label class="detect-check" for="detectDuplicate">
+            <input id="detectDuplicate" type="checkbox" class="checkbox">
+            <span>校验重复项</span>
+          </label>
+          <span class="dup-tip" role="tooltip">与“自有设备列表”中已添加的设备对比，当设备信息与某项完全一致时，判定该项为重复项，不做添加。</span>
+        </div>
+        <!-- 批量添加的操作栏左侧：仅添加成功 + 校验重复项（原「填写说明」内的两个复选项移到这里） -->
+        <div id="batchOptionsWrap" class="mr-auto hidden flex items-center gap-6">
+          <label class="detect-check" for="batchOnlySuccessful">
+            <input id="batchOnlySuccessful" type="checkbox" class="checkbox">
+            <span>仅添加检测结果为成功的设备</span>
+          </label>
+          <div class="dup-option">
+            <label class="detect-check" for="batchCheckDuplicates">
+              <input id="batchCheckDuplicates" type="checkbox" class="checkbox" checked>
+              <span>校验重复项</span>
+            </label>
+            <span class="dup-tip" role="tooltip">与“自有设备列表”中已添加的设备对比，当设备信息与某项完全一致时，判定该项为重复项，不做添加。</span>
+          </div>
+        </div>
+        <div class="flex gap-3">
+          <button id="cancelBtn" type="button" class="btn btn-secondary min-w-[92px]">取消</button>
+          <button id="submitBtn" type="button" class="btn btn-primary min-w-[92px]">确定</button>
+        </div>
+      </footer>
+    </section>
+  </main>
+
+  <!-- 标注说明内容：当前交付态不挂载运行时，仅保留文本便于后续按需启用（零 DOM 污染） -->
+  <script>
+    var annotations_removed = {
+      1: { title: '返回设备管理', desc: ['触发：点击左上角返回。', '响应：回到设备管理页并保留进入前的来源页签。', '规则：返回不写入任何设备数据。'] },
+      2: { title: '添加方式页签', desc: ['位于页头返回按钮右侧，外观与设备商城「购买设备 / 购物车」页签一致（44px 高、选中态 2px 蓝色下划线）；页面不再单独渲染「添加设备」标题。', '单个添加为默认选中。', '批量添加用于一次录入多条设备。', '切换页签会保留各自已填写的内容。'] },
+      3: { title: '网络属性', desc: ['以卡片单选呈现，默认选中「静态」（单个添加与批量添加一致）。', '静态：静态网络使用固定地址连接。', '动态：动态网络通过提取链接按规则获取IP。', '切换后展示对应的下方关联字段。'] },
+      4: { title: '静态联动字段', desc: ['地址类型（IPv4 / IPv6）、设备/域名、设备账号、设备密码、备注、到期时间、IP查询渠道。', '备注提示语为「请输入备注说明」，字数以组件内右下角的 0/40 显示。', '设备账号提示语为「请输入设备账号」；设备密码提示语为「请输入设备密码」，输入框右侧图标可切换明文 / 密文显示。', '到期时间点击后下拉单选日期，未选择时显示「请选择」。', '设备/域名与端口均为必填。', '账号与密码保存后不回填明文。'] },
+      5: { title: '动态联动字段', desc: ['提取方式固定为「每次打开浏览器都提取新IP」，默认选中。', '提取链接需为 HTTP(S) 协议。', '备注与静态保持一致的组件与口径（提示语「请输入备注说明」，右下角 0/40 计数器，最多 40 字），位于「IP查询渠道」上方。', '提取前需将本机IP加入代理平台白名单——该提示已改为「检测设备」下方的灰色提醒区块，含「联系客服」入口（悬浮气泡展示客服二维码）。'] },
+      6: { title: '设备检测与重复校验', desc: ['检测只校验连接可用性，不写入数据。', '底部操作栏左侧的「校验重复项」默认未勾选，「单个添加」的静态与动态网络都提供（未选择网络属性时不展示）；悬浮展示判定说明气泡，切换网络属性保留勾选状态。', '勾选后点击「确定」，静态按 主机:端口、动态按 提取链接，与「自有设备列表」全等比对，命中重复则 Toast 提示并禁止添加；点「检测设备」时命中的同样标为「设备重复」。', '「检测设备」为蓝色字体蓝色描边按钮，位于表单字段下方。', '检测结果在按钮下方以表格展示：设备名称、设备/域名、端口、归属地、检测结果；检测成功时归属地为「中国-杭州」、结论为「检测成功」（带对勾图标）。', '未通过校验时阻止提交并定位到对应字段。'] },
+      7: { title: '批量导入（静态）', desc: ['设备类型位于网络属性上方，与单个添加一致；不填写设备类型时，将默认为HTTP类型。', '填写说明区块列出格式规则与填写格式示例（支持IPv4、IPv6，IPv6主机需填写在 [] 内）；说明区块加宽至 490px 并整体收缩字号（正文 11px/行高 15px、格式示例 10px/行高 12px、内边距 12px），与左侧输入框同为 240px 高且不出滚动条。', '输入内容错误时，输入框下方逐行红字提示「第【n】行，格式错误」等。', 'IP查询渠道与「检测设备」按钮（蓝色字体蓝色描边）位于设备列表下方；按钮右侧同行展示检测概览：上次检测时间（精确到秒，YYYY-MM-DD HH:mm:ss）、已添加设备数量、检测成功数、检测失败数；未检测或输入变化作废结果时，时间回落为「--」、三个计数归 0。', '点击「检测设备」在按钮下方展示检测结果表（11 列）：设备名称、设备类型、地址类型、设备IP、设备端口、归属地、设备账号、设备密码、检测结果、到期时间、备注；其中地址类型由主机写法推导（IPv6 主机须填写在 [] 内，其余按 IPv4），归属地与单个添加「检测设备」同口径（成功为中国-杭州，其余为未知-未知）。', '设备名称带编辑图标，账号、密码、到期时间、备注均支持行内编辑（到期时间点单元格直接编辑，格式 YYYY-MM-DD HH:mm，清空表示未设置）。', '检测结果成功态与单个添加统一为「检测成功」（绿色对勾图标）；重复、有问题两态沿用「设备重复」「设备有问题」。', '行内编辑输入框浮于原值之上，宽度取 min(300px, 该列内容宽)；进入编辑态时其他列的位置与行高都不移动。'] },
+      8: { title: '批量导入（动态）', desc: ['每行一条提取链接，需以 http:// 或 https:// 开头，备注写在花括号内（最多 40 字，超出按行红字提示）。', '填写说明区块与静态同构：说明：+ 有序规则 + 「填写格式」等宽示例；区块宽度、字号、行距与静态完全一致，同为 240px 高且不出滚动条。', '提取方式、设备类型与IP查询渠道统一作用于本批。',
+          '「检测设备」按钮右侧同行展示检测概览：上次检测时间（精确到秒，YYYY-MM-DD HH:mm:ss）、已添加设备数量、检测成功数、检测失败数；未检测或输入变化作废结果时，时间回落为「--」、三个计数归 0。', '点击「检测设备」在按钮下方展示检测结果表（8 列）：设备名称、设备类型、提取链接、设备IP、设备端口、归属地、检测结果、备注——不展示设备账号、设备密码与到期时间；提取链接为输入行中的原始链接（过长时省略展示，完整值见 title），IP、端口为本次提取到的出口地址，归属地取本次检测结论，备注取花括号内文本；设备名称与备注支持行内编辑，输入框浮于原值之上、宽度取 min(300px, 该列内容宽)，进入编辑态时其他列位置与行高均不移动。', '「仅添加检测结果为成功的设备」「校验重复项」两个复选项位于底部操作栏左侧。', '链接重复会按行号提示。'] },
+      9: { title: '提交与反馈', desc: ['校验通过后返回设备管理页并提示新增条数。', '存在失败项时部分不写入，并保留失败原因。', '提交期间禁用重复点击。'] }
+    };
+  </script>
+
+  <script>
+    (function () {
+      'use strict';
+      var $ = function (selector, root) { return (root || document).querySelector(selector); };
+      var $$ = function (selector, root) { return Array.from((root || document).querySelectorAll(selector)); };
+      function escapeHtml(value) {
+        return String(value == null ? '' : value).replace(/[&<>'"]/g, function (character) {
+          return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' })[character];
+        });
+      }
+      var PENDING_TOAST_KEY = 'yundeng-device-toast';
+      /* 已有『自有设备』样本：静态与动态设备同属「自有设备」列表，只是网络属性不同，比对依据随之不同。
+         勾选「校验重复项」后：静态按 主机:端口 全等比对（对齐环境管理页 ownedProxyDuplicateCheck 口径），
+         动态按 提取链接全文 全等比对。 */
+      var EXISTING_STATIC_ENDPOINTS = ['203.0.113.21:8000', '198.51.100.77:1080', '192.0.2.140:3128'];
+      /* 动态样本的提取链接取自「设备管理」页动态设备种子（动态住宅提取线路 / 轮换提取线路 / 欧洲住宅提取线路），
+         其中首条与动态填写说明的示例格式一致，便于按示例填写即可复现「重复」判定。 */
+      var EXISTING_EXTRACT_URLS = [
+        'https://api.example.test/token',
+        'https://proxy.example.test/v1/rotate/secret',
+        'https://eu-res.example.test/extract/eu-token'
+      ];
+      var addMode = 'single';
+      /* 网络属性默认选中「静态」（单个添加与批量添加一致） */
+      var singleNetwork = '静态';
+      var batchNetwork = '静态';
+      var submitting = false;
+      var expiresMonth = null;
+      /* 批量检测结果行（检测后生成，行内编辑直接改这份数据；输入变化或切网络后置空） */
+      var batchRows = null;
+      var editingCell = null;
+
+      /* ===================== 轻提示（design.md §5.8.1） ===================== */
+      /* 固定业务视口顶部 24px 水平居中、白底 8px 圆角无描边、左侧 18px 语义图标、
+         正文保持 ink-body（同一条提示只使用一种语义色），默认展示 3000ms。 */
+      function toast(message, tone) {
+        var existing = $('.device-toast');
+        if (existing) existing.remove();
+        var config = tone === 'success'
+          ? { icon: 'circle-check', color: '#0FC060', role: 'status' }
+          : tone === 'danger'
+            ? { icon: 'circle-x', color: '#D9001B', role: 'alert' }
+            : tone === 'info'
+              ? { icon: 'info', color: '#0091D5', role: 'status' }
+              : { icon: 'triangle-alert', color: '#E7772D', role: 'status' };
+        var element = document.createElement('div');
+        element.className = 'device-toast';
+        element.setAttribute('role', config.role);
+        element.setAttribute('aria-live', config.role === 'alert' ? 'assertive' : 'polite');
+        element.innerHTML = '<i data-lucide="' + config.icon + '" style="color:' + config.color + '" aria-hidden="true"></i>' +
+          '<span>' + escapeHtml(message) + '</span>';
+        document.body.appendChild(element);
+        window.lucide && window.lucide.createIcons();
+        window.setTimeout(function () {
+          element.classList.add('is-leaving');
+          window.setTimeout(function () { element.remove(); }, 180);
+        }, 3000);
+      }
+
+      /* ===================== 返回 / 提交后的路由 ===================== */
+      /* 返回目标是「设备管理 - 自有设备」页签：新增的设备属于自有设备，列表页需按 tab 参数激活该来源。 */
+      var RETURN_ROUTE = { file: '设备管理.html', search: 'tab=owned', hash: '' };
+      function leaveToList(message) {
+        /* 新增结果通过会话存储交给列表页展示：子页面跳转后自身 Toast 会立即销毁。 */
+        try { if (message) window.sessionStorage.setItem(PENDING_TOAST_KEY, message); } catch (_) {}
+        if (window.parent !== window) {
+          window.parent.postMessage({ type: 'yundeng:route', file: RETURN_ROUTE.file, search: RETURN_ROUTE.search, hash: RETURN_ROUTE.hash }, '*');
+        } else {
+          window.location.href = '../index.html?page=proxy&tab=owned';
+        }
+      }
+
+      /* ===================== 页签切换 ===================== */
+      function syncAddMode() {
+        $$('.add-mode-tab').forEach(function (button) {
+          var active = button.dataset.addMode === addMode;
+          button.classList.toggle('is-active', active);
+          button.setAttribute('aria-selected', String(active));
+        });
+        $('#singlePane').classList.toggle('hidden', addMode !== 'single');
+        $('#batchPane').classList.toggle('hidden', addMode !== 'batch');
+        /* 底部操作栏的提交按钮统一为「确定」，不随添加方式变化文案。 */
+        syncFooterOptions();
+      }
+
+      /* ===================== 网络属性联动（卡片式单选，默认无选择） ===================== */
+      function syncNetworkCards(scope) {
+        var value = scope === 'single' ? singleNetwork : batchNetwork;
+        var root = $('#' + (scope === 'single' ? 'networkRadio' : 'batchNetworkRadio'));
+        $$('.net-card', root).forEach(function (card) {
+          var input = $('.net-card-input', card);
+          card.classList.toggle('is-selected', Boolean(value) && input.value === value);
+          card.classList.remove('is-error');
+        });
+      }
+
+      function syncNetwork(scope) {
+        var selected = scope === 'single' ? singleNetwork : batchNetwork;
+        var isStatic = selected === '静态';
+        var isDynamic = selected === '动态';
+        if (scope === 'single') {
+          /* 未选择时两组关联字段都不展示，检测区同样隐藏。 */
+          $('#staticGroup').classList.toggle('hidden', !isStatic);
+          $('#dynamicGroup').classList.toggle('hidden', !isDynamic);
+          $('#detectRow').classList.toggle('hidden', !selected);
+          /* 动态提醒区块跟随「动态」联动展示。 */
+          $('#dynamicNotice').classList.toggle('hidden', !isDynamic);
+          /* 静态与动态都支持「校验重复项」，切换网络属性时保留勾选；仅「未选择网络属性」时清空。 */
+          if (!selected) $('#detectDuplicate').checked = false;
+          if (!selected) hideDetectResult();
+          syncFooterOptions();
+        } else {
+          $('#batchStatic').classList.toggle('hidden', !isStatic);
+          $('#batchDynamic').classList.toggle('hidden', !isDynamic);
+        }
+        syncNetworkCards(scope);
+        window.lucide && window.lucide.createIcons();
+      }
+
+      /* 底部操作栏左侧槽位：单个添加提供「校验重复项」（静态 / 动态网络都提供，悬浮展示判定说明），
+         批量添加提供「仅添加检测结果为成功的设备」+「校验重复项」（原填写说明内的两个复选项）。 */
+      function syncFooterOptions() {
+        /* 未选择网络属性时该排选项随字段区一起不展示 */
+        $('#duplicateOptionWrap').classList.toggle('hidden', !(addMode === 'single' && Boolean(singleNetwork)));
+        $('#batchOptionsWrap').classList.toggle('hidden', addMode !== 'batch');
+      }
+
+      function clearSingleError() {
+        $('#deviceNameError').textContent = '';
+        $('#deviceHostError').textContent = '';
+        $('#extractUrlError').textContent = '';
+        $('#networkError').textContent = '';
+        $$('#networkRadio .net-card').forEach(function (card) { card.classList.remove('is-error'); });
+        $$('#singlePane .control').forEach(function (control) { control.classList.remove('is-error'); });
+      }
+
+      function clearLinesError() {
+        $('#staticLinesError').textContent = '';
+        $('#dynamicLinesError').textContent = '';
+        $('#batchNetworkError').textContent = '';
+        $$('#batchNetworkRadio .net-card').forEach(function (card) { card.classList.remove('is-error'); });
+        $('#staticLines').classList.remove('is-error');
+        $('#dynamicLines').classList.remove('is-error');
+      }
+
+      /* ===================== 单个添加校验 ===================== */
+      function markError(control, errorId, message) {
+        control.classList.add('is-error');
+        control.setAttribute('aria-invalid', 'true');
+        if (errorId) $('#' + errorId).textContent = message;
+        control.focus();
+      }
+
+      function validateSingle() {
+        clearSingleError();
+        var name = $('#deviceName');
+        if (!name.value.trim()) { markError(name, 'deviceNameError', '请输入设备名称'); return null; }
+        if (name.value.trim().length > 100) { markError(name, 'deviceNameError', '设备名称不得超过 100 字'); return null; }
+        /* 网络属性默认无选择，未选择时必须先选。 */
+        if (!singleNetwork) {
+          $('#networkError').textContent = '请选择网络属性';
+          $$('#networkRadio .net-card').forEach(function (card) { card.classList.add('is-error'); });
+          var first = $('#networkRadio .net-card-input');
+          if (first) first.focus();
+          return null;
+        }
+        var payload = {
+          name: name.value.trim(),
+          protocol: $('#deviceType').value,
+          network: singleNetwork
+        };
+        if (singleNetwork === '静态') {
+          var host = $('#deviceHost');
+          var port = $('#devicePort');
+          if (!host.value.trim()) { markError(host, 'deviceHostError', '请输入设备/域名'); return null; }
+          var portNumber = Number(port.value);
+          if (!port.value.trim() || !(portNumber >= 1 && portNumber <= 65535)) {
+            markError(port, 'deviceHostError', '端口必须在 1-65535 范围内');
+            return null;
+          }
+          payload.host = host.value.trim();
+          payload.port = portNumber;
+          payload.addressType = $('#addressType').value;
+          payload.remark = $('#deviceRemark').value.trim();
+          payload.expiresAt = $('#deviceExpires').value ? $('#deviceExpires').value.replace('T', ' ') : '-';
+        } else {
+          var url = $('#extractUrl');
+          if (!url.value.trim()) { markError(url, 'extractUrlError', '请输入提取链接'); return null; }
+          if (!/^https?:\/\//i.test(url.value.trim())) { markError(url, 'extractUrlError', '提取链接需以 http:// 或 https:// 开头'); return null; }
+          payload.endpoint = url.value.trim();
+          payload.extractMode = $('#extractMode').value;
+          /* 备注与静态同口径：随动态字段一起采集 */
+          payload.remark = $('#dynamicRemark').value.trim();
+        }
+        return payload;
+      }
+
+      /* ===================== 批量解析 ===================== */
+      /* 静态：主机:端口[:账号:密码]{备注}，可带协议前缀（socks5:// 等）。
+         错误按行收集，展示为「第【n】行，原因」；勾选校验重复项时同时比对批内与自有设备列表。 */
+      function parseStaticLines(text, defaultType, checkDuplicates) {
+        var lines = String(text || '').split('\n').map(function (line) { return line.trim(); }).filter(Boolean);
+        var errors = [];
+        var valid = [];
+        var seen = new Set();
+        lines.forEach(function (line, index) {
+          var lineNo = index + 1;
+          var content = line;
+          var remark = '';
+          var remarkMatch = content.match(/\{([^{}]*)\}\s*$/);
+          if (remarkMatch) {
+            remark = remarkMatch[1].trim();
+            content = content.slice(0, remarkMatch.index).trim();
+            if (remark.length > 40) { errors.push({ line: lineNo, reason: '备注超过 40 字' }); return; }
+          }
+          var protocolMatch = content.match(/^(https?|socks5):\/\//i);
+          var protocol = protocolMatch ? protocolMatch[1].toUpperCase() : defaultType;
+          if (protocolMatch) content = content.slice(protocolMatch[0].length);
+          var match = content.match(/^(\[[^\]]+\]|[^:\s]+):(\d{1,5})(?::([^:\s]+):(.+))?$/);
+          if (!match) { errors.push({ line: lineNo, reason: '格式错误' }); return; }
+          var port = Number(match[2]);
+          if (port < 1 || port > 65535) { errors.push({ line: lineNo, reason: '格式错误，端口不合法' }); return; }
+          var host = match[1];
+          var endpoint = host + ':' + port;
+          var normalized = endpoint.toLowerCase();
+          if (checkDuplicates && seen.has(normalized)) { errors.push({ line: lineNo, reason: '设备重复：' + endpoint }); return; }
+          if (checkDuplicates && EXISTING_STATIC_ENDPOINTS.indexOf(normalized) !== -1) {
+            errors.push({ line: lineNo, reason: '与“自有设备列表”中的设备重复' });
+            return;
+          }
+          seen.add(normalized);
+          valid.push({
+            line: lineNo,
+            protocol: protocol,
+            host: host,
+            port: port,
+            endpoint: endpoint,
+            /* 地址类型由主机写法推导：IPv6 主机须写在 [] 内（见填写说明），其余按 IPv4 */
+            addressType: host.charAt(0) === '[' ? 'IPv6' : 'IPv4',
+            remark: remark,
+            detected: !/0\.0\.0\.0|invalid|fail/i.test(endpoint)
+          });
+        });
+        return { total: lines.length, valid: valid, errors: errors };
+      }
+
+      /* 动态：每行一条 HTTP(S) 提取链接，备注写在花括号内；设备类型取批量页签顶部的设备类型 */
+      function parseDynamicLines(text, defaultType, checkDuplicates) {
+        var lines = String(text || '').split('\n').map(function (line) { return line.trim(); }).filter(Boolean);
+        var errors = [];
+        var valid = [];
+        var seen = new Set();
+        lines.forEach(function (line, index) {
+          var content = line;
+          var remark = '';
+          var remarkMatch = content.match(/\{([^{}]*)\}\s*$/);
+          if (remarkMatch) {
+            remark = remarkMatch[1].trim();
+            content = content.slice(0, remarkMatch.index).trim();
+            if (remark.length > 40) { errors.push({ line: index + 1, reason: '备注超过 40 字' }); return; }
+          }
+          if (!/^https?:\/\//i.test(content)) { errors.push({ line: index + 1, reason: '提取链接需以 http:// 或 https:// 开头' }); return; }
+          var normalized = content.toLowerCase();
+          if (checkDuplicates && seen.has(normalized)) { errors.push({ line: index + 1, reason: '提取链接重复：' + content }); return; }
+          seen.add(normalized);
+          valid.push({
+            line: index + 1,
+            protocol: defaultType,
+            endpoint: content,
+            /* 动态设备的出口 IP 由每次提取决定：检测结果表按静态同构展示 8 列，
+               这里按「设备管理」列表页同口径给 mock 出口地址与端口 */
+            host: '198.51.100.' + String(11 + (index % 200)),
+            port: 8000 + index,
+            remark: remark,
+            detected: !/invalid|fail|0\.0\.0\.0/i.test(content)
+          });
+        });
+        return { total: lines.length, valid: valid, errors: errors };
+      }
+
+      /* 输入内容错误：输入框下方逐行红字提示「第【n】行，原因」 */
+      function renderLinesErrors(errorEl, errors) {
+        if (!errors.length) { errorEl.innerHTML = ''; return; }
+        var MAX_SHOWN = 20;
+        errorEl.innerHTML = errors.slice(0, MAX_SHOWN).map(function (error) {
+          return '第【' + error.line + '】行，' + escapeHtml(error.reason);
+        }).join('<br>') + (errors.length > MAX_SHOWN ? '<br>其余 ' + (errors.length - MAX_SHOWN) + ' 行错误已折叠' : '');
+      }
+
+      function currentBatchResult() {
+        return batchNetwork === '静态'
+          ? parseStaticLines($('#staticLines').value, $('#batchDeviceType').value, $('#batchCheckDuplicates').checked)
+          : parseDynamicLines($('#dynamicLines').value, $('#batchDeviceType').value, $('#batchCheckDuplicates').checked);
+      }
+
+      /* ===================== 批量检测结果表（行内可编辑） ===================== */
+      var VERDICTS = {
+        /* 成功态文案与单个添加检测结果统一为「检测成功」（T3 同上）；重复 / 有问题维持批量表原有措辞 */
+        ok: { icon: 'circle-check', color: '#0FC060', text: '检测成功' },
+        duplicate: { icon: 'triangle-alert', color: '#E7772D', text: '设备重复' },
+        fail: { icon: 'circle-x', color: '#D9001B', text: '设备有问题' }
+      };
+      var EDITABLE_LABELS = { name: '设备名称', account: '设备账号', password: '设备密码', expires: '到期时间', remark: '备注' };
+      /* 静态检测结果表「到期时间」列的模拟默认值（批量导入格式不含到期时间，接入后由行内编辑维护） */
+      var BATCH_EXPIRES_SAMPLES = ['2026-11-30 23:59', '2026-12-31 23:59', '2027-01-31 23:59'];
+
+      function buildBatchRows(result, isStatic) {
+        var prefix = isStatic ? '批量设备-' : '批量动态设备-';
+        return result.valid.map(function (item, index) {
+          var verdict = item.detected ? 'ok' : 'fail';
+          return {
+            name: prefix + (index + 1),
+            protocol: item.protocol,
+            host: item.host || '',
+            port: item.port || '',
+            endpoint: item.endpoint,
+            /* 仅静态检测结果表展示（见 renderBatchResult）：地址类型由主机写法推导 */
+            addressType: item.addressType || 'IPv4',
+            /* 归属地口径与单个添加「检测设备」一致：成功中国-杭州，其余未知-未知 */
+            region: verdict === 'ok' ? '中国-杭州' : '未知-未知',
+            account: '',
+            password: '',
+            /* 到期时间为原型的模拟默认值（接入后由行内编辑维护），动态表不展示该列 */
+            expires: isStatic ? BATCH_EXPIRES_SAMPLES[index % BATCH_EXPIRES_SAMPLES.length] : '',
+            remark: item.remark || '',
+            verdict: verdict
+          };
+        });
+      }
+
+      function editableCellHtml(field, row) {
+        var value = row[field] || '';
+        var display = field === 'password' && value ? '••••••' : value;
+        return '<td class="cell-editable" data-field="' + field + '"><span class="cell-value">' + escapeHtml(display) + '</span>' +
+          '<i data-lucide="pencil" class="cell-hint" aria-hidden="true"></i></td>';
+      }
+
+      function verdictCellHtml(row) {
+        var verdict = VERDICTS[row.verdict] || VERDICTS.fail;
+        return '<td><span class="detect-verdict" style="color:' + verdict.color + '">' +
+          '<i data-lucide="' + verdict.icon + '" aria-hidden="true"></i><span>' + verdict.text + '</span></span></td>';
+      }
+
+      function nameCellHtml(row) {
+        return '<td class="cell-name" data-field="name"><span class="cell-value">' + escapeHtml(row.name) + '</span>' +
+          '<button type="button" class="cell-edit" data-field="name" aria-label="编辑设备名称" title="编辑设备名称">' +
+          '<i data-lucide="pencil" aria-hidden="true"></i></button></td>';
+      }
+
+      /* ===== 检测概览：检测设备按钮右侧的「上次检测时间 + 已添加 / 成功 / 失败」===== */
+      function pad2(value) { return value < 10 ? '0' + value : String(value); }
+      /* 精确到秒的时间戳：YYYY-MM-DD HH:mm:ss */
+      function formatDateTime(date) {
+        return date.getFullYear() + '-' + pad2(date.getMonth() + 1) + '-' + pad2(date.getDate()) + ' ' +
+          pad2(date.getHours()) + ':' + pad2(date.getMinutes()) + ':' + pad2(date.getSeconds());
+      }
+      /* rows 为 null 表示「当前没有有效检测结果」：时间回落到 `--`、三个计数归 0。
+         有结果时：已添加设备数量 = 本次检测的有效行数，成功 / 失败按检测结论拆分。 */
+      function renderDetectMeta(isStatic, rows) {
+        var prefix = isStatic ? '#static' : '#dynamic';
+        var ok = rows ? rows.filter(function (row) { return row.verdict === 'ok'; }).length : 0;
+        $(prefix + 'DetectTime').textContent = rows ? formatDateTime(new Date()) : '--';
+        $(prefix + 'AddedCount').textContent = rows ? String(rows.length) : '0';
+        $(prefix + 'SuccessCount').textContent = String(ok);
+        $(prefix + 'FailCount').textContent = rows ? String(rows.length - ok) : '0';
+      }
+
+      /* 检测结果表：
+         静态 11 列 —— 设备名称 / 设备类型 / 地址类型 / 设备IP / 设备端口 / 归属地 /
+                       设备账号 / 设备密码 / 检测结果 / 到期时间 / 备注；
+         动态 8 列 —— 设备名称 / 设备类型 / 提取链接 / 设备IP / 设备端口 / 归属地 /
+                      检测结果 / 备注（不展示账号、密码、到期时间；归属地取本次检测结论）。
+         动态行的 IP、端口为本次提取到的出口地址，提取链接为输入行中的原始链接。 */
+      function renderBatchResult(rows, isStatic) {
+        var ok = rows.filter(function (row) { return row.verdict === 'ok'; }).length;
+        var stats = '总数 ' + rows.length + ' · 成功 ' + ok + ' · 失败 ' + (rows.length - ok);
+        var body = isStatic ? $('#staticDetectBody') : $('#dynamicDetectBody');
+        if (isStatic) $('#staticDetectStats').textContent = stats;
+        else $('#dynamicDetectStats').textContent = stats;
+        renderDetectMeta(isStatic, rows);
+        body.innerHTML = rows.map(function (row, index) {
+          var cells;
+          if (isStatic) {
+            cells = nameCellHtml(row) +
+              '<td>' + escapeHtml(String(row.protocol || '').toLowerCase()) + '</td>' +
+              /* 地址类型（设备类型右侧） */
+              '<td>' + escapeHtml(row.addressType) + '</td>' +
+              '<td class="mono">' + escapeHtml(row.host) + '</td>' +
+              '<td class="mono">' + escapeHtml(String(row.port)) + '</td>' +
+              /* 归属地（设备端口右侧） */
+              '<td>' + escapeHtml(row.region) + '</td>' +
+              editableCellHtml('account', row) +
+              editableCellHtml('password', row) +
+              verdictCellHtml(row) +
+              /* 到期时间（备注左侧，可编辑） */
+              editableCellHtml('expires', row) +
+              editableCellHtml('remark', row);
+          } else {
+            cells = nameCellHtml(row) +
+              '<td>' + escapeHtml(String(row.protocol || '').toLowerCase()) + '</td>' +
+              '<td class="mono"><span class="cell-clip" title="' + escapeHtml(row.endpoint) + '">' +
+                escapeHtml(row.endpoint) + '</span></td>' +
+              '<td class="mono">' + escapeHtml(row.host) + '</td>' +
+              '<td class="mono">' + escapeHtml(String(row.port)) + '</td>' +
+              '<td>' + escapeHtml(row.region) + '</td>' +
+              verdictCellHtml(row) +
+              editableCellHtml('remark', row);
+          }
+          return '<tr data-row="' + index + '">' + cells + '</tr>';
+        }).join('');
+        $(isStatic ? '#staticDetectRow' : '#dynamicDetectRow').classList.remove('hidden');
+        window.lucide && window.lucide.createIcons();
+      }
+
+      function hideBatchDetect() {
+        batchRows = null;
+        if (editingCell) { editingCell = null; }
+        ['#staticDetectRow', '#dynamicDetectRow'].forEach(function (selector) {
+          $(selector).classList.add('hidden');
+        });
+        $('#staticDetectBody').innerHTML = '';
+        $('#dynamicDetectBody').innerHTML = '';
+        /* 结果已作废 → 概览同步回到「未检测」状态 */
+        renderDetectMeta(true, null);
+        renderDetectMeta(false, null);
+      }
+
+      /* 行内编辑：设备名称点铅笔、账号/密码/到期时间/备注点单元格，原位变输入框；Enter/失焦提交，Esc 取消。 */
+      function commitCellEdit(apply) {
+        var state = editingCell;
+        if (!state) return;
+        editingCell = null;
+        var row = batchRows ? batchRows[state.index] : null;
+        var value = state.input.value.trim();
+        if (apply && row) {
+          if (state.field === 'name' && !value) value = state.original; /* 名称不允许清空 */
+          if (state.field === 'remark' && value.length > 40) value = value.slice(0, 40);
+          /* 到期时间格式 YYYY-MM-DD HH:mm，最长 16 字；清空表示未设置 */
+          if (state.field === 'expires' && value.length > 16) value = value.slice(0, 16);
+          row[state.field] = value;
+        }
+        state.input.remove();
+        state.cell.classList.remove('is-editing');
+        var span = $('.cell-value', state.cell);
+        span.classList.remove('is-veiled');
+        var display = row ? (state.field === 'password' && row[state.field] ? '••••••' : (row[state.field] || '')) : '';
+        span.textContent = display;
+      }
+
+      function startCellEdit(cell) {
+        if (editingCell) commitCellEdit(true);
+        var tr = cell.closest('tr');
+        var row = batchRows && tr ? batchRows[Number(tr.dataset.row)] : null;
+        if (!row) return;
+        var field = cell.dataset.field || 'name';
+        var span = $('.cell-value', cell);
+        var input = document.createElement('input');
+        input.type = 'text';
+        input.className = 'cell-input';
+        input.value = row[field] || '';
+        input.maxLength = field === 'remark' ? 40 : (field === 'name' ? 100 : (field === 'expires' ? 16 : 200));
+        input.setAttribute('aria-label', '编辑' + (EDITABLE_LABELS[field] || field));
+        /* 到期时间给出格式提示，避免行内输入无参照 */
+        if (field === 'expires') input.placeholder = 'YYYY-MM-DD HH:mm';
+        cell.classList.add('is-editing');
+        /* 保留原值的宽度占位，仅隐藏显示 */
+        span.classList.add('is-veiled');
+        cell.insertBefore(input, span);
+        input.focus();
+        input.select();
+        editingCell = { cell: cell, input: input, index: Number(tr.dataset.row), field: field, original: row[field] || '' };
+        input.addEventListener('blur', function () { commitCellEdit(true); });
+        input.addEventListener('keydown', function (event) {
+          if (event.key === 'Enter') { event.preventDefault(); commitCellEdit(true); }
+          else if (event.key === 'Escape') { commitCellEdit(false); }
+        });
+      }
+
+      function setupBatchEditing(panelId) {
+        $(panelId).addEventListener('click', function (event) {
+          var nameCell = event.target.closest('td.cell-name');
+          if (nameCell) {
+            /* 设备名称仅通过铅笔图标进入编辑 */
+            if (!event.target.closest('.cell-edit')) return;
+            startCellEdit(nameCell);
+            return;
+          }
+          var cell = event.target.closest('td.cell-editable');
+          if (cell) startCellEdit(cell);
+        });
+      }
+
+      /* ===================== 检测（原型模拟） ===================== */
+      function hideDetectResult() {
+        var row = $('#detectResultRow');
+        if (row) row.classList.add('hidden');
+        $('#singleDetectBody').innerHTML = '';
+      }
+
+      /* 检测结果表格：设备名称 / 设备/域名 / 端口 / 归属地 / 检测结果，
+         检测结论统一用语义色 + Lucide 图标（design.md §5.8.1 同一图标口径）。
+         检测成功：归属地「中国-杭州」、结论「检测成功」。 */
+      function renderDetectResult(row) {
+        var verdicts = {
+          ok: { icon: 'circle-check', color: '#0FC060', text: '检测成功' },
+          duplicate: { icon: 'triangle-alert', color: '#E7772D', text: '设备重复' },
+          fail: { icon: 'circle-x', color: '#D9001B', text: '设备有问题' }
+        };
+        var verdict = verdicts[row.verdict];
+        $('#singleDetectBody').innerHTML = '<tr>' +
+            '<td>' + escapeHtml(row.name) + '</td>' +
+            '<td class="mono">' + escapeHtml(row.address) + '</td>' +
+            '<td class="mono">' + escapeHtml(row.port) + '</td>' +
+            '<td>' + escapeHtml(row.region) + '</td>' +
+            '<td><span class="detect-verdict" style="color:' + verdict.color + '">' +
+              '<i data-lucide="' + verdict.icon + '" aria-hidden="true"></i><span>' + verdict.text + '</span>' +
+            '</span></td>' +
+          '</tr>';
+        $('#detectResultRow').classList.remove('hidden');
+        window.lucide && window.lucide.createIcons();
+        /* 表单区为滚动容器：结果在按钮下方，保证新增的表格落在可视区内 */
+        var row = $('#detectResultRow');
+        if (row.scrollIntoView) row.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      }
+
+      function runSingleDetect() {
+        var button = $('#detectSingle');
+        clearSingleError();
+        var isStatic = singleNetwork === '静态';
+        var address = isStatic ? $('#deviceHost').value.trim() : $('#extractUrl').value.trim();
+        var port = isStatic ? $('#devicePort').value.trim() : '';
+        if (!address) {
+          if (isStatic) markError($('#deviceHost'), 'deviceHostError', '请先填写设备/域名');
+          else markError($('#extractUrl'), 'extractUrlError', '请先填写提取链接');
+          return;
+        }
+        button.disabled = true;
+        button.innerHTML = '<i data-lucide="loader-circle" class="w-4 h-4 animate-spin" aria-hidden="true"></i><span>检测中…</span>';
+        window.lucide && window.lucide.createIcons();
+        window.setTimeout(function () {
+          button.disabled = false;
+          button.innerHTML = '<i data-lucide="activity" class="w-4 h-4" aria-hidden="true"></i><span>检测设备</span>';
+          /* 勾选「校验重复项」后：静态按 主机:端口、动态按 提取链接，与已有「自有设备」样本全等比对。 */
+          var endpoint = (isStatic ? address + ':' + port : address).toLowerCase();
+          var existing = isStatic ? EXISTING_STATIC_ENDPOINTS : EXISTING_EXTRACT_URLS;
+          var duplicate = $('#detectDuplicate').checked && existing.indexOf(endpoint) !== -1;
+          var reachable = address.length % 2 === 0;
+          var verdict = duplicate ? 'duplicate' : (reachable ? 'ok' : 'fail');
+          renderDetectResult({
+            name: $('#deviceName').value.trim() || '未命名设备',
+            address: address,
+            port: isStatic ? (port || '-') : '-',
+            region: verdict === 'ok' ? '中国-杭州' : '未知-未知',
+            verdict: verdict
+          });
+        }, 900);
+      }
+
+      /* ===================== 到期时间：下拉单选日期 ===================== */
+      var EXPIRES_WEEK = ['日', '一', '二', '三', '四', '五', '六'];
+      function expiresStamp(date) {
+        return date.getFullYear() + '-' + String(date.getMonth() + 1).padStart(2, '0') + '-' + String(date.getDate()).padStart(2, '0');
+      }
+      function parseExpires(value) {
+        var matched = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value || '');
+        return matched ? new Date(Number(matched[1]), Number(matched[2]) - 1, Number(matched[3])) : null;
+      }
+      function renderExpiresCalendar() {
+        var today = new Date();
+        if (!expiresMonth) {
+          var current = parseExpires($('#deviceExpires').value) || today;
+          expiresMonth = new Date(current.getFullYear(), current.getMonth(), 1);
+        }
+        var year = expiresMonth.getFullYear();
+        var month = expiresMonth.getMonth();
+        $('#expiresMonthTitle').textContent = year + ' 年 ' + (month + 1) + ' 月';
+        $('#expiresWeek').innerHTML = EXPIRES_WEEK.map(function (label) { return '<span>' + label + '</span>'; }).join('');
+        var offset = new Date(year, month, 1).getDay();
+        var total = new Date(year, month + 1, 0).getDate();
+        var selected = $('#deviceExpires').value;
+        var cells = [];
+        for (var blank = 0; blank < offset; blank += 1) cells.push('<span class="calendar-day is-other" aria-hidden="true"></span>');
+        for (var day = 1; day <= total; day += 1) {
+          var value = expiresStamp(new Date(year, month, day));
+          cells.push('<button type="button" class="calendar-day' + (value === selected ? ' is-selected' : '') + '"' +
+            ' data-expires-day="' + value + '"' + (value === expiresStamp(today) ? ' title="今天"' : '') + '>' + day + '</button>');
+        }
+        $('#expiresGrid').innerHTML = cells.join('');
+      }
+      function syncExpiresDisplay() {
+        var value = $('#deviceExpires').value;
+        var display = $('#deviceExpiresDisplay');
+        display.textContent = value || '请选择';
+        display.classList.toggle('is-selected', Boolean(value));
+      }
+      function openExpiresPicker() {
+        expiresMonth = null;
+        renderExpiresCalendar();
+        var picker = $('#deviceExpiresPicker');
+        var trigger = $('#deviceExpiresTrigger');
+        picker.classList.remove('is-drop-up');
+        picker.classList.remove('hidden');
+        /* 表单区为滚动容器：下方放不下时向上翻转，避免面板只露出一条 */
+        var area = $('#formArea');
+        var areaBottom = area ? area.getBoundingClientRect().bottom : window.innerHeight;
+        if (areaBottom - trigger.getBoundingClientRect().bottom < picker.offsetHeight + 12) {
+          picker.classList.add('is-drop-up');
+        }
+        trigger.setAttribute('aria-expanded', 'true');
+      }
+      function closeExpiresPicker() {
+        $('#deviceExpiresPicker').classList.add('hidden');
+        $('#deviceExpiresTrigger').setAttribute('aria-expanded', 'false');
+      }
+
+      function runBatchDetect() {
+        var isStatic = batchNetwork === '静态';
+        var button = isStatic ? $('#detectStatic') : $('#detectDynamic');
+        var textarea = isStatic ? $('#staticLines') : $('#dynamicLines');
+        var errorEl = isStatic ? $('#staticLinesError') : $('#dynamicLinesError');
+        clearLinesError();
+        hideBatchDetect();
+        if (!textarea.value.trim()) {
+          textarea.classList.add('is-error');
+          errorEl.textContent = '请至少输入一条内容';
+          textarea.focus();
+          return;
+        }
+        var original = button.innerHTML;
+        button.disabled = true;
+        button.innerHTML = '<i data-lucide="loader-circle" class="w-4 h-4 animate-spin" aria-hidden="true"></i><span>检测中…</span>';
+        window.lucide && window.lucide.createIcons();
+        window.setTimeout(function () {
+          button.disabled = false;
+          button.innerHTML = original;
+          window.lucide && window.lucide.createIcons();
+          var result = currentBatchResult();
+          /* 内容错误：输入框下方逐行红字提示 */
+          renderLinesErrors(errorEl, result.errors);
+          if (result.errors.length) textarea.classList.add('is-error');
+          var rows = buildBatchRows(result, isStatic);
+          if (!rows.length) return;
+          batchRows = rows;
+          renderBatchResult(rows, isStatic);
+        }, 900);
+      }
+
+      /* ===================== 提交 ===================== */
+      function submitSingle() {
+        var payload = validateSingle();
+        if (!payload) return;
+        /* 勾选「校验重复项」后禁止添加重复设备：静态按 主机:端口、动态按 提取链接，与「自有设备列表」全等比对。 */
+        if ($('#detectDuplicate').checked) {
+          var duplicateStatic = payload.network === '静态';
+          var endpoint = (duplicateStatic ? payload.host + ':' + payload.port : payload.endpoint).toLowerCase();
+          var existing = duplicateStatic ? EXISTING_STATIC_ENDPOINTS : EXISTING_EXTRACT_URLS;
+          if (existing.indexOf(endpoint) !== -1) {
+            toast('检测到您要添加的设备与“自有设备列表”中存在重复，禁止添加！若想添加，请不要勾选“校验重复项”！', 'danger');
+            return;
+          }
+        }
+        submitting = true;
+        $('#submitBtn').disabled = true;
+        var label = payload.network === '静态'
+          ? payload.host + ':' + payload.port
+          : payload.endpoint;
+        toast('设备「' + payload.name + '」已添加', 'success');
+        window.setTimeout(function () {
+          leaveToList('已添加设备「' + payload.name + '」（' + label + '）');
+        }, 600);
+      }
+
+      function submitBatch() {
+        /* 网络属性默认无选择，未选择时必须先选。 */
+        if (!batchNetwork) {
+          $('#batchNetworkError').textContent = '请选择网络属性';
+          $$('#batchNetworkRadio .net-card').forEach(function (card) { card.classList.add('is-error'); });
+          var firstCard = $('#batchNetworkRadio .net-card-input');
+          if (firstCard) firstCard.focus();
+          return;
+        }
+        var isStatic = batchNetwork === '静态';
+        var textarea = isStatic ? $('#staticLines') : $('#dynamicLines');
+        var errorEl = isStatic ? $('#staticLinesError') : $('#dynamicLinesError');
+        clearLinesError();
+        if (!textarea.value.trim()) {
+          textarea.classList.add('is-error');
+          errorEl.textContent = '请至少输入一条内容';
+          textarea.focus();
+          return;
+        }
+        var result = currentBatchResult();
+        /* 内容错误：逐行红字提示并阻止提交 */
+        if (result.errors.length) {
+          textarea.classList.add('is-error');
+          renderLinesErrors(errorEl, result.errors);
+          textarea.focus();
+          return;
+        }
+        if (result.valid.length > 500) {
+          textarea.classList.add('is-error');
+          errorEl.textContent = '一次最多添加 500 条，请分批提交';
+          textarea.focus();
+          return;
+        }
+        /* 优先使用检测后（含行内编辑）的行数据；未检测过时按解析结果生成 */
+        var rows = (batchRows && batchRows.length) ? batchRows : buildBatchRows(result, isStatic);
+        var onlySuccessful = $('#batchOnlySuccessful').checked;
+        var addable = onlySuccessful ? rows.filter(function (row) { return row.verdict === 'ok'; }).length : rows.length;
+        if (!addable) {
+          textarea.classList.add('is-error');
+          errorEl.textContent = '没有可添加的有效设备，请修正后重新检测';
+          textarea.focus();
+          return;
+        }
+        submitting = true;
+        $('#submitBtn').disabled = true;
+        var failed = result.total - addable;
+        toast('已添加 ' + addable + ' 个' + (isStatic ? '静态' : '动态') + '设备' + (failed ? '，' + failed + ' 条未添加' : ''), failed ? 'warning' : 'success');
+        window.setTimeout(function () {
+          leaveToList('已添加 ' + addable + ' 个' + (isStatic ? '静态' : '动态') + '设备' + (failed ? '，' + failed + ' 条失败未添加' : ''));
+        }, 600);
+      }
+
+      /* ===================== 事件绑定 ===================== */
+      $('#backBtn').addEventListener('click', function () { leaveToList(''); });
+      $('#cancelBtn').addEventListener('click', function () { leaveToList(''); });
+      $('#submitBtn').addEventListener('click', function () {
+        if (submitting) return;
+        if (addMode === 'single') submitSingle();
+        else submitBatch();
+      });
+      $$('.add-mode-tab').forEach(function (button) {
+        button.addEventListener('click', function () {
+          if (addMode === button.dataset.addMode) return;
+          addMode = button.dataset.addMode;
+          syncAddMode();
+        });
+      });
+      $('#networkRadio').addEventListener('change', function (event) {
+        if (!event.target.name || event.target.name !== 'network') return;
+        /* 状态与 DOM 对齐：取消选中（含程序化置空）时回到「未选择」，由提交校验兜底拦截 */
+        singleNetwork = event.target.checked ? event.target.value : null;
+        $('#networkError').textContent = '';
+        hideDetectResult();
+        syncNetwork('single');
+      });
+      $('#batchNetworkRadio').addEventListener('change', function (event) {
+        if (!event.target.name || event.target.name !== 'batchNetwork') return;
+        if (event.target.checked && batchNetwork !== event.target.value) {
+          /* 切换网络属性：清空两侧录入与检测结果，避免上一网络的残留数据混入 */
+          $('#staticLines').value = '';
+          $('#dynamicLines').value = '';
+          clearLinesError();
+          hideBatchDetect();
+        }
+        batchNetwork = event.target.checked ? event.target.value : null;
+        $('#batchNetworkError').textContent = '';
+        syncNetwork('batch');
+      });
+      $('#detectSingle').addEventListener('click', runSingleDetect);
+      $('#detectStatic').addEventListener('click', runBatchDetect);
+      $('#detectDynamic').addEventListener('click', runBatchDetect);
+
+      /* 设备密码显隐：点击输入框右侧图标在密文 / 明文间切换，图标与 aria 状态同步。 */
+      $('#devicePasswordToggle').addEventListener('click', function () {
+        var input = $('#devicePassword');
+        var reveal = input.type === 'password';
+        input.type = reveal ? 'text' : 'password';
+        this.setAttribute('aria-pressed', reveal ? 'true' : 'false');
+        this.setAttribute('aria-label', reveal ? '隐藏设备密码' : '显示设备密码');
+        this.innerHTML = '<i data-lucide="' + (reveal ? 'eye-off' : 'eye') + '" aria-hidden="true"></i>';
+        window.lucide && window.lucide.createIcons();
+      });
+
+      /* 到期时间下拉：点触发器开合，点面板外部或 Escape 关闭 */
+      $('#deviceExpiresTrigger').addEventListener('click', function () {
+        if ($('#deviceExpiresPicker').classList.contains('hidden')) openExpiresPicker();
+        else closeExpiresPicker();
+      });
+      $('#expiresPrevMonth').addEventListener('click', function () {
+        expiresMonth = new Date(expiresMonth.getFullYear(), expiresMonth.getMonth() - 1, 1);
+        renderExpiresCalendar();
+      });
+      $('#expiresNextMonth').addEventListener('click', function () {
+        expiresMonth = new Date(expiresMonth.getFullYear(), expiresMonth.getMonth() + 1, 1);
+        renderExpiresCalendar();
+      });
+      $('#expiresGrid').addEventListener('click', function (event) {
+        var day = event.target.closest ? event.target.closest('[data-expires-day]') : null;
+        if (!day) return;
+        $('#deviceExpires').value = day.dataset.expiresDay;
+        syncExpiresDisplay();
+        closeExpiresPicker();
+      });
+      document.addEventListener('click', function (event) {
+        if ($('#deviceExpiresPicker').classList.contains('hidden')) return;
+        if (!$('.date-wrap').contains(event.target)) closeExpiresPicker();
+      });
+      document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape' && !$('#deviceExpiresPicker').classList.contains('hidden')) closeExpiresPicker();
+      });
+
+      $('#deviceName').addEventListener('input', function () {
+        $('#deviceNameCount').textContent = this.value.length + '/100';
+        this.classList.remove('is-error');
+        $('#deviceNameError').textContent = '';
+      });
+      $('#deviceRemark').addEventListener('input', function () {
+        $('#deviceRemarkCount').textContent = this.value.length + '/40';
+      });
+      /* 动态备注与静态同组件同口径，计数器同步 */
+      $('#dynamicRemark').addEventListener('input', function () {
+        $('#dynamicRemarkCount').textContent = this.value.length + '/40';
+      });
+      ['#deviceHost', '#devicePort'].forEach(function (selector) {
+        $(selector).addEventListener('input', function () {
+          this.classList.remove('is-error');
+          $('#deviceHostError').textContent = '';
+        });
+      });
+      $('#extractUrl').addEventListener('input', function () {
+        this.classList.remove('is-error');
+        $('#extractUrlError').textContent = '';
+      });
+      $('#staticLines').addEventListener('input', function () {
+        this.classList.remove('is-error');
+        $('#staticLinesError').textContent = '';
+        /* 输入变化后检测结果已过期：收起表格并作废行数据 */
+        hideBatchDetect();
+      });
+      $('#dynamicLines').addEventListener('input', function () {
+        this.classList.remove('is-error');
+        $('#dynamicLinesError').textContent = '';
+        hideBatchDetect();
+      });
+
+      /* 检测结果表行内编辑（静态 / 动态两块面板） */
+      setupBatchEditing('#staticDetectPanel');
+      setupBatchEditing('#dynamicDetectPanel');
+
+      syncAddMode();
+      syncNetwork('single');
+      syncNetwork('batch');
+      syncExpiresDisplay();
+      window.lucide && window.lucide.createIcons();
+    })();
+  </script>
+</body>
+</html>

@@ -829,7 +829,7 @@
         margin: 0 auto 12px;
         color: var(--muted);
       }
-      /* ---------- 授权环境 / 授权代理弹窗（批量授权资源） ----------
+      /* ---------- 授权环境 / 授权设备弹窗（批量授权资源） ----------
          design.md §5.6 通用 Modal 基准宽度 760px 装不下「已选成员摘要 + 分组筛选 +
          关键词搜索 + 多选表格 + 分页器」，按 §5.7.2 大型资源看板 Modal 放宽到 1140px；
          圆角 8px、遮罩 rgba(0,0,0,.3)、中层阴影仍沿用 §5.6 / §5.7.2。 */
@@ -2403,7 +2403,7 @@
           margin-left: 0;
         }
       }
-      /* ---------- 清空环境 / 清空代理授权二次确认弹窗 ----------
+      /* ---------- 清空环境 / 清空设备授权二次确认弹窗 ----------
          视觉按 design.md §5.8「信息提示弹窗 Dialog」实现，与 §5.6 Modal 区分：
          容器 600×250（max-width 92vw）、圆角 8px、阴影 0 8px 32px rgba(0,0,0,.12)；
          右上角为纯文本 × 关闭（20px、ink-muted、top 14 / right 18），不使用 Lucide 图标；
@@ -2587,8 +2587,8 @@
         font-weight: 500;
       }
     </style>
-    <link rel="stylesheet" href="公共导航.css?v=20261008a" />
-    <script src="公共导航.js?v=20261008a"></script>
+    <link rel="stylesheet" href="公共导航.css?v=20261013e" />
+    <script src="公共导航.js?v=20261013e"></script>
   </head>
   <body>
     <!-- 业务工作区：唯一系统框架由公共导航承载 -->
@@ -2648,7 +2648,7 @@
         ><button class="btn danger" id="confirmSave">确定</button>
       </footer>
     </dialog>
-    <!-- 清空环境 / 清空代理授权二次确认：design.md §5.8 Dialog（confirm 类型） -->
+    <!-- 清空环境 / 清空设备授权二次确认：design.md §5.8 Dialog（confirm 类型） -->
     <dialog
       class="overlay clear-confirm"
       id="clearAuthDialog"
@@ -2729,13 +2729,13 @@
           ],
         },
         {
-          name: "代理管理",
+          name: "设备管理",
           ops: ["查看", "添加", "编辑", "删除", "检测", "授权"],
         },
         {
           name: "费用管理",
           children: [
-            { name: "云币交易流水", ops: ["查看", "导出"] },
+            { name: "余额明细", ops: ["查看", "导出"] },
             { name: "订单管理", ops: ["查看", "支付", "取消", "导出"] },
             { name: "开票管理", ops: ["查看", "申请开票", "管理抬头"] },
             { name: "优惠券", ops: ["查看"] },
@@ -2926,9 +2926,9 @@
         note: "",
         owner: i === 0,
       }));
-      /* ---------- 授权环境 / 授权代理弹窗资源池（图1） ----------
+      /* ---------- 授权环境 / 授权设备弹窗资源池（图1） ----------
          环境：序号为主键、ID 为 32 位十六进制、按分组归类，名称沿用「环境管理」口径；
-         代理：序号 + ID + 代理名称 + 标签，名称与标签沿用「代理管理」口径。 */
+         设备：序号 + ID + 设备名称 + 标签，名称与标签沿用「设备管理」口径。 */
       const hex32 = (seedValue) => {
         // 线性同余发生器（乘数取奇数、模 2^32）：同一序号每次刷新得到相同 ID，且不同序号不碰撞。
         let x = (seedValue * 2654435761) % 4294967296;
@@ -2978,14 +2978,14 @@
             seedProxyNames[i % seedProxyNames.length] +
             "-" +
             String(i + 1).padStart(2, "0"),
-          // 少量代理不带标签，用于验证空标签列展示「—」。
+          // 少量设备不带标签，用于验证空标签列展示「—」。
           tags: i % 9 === 8 ? [] : [seedProxyTags[i % seedProxyTags.length]],
         };
       });
       const seed = {
         version: 1,
         certificationStatus: "unverified",
-        // 授权环境 / 授权代理弹窗的资源池（图1）。
+        // 授权环境 / 授权设备弹窗的资源池（图1）。
         environments: seedEnvironments,
         proxies: seedProxies,
         departments: seedDepartments,
@@ -3239,7 +3239,7 @@
           if (rootDept && rootDept.name === "云登运营团队")
             rootDept.name = "杭州XXX有限公司";
           if (typeof value.companyLogo !== "string") value.companyLogo = "";
-          // 兼容旧版本地存储：授权资源弹窗的环境 / 代理资源池按最新种子补齐。
+          // 兼容旧版本地存储：授权资源弹窗的环境 / 设备资源池按最新种子补齐。
           if (!Array.isArray(value.environments)) value.environments = seedEnvironments;
           if (!Array.isArray(value.proxies)) value.proxies = seedProxies;
           // 兼容旧版本地存储：为缺失 email / password 的历史成员补齐演示数据，
@@ -4227,12 +4227,12 @@
             e.target.close();
         }
       });
-      /* ---------- 清空环境 / 清空代理授权二次确认（图1） ----------
-         文案随场景切换「环境 / 代理」；确定后清空所选成员的授权并复位批量选中态。
+      /* ---------- 清空环境 / 清空设备授权二次确认（图1） ----------
+         文案随场景切换「环境 / 设备」；确定后清空所选成员的授权并复位批量选中态。
          主账号不参与批量操作，选中集合本身已排除 owner，此处再做一次防御性过滤。 */
       let clearAuthPending = null;
       function openClearAuthConfirm(kind) {
-        const label = kind === "proxy" ? "代理" : "环境";
+        const label = kind === "proxy" ? "设备" : "环境";
         const members = ui.selected.map(memberBy).filter((m) => m && !m.owner);
         if (!members.length) {
           toast("请先选择要清空授权的成员");
@@ -5138,12 +5138,12 @@
           `<div class="batch-bar" role="toolbar" aria-label="成员批量操作"><div class="batch-actions">` +
           item("授权资源", "batch-auth", "key-round", [
             ["授权环境", "batch-auth-env"],
-            ["授权代理", "batch-auth-proxy"],
+            ["授权设备", "batch-auth-proxy"],
           ]) +
           `<span class="batch-sep" aria-hidden="true"></span>` +
           item("清空授权", "batch-clear", "shield-off", [
             ["清空环境授权", "batch-clear-env"],
-            ["清空代理授权", "batch-clear-proxy"],
+            ["清空设备授权", "batch-clear-proxy"],
           ]) +
           `<span class="batch-sep" aria-hidden="true"></span>` +
           item("批量启用", "batch-enable", "circle-check") +
@@ -5897,8 +5897,8 @@
         if (link) link.textContent = url;
         refreshInviteQr();
       }
-      /* ---------- 授权环境 / 授权代理弹窗（图1） ----------
-         入口：「授权资源 → 授权环境 / 授权代理」（选中成员后出现）。
+      /* ---------- 授权环境 / 授权设备弹窗（图1） ----------
+         入口：「授权资源 → 授权环境 / 授权设备」（选中成员后出现）。
          结构：已选成员摘要 + 分组 / 标签下拉 + 关键词搜索 + 多选表格 + 分页器（design.md §5.5）；
          关键词按中文逗号拆分、按「或」语义匹配，与 §5.4.2 的查询逻辑保持一致。 */
       const authPicker = {
@@ -5913,7 +5913,7 @@
         ui.selected.map(memberBy).filter((m) => m && !m.owner);
       const authPickerPool = (key, fallback) =>
         Array.isArray(data[key]) ? data[key] : fallback;
-      // 环境与代理共用同一套表格骨架，差异只在列定义、下拉选项与搜索占位文案。
+      // 环境与设备共用同一套表格骨架，差异只在列定义、下拉选项与搜索占位文案。
       function authPickerConfig() {
         if (authPicker.kind === "env")
           return {
@@ -5926,11 +5926,11 @@
           };
         const proxies = authPickerPool("proxies", seedProxies);
         return {
-          title: "授权代理",
+          title: "授权设备",
           allLabel: "全部标签",
           groups: [...new Set(proxies.flatMap((p) => p.tags || []))],
-          placeholder: "搜索代理名称",
-          emptyText: "暂无代理数据",
+          placeholder: "搜索设备名称",
+          emptyText: "暂无设备数据",
           rows: proxies,
         };
       }
@@ -6011,7 +6011,7 @@
           shown.length > 0 && shown.every((r) => authPicker.selected.has(r.id));
         const head = isEnv
           ? `<th class="col-no">序号</th><th class="col-id">ID</th><th>名称</th><th class="col-group">分组</th><th class="col-note">备注</th>`
-          : `<th class="col-no">序号</th><th class="col-id">ID</th><th>代理名称</th><th class="col-tag">标签</th>`;
+          : `<th class="col-no">序号</th><th class="col-id">ID</th><th>设备名称</th><th class="col-tag">标签</th>`;
         const body = shown.length
           ? shown
               .map((r) => {
@@ -6082,11 +6082,11 @@
               toast(
                 authPicker.kind === "env"
                   ? "请选择要授权的环境"
-                  : "请选择要授权的代理",
+                  : "请选择要授权的设备",
               );
               return false;
             }
-            const label = authPicker.kind === "env" ? "环境" : "代理";
+            const label = authPicker.kind === "env" ? "环境" : "设备";
             ui.selected = [];
             commit(`已为 ${members.length} 名成员授权 ${count} 个${label}`);
             return true;

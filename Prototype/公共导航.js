@@ -4,7 +4,7 @@
   // Keep module initialization alive when the CDN icon script is delayed or unavailable.
   if (!window.lucide) window.lucide = { __yundengIconStub: true, createIcons() {} };
 
-  const ASSET_VERSION = '20261008a';
+  const ASSET_VERSION = '20261013e';
   const DEFAULT_ROUTE_KEY = 'home';
   const ONBOARDING_ICON_HTML = '<i data-lucide="compass" class="yundeng-onboarding-icon" aria-hidden="true"></i>';
   const ACCOUNT_TRAFFIC_USAGE = Object.freeze([
@@ -15,10 +15,11 @@
   const NAV = [
     { key: 'home', label: '首页', icon: 'house', href: '首页.html' },
     { key: 'environment', label: '环境管理', icon: 'monitor-cog', href: '环境管理.html' },
-    { key: 'proxy', label: '代理管理', icon: 'network', href: '代理管理.html' },
-    { key: 'store', label: '商城', icon: 'shopping-bag', href: '商城-代理.html' },
+    { key: 'proxy', label: '设备管理', icon: 'network', href: '设备管理.html' },
+    // 商城不再作为一级菜单：设备商城 / 购物车改由「设备管理 ▸ 购买设备」进入（见 STORE_VARIANTS）。
     { key: 'billing', label: '费用管理', icon: 'wallet-cards', group: true, children: [
-      { key: 'billing-coin-transactions', label: '云币交易流水', icon: 'list', href: '费用管理-云币交易流水.html' },
+      { key: 'billing-recharge', label: '云币充值', icon: 'wallet-cards', href: '费用管理-云币充值.html' },
+      { key: 'billing-balance-details', label: '余额明细', icon: 'list', href: '费用管理-余额明细.html' },
       { key: 'billing-orders', label: '订单管理', icon: 'receipt-text', href: '费用管理-订单管理.html' },
       { key: 'billing-invoice', label: '开票管理', icon: 'file-text', href: '费用管理-开票管理.html' },
       { key: 'billing-coupons', label: '优惠券', icon: 'ticket-percent', href: '费用管理-优惠券.html' }
@@ -50,16 +51,19 @@
     { key: 'settings', label: '设置', icon: 'settings-2', href: '设置.html' },
     { key: 'help', label: '帮助', icon: 'circle-help', href: '帮助.html' }
   ];
+  // 商城相关页面已撤出一级菜单：设备商城（含购物车子页面）供「设备管理 ▸ 购买设备」跳转，
+  // 套餐与套餐计价模拟仅保留文件与路由，不再在侧栏暴露入口。
   const STORE_VARIANTS = [
-    { key: 'store-coin', label: '云币充值', icon: 'wallet-cards', href: '商城-云币充值.html', routeOnly: true },
+    { key: 'store', label: '设备商城', icon: 'shopping-bag', href: '商城-设备.html', routeOnly: true },
     { key: 'store-plan-calculator', label: '套餐计价模拟', icon: 'calculator', href: '商城-套餐计价模拟.html', routeOnly: true }
   ];
   const ROUTE_ONLY = [
-    { key: 'promotion-reward', label: '推广奖励', icon: 'badge-percent', href: '推广奖励.html', routeOnly: true }
+    { key: 'promotion-reward', label: '推广奖励', icon: 'badge-percent', href: '推广奖励.html', routeOnly: true },
+    { key: 'device-create', label: '添加设备', icon: 'circle-plus', href: '添加设备.html', routeOnly: true }
   ];
   // 路由专用页面不渲染到侧栏，但必须登记到统一解析表，供 page key 和模块直开使用。
   const allItems = NAV.flatMap(item => item.children || [item]).concat(EXTRA, STORE_VARIANTS, ROUTE_ONLY);
-  const STORE_PAGE_KEYS = new Set(['store', 'store-coin', 'store-plan-calculator']);
+  const STORE_PAGE_KEYS = new Set(['store', 'store-plan-calculator']);
   const basename = decodeURIComponent(location.pathname.split('/').pop() || 'index.html');
   const searchParams = new URLSearchParams(location.search);
   const shellParamNames = new Set(['page', 'module', 'moduleHash', 'moduleSearch', 'embedded', 'guide', 'indexHost']);
@@ -184,35 +188,54 @@
     '首页.html': DEFAULT_ROUTE_KEY,
     '编辑浏览器.html': 'environment',
     '环境管理-编辑环境.html': 'environment',
-    '商城-云币充值.html': 'store-coin',
+    '费用管理-云币充值.html': 'billing-recharge',
+    '费用管理-账户充值.html': 'billing-recharge', // 兼容旧文件名
     '费用管理-订单管理.html': 'billing-orders',
-    '费用管理-云币交易流水.html': 'billing-coin-transactions',
+    '费用管理-余额明细.html': 'billing-balance-details',
+    '费用管理-交易流水.html': 'billing-balance-details', // 兼容旧文件名
     '费用管理-开票管理.html': 'billing-invoice',
     '费用管理-优惠券.html': 'billing-coupons'
   };
   const moduleAliases = {
-    '代理购买须知.html': 'store',
-    '商城-代理.html': 'store',
+    '设备购买须知.html': 'store',
+    '代理购买须知.html': 'store', // 兼容旧文件名
+    '商城-设备.html': 'store',
+    '商城-代理.html': 'store', // 兼容旧文件名
     '商城-套餐.html': 'store',
     '商城-购物车.html': 'store',
-    '商城-云币充值.html': 'store',
     '商城-套餐计价模拟.html': 'store-plan-calculator',
+    '费用管理-云币充值.html': 'billing-recharge',
+    '费用管理-账户充值.html': 'billing-recharge', // 兼容旧文件名
+    '商城-云币充值.html': 'billing-recharge', // 兼容旧文件名
     '费用管理-订单管理.html': 'billing-orders',
-    '费用管理-云币交易流水.html': 'billing-coin-transactions',
+    '费用管理-余额明细.html': 'billing-balance-details',
+    '费用管理-交易流水.html': 'billing-balance-details', // 兼容旧文件名
+    '费用管理-云币交易流水.html': 'billing-balance-details', // 兼容旧文件名
     '费用管理-开票管理.html': 'billing-invoice',
     '费用管理-优惠券.html': 'billing-coupons'
   };
   const requestedPageAliases = Object.freeze({
     '首页':'home',
     '环境管理':'environment',
+    '设备管理':'proxy',
     '代理管理':'proxy',
     '商城':'store',
     '商城代理':'store',
+    '设备商城':'store',
     'billing':'billing-orders',
     '费用管理':'billing-orders',
     '费管理':'billing-orders',
-    '云币充值':'store-coin',
-    'billing-coin':'store-coin',
+    '账户充值':'billing-recharge',
+    'billing-recharge':'billing-recharge',
+    '云币充值':'billing-recharge',
+    'store-coin':'billing-recharge', // 旧 key 兼容
+    'billing-coin':'billing-recharge', // 旧 key 兼容
+    '余额明细':'billing-balance-details',
+    'billing-balance-details':'billing-balance-details',
+    '交易流水':'billing-balance-details', // 旧称兼容
+    'billing-transactions':'billing-balance-details', // 旧 key 兼容
+    '云币交易流水':'billing-balance-details', // 旧称兼容
+    'billing-coin-transactions':'billing-balance-details', // 旧 key 兼容
     '订单管理':'billing-orders',
     '开票管理':'billing-invoice',
     '优惠券':'billing-coupons',
@@ -251,8 +274,10 @@
   const allowedModuleFiles = new Set(allItems.map(item => item.href).concat(
     '编辑浏览器.html',
     '环境管理-编辑环境.html',
-    '代理购买须知.html',
-    '商城-代理.html',
+    '设备购买须知.html',
+    '代理购买须知.html', // 兼容旧文件名
+    '商城-设备.html',
+    '商城-代理.html', // 兼容旧文件名
     '商城-套餐.html',
     '商城-购物车.html',
     '商城-云币充值.html',
@@ -260,8 +285,20 @@
   ));
   // 业务模块直开统一回到 SystemFrame；仅允许显式嵌入态在当前文档承载业务内容。
   const STANDALONE_FILES = new Set();
-  // 编辑页采用新文件名；兼容已有的旧 module 书签。
-  const normalizeModuleFile = file => file === '编辑浏览器.html' ? '环境管理-编辑环境.html' : file;
+  // 编辑页采用新文件名；兼容已有的旧 module 书签。模块改名（代理 → 设备）后同样保留旧名回退。
+  const LEGACY_MODULE_FILE_ALIASES = Object.freeze({
+    '代理管理.html': '设备管理.html',
+    '商城-代理.html': '商城-设备.html',
+    '代理购买须知.html': '设备购买须知.html',
+    '商城-云币充值.html': '费用管理-云币充值.html',
+    '费用管理-账户充值.html': '费用管理-云币充值.html',
+    '费用管理-交易流水.html': '费用管理-余额明细.html',
+    '费用管理-云币交易流水.html': '费用管理-余额明细.html'
+  });
+  const normalizeModuleFile = file => {
+    const aliased = LEGACY_MODULE_FILE_ALIASES[file] || file;
+    return aliased === '编辑浏览器.html' ? '环境管理-编辑环境.html' : aliased;
+  };
   const requestedModule = normalizeModuleFile(searchParams.get('module'));
   const requestedModuleItem = allowedModuleFiles.has(requestedModule) ? itemForModule(requestedModule) : null;
   const routedModule = isSystemFrame
@@ -629,7 +666,7 @@
             </div>
             <div class="yundeng-account-balance-item">
               <div class="yundeng-account-balance-top">
-                <span class="yundeng-account-balance-label">代理数</span>
+                <span class="yundeng-account-balance-label">设备数</span>
                 <button type="button" class="yundeng-account-balance-action" data-account-action="purchase">购买</button>
               </div>
               <div class="yundeng-account-balance-value mono">2</div>
@@ -755,7 +792,7 @@
       event.stopPropagation();
       close(false);
       if (action === 'recharge') {
-        window.yundengNavigateShell ? window.yundengNavigateShell(shellRouteHref('billing-coin')) : location.assign(shellRouteHref('billing-coin'));
+        window.yundengNavigateShell ? window.yundengNavigateShell(shellRouteHref('billing-recharge')) : location.assign(shellRouteHref('billing-recharge'));
       } else if (action === 'purchase') {
         const href = shellRouteHref('store', { moduleSearch: 'tab=proxy' });
         window.yundengNavigateShell ? window.yundengNavigateShell(href) : location.assign(href);
@@ -969,7 +1006,7 @@
     overlay.className = 'yundeng-assistant-overlay';
     overlay.dataset.yundengAssistantDrawer = 'true';
     overlay.hidden = true;
-    overlay.innerHTML = `<section id="yundengAssistantPanel" class="yundeng-assistant-panel" role="dialog" aria-modal="true" aria-labelledby="yundengAssistantTitle" tabindex="-1"><header class="yundeng-assistant-header"><div class="yundeng-assistant-heading"><span class="yundeng-assistant-mark" aria-hidden="true"><i data-lucide="sparkles"></i></span><h2 id="yundengAssistantTitle">云登智能助手</h2></div><button type="button" class="yundeng-assistant-close" data-yundeng-assistant-close title="关闭" aria-label="关闭云登智能助手"><i data-lucide="x" aria-hidden="true"></i></button></header><div class="yundeng-assistant-body"><div class="yundeng-assistant-welcome"><strong>你好，我是云登助手。</strong><p>今天需要处理什么？</p></div><div class="yundeng-assistant-questions" aria-label="常见问题"><button type="button" data-yundeng-question="如何新建浏览器？">如何新建浏览器？</button><button type="button" data-yundeng-question="在哪里管理代理？">在哪里管理代理？</button><button type="button" data-yundeng-question="如何邀请团队成员？">如何邀请团队成员？</button></div><div class="yundeng-assistant-reply" data-yundeng-assistant-reply role="status" aria-live="polite" hidden></div></div><form class="yundeng-assistant-form" data-yundeng-assistant-form novalidate><label class="yundeng-sr-only" for="yundengAssistantInput">输入问题</label><input id="yundengAssistantInput" type="text" maxlength="120" autocomplete="off" placeholder="输入问题"><button type="submit">发送</button></form></section>`;
+    overlay.innerHTML = `<section id="yundengAssistantPanel" class="yundeng-assistant-panel" role="dialog" aria-modal="true" aria-labelledby="yundengAssistantTitle" tabindex="-1"><header class="yundeng-assistant-header"><div class="yundeng-assistant-heading"><span class="yundeng-assistant-mark" aria-hidden="true"><i data-lucide="sparkles"></i></span><h2 id="yundengAssistantTitle">云登智能助手</h2></div><button type="button" class="yundeng-assistant-close" data-yundeng-assistant-close title="关闭" aria-label="关闭云登智能助手"><i data-lucide="x" aria-hidden="true"></i></button></header><div class="yundeng-assistant-body"><div class="yundeng-assistant-welcome"><strong>你好，我是云登助手。</strong><p>今天需要处理什么？</p></div><div class="yundeng-assistant-questions" aria-label="常见问题"><button type="button" data-yundeng-question="如何新建浏览器？">如何新建浏览器？</button><button type="button" data-yundeng-question="在哪里管理设备？">在哪里管理设备？</button><button type="button" data-yundeng-question="如何邀请团队成员？">如何邀请团队成员？</button></div><div class="yundeng-assistant-reply" data-yundeng-assistant-reply role="status" aria-live="polite" hidden></div></div><form class="yundeng-assistant-form" data-yundeng-assistant-form novalidate><label class="yundeng-sr-only" for="yundengAssistantInput">输入问题</label><input id="yundengAssistantInput" type="text" maxlength="120" autocomplete="off" placeholder="输入问题"><button type="submit">发送</button></form></section>`;
 
     document.body.append(button, overlay);
     const panel = overlay.querySelector('#yundengAssistantPanel');
@@ -1525,6 +1562,8 @@
     const options = config || {};
     const scopes = Array.isArray(options.scopes) && options.scopes.length ? options.scopes.slice() : [{ key: 'all', label: '全局搜索' }];
     const label = options.label || '列表';
+    /* 占位符默认沿用全局文案；页面可按需传入 options.placeholder 覆盖（当前无页面覆盖，保留该能力以便按页定制）。 */
+    const placeholderText = options.placeholder || SEARCH_PLACEHOLDER_TEXT;
     const inputId = options.inputId || container.getAttribute('data-search-input') || (container.id ? container.id + 'Keyword' : '');
     if (!inputId) return null;
     const stateKey = options.key || container.id || inputId;
@@ -1551,7 +1590,7 @@
       container.insertAdjacentHTML('afterbegin',
         '<label class="sr-only" for="' + inputId + '">搜索' + searchEscapeHtml(label) + '</label>' +
         '<span id="' + prefixId + '" class="order-search-scope-prefix hidden" aria-hidden="true">' + searchEscapeHtml(scopes[0].label) + '包含：</span>' +
-        '<input id="' + inputId + '" class="field" type="search" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="' + menuId + '" autocomplete="off" placeholder="' + SEARCH_PLACEHOLDER_TEXT + '">' +
+        '<input id="' + inputId + '" class="field" type="search" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="' + menuId + '" autocomplete="off" placeholder="' + searchEscapeHtml(placeholderText) + '">' +
         '<button id="' + clearId + '" type="button" class="order-search-clear hidden" aria-label="清空' + searchEscapeHtml(label) + '搜索"><i data-lucide="x" class="w-4 h-4" aria-hidden="true"></i></button>' +
         '<button id="' + submitId + '" type="button" class="order-search-submit" aria-label="搜索' + searchEscapeHtml(label) + '"><i data-lucide="search" class="order-search-icon" aria-hidden="true"></i></button>' +
         '<div id="' + menuId + '" class="order-search-scope-menu hidden" role="listbox" aria-label="选择' + searchEscapeHtml(label) + '搜索范围"></div>');

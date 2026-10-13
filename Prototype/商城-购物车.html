@@ -40,6 +40,17 @@
     .store-page { min-width: 0; min-height: 100%; padding-bottom: 24px; overflow: auto; background: var(--page); }
     .surface { min-width: 0; padding: 20px; border-radius: 8px; background: var(--card); }
     .cart-list-wrapper { padding: 0; }
+    /* ===== 设备商城页头（共用片段）：返回按钮 + 页签 =====
+       商城-设备.html 与 商城-购物车.html 的这段样式必须逐字一致：
+       顶部页头是两页共用的区块，切换页签只替换下方内容，页头外观保持不变。
+       返回按钮使用专属类 .back-btn，不依赖各页 .btn 体系、也不继承 body 字号，
+       避免两页基础样式（body 字号等）不同导致的边框与字号差异。
+       返回按钮为普通按钮，不参与页签的左右方向键导航。 */
+    .store-head { height: 44px; padding: 0 16px; display: flex; align-items: center; gap: 16px; }
+    .store-head .store-tabs { flex: 1 1 auto; }
+    .store-head .back-btn { height: 32px; padding: 0 16px; border: 1px solid var(--line); border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; color: var(--ink-body); background: var(--card); font-size: 14px; font-weight: 500; line-height: 1; cursor: pointer; }
+    .store-head .back-btn:hover { color: var(--primary); border-color: var(--primary); }
+    .store-head .back-btn svg { width: 15px; height: 15px; }
     .store-tabs { min-width: 0; height: 44px; display: flex; align-items: stretch; gap: 8px; overflow-x: auto; scrollbar-width: none; }
     .store-tabs::-webkit-scrollbar { display: none; }
     .store-tab { min-width: 104px; height: 44px; padding: 0 16px; border: 0; border-bottom: 2px solid transparent; display: inline-flex; align-items: center; justify-content: center; gap: 8px; flex: none; color: var(--ink-sub); background: transparent; cursor: pointer; font-size: 14px; line-height: 1; }
@@ -87,9 +98,9 @@
     .cart-dynamic-field.mono { font-family: 'JetBrains Mono', monospace; }
     .cart-dynamic-validity { min-width: 0; display: inline-flex; align-items: center; color: var(--ink-sub); white-space: nowrap; }
     .cart-mini-select { width: 200px; min-width: 200px; max-width: 200px; height: 32px; padding: 0 30px 0 10px; border: 1px solid var(--line); border-radius: 4px; color: var(--ink-body); background: var(--card); outline: none; }
-    .cart-mini-select:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(0,102,255,.12); }
-    .cart-mini-select[data-cart-coupon]:focus,
-    .cart-mini-select[data-cart-coupon]:focus-visible { outline: 0; outline-offset: 0; box-shadow: none; border-color: var(--primary); }
+    /* 下拉框焦点态：只保留单条主色描边，去掉阴影环与原生 outline，避免出现重影蓝边（与 商城-设备.html 同口径） */
+    .cart-mini-select:focus,
+    .cart-mini-select:focus-visible { border-color: var(--primary); outline: 0; outline-offset: 0; box-shadow: none; }
     .cart-quantity { display: inline-grid; grid-template-columns: 28px 44px 28px; height: 32px; border: 1px solid var(--line); border-radius: 4px; overflow: hidden; background: var(--card); }
     .cart-quantity button { border: 0; color: var(--ink-sub); background: var(--card); cursor: pointer; }
     .cart-quantity button:hover { color: var(--primary); background: var(--primary-bg); }
@@ -125,7 +136,8 @@
     .summary-selected-list { display: grid; gap: 12px; margin-top: 12px; }
     .summary-selected-item { display: flex; align-items: flex-start; gap: 12px; }
     .summary-item-main { min-width: 0; flex: 1; }
-    .summary-item-title { color: var(--ink-title); font-size: 14px; font-weight: 600; }
+    /* 摘要行：设计稿为「地区（地址类型） - 时长 - 数量」单行文案 */
+    .summary-item-line { color: var(--ink-body); font-size: 13px; line-height: 1.5; }
     .summary-item-spec { margin-top: 4px; color: var(--ink-muted); font-size: 12px; line-height: 1.45; }
     .summary-item-price { margin-left: auto; display: flex; align-items: center; gap: 10px; white-space: nowrap; }
     .summary-item-close { width: 14px; height: 14px; padding: 0; border: 0; color: var(--ink-sub); background: transparent; cursor: pointer; }
@@ -140,9 +152,16 @@
     .summary-payment-option.is-selected { color: var(--primary); border-color: var(--primary); background: var(--primary-bg); }
     .payment-label { display: flex; align-items: center; gap: 8px; }
     .payment-label svg { width: 16px; height: 16px; }
+    /* 支付方式品牌图标：沿用项目 src/assets/images 资源，尺寸口径同设备页 .recharge-payment-icon */
+    .payment-icon { width: 18px; height: 18px; display: block; object-fit: contain; }
     .payment-balance { color: var(--ink-sub); }
     .payment-recharge { margin-left: auto; }
     .payment-recharge button { height: 24px; padding: 0 10px; border: 0; border-radius: 4px; color: var(--primary); background: var(--primary-bg); cursor: pointer; }
+    /* 云币余额刷新：紧随余额文案，尺寸小于支付方式图标 */
+    .payment-refresh { width: 22px; height: 22px; padding: 0; border: 0; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; color: var(--ink-sub); background: transparent; cursor: pointer; }
+    .payment-refresh:hover { color: var(--primary); background: var(--primary-bg); }
+    .payment-refresh svg { width: 13px; height: 13px; }
+    .summary-discount-value svg { width: 14px; height: 14px; margin-left: 2px; color: var(--ink-muted); vertical-align: -2px; }
     .summary-total-top span { color: var(--ink-title); font-size: 14px; font-weight: 400; }
     .summary-total-top strong { color: var(--ink-title); font: 400 16px/1.4 'JetBrains Mono', monospace; }
     .summary-primary-submit { width: 100%; height: 52px; margin-top: 18px; border: 0; border-radius: 8px; color: var(--card); background: var(--primary); font-size: 16px; font-weight: 600; cursor: pointer; }
@@ -196,19 +215,22 @@
     /* 合并后的结算卡片拉伸至左侧列表底线，区块按内容顺序自上而下排列。 */
     .order-summary > .summary-card { flex:1 1 auto; min-height:0; }
   </style>
-  <link rel="stylesheet" href="公共导航.css?v=20261008a">
-  <script src="公共导航.js?v=20261008a"></script>
+  <link rel="stylesheet" href="公共导航.css?v=20261013e">
+  <script src="公共导航.js?v=20261013e"></script>
 </head>
 <body class="overflow-hidden">
   <main id="mainContent" class="store-page" tabindex="-1">
-    <h1 class="sr-only">商城-购物车</h1>
+    <h1 class="sr-only">购物车</h1>
     <span id="dirtyBadge" class="hidden" aria-hidden="true"></span>
-    <nav class="surface !p-0 mb-2" aria-label="商城业务范围">
-      <div id="storeTabs" class="store-tabs" role="tablist" aria-label="商城业务范围">
-        <button id="tabProxy" class="store-tab" type="button" role="tab" aria-selected="false" data-tab="proxy"><i data-lucide="server"></i><span>代理</span></button>
-        <button id="tabPlan" class="store-tab" type="button" role="tab" aria-selected="false" data-tab="plan" tabindex="-1"><i data-lucide="package"></i><span>套餐</span></button>
-        <button id="tabCoin" class="store-tab" type="button" role="tab" aria-selected="false" data-tab="coin" tabindex="-1"><i data-lucide="wallet-cards"></i><span>云币充值</span></button>
-        <button id="tabCart" class="store-tab" type="button" role="tab" aria-selected="true" data-tab="cart" tabindex="0"><i data-lucide="shopping-cart"></i><span>购物车</span></button>
+    <!-- 设备商城子页面页头：左上角返回 + 页签（购买设备 / 购物车） -->
+    <nav class="surface mb-2 store-head" aria-label="设备商城页头">
+      <button id="backBtn" type="button" class="back-btn" aria-label="返回设备管理">
+        <i data-lucide="arrow-left" aria-hidden="true"></i>
+        <span>返回</span>
+      </button>
+      <div id="storeTabs" class="store-tabs" role="tablist" aria-label="设备商城业务范围">
+        <button id="tabProxy" class="store-tab" type="button" role="tab" aria-selected="false" data-tab="proxy" tabindex="-1"><span>购买设备</span></button>
+        <button id="tabCart" class="store-tab" type="button" role="tab" aria-selected="true" data-tab="cart" tabindex="0"><span>购物车</span></button>
       </div>
     </nav>
     <section id="cartPanel" class="cart-layout" aria-labelledby="cartTitle">
@@ -220,7 +242,7 @@
           </div>
           <div class="cart-toolbar-actions"><button id="clearCart" class="cart-toolbar-link" type="button">清空失效商品</button></div>
         </div>
-        <div id="cartEmpty" class="cart-empty hidden"><span class="empty-icon"><i data-lucide="shopping-cart"></i></span><h3>购物车暂无商品</h3><p>可从商城代理或套餐页面添加商品</p></div>
+        <div id="cartEmpty" class="cart-empty hidden"><span class="empty-icon"><i data-lucide="shopping-cart"></i></span><h3>购物车暂无商品</h3><p>可从设备商城添加商品</p></div>
         <div id="cartGroupWrap" class="cart-group-list"></div>
       </div>
       <aside id="cartSummary" class="order-summary" aria-labelledby="cartSummaryTitle"></aside>
@@ -230,28 +252,25 @@
     <section class="modal-panel" tabindex="-1"><header class="modal-header"><h2 id="orderDialogTitle">确认订单</h2><button id="closeDialog" class="icon-button" type="button" aria-label="关闭确认弹窗"><i data-lucide="x"></i></button></header><div id="orderDialogBody" class="modal-body"></div><footer class="modal-footer"><button id="cancelDialog" class="btn btn-default" type="button">取消</button><button id="confirmDemo" class="btn btn-primary" type="button">确认演示</button></footer></section>
   </div>
   <script>
+    /* 支付方式与云币余额按设计稿定稿：支付宝支付 + 微信支付 + 账号云币支付（余额可刷新、可跳充值）。 */
     const paymentMethods = [
-      { id:'alipay', label:'支付宝支付', icon:'badge-dollar-sign' },
-      { id:'wechat', label:'微信支付', icon:'message-circle' },
-      { id:'coin', label:'账户云币支付', icon:'coins', suffix:'（我的云币：300）' }
+      { id:'alipay', label:'支付宝支付', icon:'../src/assets/images/支付宝支付.png' },
+      { id:'wechat', label:'微信支付', icon:'../src/assets/images/微信支付.png' },
+      { id:'coin', label:'账号云币支付', suffix:'（我的云币：85729.4）' }
     ];
+    /* 购物车 mock 数据：与设计稿一致，按「地区（规格）」+ 地址类型 + 时长 + 数量 + 原价/实付 呈现。 */
     const initialCart = [
-      { id:101, type:'代理', name:'静态住宅 S28', spec:'美国-洛杉矶 · 随机号段 · 1个月', region:'美国-洛杉矶', segment:'随机号段', duration:1, packageTraffic:'10G/月', overageRate:'限时免费', unit:59.90, qty:1, discount:14, baseDiscount:14, couponDiscount:0, couponLabel:'未选择优惠券', status:'valid', checked:true },
-      { id:102, type:'代理', name:'云平台 · 华为云', spec:'日本-东京 · 随机号段 · 3个月', region:'日本-东京', segment:'随机号段', duration:3, packageTraffic:'10G/月', overageRate:'限时免费', unit:96.93, qty:1, discount:10, baseDiscount:10, couponDiscount:0, couponLabel:'未选择优惠券', status:'valid', checked:true },
-      { id:103, type:'套餐', name:'套餐升级', spec:'美国-凤凰城（资源Hy）', region:'美国-凤凰城（资源Hy）', segment:'', duration:1, unit:100, qty:1, discount:50, baseDiscount:50, couponDiscount:0, couponLabel:'未选择优惠券', status:'valid', checked:true },
-      { id:104, type:'代理', name:'小众 · S53', spec:'英国-伦敦 · 自定义号段 · 1个月', region:'英国-伦敦', segment:'自定义号段', duration:1, packageTraffic:'10G/月', overageRate:'限时免费', unit:49.90, qty:1, discount:0, baseDiscount:0, couponDiscount:0, couponLabel:'未选择优惠券', status:'low-stock', checked:false },
-      { id:105, type:'代理', name:'静态住宅 S28 Pro', spec:'加拿大-多伦多 · 6个月', region:'加拿大-多伦多', segment:'6个月', duration:6, packageTraffic:'10G/月', overageRate:'限时免费', unit:349.90, qty:1, discount:42, baseDiscount:42, couponDiscount:0, couponLabel:'未选择优惠券', status:'price-changed', checked:true },
-      { id:106, type:'代理', name:'云平台 · 阿里云 1', spec:'新加坡 · 1个月', region:'新加坡', segment:'1个月', duration:1, packageTraffic:'10G/月', overageRate:'限时免费', unit:42.90, qty:2, discount:8, baseDiscount:8, couponDiscount:0, couponLabel:'未选择优惠券', status:'valid', checked:false },
-      { id:107, type:'代理', name:'小众 · S58', spec:'德国-法兰克福 · 12个月', region:'德国-法兰克福', segment:'12个月', duration:12, packageTraffic:'10G/月', overageRate:'限时免费', unit:539.10, qty:1, discount:0, baseDiscount:0, couponDiscount:0, couponLabel:'未选择优惠券', status:'sold-out', checked:false },
-      { id:108, type:'套餐', name:'原套餐续费', spec:'美国-洛杉矶（资源_Ipv） · 号段：146.71.35.0/24', region:'美国-洛杉矶（资源_Ipv）', segment:'号段：146.71.35.0/24', duration:12, unit:320, qty:1, discount:64, baseDiscount:64, couponDiscount:0, couponLabel:'未选择优惠券', status:'quote-expired', checked:false }
+      { id:101, type:'设备', name:'加拿大-加拿大（静态住宅-标准）', region:'加拿大-加拿大', segment:'IPV4', duration:1, packageTraffic:'10G/月', overageRate:'限时免费', unit:58, originalUnit:58, qty:1, baseDiscount:0, couponDiscount:0, couponLabel:'选择优惠券', status:'valid', checked:true },
+      { id:102, type:'设备', name:'美国-洛杉矶（静态住宅-标准）', region:'美国-洛杉矶', segment:'IPV4', duration:1, packageTraffic:'10G/月', overageRate:'限时免费', unit:68, originalUnit:68, qty:1, baseDiscount:0, couponDiscount:0, couponLabel:'选择优惠券', status:'valid', checked:true }
     ];
-    const CART_STORAGE_KEY = 'yundeng-store-cart-v1';
+    /* v2：字段口径按设计稿重排（region/segment/原价），避免旧的 v1 缓存覆盖新数据结构。 */
+    const CART_STORAGE_KEY = 'yundeng-store-cart-v2';
     function normalizeTrafficType(item) {
       const rawType = String(item?.type ?? item?.productType ?? item?.category ?? item?.purchaseKind ?? '').toLowerCase();
       if (rawType.includes('traffic') || rawType.includes('流量')) return '流量包';
       if (rawType.includes('plan') || rawType.includes('套餐')) return '套餐';
-      if (rawType.includes('proxy') || rawType.includes('代理')) return '代理';
-      return item?.type || '代理';
+      if (rawType.includes('proxy') || rawType.includes('设备')) return '设备';
+      return item?.type || '设备';
     }
     function escapeHtml(value) {
       const entityMap = { '&amp;':'&', '&lt;':'<', '&gt;':'>', '&quot;':'"', '&#39;':"'" };
@@ -294,7 +313,7 @@
         baseDiscount,
         couponDiscount,
         discount: Math.max(0, toNumber(raw.discount, baseDiscount + couponDiscount)),
-        couponLabel: escapeHtml(raw.couponLabel || '未选择优惠券'),
+        couponLabel: escapeHtml(raw.couponLabel || '选择优惠券'),
         status: raw.status || 'valid',
         checked: raw.checked !== false
       };
@@ -333,9 +352,20 @@
     };
     const cartGroupCollapsed = type => localStorage.getItem(`yundeng-store-cart-group-${type}`) === '1';
     const setCartGroupCollapsed = (type, collapsed) => localStorage.setItem(`yundeng-store-cart-group-${type}`, collapsed ? '1' : '0');
+    /* 返回设备管理：嵌入态交给壳层软导航，独立打开时回退 index.html 的 page key。 */
+    function navigateBackToDevice() {
+      if (window.parent !== window) {
+        window.parent.postMessage({ type: 'yundeng:route', file: '设备管理.html', search: '', hash: '' }, '*');
+        return;
+      }
+      location.replace('../index.html?page=proxy');
+    }
+    $('#backBtn').addEventListener('click', navigateBackToDevice);
+    /* 设备商城子页面页签：仅「购买设备」需要跳转到独立子页面，「购物车」即当前页。 */
     function navigateToStoreTab(tab) {
-      const search = `?tab=${tab}`;
-      const file = tab === 'plan' ? '商城-套餐.html' : tab === 'coin' ? '商城-云币充值.html' : tab === 'cart' ? '商城-购物车.html' : '商城-代理.html';
+      if (tab !== 'proxy') return;
+      const file = '商城-设备.html';
+      const search = '?tab=proxy';
       if (window.parent !== window) {
         window.parent.postMessage({ type: 'yundeng:route', file, search, hash: '' }, '*');
         return;
@@ -370,7 +400,7 @@
     function renderCartDetails(item) {
       const disabled = selectable(item) ? '' : 'disabled';
       const durationOptions = [{ value:1, label:'1个月' }, { value:3, label:'3个月（8折）' }, { value:12, label:'12个月（4折）' }];
-      const couponOptions = ['未选择优惠券','满 100 减 50','专享减 20'];
+      const couponOptions = ['选择优惠券','满 100 减 50','专享减 20'];
       const itemId = escapeHtml(item.id);
       const durationValue = [1, 3, 12].includes(Number(item.duration)) ? Number(item.duration) : 1;
       if (!isDynamicResidential(item) && Number(item.duration) !== durationValue) item.duration = durationValue;
@@ -383,24 +413,30 @@
     }
     function cartGroups() {
       return [
-        { type:'代理', items:state.cart.filter(item => item.type === '代理' && !isDynamicResidential(item)) },
+        { type:'设备', items:state.cart.filter(item => item.type === '设备' && !isDynamicResidential(item)) },
         { type:'动态代理（住宅）', items:state.cart.filter(item => isDynamicResidential(item) && item.orderTypeCode === 'dynamic_proxy') },
         { type:'流量包', items:state.cart.filter(item => isDynamicResidential(item) && item.orderTypeCode !== 'dynamic_proxy') },
         { type:'套餐', items:state.cart.filter(item => item.type === '套餐') }
       ].filter(group => group.items.length);
     }
     function cartGroupLabel(type, items = []) {
-      return ({ 代理:'全球家庭住宅-静态', '动态代理（住宅）':'动态代理（住宅）', 流量包:'动态住宅流量包', 套餐:'云平台套餐' })[type] || type;
+      return ({ 设备:'全球家庭住宅-静态', '动态代理（住宅）':'动态代理（住宅）', 流量包:'动态住宅流量包', 套餐:'云平台套餐' })[type] || type;
     }
     function cartItemSummarySpec(item) {
       if (isTrafficItem(item)) return `容量 ${item.capacity || item.trafficPackage} · 有效期 ${trafficValidityLabel(item)} · 套餐流量 ${item.packageTraffic} · 超出流量资费 ${item.overageRate} · ${item.qty}个`;
       return `${item.region}${item.segment ? ` · ${item.segment}` : ''} · ${item.duration}个月 · ${item.qty}个`;
     }
+    /* 结算区摘要文案（设计稿）：地区（地址类型） - 购买时长 - 购买数量个代理 */
+    function summaryItemLine(item) {
+      if (isTrafficItem(item)) return cartItemSummarySpec(item);
+      if (item.type === '套餐') return `${item.region} - ${item.duration}个月 - ${item.qty}个`;
+      return `${item.region}${item.segment ? `（${item.segment}）` : ''} - ${item.duration}个月 - ${item.qty}个代理`;
+    }
     function renderSummary(selected, total, blocked) {
-      const selectedList = selected.map(item => `<div class="summary-selected-item"><div class="summary-item-main"><div class="summary-item-title">${item.type === '套餐' ? item.region : item.name}</div><div class="summary-item-spec">${cartItemSummarySpec(item)}</div></div><div class="summary-item-price"><span class="mono">${money(cartItemAmount(item))}</span><button class="summary-item-close" type="button" data-delete-cart="${escapeHtml(item.id)}" aria-label="移除商品"><i data-lucide="x"></i></button></div></div>`).join('') || '<div class="summary-item-spec">当前未选择商品</div>';
-      const paymentOptions = paymentMethods.map(method => `<div class="summary-payment-option ${state.cartPayment === method.id ? 'is-selected' : ''}" role="radio" tabindex="0" aria-checked="${state.cartPayment === method.id}" data-cart-payment="${method.id}"><span class="payment-label"><i data-lucide="${method.icon}"></i><span>${method.label}</span>${method.suffix ? `<span class="payment-balance">${method.suffix}</span>` : ''}</span>${method.id === 'coin' ? '<span class="payment-recharge"><button type="button" data-recharge>充值</button></span>' : ''}</div>`).join('');
+      const selectedList = selected.map(item => `<div class="summary-selected-item"><div class="summary-item-main"><div class="summary-item-line">${escapeHtml(summaryItemLine(item))}</div></div><div class="summary-item-price"><span class="mono">${money(cartItemAmount(item))}</span><button class="summary-item-close" type="button" data-delete-cart="${escapeHtml(item.id)}" aria-label="移除商品"><i data-lucide="x"></i></button></div></div>`).join('') || '<div class="summary-item-spec">当前未选择商品</div>';
+      const paymentOptions = paymentMethods.map(method => `<div class="summary-payment-option ${state.cartPayment === method.id ? 'is-selected' : ''}" role="radio" tabindex="0" aria-checked="${state.cartPayment === method.id}" data-cart-payment="${method.id}"><span class="payment-label">${method.icon ? `<img class="payment-icon" src="${method.icon}" alt="">` : ''}<span>${method.label}</span>${method.suffix ? `<span class="payment-balance">${method.suffix}</span>` : ''}${method.id === 'coin' ? '<button type="button" class="payment-refresh" data-refresh-balance aria-label="刷新云币余额"><i data-lucide="refresh-cw"></i></button>' : ''}</span>${method.id === 'coin' ? '<span class="payment-recharge"><button type="button" data-recharge>充值</button></span>' : ''}</div>`).join('');
       /* 订单信息 / 支付方式 / 应付金额 同处一张卡片，区块之间由 .summary-block 的分割线区分。 */
-      $('#cartSummary').innerHTML = `<section class="summary-card"><div class="summary-block summary-order"><div class="summary-title-row"><h2 id="cartSummaryTitle">订单信息</h2><span class="selected-count">已选择 ${selected.length}</span></div><div class="summary-selected-list">${selectedList}</div><div class="summary-overview"><div class="summary-overview-row"><span>订单总金额</span><strong class="mono">${money(selected.reduce((sum,item) => sum + item.unit * item.qty, 0))}</strong></div><div class="summary-overview-row"><span>子订单数</span><span class="mono">${selected.length}</span></div><div class="summary-overview-row"><span>共减</span><span class="mono">${money(selected.reduce((sum,item) => sum + (item.baseDiscount ?? item.discount ?? 0) + (item.couponDiscount ?? 0), 0))}</span></div><div class="summary-overview-row"><span>合计</span><strong class="mono">${money(total)}</strong></div></div></div><div class="summary-block summary-payment"><h3>支付方式</h3><div class="summary-payment-options">${paymentOptions}</div></div><div class="summary-block summary-total"><div class="summary-total-top"><span>实际应付金额</span><strong class="mono">${money(total)}</strong></div><button id="checkout" class="summary-primary-submit" type="button" ${selected.length === 0 || blocked.length ? 'disabled' : ''}>提交支付</button><label class="checkbox-line summary-agreement"><input id="cartNotice" type="checkbox" ${state.cartNotice ? 'checked' : ''}><span>请认真阅读并同意云登浏览器<a href="https://www.yunlogin.com/v2/news/proxyBuyNotice.html?lang=zh" target="_blank" rel="noopener noreferrer">《代理购买须知》</a></span></label></div></section>`;
+      $('#cartSummary').innerHTML = `<section class="summary-card"><div class="summary-block summary-order"><div class="summary-title-row"><h2 id="cartSummaryTitle">订单信息</h2><span class="selected-count">已选择 ${selected.length}</span></div><div class="summary-selected-list">${selectedList}</div><div class="summary-overview"><div class="summary-overview-row"><span>订单总金额</span><strong class="mono">${money(selected.reduce((sum,item) => sum + item.unit * item.qty, 0))}</strong></div><div class="summary-overview-row"><span>子订单数</span><span class="mono">${selected.length}</span></div><div class="summary-overview-row"><span>共减</span><span class="mono summary-discount-value">${money(selected.reduce((sum,item) => sum + (item.baseDiscount ?? item.discount ?? 0) + (item.couponDiscount ?? 0), 0))}<i data-lucide="chevron-down" aria-hidden="true"></i></span></div><div class="summary-overview-row"><span>合计</span><strong class="mono">${money(total)}</strong></div></div></div><div class="summary-block summary-payment"><h3>支付方式</h3><div class="summary-payment-options">${paymentOptions}</div></div><div class="summary-block summary-total"><div class="summary-total-top"><span>实际应付金额</span><strong class="mono">${money(total)}</strong></div><button id="checkout" class="summary-primary-submit" type="button" ${selected.length === 0 || blocked.length ? 'disabled' : ''}>提交支付</button><label class="checkbox-line summary-agreement"><input id="cartNotice" type="checkbox" ${state.cartNotice ? 'checked' : ''}><span>请认真阅读并同意云登浏览器<a href="https://www.yunlogin.com/v2/news/proxyBuyNotice.html?lang=zh" target="_blank" rel="noopener noreferrer">《设备购买须知》</a></span></label></div></section>`;
     }
     function renderCart() {
       const selected = selectedCartItems();
@@ -420,7 +456,7 @@
         const groupItems = group.items.filter(selectable);
         const groupSelected = groupItems.filter(item => item.checked);
         const collapsed = cartGroupCollapsed(group.type);
-        return `<article class="cart-group ${collapsed ? 'collapsed' : ''}" data-cart-group="${group.type}"><header class="cart-group-header" data-group-toggle="${group.type}" role="button" tabindex="0" aria-expanded="${String(!collapsed)}"><div class="cart-group-header-main"><span class="cart-group-summary"><input type="checkbox" data-group-check="${group.type}" ${groupItems.length && groupItems.every(item => item.checked) ? 'checked' : ''} ${groupItems.length === 0 ? 'disabled' : ''} aria-label="选择${group.type}商品"><span class="cart-group-title">${cartGroupLabel(group.type, group.items)}</span></span><span class="cart-group-count mono">已选择 ${groupSelected.length}（共${group.items.length}条）</span></div><button type="button" class="cart-group-toggle" data-group-toggle="${group.type}" aria-label="${collapsed ? '展开' : '收起'} ${group.type}"><i data-lucide="${collapsed ? 'chevron-down' : 'chevron-up'}"></i></button></header><div class="cart-group-body">${group.items.map(item => `<div class="cart-row${isDynamicResidential(item) ? ' is-dynamic' : ''}" data-cart-row="${escapeHtml(item.id)}"><div class="cart-row-main"><label class="checkbox-line"><input type="checkbox" data-cart-check="${escapeHtml(item.id)}" ${item.checked ? 'checked' : ''} ${selectable(item) ? '' : 'disabled'} aria-label="选择商品"><span class="cart-row-title"><strong>${item.type === '套餐' ? item.region : item.name || `${item.region}（${item.name}）`}</strong>${item.segment && !isDynamicResidential(item) ? `<span class="cart-row-sub">${item.segment}</span>` : ''}</span></label></div>${renderCartDetails(item)}<div class="cart-row-actions"><button class="delete-icon-button" type="button" data-delete-cart="${escapeHtml(item.id)}" aria-label="删除商品"><i data-lucide="trash-2"></i></button></div></div>`).join('')}</div></article>`;
+        return `<article class="cart-group ${collapsed ? 'collapsed' : ''}" data-cart-group="${group.type}"><header class="cart-group-header" data-group-toggle="${group.type}" role="button" tabindex="0" aria-expanded="${String(!collapsed)}"><div class="cart-group-header-main"><span class="cart-group-summary"><input type="checkbox" data-group-check="${group.type}" ${groupItems.length && groupItems.every(item => item.checked) ? 'checked' : ''} ${groupItems.length === 0 ? 'disabled' : ''} aria-label="选择${group.type}商品"><span class="cart-group-title">${cartGroupLabel(group.type, group.items)}</span></span><span class="cart-group-count mono">已选择 ${groupSelected.length}（共${group.items.length}条）</span></div><button type="button" class="cart-group-toggle" data-group-toggle="${group.type}" aria-label="${collapsed ? '展开' : '收起'} ${group.type}"><i data-lucide="${collapsed ? 'chevron-down' : 'chevron-up'}"></i></button></header><div class="cart-group-body">${group.items.map(item => `<div class="cart-row${isDynamicResidential(item) ? ' is-dynamic' : ''}" data-cart-row="${escapeHtml(item.id)}"><div class="cart-row-main"><label class="checkbox-line"><input type="checkbox" data-cart-check="${escapeHtml(item.id)}" ${item.checked ? 'checked' : ''} ${selectable(item) ? '' : 'disabled'} aria-label="选择商品"><span class="cart-row-title"><strong title="${item.type === '套餐' ? item.region : item.name || `${item.region}（${item.name}）`}">${item.type === '套餐' ? item.region : item.name || `${item.region}（${item.name}）`}</strong>${item.segment && !isDynamicResidential(item) ? `<span class="cart-row-sub">${item.segment}</span>` : ''}</span></label></div>${renderCartDetails(item)}<div class="cart-row-actions"><button class="delete-icon-button" type="button" data-delete-cart="${escapeHtml(item.id)}" aria-label="删除商品"><i data-lucide="trash-2"></i></button></div></div>`).join('')}</div></article>`;
       }).join('');
       renderSummary(selected, total, blocked);
       persistCart();
@@ -438,8 +474,11 @@
       if (qty) { const item = cartItemById(qty.dataset.cartQty); if (item) item.qty = clamp(item.qty + Number(qty.dataset.delta), 1, 50); renderCart(); return; }
       if (clearSelected) { state.cart = state.cart.filter(item => !item.checked); renderCart(); return; }
       if (remove) { state.cart = state.cart.filter(item => String(item.id) !== String(remove.dataset.deleteCart)); renderCart(); return; }
-      if (payment) { state.cartPayment = payment.dataset.cartPayment; renderCart(); return; }
+      /* 云币余额刷新 / 充值按钮需先于支付方式判定处理，否则点击按钮会被当成切换支付方式并整块重渲染。 */
+      const refreshBalance = event.target.closest('[data-refresh-balance]');
+      if (refreshBalance) { const icon = refreshBalance.querySelector('svg'); if (icon) { icon.style.transition = 'transform .5s ease'; icon.style.transform = 'rotate(360deg)'; setTimeout(() => { icon.style.transition = ''; icon.style.transform = ''; }, 500); } return; }
       if (event.target.closest('[data-recharge]')) return;
+      if (payment) { state.cartPayment = payment.dataset.cartPayment; renderCart(); return; }
       if (toggle && header && !event.target.closest('input, select, button:not([data-group-toggle])')) { const group = header.closest('.cart-group'); const collapsed = !group.classList.contains('collapsed'); group.classList.toggle('collapsed', collapsed); setCartGroupCollapsed(header.dataset.groupToggle, collapsed); header.setAttribute('aria-expanded', String(!collapsed)); lucide.createIcons(); return; }
       if (event.target.closest('#checkout')) openOrderDialog();
     });

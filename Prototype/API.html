@@ -59,8 +59,8 @@
     @media (max-width:1023px) { .directory-panel { order:-1; } }
     @media (max-width:767px) { .sidebar { position:fixed; z-index:50; height:100vh; box-shadow:0 6px 24px rgba(0,0,0,.12); } .sidebar.compact { width:0; overflow:hidden; } }
   </style>
-  <link rel="stylesheet" href="公共导航.css?v=20261008a">
-  <script src="公共导航.js?v=20261008a"></script>
+  <link rel="stylesheet" href="公共导航.css?v=20261013e">
+  <script src="公共导航.js?v=20261013e"></script>
 </head>
 <body class="bg-page text-[13px]">
   <div class="flex min-h-screen">
@@ -160,8 +160,7 @@
     const session = { user:'张小登', language:'简体中文' };
     const navItems = [
       { id:'environment', label:'环境管理', icon:'monitor-cog' },
-      { id:'proxy', label:'代理管理', icon:'network' },
-      { id:'store', label:'商城', icon:'shopping-bag' },
+      { id:'proxy', label:'设备管理', icon:'network' },
       { id:'billing', label:'费用管理', icon:'receipt-text' },
       { id:'team', label:'团队', icon:'users-round', group:true, expanded:true, children:[
         { id:'team-management', label:'团队管理', icon:'building-2', href:'团队管理-成员管理.html' },
@@ -192,8 +191,8 @@
       {id:'env-delete', group:'环境管理', title:'删除浏览器指纹', icon:'trash-2', description:'删除指定浏览器环境及指纹。'},
       {id:'env-group', group:'环境管理', title:'更新环境分组', icon:'folder-sync', description:'调整环境所属分组。'},
       {id:'env-platform', group:'环境管理', title:'查询账号平台', icon:'globe-2', description:'查询账号所属的平台信息。'},
-      {id:'proxy-add', group:'代理管理', title:'添加自有代理', icon:'plug-zap', description:'添加可供环境使用的自有代理。'},
-      {id:'proxy-check', group:'代理管理', title:'校验自有代理', icon:'shield-check', description:'校验自有代理连通性和可用性。'}
+      {id:'proxy-add', group:'设备管理', title:'添加自有设备', icon:'plug-zap', description:'添加可供环境使用的自有设备。'},
+      {id:'proxy-check', group:'设备管理', title:'校验自有设备', icon:'shield-check', description:'校验自有设备连通性和可用性。'}
     ];
     const $ = id => document.getElementById(id);
     let sidebarCompact=innerWidth<768, activeDoc='overview', responseMode='success', statusMode='idle', directoryOpen={};

@@ -1597,8 +1597,8 @@
         font-weight: 500;
       }
     </style>
-    <link rel="stylesheet" href="公共导航.css?v=20261008a" />
-    <script src="公共导航.js?v=20261008a"></script>
+    <link rel="stylesheet" href="公共导航.css?v=20261013e" />
+    <script src="公共导航.js?v=20261013e"></script>
   </head>
   <body>
     <!-- 业务工作区：唯一系统框架由公共导航承载 -->
@@ -1706,13 +1706,13 @@
           ],
         },
         {
-          name: "代理管理",
+          name: "设备管理",
           ops: ["查看", "添加", "编辑", "删除", "检测", "授权"],
         },
         {
           name: "费用管理",
           children: [
-            { name: "云币交易流水", ops: ["查看", "导出"] },
+            { name: "余额明细", ops: ["查看", "导出"] },
             { name: "订单管理", ops: ["查看", "支付", "取消", "导出"] },
             { name: "开票管理", ops: ["查看", "申请开票", "管理抬头"] },
             { name: "优惠券", ops: ["查看"] },
@@ -1819,13 +1819,13 @@
           name: "环境配置员",
           scope: "本部门及下级部门",
           enabled: true,
-          note: "创建和维护环境与代理配置",
+          note: "创建和维护环境与设备配置",
           creator: "张小登",
           created: "2026-06-15 10:05:00",
           permissions: () =>
             allPermissions.filter(
               (p) => p.startsWith("环境管理/")
-                || p.startsWith("代理管理/"),
+                || p.startsWith("设备管理/"),
             ),
         },
         {
@@ -1886,15 +1886,15 @@
             ),
         },
         {
-          name: "代理采购员",
+          name: "设备采购员",
           scope: "本部门及下级部门",
           enabled: true,
-          note: "负责代理采购、检测与授权分配",
+          note: "负责设备采购、检测与授权分配",
           creator: "王蕾",
           created: "2026-07-20 15:20:00",
           permissions: () =>
             allPermissions.filter(
-              (p) => p.startsWith("代理管理/") && !p.endsWith("/删除"),
+              (p) => p.startsWith("设备管理/") && !p.endsWith("/删除"),
             ),
         },
         {
@@ -1909,8 +1909,8 @@
               [
                 "环境管理/环境列表/查看",
                 "环境管理/环境列表/导出",
-                "费用管理/云币交易流水/查看",
-                "费用管理/云币交易流水/导出",
+                "费用管理/余额明细/查看",
+                "费用管理/余额明细/导出",
                 "费用管理/订单管理/查看",
               ].includes(p),
             ),

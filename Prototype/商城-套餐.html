@@ -26,7 +26,7 @@
       }
     };
   </script>
-  <link rel="stylesheet" href="公共导航.css?v=20261008a">
+  <link rel="stylesheet" href="公共导航.css?v=20261013e">
   <style>
     :root {
       --primary: #0066ff;
@@ -463,18 +463,11 @@
     .summary-panel > .summary-section:not(.order-lines) { border-bottom:0; }
     .summary-panel > .summary-section.order-lines { border-top:1px solid #E8EAED; }
   </style>
-  <script src="公共导航.js?v=20261008a"></script>
+  <script src="公共导航.js?v=20261013e"></script>
 </head>
   <body class="first-purchase-page" data-account-status="first" data-purchase-mode="renew">
   <main class="package-page">
-    <nav class="surface !p-0 mb-2" aria-label="商城业务范围">
-      <div class="store-tabs" role="tablist" aria-label="商城业务范围">
-        <button id="tabProxy" class="store-tab" type="button" role="tab" aria-selected="false" data-tab="proxy" tabindex="-1"><i data-lucide="server"></i><span>代理</span></button>
-        <button id="tabPlan" class="store-tab" type="button" role="tab" aria-selected="true" data-tab="plan" tabindex="0"><i data-lucide="package"></i><span>套餐</span></button>
-        <button id="tabCoin" class="store-tab" type="button" role="tab" aria-selected="false" data-tab="coin" tabindex="-1"><i data-lucide="wallet-cards"></i><span>云币充值</span></button>
-        <button id="tabCart" class="store-tab" type="button" role="tab" aria-selected="false" data-tab="cart" tabindex="-1"><i data-lucide="shopping-cart"></i><span>购物车</span></button>
-      </div>
-    </nav>
+    <!-- 商城页签已收敛为设备商城的「购买设备 / 购物车」；套餐页撤出页签体系，作为保留路由的独立页面 -->
     <div class="package-layout">
       <section class="panel main-panel" aria-label="套餐购买">
         <div class="account-status" aria-label="账户套餐状态">
@@ -670,7 +663,7 @@
       </header>
       <div class="recharge-dialog-body">
         <div class="recharge-field">
-          <div class="recharge-field-label-with-help"><label class="recharge-field-label">充值金额</label><div class="recharge-help"><button type="button" class="recharge-help-trigger" aria-label="关于云币" aria-describedby="rechargeCoinHelp"><i data-lucide="circle-help"></i></button><div id="rechargeCoinHelp" class="recharge-help-popover" role="tooltip"><h3>关于云币</h3><ul class="recharge-info-list"><li>云币是云登提供的一种内部结算形式，1元=1云币。</li><li>云币可以用于购买代理与套餐，支付时选择云币支付，用多少扣多少。</li><li>云币充值记录、消费记录、剩余余额，可在商城-云币充值页面查看。</li></ul></div></div></div>
+          <div class="recharge-field-label-with-help"><label class="recharge-field-label">充值金额</label><div class="recharge-help"><button type="button" class="recharge-help-trigger" aria-label="关于云币" aria-describedby="rechargeCoinHelp"><i data-lucide="circle-help"></i></button><div id="rechargeCoinHelp" class="recharge-help-popover" role="tooltip"><h3>关于云币</h3><ul class="recharge-info-list"><li>云币是云登提供的一种内部结算形式，1元=1云币。</li><li>云币可以用于购买设备与套餐，支付时选择云币支付，用多少扣多少。</li><li>云币充值记录、消费记录、剩余余额，可在商城-云币充值页面查看。</li></ul></div></div></div>
           <div class="recharge-amount-options" id="rechargeAmountOptions">
             <button type="button" class="recharge-amount-btn selected" data-amount="500"><span class="recharge-amount-check" aria-hidden="true"><i data-lucide="check"></i></span><span class="recharge-amount-value">¥ 500</span><span class="recharge-amount-gift">赠送 25 云币</span><span class="recharge-amount-total">到账 525 云币</span></button>
             <button type="button" class="recharge-amount-btn" data-amount="1000"><span class="recharge-amount-check" aria-hidden="true"><i data-lucide="check"></i></span><span class="recharge-amount-value">¥ 1000</span><span class="recharge-amount-gift">赠送 100 云币</span><span class="recharge-amount-total">到账 1,100 云币</span></button>
@@ -1095,16 +1088,7 @@
         renderPriceTooltip();
         lucide.createIcons();
       };
-      function navigateToStoreTab(tab) {
-        const search = `?tab=${tab}`;
-        if (window.parent !== window) {
-          const file = tab === 'plan' ? '商城-套餐.html' : tab === 'coin' ? '商城-云币充值.html' : tab === 'cart' ? '商城-购物车.html' : '商城-代理.html';
-          window.parent.postMessage({ type: 'yundeng:route', file, search, hash: '' }, '*');
-          return;
-        }
-        const file = tab === 'plan' ? '商城-套餐.html' : tab === 'coin' ? '商城-云币充值.html' : tab === 'cart' ? '商城-购物车.html' : '商城-代理.html';
-        location.replace(`../index.html?page=store&module=${encodeURIComponent(file)}&moduleSearch=${encodeURIComponent(search.slice(1))}`);
-      }
+      /* 套餐页已撤出商城页签体系：不再承载商城页签跳转，「购买设备 / 购物车」由设备商城子页面提供。 */
       $('#envTierStrip').addEventListener('click', (event) => {
         const tierButton = event.target.closest('[data-tier-value]');
         if (tierButton) {
@@ -1216,10 +1200,6 @@
       };
       document.querySelectorAll('[data-compare-resource]').forEach((button) => button.addEventListener('click', () => toggleDetailPanel(button, '#' + button.getAttribute('aria-controls'))));
       document.querySelectorAll('[data-compare-tooltip-expand]').forEach((button) => button.addEventListener('click', () => toggleDetailPanel(button, '#' + button.getAttribute('aria-controls'))));
-      document.querySelectorAll('[data-tab]').forEach((button) => button.addEventListener('click', () => {
-        const tab = button.dataset.tab;
-        if (tab !== 'plan') navigateToStoreTab(tab);
-      }));
       $('#rechargeButton').addEventListener('click', openRechargeDialog);
       $('#planRefreshBalance').addEventListener('click', () => {
         state.cloudBalance += 18;

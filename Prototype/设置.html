@@ -96,8 +96,8 @@
       *,*::before,*::after { animation-duration:.01ms!important; transition-duration:.01ms!important; scroll-behavior:auto!important; }
     }
   </style>
-  <link rel="stylesheet" href="公共导航.css?v=20261008a">
-  <script src="公共导航.js?v=20261008a"></script>
+  <link rel="stylesheet" href="公共导航.css?v=20261013e">
+  <script src="公共导航.js?v=20261013e"></script>
 </head>
 <body class="bg-page text-[13px]">
   <div class="flex h-screen min-w-0">
@@ -114,8 +114,7 @@
       </div>
       <nav class="px-3 flex-1 overflow-y-auto pb-3" aria-label="业务模块">
         <a href="环境管理.html" class="nav-link px-2 flex items-center gap-3 mb-1"><i data-lucide="monitor-cog" class="w-[18px] h-[18px]"></i><span class="nav-label">环境管理</span></a>
-        <a href="代理管理.html" class="nav-link px-2 flex items-center gap-3 mb-1"><i data-lucide="network" class="w-[18px] h-[18px]"></i><span class="nav-label">代理管理</span></a>
-        <a href="商城-代理.html" class="nav-link px-2 flex items-center gap-3 mb-1"><i data-lucide="shopping-bag" class="w-[18px] h-[18px]"></i><span class="nav-label">商城</span></a>
+        <a href="设备管理.html" class="nav-link px-2 flex items-center gap-3 mb-1"><i data-lucide="network" class="w-[18px] h-[18px]"></i><span class="nav-label">设备管理</span></a>
         <a href="费用管理-订单管理.html" class="nav-link px-2 flex items-center gap-3 mb-1"><i data-lucide="receipt-text" class="w-[18px] h-[18px]"></i><span class="nav-label">费用管理</span></a>
         <div class="mb-1">
           <button class="nav-link w-full px-2 flex items-center gap-3 text-left" data-nav-group="team" aria-expanded="true"><i data-lucide="users-round" class="w-[18px] h-[18px]"></i><span class="nav-label flex-1">团队</span><i data-lucide="chevron-down" class="nav-chevron w-4 h-4"></i></button>
@@ -178,13 +177,13 @@
     <section id="permissionPanel" class="w-[600px] max-w-[92vw] bg-card rounded-lg shadow-[0_6px_24px_rgba(0,0,0,.12)]">
       <header class="px-5 py-4 border-b border-line flex items-center justify-between"><h2 id="permissionTitle" class="text-[16px] font-semibold text-ink-title">确认开启</h2><button id="closePermission" class="w-8 h-8 rounded flex items-center justify-center text-ink-muted hover:bg-hover" aria-label="关闭"><i data-lucide="x" class="w-5 h-5"></i></button></header>
       <div class="px-5 py-5 text-[14px] leading-7 text-ink-body">
-        <p>设置后，将开启代理数据权限。数据权限规则：</p>
+        <p>设置后，将开启设备数据权限。数据权限规则：</p>
         <ul class="mt-2 pl-5 list-disc space-y-1">
-          <li>创始人：可查看所有代理</li>
-          <li>部门管理员：可查看部门及子部门成员创建、购买和被授权的所有代理</li>
-          <li>普通成员：可查看自己创建、购买和被授权的所有代理</li>
+          <li>创始人：可查看所有设备</li>
+          <li>部门管理员：可查看部门及子部门成员创建、购买和被授权的所有设备</li>
+          <li>普通成员：可查看自己创建、购买和被授权的所有设备</li>
         </ul>
-        <p class="mt-3 text-ink-sub">代理授权入口：代理管理-平台/自有/代理API对应代理授权列。</p>
+        <p class="mt-3 text-ink-sub">设备授权入口：设备管理-平台/自有/代理API对应设备授权列。</p>
       </div>
       <footer class="px-5 pb-5 flex justify-end gap-3"><button id="cancelPermission" class="btn btn-secondary">取消</button><button id="confirmPermission" class="btn btn-primary">确定</button></footer>
     </section>
@@ -207,7 +206,7 @@
     const tabs = [
       {id:'local',label:'本地设置',icon:'hard-drive',subs:[['software','软件版本','badge-check'],['kernel','内核','cpu']]},
       {id:'personal',label:'个人偏好',icon:'user-cog',subs:[['taskbar','任务栏图标','app-window'],['search','搜索引擎','search'],['translation','翻译目标语言','languages'],['launch','指纹窗口批量启动规则','panels-top-left']]},
-      {id:'team',label:'团队偏好',icon:'users-round',subs:[['preload','预加载页面','panels-top-left'],['security-policy','环境安全策略','shield-check'],['security-monitor','环境安全监控','scan-eye'],['sync','同步设置','cloud-upload'],['proxy-permission','代理数据权限','key-round'],['defaults','默认偏好项','sliders-horizontal']]},
+      {id:'team',label:'团队偏好',icon:'users-round',subs:[['preload','预加载页面','panels-top-left'],['security-policy','环境安全策略','shield-check'],['security-monitor','环境安全监控','scan-eye'],['sync','同步设置','cloud-upload'],['proxy-permission','设备数据权限','key-round'],['defaults','默认偏好项','sliders-horizontal']]},
       {id:'navigation',label:'导航设置',icon:'panel-left',subs:[['side-navigation','侧边导航设置','panel-left'],['tab-navigation','Tab 导航设置','gallery-horizontal']]},
       {id:'agreement',label:'服务协议',icon:'file-text',subs:[['agreement-content','服务协议','file-text']]}
     ];
@@ -216,8 +215,7 @@
       team:{preloadMode:'specified',preloadUrl:'https://www.yunlogin.com',hideBoundProxy:false,hideExpiredProxy:true,securityMonitor:true,highRiskAlert:true,syncCache:false,proxyDataPermission:true,defaults:{images:'off',video:false,sound:false,memory:false,cache:false,cookie:false,fingerprint:false}},
       sideNavigation:[
         {id:'environment',label:'环境管理',icon:'monitor-cog',visible:true},
-        {id:'proxy',label:'代理管理',icon:'network',visible:true},
-        {id:'store',label:'商城',icon:'shopping-bag',visible:true},
+        {id:'proxy',label:'设备管理',icon:'network',visible:true},
         {id:'billing',label:'费用管理',icon:'receipt-text',visible:true},
         {id:'team',label:'团队',icon:'users-round',visible:true,children:[
           {id:'team-management',label:'团队管理',visible:true},{id:'account-management',label:'账号管理',visible:true},{id:'transfer',label:'分享转移',visible:true},{id:'logs',label:'日志管理',visible:true},{id:'account-settings',label:'账号设置',visible:true}
@@ -227,11 +225,10 @@
         {id:'recycle',label:'回收站',icon:'trash-2',visible:true}
       ],
       tabGroups:[
-        {id:'proxy',label:'代理管理',icon:'network',items:[['platform','平台代理'],['owned','自有代理'],['proxy-api','代理API']]},
+        {id:'proxy',label:'设备管理',icon:'network',items:[['platform','平台设备'],['owned','自有设备'],['proxy-api','代理API']]},
         {id:'plugins',label:'插件管理',icon:'blocks',items:[['market','插件市场'],['mine','我的插件'],['team','团队插件']]},
-        {id:'store',label:'商城',icon:'shopping-bag',items:[['proxy-product','代理'],['plan','套餐'],['cart','购物车']]},
-        {id:'billing',label:'费用管理',icon:'receipt-text',items:[['coin','云币充值'],['orders','订单管理'],['coupons','优惠券']]},
-        {id:'recycle',label:'回收站',icon:'trash-2',items:[['environment','环境'],['account','账号'],['platform-proxy','平台代理'],['owned-proxy','自有代理'],['proxy-api','代理API'],['rpa-template','RPA模板']]},
+        {id:'billing',label:'费用管理',icon:'receipt-text',items:[['recharge','云币充值'],['orders','订单管理'],['coupons','优惠券']]},
+        {id:'recycle',label:'回收站',icon:'trash-2',items:[['environment','环境'],['account','账号'],['platform-proxy','平台设备'],['owned-proxy','自有设备'],['proxy-api','代理API'],['rpa-template','RPA模板']]},
         {id:'api',label:'API',icon:'braces',items:[['docs','API文档'],['keys','密钥管理'],['logs','调用日志']]}
       ]
     };
@@ -268,12 +265,12 @@
       5:{title:'个人偏好',desc:['配置任务栏图标、默认搜索引擎、翻译语言和批量启动规则。','任务栏图标修改需重启环境后生效。']},
       6:{title:'预加载页面',desc:['可选择上次打开页面或指定网址。','指定网址仅接受 HTTP/HTTPS，非法输入使用字段级错误。']},
       7:{title:'环境安全与同步',desc:['团队安全策略、监控和缓存同步即时保存。','团队设置会应用于全员，服务端仍需再次鉴权。']},
-      8:{title:'代理数据权限',desc:['开启前必须阅读创始人、部门管理员和普通成员的数据范围。','取消确认不会改变当前开关。']},
+      8:{title:'设备数据权限',desc:['开启前必须阅读创始人、部门管理员和普通成员的数据范围。','取消确认不会改变当前开关。']},
       9:{title:'默认偏好项',desc:['配置图片、视频、声音、内存、缓存、Cookie 与随机指纹默认值。','原型不伪造“自定义图片”的二级规则。']},
       10:{title:'侧边导航设置',desc:['控制模块显隐，并支持同层拖拽或上移/下移排序。','设置入口固定保留，隐藏菜单不等于移除权限。']},
       11:{title:'Tab 导航设置',desc:['按业务模块控制 Tab 显隐。','每组至少保留一个可访问项。']},
       12:{title:'服务协议',desc:['展示更新日期和滚动协议正文。','原型只放代表性内容，正式文本需由法务发布。']},
-      13:{title:'确认开启代理数据权限',desc:['确认后才模拟保存并打开开关。','关闭或取消弹窗均恢复操作前状态。']}
+      13:{title:'确认开启设备数据权限',desc:['确认后才模拟保存并打开开关。','关闭或取消弹窗均恢复操作前状态。']}
     */
     let activeTab='local', activeSub='software', sidebarCompact=false, draggedItem=null, permissionTrigger=null;
     const downloadTimers = new Map();
@@ -319,7 +316,7 @@
     function settingToggleRow(path,title,desc,checked) { return `<div class="pref-row"><div><p class="font-medium text-ink-title">${title}</p><p class="mt-1 text-[12px] leading-5 text-ink-sub">${desc}</p></div><div>${switchButton(path,checked,title)}</div></div>`; }
     function renderTeam() {
       const d=settings.team.defaults;
-      return `<div><div class="mb-5 px-4 py-3 rounded bg-danger-bg text-danger flex items-start gap-2"><i data-lucide="triangle-alert" class="w-4 h-4 mt-0.5 shrink-0"></i><div><strong>团队设置将应用于团队全员，请谨慎操作</strong><p class="mt-1 text-[12px] opacity-90">所有写操作在生产环境均需服务端权限校验和审计。</p></div></div><section id="preload" class="section-block scroll-mt-4"><h2 class="text-[17px] font-semibold text-ink-title">预加载页面</h2><div class="pref-row"><div><p class="font-medium text-ink-title">环境启动后打开</p><p class="mt-1 text-[12px] text-ink-sub">为团队环境统一设置启动页</p></div><div>${segment('team.preloadMode',[['last','上次打开页面'],['specified','指定网址']],settings.team.preloadMode)}<div id="preloadUrlWrap" class="${settings.team.preloadMode==='specified'?'':'hidden'} mt-3 max-w-[500px]"><input id="preloadUrl" class="control w-full" maxlength="2048" value="${escapeHtml(settings.team.preloadUrl)}" placeholder="请输入以 http:// 或 https:// 开头的网址"><p id="preloadError" class="hidden mt-1.5 text-[12px] text-danger" role="alert">请输入有效的网址</p></div></div></div></section><section id="security-policy" class="section-block scroll-mt-4"><h2 class="text-[17px] font-semibold text-ink-title">环境安全策略</h2>${settingToggleRow('team.hideBoundProxy','默认不显示已绑环境代理','换绑代理时默认隐藏已绑定代理，仍可手动取消筛选。',settings.team.hideBoundProxy)}${settingToggleRow('team.hideExpiredProxy','默认不显示已过期代理','换绑代理时默认隐藏已过期代理，仍可手动取消筛选。',settings.team.hideExpiredProxy)}</section><section id="security-monitor" class="section-block scroll-mt-4"><h2 class="text-[17px] font-semibold text-ink-title">环境安全监控</h2>${settingToggleRow('team.securityMonitor','设置环境安全监控','监控团队环境中的异常配置与风险行为。',settings.team.securityMonitor)}${settingToggleRow('team.highRiskAlert','高风险操作提醒','成员执行高风险操作时展示提醒。',settings.team.highRiskAlert)}</section><section id="sync" class="section-block scroll-mt-4"><h2 class="text-[17px] font-semibold text-ink-title">同步设置</h2>${settingToggleRow('team.syncCache','同步缓存','开启后，缓存数据将在环境关闭后自动同步至云端。',settings.team.syncCache)}</section><section id="proxy-permission" class="section-block scroll-mt-4"><h2 class="text-[17px] font-semibold text-ink-title">代理数据权限</h2>${settingToggleRow('team.proxyDataPermission','是否开启代理数据权限','按创始人、部门管理员与普通成员范围控制可查看代理。',settings.team.proxyDataPermission)}<div class="mt-2 max-w-[760px] rounded bg-info-bg px-4 py-3 text-[12px] leading-5 text-info"><i data-lucide="info" class="inline w-4 h-4 mr-1"></i>代理授权入口：代理管理-平台/自有/代理API对应代理授权列。</div></section><section id="defaults" class="section-block scroll-mt-4"><h2 class="text-[17px] font-semibold text-ink-title">默认偏好项</h2><p class="mt-1 text-[12px] text-ink-sub">新建环境默认继承以下团队配置，成员实际可修改范围以权限为准。</p><div class="mt-3 divide-y divide-line-lighter"><div class="pref-row"><p class="font-medium text-ink-title">禁止加载图片</p>${segment('team.defaults.images',[['custom','自定义'],['off','关闭']],d.images)}</div>${[['video','禁止加载视频'],['sound','禁止播放声音'],['memory','定时内存回收'],['cache','自动删除缓存'],['cookie','自动删除 Cookie'],['fingerprint','启动时随机生成指纹']].map(([key,label])=>`<div class="pref-row"><p class="font-medium text-ink-title">${label}</p>${segment(`team.defaults.${key}`,[['true','开启'],['false','关闭']],String(d[key]))}</div>`).join('')}</div></section></div>`;
+      return `<div><div class="mb-5 px-4 py-3 rounded bg-danger-bg text-danger flex items-start gap-2"><i data-lucide="triangle-alert" class="w-4 h-4 mt-0.5 shrink-0"></i><div><strong>团队设置将应用于团队全员，请谨慎操作</strong><p class="mt-1 text-[12px] opacity-90">所有写操作在生产环境均需服务端权限校验和审计。</p></div></div><section id="preload" class="section-block scroll-mt-4"><h2 class="text-[17px] font-semibold text-ink-title">预加载页面</h2><div class="pref-row"><div><p class="font-medium text-ink-title">环境启动后打开</p><p class="mt-1 text-[12px] text-ink-sub">为团队环境统一设置启动页</p></div><div>${segment('team.preloadMode',[['last','上次打开页面'],['specified','指定网址']],settings.team.preloadMode)}<div id="preloadUrlWrap" class="${settings.team.preloadMode==='specified'?'':'hidden'} mt-3 max-w-[500px]"><input id="preloadUrl" class="control w-full" maxlength="2048" value="${escapeHtml(settings.team.preloadUrl)}" placeholder="请输入以 http:// 或 https:// 开头的网址"><p id="preloadError" class="hidden mt-1.5 text-[12px] text-danger" role="alert">请输入有效的网址</p></div></div></div></section><section id="security-policy" class="section-block scroll-mt-4"><h2 class="text-[17px] font-semibold text-ink-title">环境安全策略</h2>${settingToggleRow('team.hideBoundProxy','默认不显示已绑环境设备','换绑设备时默认隐藏已绑定设备，仍可手动取消筛选。',settings.team.hideBoundProxy)}${settingToggleRow('team.hideExpiredProxy','默认不显示已过期设备','换绑设备时默认隐藏已过期设备，仍可手动取消筛选。',settings.team.hideExpiredProxy)}</section><section id="security-monitor" class="section-block scroll-mt-4"><h2 class="text-[17px] font-semibold text-ink-title">环境安全监控</h2>${settingToggleRow('team.securityMonitor','设置环境安全监控','监控团队环境中的异常配置与风险行为。',settings.team.securityMonitor)}${settingToggleRow('team.highRiskAlert','高风险操作提醒','成员执行高风险操作时展示提醒。',settings.team.highRiskAlert)}</section><section id="sync" class="section-block scroll-mt-4"><h2 class="text-[17px] font-semibold text-ink-title">同步设置</h2>${settingToggleRow('team.syncCache','同步缓存','开启后，缓存数据将在环境关闭后自动同步至云端。',settings.team.syncCache)}</section><section id="proxy-permission" class="section-block scroll-mt-4"><h2 class="text-[17px] font-semibold text-ink-title">设备数据权限</h2>${settingToggleRow('team.proxyDataPermission','是否开启设备数据权限','按创始人、部门管理员与普通成员范围控制可查看设备。',settings.team.proxyDataPermission)}<div class="mt-2 max-w-[760px] rounded bg-info-bg px-4 py-3 text-[12px] leading-5 text-info"><i data-lucide="info" class="inline w-4 h-4 mr-1"></i>设备授权入口：设备管理-平台/自有/代理API对应设备授权列。</div></section><section id="defaults" class="section-block scroll-mt-4"><h2 class="text-[17px] font-semibold text-ink-title">默认偏好项</h2><p class="mt-1 text-[12px] text-ink-sub">新建环境默认继承以下团队配置，成员实际可修改范围以权限为准。</p><div class="mt-3 divide-y divide-line-lighter"><div class="pref-row"><p class="font-medium text-ink-title">禁止加载图片</p>${segment('team.defaults.images',[['custom','自定义'],['off','关闭']],d.images)}</div>${[['video','禁止加载视频'],['sound','禁止播放声音'],['memory','定时内存回收'],['cache','自动删除缓存'],['cookie','自动删除 Cookie'],['fingerprint','启动时随机生成指纹']].map(([key,label])=>`<div class="pref-row"><p class="font-medium text-ink-title">${label}</p>${segment(`team.defaults.${key}`,[['true','开启'],['false','关闭']],String(d[key]))}</div>`).join('')}</div></section></div>`;
     }
     function navigationRow(item,index,total,parentId='root') {
       return `<div class="sortable-row min-h-[48px] px-3 flex items-center gap-3 border-b border-line-lighter last:border-0" draggable="true" data-sort-id="${item.id}" data-parent="${parentId}"><button class="w-7 h-7 rounded flex items-center justify-center text-ink-muted hover:bg-hover" data-drag-handle aria-label="拖动${item.label}"><i data-lucide="grip-vertical" class="w-4 h-4"></i></button><span class="w-8 h-8 rounded bg-page text-ink-sub flex items-center justify-center">${item.icon?`<i data-lucide="${item.icon}" class="w-4 h-4"></i>`:'<span class="w-1.5 h-1.5 rounded-full bg-line"></span>'}</span><span class="flex-1 text-ink-title ${parentId!=='root'?'text-[12px]':''}">${item.label}</span><div class="flex items-center gap-1"><button class="w-7 h-7 rounded flex items-center justify-center text-ink-muted hover:bg-hover disabled:opacity-30" data-move="up" data-id="${item.id}" data-parent="${parentId}" ${index===0?'disabled':''} aria-label="上移${item.label}"><i data-lucide="chevron-up" class="w-4 h-4"></i></button><button class="w-7 h-7 rounded flex items-center justify-center text-ink-muted hover:bg-hover disabled:opacity-30" data-move="down" data-id="${item.id}" data-parent="${parentId}" ${index===total-1?'disabled':''} aria-label="下移${item.label}"><i data-lucide="chevron-down" class="w-4 h-4"></i></button></div>${switchButton(`navigation.${parentId}.${item.id}`,item.visible,`${item.label}导航`)}</div>`;

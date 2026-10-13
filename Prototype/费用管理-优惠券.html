@@ -7,7 +7,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <link rel="stylesheet" href="../src/styles/global.css?v=20260821a">
-  <link rel="stylesheet" href="公共导航.css?v=20261008a">
+  <link rel="stylesheet" href="公共导航.css?v=20261013e">
   <script>
     window.tailwind=window.tailwind||{};window.lucide=window.lucide||{createIcons(){}};tailwind.config={theme:{extend:{colors:{primary:'#0066FF','primary-hover':'#0052CC','primary-active':'#0047B3','primary-bg':'#E6F0FF','ink-title':'#1A1D24','ink-body':'#3A3F4A','ink-sub':'#6E7685','ink-muted':'#9DA2AC',line:'#DFE1E5','line-light':'#E8EAED','line-lighter':'#F0F1F3',page:'#F7F8FA',card:'#FFFFFF',hover:'#F3F4F6',success:'#0FC060','success-bg':'#E7F9F0',warning:'#E7772D','warning-bg':'#FDF2E9',danger:'#D9001B','danger-bg':'#FFE8EB',info:'#0091D5','info-bg':'#E4F4FB'}}}};
   </script>
@@ -29,7 +29,7 @@
     .coupon-info-row.coupon-expiring span { overflow: visible; text-overflow: clip; white-space: normal; word-break: break-all; line-height: 16px; }
     .coupon-expiry-remaining { display: block; margin-top: 2px; font-size: 11px; font-weight: 600; line-height: 16px; white-space: nowrap; }
   </style>
-  <script src="公共导航.js?v=20261008a"></script>
+  <script src="公共导航.js?v=20261013e"></script>
 </head>
 <body class="bg-page text-ink-body">
   <script>(function(){if(window===top){try{location.replace(new URL('../index.html?page=billing-coupons',location.href).href)}catch(_){location.replace('../index.html?page=billing-coupons')}}})();</script>
@@ -68,13 +68,13 @@
       const saveState=patch=>{state=Object.assign({},state,patch||{});try{sessionStorage.setItem(stateKey,JSON.stringify(state))}catch(_) {}};
       const coupons=[
         {id:'CP20260827001',name:'全场立减券',type:'立减券',discount:10,validMode:'无限制',scene:'全局',payments:['微信支付','支付宝支付'],lifecycle:'未使用'},
-        {id:'CP20260827002',name:'代理采购满减券',type:'满减券',threshold:100,discount:20,validMode:'时间段',start:'2026-08-01',end:'2026-09-30',scene:'代理',payments:['微信支付','支付宝支付'],lifecycle:'未使用'},
+        {id:'CP20260827002',name:'设备采购满减券',type:'满减券',threshold:100,discount:20,validMode:'时间段',start:'2026-08-01',end:'2026-09-30',scene:'设备',payments:['微信支付','支付宝支付'],lifecycle:'未使用'},
         {id:'CP20260827003',name:'套餐续费赠金券',type:'满赠券',threshold:100,gift:20,validMode:'领取后多少天内',claimedAt:'2026-08-24',validDays:6,scene:'套餐',payments:['微信支付'],lifecycle:'未使用'},
         {id:'CP20260827004',name:'充值限时立减券',type:'立减券',discount:15,validMode:'时间段',start:'2026-08-20',end:'2026-08-29',scene:'充值',payments:['支付宝支付'],lifecycle:'未使用'},
         {id:'CP20260827005',name:'九月套餐满减券',type:'满减券',threshold:300,discount:50,validMode:'时间段',start:'2026-09-01',end:'2026-09-30',scene:'套餐',payments:['微信支付','支付宝支付'],lifecycle:'未使用'},
-        {id:'CP20260827006',name:'代理加购赠金券',type:'满赠券',threshold:500,gift:80,validMode:'时间段',start:'2026-08-30',end:'2026-10-15',scene:'代理',payments:['支付宝支付'],lifecycle:'未使用'},
+        {id:'CP20260827006',name:'设备加购赠金券',type:'满赠券',threshold:500,gift:80,validMode:'时间段',start:'2026-08-30',end:'2026-10-15',scene:'设备',payments:['支付宝支付'],lifecycle:'未使用'},
         {id:'CP20260827007',name:'充值回馈满减券',type:'满减券',threshold:500,discount:30,validMode:'时间段',start:'2026-08-01',end:'2026-09-15',scene:'充值',payments:['微信支付','支付宝支付'],lifecycle:'已使用'},
-        {id:'CP20260827008',name:'代理首购立减券',type:'立减券',discount:8,validMode:'无限制',scene:'代理',payments:['微信支付'],lifecycle:'已使用'},
+        {id:'CP20260827008',name:'设备首购立减券',type:'立减券',discount:8,validMode:'无限制',scene:'设备',payments:['微信支付'],lifecycle:'已使用'},
         {id:'CP20260827009',name:'七月套餐满减券',type:'满减券',threshold:200,discount:20,validMode:'时间段',start:'2026-07-01',end:'2026-08-20',scene:'套餐',payments:['微信支付','支付宝支付'],lifecycle:'未使用'},
         {id:'CP20260827010',name:'充值领取立减券',type:'立减券',discount:5,validMode:'领取后多少天内',claimedAt:'2026-08-15',validDays:5,scene:'充值',payments:['支付宝支付'],lifecycle:'未使用'}
       ];
@@ -89,7 +89,7 @@
       const isUsable=coupon=>lifecycle(coupon)==='未使用';
       const benefit=coupon=>coupon.type==='立减券'?{value:'¥'+coupon.discount,note:'无门槛立减'}:coupon.type==='满减券'?{value:'¥'+coupon.discount,note:'满 ¥'+coupon.threshold+' 可用'}:{value:'赠 ¥'+coupon.gift,note:'满 ¥'+coupon.threshold+' 可赠'};
       const validity=coupon=>{if(coupon.validMode==='无限制')return '无限制';if(coupon.validMode==='时间段')return coupon.start+' 至 '+coupon.end;const end=endDate(coupon);return coupon.claimedAt?'领取后 '+coupon.validDays+' 天内（至 '+formatDate(end)+'）':'领取后 '+coupon.validDays+' 天内'};
-      const routeFor=coupon=>({全局:'../index.html?page=store',代理:'../index.html?page=store&moduleSearch=tab%3Dproxy',套餐:'../index.html?page=store&moduleSearch=tab%3Dpackage',充值:'../index.html?page=store-coin'})[coupon.scene];
+      const routeFor=coupon=>({全局:'../index.html?page=store',设备:'../index.html?page=store&moduleSearch=tab%3Dproxy',套餐:'../index.html?page=store&moduleSearch=tab%3Dpackage',充值:'../index.html?page=billing-recharge'})[coupon.scene];
       const rowsForTab=tab=>coupons.filter(coupon=>tab==='即将过期'?isExpiring(coupon):lifecycle(coupon)===tab);
       const escapeHtml=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
       function render(tab){
@@ -105,7 +105,7 @@
       }
       $$('[data-coupon-tab]').forEach(button=>button.addEventListener('click',()=>render(button.dataset.couponTab)));
 
-      const annotations={1:{title:'优惠券状态筛选',desc:['触发：点击状态 Tab','响应：按有效期和使用状态刷新卡券宫格','规则：即将过期为距离到期 3 天内；无限制不进入该筛选']},2:{title:'优惠券卡券',desc:['触发：进入任一状态 Tab','响应：展示金额、门槛、场景、支付限制和有效期','规则：卡面不显示状态，也不提供额外详情入口']},3:{title:'去使用',desc:['触发：点击可用优惠券的去使用','响应：按全局、代理、套餐或充值进入对应页面','规则：未生效、已使用和已失效优惠券不显示按钮']}};
+      const annotations={1:{title:'优惠券状态筛选',desc:['触发：点击状态 Tab','响应：按有效期和使用状态刷新卡券宫格','规则：即将过期为距离到期 3 天内；无限制不进入该筛选']},2:{title:'优惠券卡券',desc:['触发：进入任一状态 Tab','响应：展示金额、门槛、场景、支付限制和有效期','规则：卡面不显示状态，也不提供额外详情入口']},3:{title:'去使用',desc:['触发：点击可用优惠券的去使用','响应：按全局、设备、套餐或充值进入对应页面','规则：未生效、已使用和已失效优惠券不显示按钮']}};
       let annoVisible=false;const annoLayer=$('#annoLayer'),annoPopup=$('#annoPopup');
       function renderAnno(){annoLayer.innerHTML='';if(!annoVisible||!annoPopup.classList.contains('hidden'))return;document.querySelectorAll('[data-anno]').forEach(element=>{if(element.offsetParent===null)return;const rect=element.getBoundingClientRect(),badge=document.createElement('button');badge.type='button';badge.className='anno-badge';badge.textContent=element.dataset.anno;badge.style.left=rect.right-10+'px';badge.style.top=rect.top-10+'px';badge.onclick=()=>{const item=annotations[element.dataset.anno];$('#annoTitle').textContent=element.dataset.anno+'. '+item.title;$('#annoBody').innerHTML='<ul class="list-disc pl-5 space-y-2">'+item.desc.map(text=>'<li>'+text+'</li>').join('')+'</ul>';annoPopup.classList.remove('hidden');renderAnno();$('#annoClose').focus()};annoLayer.appendChild(badge)})}
       $('#annoToggle').addEventListener('click',()=>{annoVisible=!annoVisible;$('#annoToggle').setAttribute('aria-pressed',String(annoVisible));$('#annoToggle span').textContent=annoVisible?'隐藏标注':'显示标注';renderAnno()});$('#annoClose').addEventListener('click',()=>{annoPopup.classList.add('hidden');renderAnno()});annoPopup.addEventListener('click',event=>{if(event.target===annoPopup){annoPopup.classList.add('hidden');renderAnno()}});window.addEventListener('resize',renderAnno);$('#mainContent').addEventListener('scroll',renderAnno);

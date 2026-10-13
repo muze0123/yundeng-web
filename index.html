@@ -136,7 +136,7 @@
   <script>
     // 页面数据：业务模块通过唯一 SystemFrame 路由打开，文件名用于搜索和路由映射。
     const prototypes = [
-      { id:'home', group:'后台系统', title:'首页', description:'登录后的默认工作台，集中说明环境能力、常用配置路径、热门代理与高频使用指南。', file:'首页.html', icon:'house', status:'业务原型', statusTone:'success', updated:'08-17', size:'单文件', tags:['默认首页','环境介绍','热门代理','使用指南'] },
+      { id:'home', group:'后台系统', title:'首页', description:'登录后的默认工作台，集中说明环境能力、常用配置路径、热门设备与高频使用指南。', file:'首页.html', icon:'house', status:'业务原型', statusTone:'success', updated:'08-17', size:'单文件', tags:['默认首页','环境介绍','热门设备','使用指南'] },
       { id:'api', group:'后台系统', title:'API', description:'查看本地 API 状态、参数格式、接口目录与 GET /status 契约，其他接口明确标注待后端确认。', file:'API.html', icon:'braces', status:'业务原型', statusTone:'success', updated:'08-13', size:'单文件', tags:['本地API','接口文档','状态检查','自动化'] },
       { id:'rpa', group:'后台系统', title:'RPA', description:'管理本地自动化任务流程、模板市场、计划空态和运行日志，支持流程编辑与环境分配演示。', file:'RPA.html', icon:'bot', status:'业务原型', statusTone:'success', updated:'08-13', size:'单文件', tags:['任务流程','模板市场','计划管理','运行日志'] },
       { id:'plugins', group:'后台系统', title:'插件管理', description:'管理插件市场、我的插件、团队插件、上传插件、授权协议、分组与环境分配。', file:'插件管理.html', icon:'blocks', status:'业务原型', statusTone:'success', updated:'08-13', size:'单文件', tags:['插件市场','上传插件','团队插件','环境分配'] },
@@ -147,26 +147,26 @@
       { id:'team-logins', group:'后台系统', title:'登录请求', description:'团队管理 · 登录请求', file:'团队管理-登录请求.html', icon:'monitor-check', status:'业务原型', statusTone:'success', updated:'09-30', size:'单文件', tags:['团队管理','登录请求'] },
       { id:'account-management', group:'后台系统', title:'账号管理', description:'管理业务账号、平台、凭证锁定、环境绑定和账号分组。', file:'账号管理.html', icon:'contact', status:'业务原型', statusTone:'success', updated:'08-13', size:'单文件', tags:['业务账号','平台','凭证','环境绑定'] },
       { id:'transfer', group:'后台系统', title:'分享转移', description:'管理环境分享、资源转移、缓存快照和跨团队交接记录。', file:'分享转移.html', icon:'arrow-right-left', status:'业务原型', statusTone:'success', updated:'08-13', size:'单文件', tags:['环境分享','资源转移','缓存','跨团队'] },
-      { id:'logs', group:'后台系统', title:'日志管理', description:'查询团队成员对环境、代理、账号、团队和费用执行的审计记录。', file:'日志管理.html', icon:'scroll-text', status:'业务原型', statusTone:'success', updated:'08-13', size:'单文件', tags:['操作日志','审计','筛选','导出'] },
+      { id:'logs', group:'后台系统', title:'日志管理', description:'查询团队成员对环境、设备、账号、团队和费用执行的审计记录。', file:'日志管理.html', icon:'scroll-text', status:'业务原型', statusTone:'success', updated:'08-13', size:'单文件', tags:['操作日志','审计','筛选','导出'] },
       { id:'account-settings', group:'后台系统', title:'账号设置', description:'维护团队、个人资料、手机邮箱、密码、第三方绑定和登录设备。', file:'账号设置.html', icon:'key-round', status:'业务原型', statusTone:'success', updated:'08-13', size:'单文件', tags:['个人资料','安全设置','设备','团队切换'] },
       { id:'promotion-reward', group:'后台系统', title:'推广奖励', description:'查看推广返佣、邀请链接和提现记录。', file:'推广奖励.html', icon:'badge-percent', status:'业务原型', statusTone:'success', updated:'08-28', size:'单文件', tags:['推广返佣','邀请码','提现','邀请记录'] },
       { id:'access-policy', group:'后台系统', title:'访问策略', description:'管理成员在指定账号环境中的网页访问范围，支持黑名单、白名单、网页规则与策略生效。', file:'访问策略.html', icon:'shield-check', status:'业务原型', statusTone:'success', updated:'08-27', size:'单文件', tags:['安全策略','黑名单','白名单','网页规则'] },
       { id:'access-logs', group:'后台系统', title:'访问拦截日志', description:'审计访问与操作拦截数据，按成员、平台账号和网页 URL 汇总并追溯日志明细。', file:'访问日志.html', icon:'scroll-text', status:'业务原型', statusTone:'success', updated:'08-27', size:'单文件', tags:['安全策略','访问日志','筛选','审计'] },
-      { id:'store-coin', group:'后台系统', title:'云币充值', description:'在商城中查看云币余额并完成在线充值。', file:'商城-云币充值.html', icon:'wallet-cards', status:'业务原型', statusTone:'success', updated:'08-28', size:'单文件', tags:['商城','云币','充值','流水'] },
+      { id:'billing-recharge', group:'后台系统', title:'云币充值', description:'查看云币余额并完成在线充值，余额明细作为费用管理二级菜单提供查询与导出。', file:'费用管理-云币充值.html', icon:'wallet-cards', status:'业务原型', statusTone:'success', updated:'10-13', size:'单文件', tags:['云币充值','在线支付','余额明细'] },
       { id:'store-plan-calculator', group:'后台系统', title:'套餐计价模拟', description:'模拟套餐首次购买、续期和更改套餐场景，展示订单金额、原套餐抵扣、折扣优惠与最终应付金额的详细计算过程。', file:'商城-套餐计价模拟.html', icon:'calculator', status:'业务原型', statusTone:'success', updated:'09-03', size:'单文件', tags:['商城','套餐','计价模拟','计算公式'] },
-      { id:'billing-orders', group:'后台系统', title:'订单管理', description:'统一查看代理、套餐、充值及云浏览器订单，支持订单类型、状态、创建时间和创建人筛选。', file:'费用管理-订单管理.html', icon:'receipt-text', status:'业务原型', statusTone:'success', updated:'08-26', size:'单文件', tags:['订单','状态','创建时间','分页'] },
-      { id:'billing-coin-transactions', group:'后台系统', title:'云币交易流水', description:'查看云币交易流水，支持导出、搜索与筛选。', file:'费用管理-云币交易流水.html', icon:'list', status:'业务原型', statusTone:'success', updated:'09-07', size:'单文件', tags:['云币','流水','导出','筛选'] },
+      { id:'billing-orders', group:'后台系统', title:'订单管理', description:'统一查看设备、套餐、充值及云浏览器订单，支持订单类型、状态、创建时间和创建人筛选。', file:'费用管理-订单管理.html', icon:'receipt-text', status:'业务原型', statusTone:'success', updated:'08-26', size:'单文件', tags:['订单','状态','创建时间','分页'] },
+      { id:'billing-balance-details', group:'后台系统', title:'余额明细', description:'查看账户余额明细，支持导出、搜索与筛选；位于「费用管理 ▸ 云币充值」下方。', file:'费用管理-余额明细.html', icon:'list', status:'业务原型', statusTone:'success', updated:'10-13', size:'单文件', tags:['余额明细','导出','筛选'] },
       { id:'billing-invoice', group:'后台系统', title:'开票管理', description:'管理可开票订单、开票记录和常用抬头，支持申请、详情查看、下载与抬头维护。', file:'费用管理-开票管理.html', icon:'file-text', status:'业务原型', statusTone:'success', updated:'08-26', size:'单文件', tags:['开票订单','开票记录','常用抬头','申请'] },
       { id:'billing-coupons', group:'后台系统', title:'优惠券', description:'查看团队优惠券使用范围、有效期和状态，支持关键词搜索、筛选及新增优惠券。', file:'费用管理-优惠券.html', icon:'ticket-percent', status:'业务原型', statusTone:'success', updated:'08-26', size:'单文件', tags:['优惠券','有效期','状态','筛选'] },
-      { id:'store', group:'后台系统', title:'商城代理', description:'选择代理地区、资源、数量、时长与支付方式，支持实时试算和支付前订单确认。', file:'商城-代理.html', icon:'shopping-bag', status:'业务原型', statusTone:'success', updated:'08-24', size:'单文件', tags:['代理购买','地区选择','实时试算','订单确认'] },
-      { id:'proxy-management', group:'后台系统', title:'代理管理', description:'统一管理平台代理、自有代理和代理 API，支持检测、授权、环境分配、续费与安全删除。', file:'代理管理.html', icon:'network', status:'业务原型', statusTone:'success', updated:'08-12', size:'单文件', tags:['平台代理','自有代理','代理API','批量操作'] },
+      { id:'store', group:'后台系统', title:'设备商城', description:'选择设备地区、资源、数量、时长与支付方式，支持实时试算和支付前订单确认；由设备管理「购买设备」进入，页签含购买设备与购物车。', file:'商城-设备.html', icon:'shopping-bag', status:'业务原型', statusTone:'success', updated:'10-13', size:'单文件', tags:['设备购买','地区选择','实时试算','购物车'] },
+      { id:'proxy-management', group:'后台系统', title:'设备管理', description:'统一管理平台设备、自有设备和设备 API，支持检测、授权、环境分配、续费与安全删除。', file:'设备管理.html', icon:'network', status:'业务原型', statusTone:'success', updated:'10-12', size:'单文件', tags:['平台设备','自有设备','设备API','批量操作'] },
       { id:'browser-create', group:'后台系统', title:'新建环境', description:'支持单个、批量、文件导入与一键迁移四种环境创建模式，复用完整指纹配置能力。', file:'新建浏览器.html', icon:'circle-plus', status:'业务原型', statusTone:'success', updated:'08-12', size:'单文件', tags:['单个创建','批量创建','导入','迁移'] },
       { id:'browser-editor', group:'后台系统', title:'编辑环境', description:'配置环境信息、浏览器指纹、插件与偏好设置，验证随机指纹覆盖、帮助说明和保存保护流程。', file:'环境管理-编辑环境.html', icon:'monitor-cog', status:'业务原型', statusTone:'success', updated:'08-07 20:30', size:'99.9 KB', tags:['环境配置','浏览器指纹','插件','表单'] },
       { id:'environment', group:'后台系统', title:'环境管理', description:'统一管理浏览器环境，支持筛选、多选、启动、关闭、字段设置及批量运维子流程。', file:'环境管理.html', icon:'monitor-cog', status:'已完成', statusTone:'success', updated:'08-12', size:'单文件', tags:['环境列表','批量操作','弹窗','分页'] },
       { id:'settings', group:'后台系统', title:'设置', description:'维护客户端偏好、启动行为、更新策略、网络与其他全局配置。', file:'设置.html', icon:'settings-2', status:'业务原型', statusTone:'success', updated:'08-13', size:'单文件', tags:['偏好设置','更新','网络','客户端'] },
       { id:'help', group:'后台系统', title:'帮助', description:'搜索云登使用指南、浏览常见问题，并通过联系支持表单提交问题。', file:'帮助.html', icon:'circle-help', status:'业务原型', statusTone:'success', updated:'08-17', size:'单文件', tags:['帮助中心','使用指南','常见问题','联系支持'] },
-      { id:'onboarding', group:'后台系统', title:'新手引导', description:'通过真实产品截图串联新建环境、购买代理、绑定代理和启动环境，并支持操作步骤自动轮播。', file:'新手引导.html', icon:'route', status:'业务原型', statusTone:'success', updated:'08-17', size:'单文件', tags:['首次登录','全局弹窗','步骤引导','产品截图'] },
-      { id:'recycle', group:'后台系统', title:'回收站', description:'恢复或彻底清理已删除的环境、代理、账号和自动化资源。', file:'回收站.html', icon:'trash-2', status:'业务原型', statusTone:'success', updated:'08-13', size:'单文件', tags:['恢复','彻底删除','批量操作','保留期'] },
+      { id:'onboarding', group:'后台系统', title:'新手引导', description:'通过真实产品截图串联新建环境、购买设备、绑定设备和启动环境，并支持操作步骤自动轮播。', file:'新手引导.html', icon:'route', status:'业务原型', statusTone:'success', updated:'08-17', size:'单文件', tags:['首次登录','全局弹窗','步骤引导','产品截图'] },
+      { id:'recycle', group:'后台系统', title:'回收站', description:'恢复或彻底清理已删除的环境、设备、账号和自动化资源。', file:'回收站.html', icon:'trash-2', status:'业务原型', statusTone:'success', updated:'08-13', size:'单文件', tags:['恢复','彻底删除','批量操作','保留期'] },
       { id:'app-shell', group:'后台系统', title:'系统框架', description:'展示云登 PC 端统一应用壳，包含侧栏、顶部导航、路由承载、全局通知与智能助手入口。', file:'系统框架.html', icon:'panel-left', status:'基础框架', statusTone:'info', updated:'08-07 20:28', size:'33.7 KB', tags:['App Shell','全局导航','路由','响应式'] },
       { id:'design-system', group:'设计规范', title:'设计系统', description:'集中查看颜色、字体、间距、组件和配置型长表单规范，作为原型视觉实现的单一事实来源。', file:'设计系统.html', icon:'swatch-book', status:'规范文档', statusTone:'primary', updated:'08-07 20:47', size:'234.1 KB', tags:['Design Token','组件','表单规范','交付标准'] }
     ];
@@ -196,19 +196,26 @@
       '推广奖励.html':'promotion-reward',
       '访问策略.html':'access-policy',
       '访问日志.html':'access-logs',
-      '商城-云币充值.html':'store-coin',
+      '费用管理-云币充值.html':'billing-recharge',
+      '费用管理-账户充值.html':'billing-recharge', // 旧文件名兼容
+      '商城-云币充值.html':'billing-recharge', // 兼容旧文件名
       '商城-套餐计价模拟.html':'store-plan-calculator',
       '费用管理-订单管理.html':'billing-orders',
-      '费用管理-云币交易流水.html':'billing-coin-transactions',
+      '费用管理-余额明细.html':'billing-balance-details',
+      '费用管理-交易流水.html':'billing-balance-details', // 兼容旧文件名
+      '费用管理-云币交易流水.html':'billing-balance-details', // 兼容旧文件名
       '费用管理-开票管理.html':'billing-invoice',
       '费用管理-优惠券.html':'billing-coupons',
-      '商城-代理.html':'store',
+      '商城-设备.html':'store',
+      '商城-代理.html':'store', // 兼容旧文件名
       '商城-套餐.html':'store',
       '商城-购物车.html':'store',
-      '代理管理.html':'proxy',
+      '设备管理.html':'proxy',
+      '代理管理.html':'proxy', // 兼容旧文件名
       '新建浏览器.html':'create',
       '编辑浏览器.html':'environment',
       '环境管理-编辑环境.html':'environment',
+      '添加设备.html':'device-create',
       '环境管理.html':'environment',
       '设置.html':'settings',
       '帮助.html':'help',
@@ -218,13 +225,24 @@
     const legacyPageAliases = Object.freeze({
       '首页':'home',
       '环境管理':'environment',
+      '设备管理':'proxy',
       '代理管理':'proxy',
       '商城':'store',
+      '设备商城':'store',
       'billing':'billing-orders',
       '费用管理':'billing-orders',
       '费管理':'billing-orders',
-      '云币充值':'store-coin',
-      'billing-coin':'store-coin',
+      '账户充值':'billing-recharge',
+      'billing-recharge':'billing-recharge',
+      '云币充值':'billing-recharge',
+      'billing-coin':'billing-recharge', // 旧 key 兼容
+      'store-coin':'billing-recharge', // 旧 key 兼容
+      '余额明细':'billing-balance-details',
+      'billing-balance-details':'billing-balance-details',
+      '交易流水':'billing-balance-details', // 旧称兼容
+      'billing-transactions':'billing-balance-details', // 旧 key 兼容
+      '云币交易流水':'billing-balance-details', // 旧称兼容
+      'billing-coin-transactions':'billing-balance-details', // 旧 key 兼容
       '订单管理':'billing-orders',
       '开票管理':'billing-invoice',
       '优惠券':'billing-coupons',
@@ -351,8 +369,15 @@
     function syncIndexTitle(search) {
       const params = new URLSearchParams(search || '');
       const page = normalizePageKey(params.get('page')) || 'home';
-      if (['编辑浏览器.html', '环境管理-编辑环境.html'].includes(params.get('module'))) {
-        document.title = '云登 · 编辑环境';
+      // 业务子页面（无索引卡片）按 module 参数单独取标题，避免落到导航默认标题。
+      const subPageTitleByModule = {
+        '编辑浏览器.html': '编辑环境',
+        '环境管理-编辑环境.html': '编辑环境',
+        '添加设备.html': '添加设备'
+      };
+      const subPageTitle = subPageTitleByModule[params.get('module')];
+      if (subPageTitle) {
+        document.title = '云登 · ' + subPageTitle;
         return;
       }
       const item = prototypes.find(candidate => candidate.id === page || systemRouteByFile[candidate.file] === page);
