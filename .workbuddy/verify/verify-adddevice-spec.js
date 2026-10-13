@@ -1,4 +1,4 @@
-/* 添加设备.html 对 design.md 规范合规性验证脚本（jsdom）
+/* 设备管理-自有设备-添加设备.html 对 design.md 规范合规性验证脚本（jsdom）
  * 口径说明：
  *  - 结构性属性（grid-template-columns / animation / appearance 等）jsdom 的 cssstyle 不支持，
  *    改为对 <style> 规则原文做归一化子串断言 —— 规则原文即「规范落地值」的单一事实来源。
@@ -7,7 +7,7 @@
 const fs = require('fs');
 const { JSDOM } = require('jsdom');
 
-const FILE = '/Users/zhangbin/Desktop/灵匠/云登pc端/Prototype/添加设备.html';
+const FILE = '/Users/zhangbin/Desktop/灵匠/云登pc端/Prototype/设备管理-自有设备-添加设备.html';
 const html = fs.readFileSync(FILE, 'utf8');
 
 const results = [];
@@ -54,7 +54,7 @@ function hasRule(selector) {
   const dom = new JSDOM(html, {
     runScripts: 'outside-only',
     pretendToBeVisual: true,
-    url: 'http://127.0.0.1:8899/Prototype/添加设备.html?embedded=1'
+    url: 'http://127.0.0.1:8899/Prototype/设备管理-自有设备-添加设备.html?embedded=1'
   });
   const win = dom.window;
   const doc = win.document;
@@ -100,23 +100,27 @@ function hasRule(selector) {
     if (!a) return '__NO_FORM_AREA__';
     return ['flex-1', 'min-h-0', 'overflow-auto', 'p-5', 'md:p-6'].every(k => a.classList.contains(k));
   })(), true);
-  check('A4 页头不再渲染页面标题，为「返回 + 添加方式页签」单行页头（需求 18）', (() => {
+  check('A4 页头不再渲染页面标题，为「返回 + 添加方式页签」单行页头 + 下方分割线（需求 18）', (() => {
     const sec = $('main > section');
     const head = $('.add-head');
     if (!head || !sec.contains(head)) return '__NO_HEAD__';
+    const divider = $('.page-divider');
     return {
-      /* 标题与标题下分割线都已移除（规则也被删掉，不留死代码） */
+      /* 标题已移除（不再有页面级 h1） */
       titleRemoved: !$('#pageTitle') && $$('main > section h1').length === 0,
-      dividerRemoved: !$('.page-divider') && !hasRule('.page-divider'),
       /* 返回按钮在左、页签紧随其右（同一行内的第 1 / 第 2 个子元素） */
       headOrder: Array.from(head.children).map((el, i) => (i < 2 ? el.id || el.className.split(' ')[0] : el.className.split(' ')[0])),
       tablistInHead: !!head.querySelector('[role="tablist"]'),
-      backBtnInHead: !!head.querySelector('#backBtn')
+      backBtnInHead: !!head.querySelector('#backBtn'),
+      /* 分割线紧跟在页头之后，划开「页头栏」与表单内容 */
+      dividerNext: !!divider && divider.previousElementSibling === head,
+      dividerDecl: hasDecl('.page-divider', 'height:1px') && hasDecl('.page-divider', 'background:#DFE1E5')
     };
   })(), {
-    titleRemoved: true, dividerRemoved: true,
+    titleRemoved: true,
     headOrder: ['backBtn', 'add-tabs', 'add-hint'],
-    tablistInHead: true, backBtnInHead: true
+    tablistInHead: true, backBtnInHead: true,
+    dividerNext: true, dividerDecl: true
   });
   check('A5 单区块页无需外描边（section 未声明 border）', hasDecl('main > section', 'border'), false);
 
@@ -308,7 +312,7 @@ function hasRule(selector) {
   })(), true);
 
   /* ========== K. 页签一致性（§5.0 同类组件全站外观一致） ========== */
-  /* 需求 18：页签规格对齐设备商城页头（商城-设备.html .store-tab），不再是设备来源页签那一套 */
+  /* 需求 18：页签规格对齐设备商城页头（设备管理-平台设备-购买设备.html .store-tab），不再是设备来源页签那一套 */
   check('K1 页签对齐「购买设备」页（.add-mode-tab 44px 高 / min-width 104px / 2px 透明下划线底）',
     hasDecl('.add-mode-tab', 'height:44px') && hasDecl('.add-mode-tab', 'min-width:104px') &&
     hasDecl('.add-mode-tab', 'border-bottom:2px solid transparent') && hasDecl('.add-tabs', 'gap:8px'), true);

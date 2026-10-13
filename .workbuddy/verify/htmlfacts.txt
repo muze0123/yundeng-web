@@ -1,0 +1,294 @@
+### 1. 页签（tab）
+  tab key: orders
+  tab key: records
+  tab key: titles
+  tab key: records
+  setInvoiceTab 调用: ["'titles'", 'nextTab, updateRoute=true', 'btn.dataset.invoiceTab', "invoiceParams.get('invoiceTab'"]
+
+### 2. 搜索范围数组
+
+ orders:[{key:'all',label:'全局搜索'},{key:'no',label:'订单号'},{key:'type',label:'订单类型'},{key:'name',label:'商品名称'},{key:'pay',label:'支付方式'},{key:'amount',label:'可开票金额'},{key:'payTime',label:'支付时间'},{key:'state',label:'状态'}],
+ records:[{key:'all',label:'全局搜索'},{key:'id',label:'申请单号'},{key:'invoiceNo',label:'发票号码'},{key:'order',label:'开票订单'},{key:'teamId',label:'团队ID'},{key:'applicant',label:'申请人'},{key:'created',label:'申请时间'},{key:'type',label:'发票类型'},{key:'title',label:'发票抬头'},{key:'amount',label:'金额'},{key:'status',label:'状态'},{key:'no',label:'发票编号'}],
+ titles:[{key:'all',label:'全局搜索'},{key:'name',label:'发票抬头'},{key:'type',label:'抬头类型'},{key:'invoiceType',label:'发票类型'},{key:'tax',label:'税号'},{key:'bank',label:'开户银行'},{key:'account',label:'银行账号'},{key:'address',label:'企业地址'},{key:'phone',label:'企业电话'},{key:'contactEmail',label:'联系邮箱'},{key:'contactPhone',label:'联系电话'}]
+
+
+### 3. 搜索容器 / inputId
+ targets: ["invoiceSearchTargets={orders:'#invoiceOrderSearch',records:'#invoiceRecordSearch',titles:'#invoiceTitleSearch'}"]
+ inputs : ["invoiceSearchInputIds={orders:'invoiceKeyword',records:'invoiceRecordKeyword',titles:'invoiceTitleKeyword'}"]
+
+### 4. 表格 thead 列（按出现顺序）
+  cols: ['交易类型', '交易时间', '交易单号', '订单号', '项目', '金额', '账户余额', '操作人']
+  cols: ['订单号', '订单类型', '商品名称', '订单金额', '应付金额', '支付方式', '支付时间', '是否可申请', '创建人', '创建时间', '操作']
+  cols: ['订单号', '订单类型', '商品名称', '支付方式', '可开票金额', '支付时间', '是否可申请', '操作']
+  cols: ['申请单号', '发票类型', '发票抬头', '发票号码', '', '', '联系邮箱', '开票订单', '团队ID', '申请人', '开票状态', '操作']
+  cols: ['发票抬头', '抬头类型', '发票类型', '税号', '开户银行', '银行账号', '企业地址', '企业电话', '联系邮箱', '联系电话', '是否启用', '操作']
+  cols: ['订单号', '订单类型', '商品名称', '订单金额', '应付金额', '支付方式', '支付时间']
+  cols: ['子订单号', '商品信息', '设备类型', '规格', '自动续费', '优惠券', '时长', '数量', '设备单价', '到期时间', '订单状态']
+
+### 5. Toast 文案
+   一次只能提交一个订单
+   一次只能申请一个有效订单
+   一次只能申请一个订单
+   发送任务已提交
+   只能选择今天及之前的日期
+   复制失败
+   已刷新常用抬头信息，请核对后提交
+   已设为默认抬头
+   常用抬头已保存
+   常用抬头已删除
+   开始支付时间不能晚于结束支付时间
+   开始时间不能晚于结束时间
+   开始申请日期不能晚于结束申请日期
+   开始申请时间不能晚于结束申请时间
+   开票申请已提交，等待有权限的管理员或财务审批
+   当前抬头已停用或删除，请重新选择
+   当前记录暂无可下载的电子发票
+   当前预览环境不支持跨标签页原子操作，请使用本地 HTTP 预览
+   更正申请已提交，审核通过后将处理原发票红冲
+   更正申请已提交，请勿重复提交
+   更正申请已提交，请等待审核
+   没有可提交的订单
+   演示操作已完成，未影响真实数据
+   状态查询失败，请稍后刷新；当前操作尚未确认
+   申请单号已复制
+   申请处理状态已更新，请查看最新结果
+   申请已撤回，可修改后重新提交
+   申请已被其他用户处理，列表已更新
+   电子发票已下载
+   订单资格已变化，请刷新后重试
+   该抬头已被其他操作修改或删除，请重新打开
+   请从下拉列表中选择创建人
+   请先启用该抬头
+   请输入 0-100000 元且最多两位小数的有效金额
+  --- 弹窗/确认标题 ---
+   关联订单
+   其他用户的申请
+   北京木棉工作室
+   发票申请详情
+   受票信息
+   商品列表
+   处理时间线
+   成都青禾云计算有限公司
+   李小云
+   杭州星河网络有限公司
+   深圳云桥科技有限公司
+   王小雨
+   申请摘要
+   确认删除常用抬头
+   确认撤回开票申请
+   票据与交付
+   红冲与重开
+   订单信息
+   订单详情
+
+### 6. 弹窗 / 抽屉容器（id + class 尺寸）
+   invoiceRecordSearch -> btn btn-primary
+   invoiceApplyModal -> modal-bg invoice-modal-layer hidden
+   invoiceApplyPanel -> modal-card bg-white w-[760px] max-w-[92vw] max-h-[92vh] overflow-y-auto rounded-lg shadow-[0_6px_24px_rgba(0,0
+   invoiceTitleDrawer -> modal-bg invoice-modal-layer hidden invoice-drawer-overlay
+   invoiceTitlePanel -> invoice-drawer-panel invoice-title-drawer-panel
+   invoiceReasonDrawer -> modal-bg invoice-modal-layer hidden
+   invoiceReasonPanel -> modal-card bg-white w-[760px] max-w-[92vw] max-h-[92vh] overflow-y-auto rounded-lg shadow-[0_6px_24px_rgba(0,0
+   invoiceReasonBody -> px-6 py-8
+   invoiceTitleSearch -> order-global-search
+   invoiceTitleFilterPanel -> order-filter-drawer-panel invoice-filter-drawer-panel
+   invoiceTitleEditorModal -> modal-bg invoice-modal-layer is-nested hidden
+   invoiceTitleEditorPanel -> modal-card bg-white w-[760px] max-w-[92vw] max-h-[92vh] overflow-y-auto rounded-lg shadow-[0_6px_24px_rgba(0,0
+   invoiceConfirmModal -> invoice-dialog-layer hidden
+   invoiceConfirmPanel -> invoice-dialog-panel
+   invoiceRecordDrawer -> modal-bg invoice-modal-layer order-drawer-overlay hidden
+   invoiceRecordPanel -> order-drawer-panel
+   invoiceRecordDetailBody -> order-drawer-body
+   invoiceRecordFooter -> invoice-record-drawer-footer
+   invoicePreviewModal -> modal-bg invoice-modal-layer is-nested hidden
+   invoicePreviewPanel -> modal-card bg-white w-[760px] max-w-[92vw] max-h-[92vh] overflow-y-auto rounded-lg shadow-[0_6px_24px_rgba(0,0
+   invoicePreviewBody -> p-6 bg-white
+   invoiceResendModal -> modal-bg invoice-modal-layer is-nested hidden
+   invoiceResendPanel -> modal-card bg-white w-[760px] max-w-[92vw] rounded-lg shadow-[0_6px_24px_rgba(0,0,0,.12)]
+   invoiceCorrectionModal -> modal-bg invoice-modal-layer is-nested hidden
+   invoiceCorrectionPanel -> modal-card bg-white w-[760px] max-w-[92vw] max-h-[92vh] overflow-y-auto rounded-lg shadow-[0_6px_24px_rgba(0,0
+   invoiceProgressPanel -> modal-card bg-white w-[760px] max-w-[92vw] max-h-[92vh] overflow-y-auto rounded-lg shadow-[0_6px_24px_rgba(0,0
+   invoiceProgressBody -> px-6 py-8 bg-white
+   invoiceReviewBody -> grid grid-cols-[108px_1fr] gap-y-3
+
+### 7. 筛选抽屉字段（label + select/option）
+   订单范围： | options: []
+   是否可申请： | options: ['全部', '可申请', '不可申请']
+   订单类型： | options: ['全部', '设备订单', '续费设备', '充值订单', '套餐订单', '续费套餐', '兑换订单', '代理商充值', '云浏览器订单', '云浏览器续费']
+   订单状态： | options: ['全部', '创建中', '处理中', '已完成', '已关闭', '已退款', '部分退款', '开通中', '异常', '待支付']
+   支付方式： | options: ['全部', '支付宝', '微信', '银联', '其他法币渠道', '云币']
+   支付时间： | options: []
+   发票类型： | options: ['全部', '数电普通发票', '数电专用发票']
+   开票状态： | options: ['全部', '待审核', '开票中', '已开票', '已驳回', '开票失败', '红冲处理中', '红冲失败', '已红冲', '已撤回', '已取消']
+   申请时间： | options: []
+   抬头类型： | options: ['全部类型', '企业', '个人或事业单位']
+   发票类型： | options: ['全部', '数电普通发票', '数电专用发票']
+   是否启用： | options: ['全部', '启用', '停用']
+
+### 8. 常用抬头工具栏
+   itleBody=titlePanel.querySelector('.invoice-drawer-body'); if(titleBody&&!q('#invoiceTitleToolbar')){ const toolbar=document.createElement('div'); toolbar.id='invoiceTitleToolbar'; toolbar.className='invoice-title-toolbar'; toolbar.innerHTML='<div class="order-toolbar-actions"><button id="titleAdd" class="btn btn-primary" type="button"><i data-lucide="plus" class="w-4" aria-hidden="true"></i>新增抬头</button></div><div class="order-search-filter-group"><div id="invoiceTitleSearch" class="order-global-search" role="search"></div><button id="invoiceTitleFilterBtn" type="button" class="btn btn-default order-filter-button"
+
+### 9. Mock 数据规模
+  invoiceOrders 条数: 0
+  invoiceRecords 条数: 11
+  titles 条数: 6
+  记录状态取值: ['全部', '创建中', '处理中', '已使用', '已关闭', '已取消', '已失效', '已完成', '已开票', '已撤回', '已红冲', '已退款', '已驳回', '开票中', '开票失败', '开通中', '异常', '待审核', '待支付', '未使用', '税务平台处理中', '红冲处理中', '红冲失败', '部分退款']
+  记录状态排序数组: ["invoiceRecordStatusOrder=['待审核','已撤回','已驳回','已取消','开票中','开票失败','已开票','红冲处理中','红冲失败','已红冲']"]
+  订单资格取值: ['不可申请', '可申请']
+
+### 10. 分页 / 排序 / 气泡
+   invoiceOrderSort 出现次数: 11
+   invoiceRecordSort 出现次数: 15
+   pageSize 出现次数: 0
+   分页 出现次数: 5
+   pager 出现次数: 0
+   invoice-status-tooltip 出现次数: 8
+   aria-sort 出现次数: 10
+   perPage 出现次数: 0
+
+### 11. Mock 数组长度（按顶层对象计数）
+   invoiceOrders: 14
+   invoiceRecords: 10
+   titles: 6
+   invoiceRecordStatusOrder: 0
+   order 关键字出现: 32 | record id 出现: 11
+
+### 12. 空态文案
+   当前筛选条件下暂无开票订单
+   暂无开票记录
+   订单明细暂无数据
+   暂无常用抬头
+   暂无符合条件的流水
+   暂无符合条件的订单
+   暂无符合条件的订单
+  (empty) 当前筛选条件下暂无开票订单
+  (empty) 暂无开票记录
+  (empty) 订单明细暂无数据
+  (empty) 暂无常用抬头
+  (empty) 暂无符合条件的流水
+  (empty) 暂无符合条件的订单
+  (empty) 暂无符合条件的订单
+
+### 13. 校验/错误文案
+   个人仅支持数电普通发票
+   个人抬头仅支持数电普通发票
+   开票金额必须大于 0
+   当前记录没有可更正的有效蓝票
+   更正税号不能为空
+   税号不能为空
+   请填写发票抬头
+   请确认全额红冲及自动重新开票规则
+   请输入抬头名称
+   请输入有效的接收邮箱
+   请输入有效的联系电话
+   请输入有效的联系邮箱
+   请输入纳税人识别号或社会统一征信代码
+   请选择发票内容
+   请选择发票类型
+   请选择抬头类型
+   请选择更正原因
+   请选择更正后的发票内容
+   请选择更正后的发票抬头
+   请选择更正后的发票类型
+  --- fallback/兜底 ---
+   :/请选择|请先|最多|不能|不可|未找到|缺少|暂无/.test(t)?
+   <div class="invoice-title-empty">暂无匹配抬头</div>
+   <div class="px-2 py-3 text-[12px] text-ink-muted">暂无匹配创建人</div>
+   <p class="text-ink-sub">暂无可申请订单</p>
+   <tr><td colspan="11" class="py-16 text-center text-ink-sub">暂无符合条件的订单</td></tr>
+   <tr><td colspan="12" class="py-16 text-center text-ink-sub">暂无常用抬头</td></tr>
+   <tr><td colspan="12" class="py-16 text-center text-ink-sub">暂无开票记录</td></tr>
+   当前记录暂无可下载的电子发票
+
+### 14. 分页相关
+   ody id="txBody"></tbody></table></div><div id="txPagination" class="pt-5" aria-label="云币流水分页"></div></div></div>
+    <div id="orderPagination" class="pt-5" aria-label="订单列表分页"></div>
+   <script src="分页器.js?v=20260814"></script><script>
+   dy"></tbody></table></div><div id="invoiceOrderPagination" class="pt-5" aria-label="订单资格清单分页"></div></div></div>
+   ody"></tbody></table></div><div id="invoiceRecordPagination" class="pt-5" aria-label="开票记录分页"></div></div></div>
+   )invoiceOrderPager=new YDPager('#invoiceOrderPagination',{total_count:rows.length,current_page:1,page_size:10,page_size_options:[10,20,50],onChange:drawInvoiceOrderPage,toast});else{const current=invoiceOrderPager.getSta
+   nvoiceRecordPager=new YDPager('#invoiceRecordPagination',{total_count:rows.length,current_page:1,page_size:10,page_size_options:[10,20,50],onChange:drawInvoiceRecordPage,toast});else{const current=invoiceRecordPager.getS
+   ager)txPager=new YDPager('#txPagination',{total_count:filteredTransactions.length,current_page:1,page_size:10,page_size_options:[10,20,50],onChange:drawTxPage,toast});else txPager.setState({total_count:filteredTransactio
+   t_page:1},{silent:true});drawTxPage(txPager.getState())}
+   ager)orderPager=new YDPager('#orderPagination',{total_count:filteredOrders.length,current_page:1,page_size:10,page_size_options:[10,20,50],onChange:drawOrderPage,toast});else orderPager.setState({total_count:filteredOrde
+   t_page:1},{silent:true});drawOrderPage(orderPager.getState());return true}
+   ager)orderPager=new YDPager('#orderPagination',{total_count:filteredOrders.length,current_page:1,page_size:10,page_size_options:[10,20,50],onChange:drawOrderPage,toast});else orderPager.setState({total_count:filteredOrde
+   t_page:1},{silent:true});drawOrderPage(orderPager.getState());updateOrderSortHeaders();updateOrderFilterButton();return true}
+
+### 15. 刷新/导出按钮 id
+   invoiceOrderRefresh : 0
+   invoiceRecordRefresh : 0
+   invoiceOrderExport : 1
+   invoiceRecordExport : 1
+   titleAdd : 6
+   invoiceTitleFilterBtn : 5
+   invoiceOrderFilterBtn : 1
+   invoiceRecordFilterBtn : 1
+
+### 16. 可排序列（data-invoice-*-sort）
+  order sort keys: ['payTime']
+  record sort keys: ['amount', 'created']
+
+### 17. 尺寸断言（width 值）
+  modal-card w-[ 1060 px]
+  modal-card w-[ 1160 px]
+  modal-card w-[ 1180 px]
+  modal-card w-[ 1260 px]
+  modal-card w-[ 240 px]
+  modal-card w-[ 400 px]
+  modal-card w-[ 500 px]
+  modal-card w-[ 520 px]
+  modal-card w-[ 640 px]
+  modal-card w-[ 760 px]
+  drawer width: 1200
+  drawer width: 480
+  drawer width: 800
+  dialog width: 20
+  dialog width: 28
+  dialog width: 600
+
+### 18. 常用抬头相关按钮/开关
+   data-title-default
+   data-title-delete
+   data-title-edit
+   data-title-editor
+   data-title-option
+   data-title-toggle
+
+### 19. 详情抽屉底部按钮（按状态）
+   invoiceRecordFooterHtml(r){return invoiceRecordActions(r).map(a=>'<button type="button" class="btn '+(a.primary?'btn-primary':'btn-default')+'" data-detail-action="'+a.action+'">'+a.label+'</button>').join('')} function handleInvoiceDetailAction(action){ const record=activeInvoiceRecord; if(!record||!invoiceRecordActions(record).some(item=>item.action===action))return; // 先关闭全局遮罩，避免后续业务弹窗被框架遮挡；保留当前记录供重提校验。 if(action!=='download'){ if(window.parent!==window)window.parent.postMessage({type:'yundeng:global-drawer-close'},'*'); else closeInvoiceRecordDrawer(); } if(action==='preview')openInvoicePreview(record); else if(action==='download')downloadInvoice(record); else if(action==='resend')openInvoiceResend(record); else if(action==='correction')openInvoiceCorrection(record); else if(action==='withdraw')requestInvoiceWithdrawal(record,invoiceRecordLastFocus); else if(action==='
+
+### 20. refresh 相关全部引用
+  - #invoiceApplyModal #invoiceTitleRefresh { width:32px; height:32px; padding:0; flex:0 0 32px; }
+  - function refreshInvoiceOrderEligibility(order){
+  - invoiceOrders.forEach(refreshInvoiceOrderEligibility);
+  - function refreshInvoiceTitle(){const id=q('#invoiceTitle').value,target=titles.find(t=>t.id===id);if(id&&(!target||!target.enabled))retu
+  - window.refreshInvoiceTitle=refreshInvoiceTitle;
+  - function invoiceActionAllowed(record,version,statuses){refreshInvoiceSharedState();if(!record||record.version!==(version||1)||!statuses.includes(record.status)){toast(invoiceConflict
+  -  refreshInvoiceSharedState();
+  -  footer.innerHTML='<button type="button" id="invoiceRedRefresh" class="btn btn-default">刷新结果</button><button type="button" data-invoice-progress-close class="btn btn-primary">关闭</but
+  -  q('#invoiceRedRefresh').onclick=async()=>{await syncInvoiceRemoteState();openInvoiceProgress(invoiceRecords.find(item=>item.id===r.id)||r,mod
+  - function refreshInvoiceSharedState(){
+  -  const run=()=>{refreshInvoiceSharedState();const result=command();publishInvoiceSharedState();return result};
+  - window.addEventListener('storage',e=>{if(e.key!==invoiceSharedKey)return;refreshInvoiceSharedState();invoiceOrders.forEach(refreshInvoiceOrderEligibility);renderInvoiceRecords();renderInvoiceOrders();
+  - refreshInvoiceSharedState();
+  -  if(changed){invoiceOrders.forEach(refreshInvoiceOrderEligibility);renderInvoiceRecords();renderInvoiceOrders();if(activeInvoiceRecord&&!q('#invoiceRecordDrawer')
+  - function restoreInvoiceOrderEligibility(order){refreshInvoiceOrderEligibility(order)}
+  - ;q('#invoiceTitle').onchange=()=>syncInvoiceTitle(true);q('#invoiceType').onchange=syncInvoiceTypeRadio;q('#invoiceTitleRefresh')?.addEventListener('click',refreshInvoiceTitle);
+  -  const refreshSearch=()=>{const hasValue=Boolean(search.value);clear.classList.toggle('hidden',!hasValue);if(!hasValue){orderSearchSco
+  -  search.addEventListener('input',refreshSearch);
+  -  const refresh=document.createElement('button');refresh.type='button';refresh.className='btn btn-default';refresh.id='invoiceTitleRefresh';refresh.title='刷新常用抬头';refresh.setAttribute('aria-label','刷新常用抬头');refresh.innerHTML='<i da
+  - lucide="refresh-cw" class="w-4" aria-hidden="true"></i>';refresh.onclick=refreshInvoiceTitle;titleWrap.append(refresh);
+
+### 21. 排序表头生成
+  - .order-sort-button{display:inline-flex;align-items:center;gap:4px;color:inherit;font:inherit;font-weight:600;white-space:nowrap;cursor:pointer}
+  - .order-sort-button[data-sort-direction="asc"],.order-sort-button[data-sort-direction="desc"]{color:#0066FF}
+  - .order-sort-button[data-sort-direction="none"]{color:#6E7685}
+  - .order-sort-button:hover{color:#0066FF}
+  - .order-sort-button:focus-visible{color:#0066FF;outline:2px solid #0066FF;outline-offset:2px;border-radius:2px}
+  - .order-sort-button[data-sort-direction="asc"] .order-sort-caret.is-up,.order-sort-button[data-sort-direction="desc"] .order-sort-caret.is-down{color:#0066FF}
+  - ">商品名称</th><th class="p-3 text-left">支付方式</th><th class="p-3 text-left">可开票金额</th><th class="p-3 text-left" aria-sort="descending"><button type="button" class="order-sort-button" data-invoice-order-sort="payTime">支付时间</button></th><th class="p-3 text-left">是否可申请</th><th class="p-3 text-left">操作</th>
+  - xt-left">发票类型</th><th class="p-3 text-left">发票抬头</th><th class="p-3 text-left">发票号码</th><th class="p-3 text-left" aria-sort="none"><button type="button" class="order-sort-button" data-invoice-record-sort="amount"></button></th><th class="p-3 text-left" aria-sort="none"><button type="button" class="o
+  - k">订单号</span></th><th class="p-3 text-left">订单类型</th><th class="p-3 text-left">商品名称</th><th class="p-3 text-left" aria-sort="none"><button type="button" class="order-sort-button" data-order-sort="amount"></button></th><th class="p-3 text-left" aria-sort="none"><button type="button" class="order-sort
+  - button></th><th class="p-3 text-left">支付方式</th><th class="p-3 text-left" aria-sort="none"><button type="button" class="order-sort-button" data-order-sort="paid"></button></th><th class="p-3 text-left"><span class="inline-block">订单状态</span></th><th class="p-3 text-left">创建人</th><th class="p-3 tex
+  - t-left" aria-sort="descending"><button type="button" class="order-sort-button" data-order-sort="time"></button></th><th class="p-3 text-left">操作</th></tr>';$('#ordersPanel table thead')?.addEventListener('click',event=>{const button=even

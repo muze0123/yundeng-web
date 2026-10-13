@@ -158,8 +158,8 @@
       { id:'billing-balance-details', group:'后台系统', title:'余额明细', description:'查看账户余额明细，支持导出、搜索与筛选；位于「费用管理 ▸ 云币充值」下方。', file:'费用管理-余额明细.html', icon:'list', status:'业务原型', statusTone:'success', updated:'10-13', size:'单文件', tags:['余额明细','导出','筛选'] },
       { id:'billing-invoice', group:'后台系统', title:'开票管理', description:'管理可开票订单、开票记录和常用抬头，支持申请、详情查看、下载与抬头维护。', file:'费用管理-开票管理.html', icon:'file-text', status:'业务原型', statusTone:'success', updated:'08-26', size:'单文件', tags:['开票订单','开票记录','常用抬头','申请'] },
       { id:'billing-coupons', group:'后台系统', title:'优惠券', description:'查看团队优惠券使用范围、有效期和状态，支持关键词搜索、筛选及新增优惠券。', file:'费用管理-优惠券.html', icon:'ticket-percent', status:'业务原型', statusTone:'success', updated:'08-26', size:'单文件', tags:['优惠券','有效期','状态','筛选'] },
-      { id:'store', group:'后台系统', title:'设备商城', description:'选择设备地区、资源、数量、时长与支付方式，支持实时试算和支付前订单确认；由设备管理「购买设备」进入，页签含购买设备与购物车。', file:'商城-设备.html', icon:'shopping-bag', status:'业务原型', statusTone:'success', updated:'10-13', size:'单文件', tags:['设备购买','地区选择','实时试算','购物车'] },
-      { id:'proxy-management', group:'后台系统', title:'设备管理', description:'统一管理平台设备、自有设备和设备 API，支持检测、授权、环境分配、续费与安全删除。', file:'设备管理.html', icon:'network', status:'业务原型', statusTone:'success', updated:'10-12', size:'单文件', tags:['平台设备','自有设备','设备API','批量操作'] },
+      { id:'store', group:'后台系统', title:'设备商城', description:'选择设备地区、资源、数量、时长与支付方式，支持实时试算和支付前订单确认；由设备管理「购买设备」进入，页签含购买设备与购物车。', file:'设备管理-平台设备-购买设备.html', icon:'shopping-bag', status:'业务原型', statusTone:'success', updated:'10-13', size:'单文件', tags:['设备购买','地区选择','实时试算','购物车'] },
+      { id:'proxy-management', group:'后台系统', title:'设备管理', description:'统一管理平台设备、自有设备和设备 API，支持检测、授权、环境分配、续费与安全删除。', file:'设备管理-自有设备.html', icon:'network', status:'业务原型', statusTone:'success', updated:'10-12', size:'单文件', tags:['平台设备','自有设备','设备API','批量操作'] },
       { id:'browser-create', group:'后台系统', title:'新建环境', description:'支持单个、批量、文件导入与一键迁移四种环境创建模式，复用完整指纹配置能力。', file:'新建浏览器.html', icon:'circle-plus', status:'业务原型', statusTone:'success', updated:'08-12', size:'单文件', tags:['单个创建','批量创建','导入','迁移'] },
       { id:'browser-editor', group:'后台系统', title:'编辑环境', description:'配置环境信息、浏览器指纹、插件与偏好设置，验证随机指纹覆盖、帮助说明和保存保护流程。', file:'环境管理-编辑环境.html', icon:'monitor-cog', status:'业务原型', statusTone:'success', updated:'08-07 20:30', size:'99.9 KB', tags:['环境配置','浏览器指纹','插件','表单'] },
       { id:'environment', group:'后台系统', title:'环境管理', description:'统一管理浏览器环境，支持筛选、多选、启动、关闭、字段设置及批量运维子流程。', file:'环境管理.html', icon:'monitor-cog', status:'已完成', statusTone:'success', updated:'08-12', size:'单文件', tags:['环境列表','批量操作','弹窗','分页'] },
@@ -206,16 +206,16 @@
       '费用管理-云币交易流水.html':'billing-balance-details', // 兼容旧文件名
       '费用管理-开票管理.html':'billing-invoice',
       '费用管理-优惠券.html':'billing-coupons',
-      '商城-设备.html':'store',
+      '设备管理-平台设备-购买设备.html':'store',
       '商城-代理.html':'store', // 兼容旧文件名
-      '商城-套餐.html':'store',
-      '商城-购物车.html':'store',
-      '设备管理.html':'proxy',
+      '设备管理-平台设备.html':'store',
+      '设备管理-平台设备-购物车.html':'store',
+      '设备管理-自有设备.html':'proxy',
       '代理管理.html':'proxy', // 兼容旧文件名
       '新建浏览器.html':'create',
       '编辑浏览器.html':'environment',
       '环境管理-编辑环境.html':'environment',
-      '添加设备.html':'device-create',
+      '设备管理-自有设备-添加设备.html':'device-create',
       '环境管理.html':'environment',
       '设置.html':'settings',
       '帮助.html':'help',
@@ -373,7 +373,7 @@
       const subPageTitleByModule = {
         '编辑浏览器.html': '编辑环境',
         '环境管理-编辑环境.html': '编辑环境',
-        '添加设备.html': '添加设备'
+        '设备管理-自有设备-添加设备.html': '添加设备'
       };
       const subPageTitle = subPageTitleByModule[params.get('module')];
       if (subPageTitle) {

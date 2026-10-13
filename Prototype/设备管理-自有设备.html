@@ -2191,7 +2191,7 @@
           }
         });
       }
-      /* 工具栏左侧主操作：平台设备「购买设备」跳转「商城-设备」，
+      /* 工具栏左侧主操作：平台设备「购买设备」跳转「设备管理-平台设备-购买设备」，
          自有设备「添加设备」跳转「添加设备」子页面（design.md §5.4.1 左侧命令区）。 */
       function renderToolbarLeft() {
         var host = $('#toolbarLeft');
@@ -3625,7 +3625,7 @@
       }
       function navigateToStore() {
         if (window.parent !== window) {
-          window.parent.postMessage({ type: 'yundeng:route', file: '商城-设备.html', search: '', hash: '' }, '*');
+          window.parent.postMessage({ type: 'yundeng:route', file: '设备管理-平台设备-购买设备.html', search: '', hash: '' }, '*');
           return;
         }
         window.location.href = '../index.html?page=store';
@@ -3633,7 +3633,7 @@
       /* 跳转「添加设备」子页面：嵌入态交给壳层软导航，独立打开时回退 index.html 的 page key */
       function navigateToAddDevice() {
         if (window.parent !== window) {
-          window.parent.postMessage({ type: 'yundeng:route', file: '添加设备.html', search: '', hash: '' }, '*');
+          window.parent.postMessage({ type: 'yundeng:route', file: '设备管理-自有设备-添加设备.html', search: '', hash: '' }, '*');
           return;
         }
         window.location.href = '../index.html?page=device-create';
@@ -4008,7 +4008,7 @@
         requestAnimationFrame(collapseBindChips);
       });
       /* ===================== 平台设备：工具栏 / 表头排序 / 批量条 / 字段设置 ===================== */
-      /* 工具栏命令区：购买设备（跳转商城-设备）、刷新、字段设置（design.md §5.4.1） */
+      /* 工具栏命令区：购买设备（跳转设备管理-平台设备-购买设备）、刷新、字段设置（design.md §5.4.1） */
       $('#proxyToolbar').addEventListener('click', function (event) {
         var button = event.target.closest('[data-page-action]');
         if (button) handlePageAction(button.dataset.pageAction, button);

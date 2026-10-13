@@ -495,7 +495,7 @@
       button.disabled=true;
       button.setAttribute('aria-busy','true');
       button.querySelector('span').textContent='正在前往';
-      routeTo('store','商城-设备.html',{product_id:button.dataset.productId,source:'home_hot_proxy'});
+      routeTo('store','设备管理-平台设备-购买设备.html',{product_id:button.dataset.productId,source:'home_hot_proxy'});
     }
     // ===== 使用指南 =====
     function guideSkeleton(){return `<div aria-label="使用指南加载中">${Array.from({length:5},()=>`<div class="h-12 flex items-center gap-3" aria-hidden="true"><span class="w-4 h-4 rounded skeleton shrink-0"></span><span class="block h-3 flex-1 rounded skeleton"></span></div>`).join('')}</div>`}
@@ -744,8 +744,8 @@
       if(action==='more'){toast('已展开全部消息（原型）');return}
       if(action==='support'){closeResourceBoard(false);openSupportChat($('openSupportChat'));return}
       if(action==='help'){closeResourceBoard(false);routeTo('help','帮助.html',{source:'home_resource_board'});return}
-      if(action==='proxy'){closeResourceBoard(false);routeTo('store','商城-设备.html',{source:'home_resource_board'});return}
-      if(action==='plan'){closeResourceBoard(false);routeTo('store','商城-套餐.html',{tab:'plan',source:'home_resource_board'});}
+      if(action==='proxy'){closeResourceBoard(false);routeTo('store','设备管理-平台设备-购买设备.html',{source:'home_resource_board'});return}
+      if(action==='plan'){closeResourceBoard(false);routeTo('store','设备管理-平台设备.html',{tab:'plan',source:'home_resource_board'});}
     }
     function syncStateSwitcher(){
       document.querySelectorAll('#stateSwitcher [data-env-state]').forEach(button=>{

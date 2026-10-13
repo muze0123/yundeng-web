@@ -70,7 +70,7 @@
     .surface + .surface { margin-top: 16px; }
 
     /* ===== 设备商城页头（共用片段）：返回按钮 + 页签 =====
-       商城-设备.html 与 商城-购物车.html 的这段样式必须逐字一致：
+       设备管理-平台设备-购买设备.html 与 设备管理-平台设备-购物车.html 的这段样式必须逐字一致：
        顶部页头是两页共用的区块，切换页签只替换下方内容，页头外观保持不变。
        返回按钮使用专属类 .back-btn，不依赖各页 .btn 体系、也不继承 body 字号，
        避免两页基础样式（body 字号等）不同导致的边框与字号差异。
@@ -781,7 +781,7 @@
     const proxyTypes = [{ id: 'all', label: '全部平台设备' }, { id: 'static', label: '静态住宅' }, { id: 'cloud', label: '云平台' }, { id: 'local', label: '本地' }];
     /* 本地类型：仅提供本地动态 / 本地静态两种，选中后在套餐卡片下方展示对应特别提示。 */
     const localTips = {
-      'local-dynamic': '本地动态网络适用于本地设备为动态网络，使用本地网络访问店铺，我们只提供店铺环境，不提供网络。需注意，动态网络不适用对网络地址稳定性有较高要求的店铺平台。mac版本暂不支持shopee本土店铺。每个动态设备同时最多支持绑定5个账号。同时，以购买之日起，30天为一个周期；每个周期内，每个动态设备支持5次绑定账号操作；绑定次数超过5次后，将限制绑定账号，下一个周期更新绑定次数。',
+      'local-dynamic': '本地动态网络适用于本地设备为动态网络，使用本地网络访问店铺，我们只提供店铺环境，不提供网络。需注意，动态网络不适用对网络地址稳定性有较高要求的店铺平台。mac版本暂不支持shopee本土店铺。每个动态设备同时最多支持绑定5个环境。同时，以购买之日起，30天为一个周期；每个周期内，每个动态设备支持5次绑定环境操作；绑定次数超过5次后，将限制绑定环境，下一个周期更新绑定次数。',
       'local-static': '本地静态网络适用于本地设备为静态网络，使用本地网络访问店铺，我们只提供店铺环境，不提供网络。需注意，首次绑定设备后可变更1次网络地址，首次变更后每7天可再次变更一次；若您网络变更后，7天内再次发生网络变化，会导致无法访问店铺；需等待变更7天周期到了，才能变更网络，进行店铺访问。不支持shopee本土店铺。'
     };
     const trafficPacks = [
@@ -819,9 +819,9 @@
       wechat: '../src/assets/images/微信支付.png'
     };
     const incomingPresets = {
-      'proxy-us-static': { continent: '北美洲', country: '美国', city: '洛杉矶', type: 'static', productId: 's28', name: '北美静态住宅代理' },
-      'proxy-sg-dynamic': { type: 'dynamic', productId: '', name: '东南亚动态住宅代理' },
-      'proxy-uk-static': { continent: '欧洲', country: '英国', city: '伦敦', type: 'static', productId: 's28-pro', name: '欧洲静态住宅代理' }
+      'proxy-us-static': { continent: '北美洲', country: '美国', city: '洛杉矶', type: 'static', productId: 's28', name: '北美静态住宅设备' },
+      'proxy-sg-dynamic': { type: 'dynamic', productId: '', name: '东南亚动态住宅设备' },
+      'proxy-uk-static': { continent: '欧洲', country: '英国', city: '伦敦', type: 'static', productId: 's28-pro', name: '欧洲静态住宅设备' }
     };
     const $ = selector => document.querySelector(selector);
     const $$ = selector => [...document.querySelectorAll(selector)];
@@ -956,7 +956,7 @@
         if (!pack || pack.custom) return { available: false, original: 0, packageDiscount: 0, coupon: 0, total: 0, product: null, trafficPack: pack };
         const original = Number(pack.original ?? pack.price);
         const packageDiscount = Math.max(0, original - Number(pack.price));
-        const product = { id: pack.id, name: `动态住宅流量包 · ${pack.capacity} / ${pack.days} 天`, type: 'dynamic', price: pack.price, original, stock: 999, info: '按流量包提供动态住宅代理资源。' };
+        const product = { id: pack.id, name: `动态住宅流量包 · ${pack.capacity} / ${pack.days} 天`, type: 'dynamic', price: pack.price, original, stock: 999, info: '按流量包提供动态住宅设备资源。' };
         return { available: true, original, packageDiscount, coupon: 0, total: Number(pack.price), product, trafficPack: pack, orderType: state.proxy.purchaseKind === 'traffic_package' ? 'traffic_package' : 'dynamic_proxy' };
       }
       const product = currentProduct(); if (!product || !regionHasResources()) return { available: false, original: 0, packageDiscount: 0, coupon: 0, total: 0, product };
@@ -969,7 +969,7 @@
       const dynamic = isDynamicProxy();
       const pack = quote.trafficPack;
       const resourceGroup = dynamic
-        ? `<div class="detail-group"><h4>流量包</h4><div class="detail-row"><span>流量包规格</span><span>${pack ? `${pack.capacity} / ${pack.days}天` : '待选择'}</span></div><div class="detail-row"><span>设备类型</span><span>动态代理（住宅）</span></div><div class="detail-row"><span class="detail-help-label">套餐流量<button type="button" class="detail-help" aria-label="查看套餐流量说明"><i data-lucide="circle-help"></i><span class="detail-help-tip" role="tooltip">该套餐可每月使用 10GB 高速流量。限时福利：活动期间不限流量！</span></button></span><span class="mono">10G/月</span></div><div class="detail-row"><span>超出流量资费</span><span>限时免费</span></div></div>`
+        ? `<div class="detail-group"><h4>流量包</h4><div class="detail-row"><span>流量包规格</span><span>${pack ? `${pack.capacity} / ${pack.days}天` : '待选择'}</span></div><div class="detail-row"><span>设备类型</span><span>动态设备（住宅）</span></div><div class="detail-row"><span class="detail-help-label">套餐流量<button type="button" class="detail-help" aria-label="查看套餐流量说明"><i data-lucide="circle-help"></i><span class="detail-help-tip" role="tooltip">该套餐可每月使用 10GB 高速流量。限时福利：活动期间不限流量！</span></button></span><span class="mono">10G/月</span></div><div class="detail-row"><span>超出流量资费</span><span>限时免费</span></div></div>`
         : `<div class="detail-group"><h4>设备资源</h4><div class="detail-row"><span>资源名称</span><span>${quote.product?.name || '待选择'}</span></div><div class="detail-row"><span>设备地区</span><span>${regionSummaryText()}</span></div><div class="detail-row"><span>购买数量</span><span class="mono">${state.proxy.qty} 个</span></div><div class="detail-row"><span>购买时长</span><span class="mono">${state.proxy.duration} 个月</span></div><div class="detail-row"><span class="detail-help-label">套餐流量<button type="button" class="detail-help" aria-label="查看套餐流量说明"><i data-lucide="circle-help"></i><span class="detail-help-tip" role="tooltip">该套餐可每月使用 10GB 高速流量。限时福利：活动期间不限流量！</span></button></span><span class="mono">10G/月</span></div><div class="detail-row"><span>超出流量资费</span><span>限时免费</span></div></div>`;
       $('#priceDetailPopover').innerHTML = `<h3 id="priceDetailTitle">订单信息</h3>${resourceGroup}<div class="detail-group"><div class="detail-row"><span>${dynamic ? '流量包金额' : '资源金额'}</span><span class="mono">${money(quote.original)}</span></div><div class="detail-row"><span>${dynamic ? '流量包优惠' : '资源优惠'}</span><span class="mono">-${money(quote.packageDiscount)}</span></div><div class="detail-row"><span>优惠券抵扣金额</span><span class="mono">-${money(quote.coupon)}</span></div></div>`;
       lucide.createIcons();
@@ -1039,7 +1039,7 @@
     }
 
     function addToSharedCart(quote) {
-      /* 与 商城-购物车.html 共用购物车存储：v2 起字段口径统一为 region/segment/原价。 */
+      /* 与 设备管理-平台设备-购物车.html 共用购物车存储：v2 起字段口径统一为 region/segment/原价。 */
       const storageKey = 'yundeng-store-cart-v2';
       let stored = [];
       try {
@@ -1053,7 +1053,7 @@
           id: `traffic-${Date.now()}`,
           type: isTrafficPackage ? '流量包' : '设备',
           orderTypeCode: isTrafficPackage ? 'traffic_package' : 'dynamic_proxy',
-          name: isTrafficPackage ? `动态住宅流量包 · ${pack.capacity} / ${pack.days} 天` : '动态代理（住宅）',
+          name: isTrafficPackage ? `动态住宅流量包 · ${pack.capacity} / ${pack.days} 天` : '动态设备（住宅）',
           spec: `${pack.capacity} · ${pack.days}天`,
           region: '动态住宅',
           segment: '流量包',
@@ -1141,7 +1141,7 @@
       const orderNo = createPendingOrderNumber(createdAt);
       const pack = quote.trafficPack;
       const isTrafficPackage = isDynamicProxy() && state.proxy.purchaseKind === 'traffic_package';
-      const typeLabel = isDynamicProxy() ? (isTrafficPackage ? '流量包' : '动态代理（住宅）') : ({ static: '静态住宅', cloud: '云平台-静态', niche: '小众设备' })[state.proxy.type] || '设备资源';
+      const typeLabel = isDynamicProxy() ? (isTrafficPackage ? '流量包' : '动态设备（住宅）') : ({ static: '静态住宅', cloud: '云平台-静态', niche: '小众设备' })[state.proxy.type] || '设备资源';
       const scanApp = state.proxy.payment === 'wechat' ? '微信' : state.proxy.payment === 'coin' ? '云登客户端' : '支付宝';
       state.pendingOrder = { kind: quote.orderType || 'proxy_order', orderTypeCode: quote.orderType || 'proxy_order', total: quote.total, orderNo, createdAt, remainingSeconds: 29 * 60 + 49 };
       state.lastFocus = document.activeElement;
@@ -1339,7 +1339,7 @@
     /* 返回设备管理：嵌入态交给壳层软导航，独立打开时回退 index.html 的 page key。 */
     function navigateBackToDevice() {
       if (window.parent !== window) {
-        window.parent.postMessage({ type: 'yundeng:route', file: '设备管理.html', search: '', hash: '' }, '*');
+        window.parent.postMessage({ type: 'yundeng:route', file: '设备管理-自有设备.html', search: '', hash: '' }, '*');
         return;
       }
       location.replace('../index.html?page=proxy');
@@ -1348,13 +1348,15 @@
     /* 设备商城子页面页签：仅「购物车」需要跳转到独立子页面，「购买设备」即当前页。 */
     function navigateToStoreTab(tab) {
       if (tab !== 'cart') return;
-      const file = '商城-购物车.html';
+      const file = '设备管理-平台设备-购物车.html';
       const search = '?tab=cart';
       if (window.parent !== window) {
         window.parent.postMessage({ type: 'yundeng:route', file, search, hash: '' }, '*');
         return;
       }
-      location.replace(`../index.html?page=store&module=${encodeURIComponent(file)}&moduleSearch=${encodeURIComponent(search.slice(1))}`);
+      // 独立打开时用 page=store + tab 定位（见 公共导航.js STORE_TAB_MODULE_FILES），
+      // 与「设备管理 ▸ 购买设备」入口同格式，地址栏不出现中文 module 文件名。
+      location.replace('../index.html?page=store&moduleSearch=tab%3Dcart');
     }
     $('#storeTabs').addEventListener('click', event => {
       const button = event.target.closest('[data-tab]');

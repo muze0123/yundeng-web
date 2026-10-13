@@ -127,7 +127,7 @@
     function renderPlatformOptions(){const options=platforms.map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join('');$('platformFilter').insertAdjacentHTML('beforeend',options);$('accountPlatform').innerHTML='<option value="">请选择平台</option>'+options;}
     const navItems=[
       {id:'environment',label:'环境管理',icon:'monitor-cog',href:'环境管理.html'},
-      {id:'proxy',label:'设备管理',icon:'network',href:'设备管理.html'},
+      {id:'proxy',label:'设备管理',icon:'network',href:'设备管理-自有设备.html'},
       {id:'billing',label:'费用管理',icon:'receipt-text',href:'费用管理-订单管理.html'},
       {id:'team',label:'团队',icon:'users-round',group:true,expanded:true,children:[
         {id:'team-management',label:'团队管理',icon:'building-2',href:'团队管理-成员管理.html'},

@@ -191,12 +191,13 @@
     .host-row .control:first-child { flex: 1 1 auto; width: auto; min-width: 0; }
     .host-row .control:last-child { flex: none; width: 120px; }
     /* ===== 页头：返回按钮 + 添加方式页签（design.md §5.0 同类组件全站外观一致） =====
-       结构和视觉对齐 商城-设备.html 的「返回 + 页签」页头：返回按钮在左、页签紧随其右，
+       结构和视觉对齐 设备管理-平台设备-购买设备.html 的「返回 + 页签」页头：返回按钮在左、页签紧随其右，
        页签沿用设备商城「购买设备 / 购物车」的规格 —— 44px 高、min-width 104px、间距 8px、
-       选中态 2px primary 下划线 + 600 字重 + 白底、hover 浅灰底 + primary 字色，
-       不再给页签行加底部分隔线（商城页头也是仅靠选中页签的下划线指示）。
+       选中态 2px primary 下划线 + 600 字重 + 白底、hover 浅灰底 + primary 字色。
+       页头下方另加一条独立分割线（.page-divider）划开「页头栏」与表单内容，
+       与页签下划线之间留 16px —— 页签蓝线就在页签底边，紧贴一条 1px 灰线会叠成重色描边。
        类名用本页专属 .add-head / .add-tabs / .add-mode-tab，不复用 .source-tab：
-       设备管理.html 的「设备来源页签」是另一套视觉（4px 间距 + ::after 内缩下划线），
+       设备管理-自有设备.html 的「设备来源页签」是另一套视觉（4px 间距 + ::after 内缩下划线），
        同名不同样会让后续改动互相踩踏。 */
     .add-head { height: 44px; display: flex; align-items: center; gap: 16px; }
     .add-head .add-tabs { flex: 1 1 auto; }
@@ -212,6 +213,8 @@
     .add-mode-tab[aria-selected="true"], .add-mode-tab.is-active { color: #0066FF; border-bottom-color: #0066FF; font-weight: 600; background: #FFFFFF; }
     /* 页头右侧辅助说明：位于页签之后、flex:none 不参与收缩（剩余宽度已被页签区占满） */
     .add-hint { flex: none; color: #9DA2AC; font-size: 12px; line-height: 18px; }
+    /* 页头下方的分割线（design.md §5.0 区块内分隔）：1px line 色，与底部操作栏的 border-t 同色，上下呼应 */
+    .page-divider { height: 1px; background: #DFE1E5; }
     /* 批量导入区：左侧录入区 500px（design.md §5.9 控件区标准宽）+ 右侧填写说明。
        左侧输入框与右侧说明区块共用 --entry-height，保证两个区块等高对齐。
        说明区块加宽到 490px 并整体收缩字号/行距（正文 11/15、格式示例 10/12），
@@ -292,8 +295,8 @@
       <!-- 表单区：区块内独立滚动，底部操作栏固定在区块底部 -->
       <div id="formArea" class="flex-1 min-h-0 overflow-auto p-5 md:p-6">
         <!-- 页头：返回按钮 + 添加方式页签同一行（页签在返回按钮右侧，样式对齐「购买设备」页的购买设备 / 购物车）。
-             页面标题「添加设备」与标题下分割线已按要求去掉，模块名由外层框架标题承载。 -->
-        <div class="add-head mb-4">
+             页面标题「添加设备」已按要求去掉，模块名由外层框架标题承载。 -->
+        <div class="add-head">
           <button id="backBtn" type="button" class="back-btn" aria-label="返回设备管理">
             <i data-lucide="arrow-left" aria-hidden="true"></i>
             <span>返回</span>
@@ -304,6 +307,8 @@
           </div>
           <span class="add-hint">静态设备填写连接信息，动态设备填写提取链接</span>
         </div>
+        <!-- 页头栏下方的分割线：与页头、表单内容各留 16px -->
+        <div class="page-divider my-4"></div>
 
         <!-- 单个添加 -->
         <div id="singlePane" role="tabpanel" aria-label="单个添加">
@@ -866,7 +871,7 @@
 
       /* ===================== 返回 / 提交后的路由 ===================== */
       /* 返回目标是「设备管理 - 自有设备」页签：新增的设备属于自有设备，列表页需按 tab 参数激活该来源。 */
-      var RETURN_ROUTE = { file: '设备管理.html', search: 'tab=owned', hash: '' };
+      var RETURN_ROUTE = { file: '设备管理-自有设备.html', search: 'tab=owned', hash: '' };
       function leaveToList(message) {
         /* 新增结果通过会话存储交给列表页展示：子页面跳转后自身 Toast 会立即销毁。 */
         try { if (message) window.sessionStorage.setItem(PENDING_TOAST_KEY, message); } catch (_) {}

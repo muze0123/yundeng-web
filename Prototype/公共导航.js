@@ -15,7 +15,7 @@
   const NAV = [
     { key: 'home', label: '首页', icon: 'house', href: '首页.html' },
     { key: 'environment', label: '环境管理', icon: 'monitor-cog', href: '环境管理.html' },
-    { key: 'proxy', label: '设备管理', icon: 'network', href: '设备管理.html' },
+    { key: 'proxy', label: '设备管理', icon: 'network', href: '设备管理-自有设备.html' },
     // 商城不再作为一级菜单：设备商城 / 购物车改由「设备管理 ▸ 购买设备」进入（见 STORE_VARIANTS）。
     { key: 'billing', label: '费用管理', icon: 'wallet-cards', group: true, children: [
       { key: 'billing-recharge', label: '云币充值', icon: 'wallet-cards', href: '费用管理-云币充值.html' },
@@ -54,16 +54,35 @@
   // 商城相关页面已撤出一级菜单：设备商城（含购物车子页面）供「设备管理 ▸ 购买设备」跳转，
   // 套餐与套餐计价模拟仅保留文件与路由，不再在侧栏暴露入口。
   const STORE_VARIANTS = [
-    { key: 'store', label: '设备商城', icon: 'shopping-bag', href: '商城-设备.html', routeOnly: true },
+    { key: 'store', label: '设备商城', icon: 'shopping-bag', href: '设备管理-平台设备-购买设备.html', routeOnly: true },
     { key: 'store-plan-calculator', label: '套餐计价模拟', icon: 'calculator', href: '商城-套餐计价模拟.html', routeOnly: true }
   ];
   const ROUTE_ONLY = [
     { key: 'promotion-reward', label: '推广奖励', icon: 'badge-percent', href: '推广奖励.html', routeOnly: true },
-    { key: 'device-create', label: '添加设备', icon: 'circle-plus', href: '添加设备.html', routeOnly: true }
+    { key: 'device-create', label: '添加设备', icon: 'circle-plus', href: '设备管理-自有设备-添加设备.html', routeOnly: true }
   ];
   // 路由专用页面不渲染到侧栏，但必须登记到统一解析表，供 page key 和模块直开使用。
   const allItems = NAV.flatMap(item => item.children || [item]).concat(EXTRA, STORE_VARIANTS, ROUTE_ONLY);
   const STORE_PAGE_KEYS = new Set(['store', 'store-plan-calculator']);
+  // 「设备商城」是唯一一个多页签共用同一 route key 的模块：page key 恒为 store，
+  // 「购买设备」与「购物车」两个页签分别落在不同 HTML 文件。这里登记「页签 → 模块文件」映射，
+  // 使链接只需 page=store + moduleSearch=tab=xxx 即可定位子页，地址栏不再出现中文 module 文件名，
+  // 与「设备管理 ▸ 购买设备」入口（index.html?page=store）保持同一格式。
+  const STORE_TAB_MODULE_FILES = Object.freeze({
+    proxy: '设备管理-平台设备-购买设备.html',
+    cart: '设备管理-平台设备-购物车.html'
+  });
+  const STORE_MODULE_TAB_FILES = Object.freeze(
+    Object.fromEntries(Object.entries(STORE_TAB_MODULE_FILES).map(([tab, file]) => [file, tab]))
+  );
+  // 从查询串（或模块查询串）解析 tab 并反查 store 子页文件；支持整串 URL 搜索参数与嵌套 moduleSearch 两种形态。
+  function storeModuleFromQuery(raw) {
+    const params = new URLSearchParams(String(raw || '').replace(/^\?/, ''));
+    const direct = STORE_TAB_MODULE_FILES[params.get('tab')];
+    if (direct) return direct;
+    const nested = new URLSearchParams(params.get('moduleSearch') || '');
+    return STORE_TAB_MODULE_FILES[nested.get('tab')] || null;
+  }
   const basename = decodeURIComponent(location.pathname.split('/').pop() || 'index.html');
   const searchParams = new URLSearchParams(location.search);
   const shellParamNames = new Set(['page', 'module', 'moduleHash', 'moduleSearch', 'embedded', 'guide', 'indexHost']);
@@ -199,10 +218,13 @@
   const moduleAliases = {
     '设备购买须知.html': 'store',
     '代理购买须知.html': 'store', // 兼容旧文件名
-    '商城-设备.html': 'store',
+    '设备管理-平台设备-购买设备.html': 'store',
     '商城-代理.html': 'store', // 兼容旧文件名
-    '商城-套餐.html': 'store',
-    '商城-购物车.html': 'store',
+    '设备管理-平台设备.html': 'store',
+    '设备管理-平台设备-购物车.html': 'store',
+    '商城-设备.html': 'store', // 兼容旧文件名（2026-10-13 改名前）
+    '商城-套餐.html': 'store', // 兼容旧文件名（2026-10-13 改名前）
+    '商城-购物车.html': 'store', // 兼容旧文件名（2026-10-13 改名前）
     '商城-套餐计价模拟.html': 'store-plan-calculator',
     '费用管理-云币充值.html': 'billing-recharge',
     '费用管理-账户充值.html': 'billing-recharge', // 兼容旧文件名
@@ -276,10 +298,15 @@
     '环境管理-编辑环境.html',
     '设备购买须知.html',
     '代理购买须知.html', // 兼容旧文件名
-    '商城-设备.html',
+    '设备管理-平台设备-购买设备.html',
     '商城-代理.html', // 兼容旧文件名
-    '商城-套餐.html',
-    '商城-购物车.html',
+    '设备管理-平台设备.html',
+    '设备管理-平台设备-购物车.html',
+    '商城-设备.html', // 兼容旧文件名（2026-10-13 改名前）
+    '商城-套餐.html', // 兼容旧文件名（2026-10-13 改名前）
+    '商城-购物车.html', // 兼容旧文件名（2026-10-13 改名前）
+    '设备管理.html', // 兼容旧文件名（2026-10-13 改名前）
+    '添加设备.html', // 兼容旧文件名（2026-10-13 改名前）
     '商城-云币充值.html',
     '商城-套餐计价模拟.html'
   ));
@@ -287,9 +314,15 @@
   const STANDALONE_FILES = new Set();
   // 编辑页采用新文件名；兼容已有的旧 module 书签。模块改名（代理 → 设备）后同样保留旧名回退。
   const LEGACY_MODULE_FILE_ALIASES = Object.freeze({
-    '代理管理.html': '设备管理.html',
-    '商城-代理.html': '商城-设备.html',
+    '代理管理.html': '设备管理-自有设备.html',
+    '商城-代理.html': '设备管理-平台设备-购买设备.html',
     '代理购买须知.html': '设备购买须知.html',
+    // 2026-10-13 商城/设备模块改名前文件名 → 现文件名，保证旧 module 书签仍可打开
+    '商城-设备.html': '设备管理-平台设备-购买设备.html',
+    '商城-套餐.html': '设备管理-平台设备.html',
+    '商城-购物车.html': '设备管理-平台设备-购物车.html',
+    '设备管理.html': '设备管理-自有设备.html',
+    '添加设备.html': '设备管理-自有设备-添加设备.html',
     '商城-云币充值.html': '费用管理-云币充值.html',
     '费用管理-账户充值.html': '费用管理-云币充值.html',
     '费用管理-交易流水.html': '费用管理-余额明细.html',
@@ -301,8 +334,12 @@
   };
   const requestedModule = normalizeModuleFile(searchParams.get('module'));
   const requestedModuleItem = allowedModuleFiles.has(requestedModule) ? itemForModule(requestedModule) : null;
+  // store 子页允许省略 module 参数：page=store + moduleSearch=tab=cart 即可定位购物车页（见 STORE_TAB_MODULE_FILES）。
+  const requestedTabModule = routeItem?.key === 'store' ? storeModuleFromQuery(location.search) : null;
   const routedModule = isSystemFrame
-    ? (requestedModuleItem?.key === routeItem?.key ? requestedModule : routeItem?.href || '首页.html')
+    ? (requestedModuleItem?.key === routeItem?.key && allowedModuleFiles.has(requestedModule)
+        ? requestedModule
+        : (allowedModuleFiles.has(requestedTabModule) ? requestedTabModule : routeItem?.href || '首页.html'))
     : basename;
   const pageKey = isSystemFrame
     ? (routeItem?.key || DEFAULT_ROUTE_KEY)
@@ -382,7 +419,11 @@
     const moduleFile = allowedModuleFiles.has(options.module) ? normalizeModuleFile(options.module) : item.href;
     const params = new URLSearchParams();
     params.set('page', item.key);
-    if (moduleFile !== item.href) params.set('module', moduleFile);
+    // store 子页可由 page + tab 精确推导（见 STORE_TAB_MODULE_FILES）时省略 module 参数，
+    // 使购物车链接与「购买设备」入口同格式，地址栏不出现中文文件名。
+    const tabResolvable = item.key === 'store'
+      && [options.moduleSearch, options.search].some(raw => storeModuleFromQuery(raw) === moduleFile);
+    if (moduleFile !== item.href && !tabResolvable) params.set('module', moduleFile);
     const namespacedModuleParams = new URLSearchParams();
     const outerParams = new URLSearchParams(String(options.search || '').replace(/^\?/, ''));
     new URLSearchParams(outerParams.get('moduleSearch') || '').forEach((value, name) => namespacedModuleParams.append(name, value));
@@ -430,7 +471,13 @@
     if (isSystemFrame || isEmbedded || STANDALONE_FILES.has(basename) || !allowedModuleFiles.has(basename)) return false;
     const item = itemForModule(basename);
     if (!item) return false;
-    location.replace(shellRouteHref(item.key, { module: basename, moduleSearch: location.search, hash: location.hash }));
+    // store 非默认子页（购物车）独立打开时补上页签参数：转成 page=store + tab 的紧凑路由，
+    // 地址栏不出现中文 module 文件名，与「购买设备」入口保持同一格式。
+    const storeTab = item.key === 'store' && basename !== item.href ? STORE_MODULE_TAB_FILES[basename] : '';
+    const standaloneParams = new URLSearchParams(String(location.search || '').replace(/^\?/, ''));
+    if (storeTab && !standaloneParams.get('tab')) standaloneParams.set('tab', storeTab);
+    const standaloneSearch = standaloneParams.toString() ? `?${standaloneParams}` : '';
+    location.replace(shellRouteHref(item.key, { module: basename, moduleSearch: standaloneSearch, hash: location.hash }));
     return true;
   }
 
@@ -1149,7 +1196,11 @@
         const page = target.searchParams.get('page');
         item = allItems.find(candidate => candidate.key === page || candidate.label === page || candidate.href === page) || item;
         const moduleFile = target.searchParams.get('module');
-        targetFile = allowedModuleFiles.has(moduleFile) && itemForModule(moduleFile)?.key === item?.key ? moduleFile : item?.href;
+        // 无 module 的 store 链接（page=store + tab）同样要落到对应子页。
+        const tabModule = item?.key === 'store' ? storeModuleFromQuery(target.search) : null;
+        targetFile = allowedModuleFiles.has(moduleFile) && itemForModule(moduleFile)?.key === item?.key
+          ? moduleFile
+          : (allowedModuleFiles.has(tabModule) ? tabModule : item?.href);
         const params = new URLSearchParams(target.searchParams.get('moduleSearch') || '');
         target.searchParams.forEach((value, name) => {
           if (!shellParamNames.has(name)) params.append(name, value);
@@ -1317,7 +1368,11 @@
         if (!item) return null;
         const moduleParam = normalizeModuleFile(url.searchParams.get('module'));
         const moduleItem = moduleParam ? itemForModule(moduleParam) : null;
-        const moduleFile = moduleItem?.key === item.key ? moduleParam : item.href;
+        // page=store + tab 也能定位子页（见 STORE_TAB_MODULE_FILES）：无有效 module 时按 tab 反查。
+        const tabModule = item.key === 'store' ? storeModuleFromQuery(url.search) : null;
+        const moduleFile = moduleItem?.key === item.key
+          ? moduleParam
+          : (allowedModuleFiles.has(tabModule) ? tabModule : item.href);
         return { url, key, label: moduleFile === '环境管理-编辑环境.html' ? '编辑环境' : item.label, moduleFile };
       } catch (_) { return null; }
     };

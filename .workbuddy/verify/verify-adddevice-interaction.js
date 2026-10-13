@@ -1,8 +1,8 @@
-/* 添加设备.html 子页面交互验证脚本（jsdom） */
+/* 设备管理-自有设备-添加设备.html 子页面交互验证脚本（jsdom） */
 const fs = require('fs');
 const { JSDOM } = require('jsdom');
 
-const FILE = '/Users/zhangbin/Desktop/灵匠/云登pc端/Prototype/添加设备.html';
+const FILE = '/Users/zhangbin/Desktop/灵匠/云登pc端/Prototype/设备管理-自有设备-添加设备.html';
 const html = fs.readFileSync(FILE, 'utf8');
 
 (async () => {
@@ -16,7 +16,7 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
 const dom = new JSDOM(html, {
   runScripts: 'outside-only',
   pretendToBeVisual: true,
-  url: 'http://127.0.0.1:8899/Prototype/添加设备.html?embedded=1'
+  url: 'http://127.0.0.1:8899/Prototype/设备管理-自有设备-添加设备.html?embedded=1'
 });
 const win = dom.window;
 const doc = win.document;
@@ -70,7 +70,11 @@ check('返回按钮存在且为页头专属次按钮样式', [
   $('#backBtn').classList.contains('back-btn'),
   $('#backBtn').classList.contains('btn-secondary')
 ], [true, true, false]);
-check('标题下分割线已移除', [!!$('.page-divider'), !!$('.add-head')], [false, true]);
+check('页头下方存在分割线且紧跟页头（划开页头栏与表单内容）', [
+  !!$('.page-divider'),
+  $('.page-divider').previousElementSibling === $('.add-head'),
+  $('.page-divider').classList.contains('my-4')
+], [true, true, true]);
 check('页头顺序：返回按钮在左、页签紧随其右', Array.from($('.add-head').children).map(el => el.id || el.className.split(' ')[0]),
   ['backBtn', 'add-tabs', 'add-hint']);
 check('添加方式页签', $$('.add-mode-tab').map(b => b.dataset.addMode), ['single', 'batch']);
@@ -577,13 +581,13 @@ clickEl($('#submitBtn'));
 await sleep(900);
 check('单个添加写入会话存储', Object.keys(memStore).includes('yundeng-device-toast'), true);
 check('单个添加 Toast 文案', memStore['yundeng-device-toast'], a => typeof a === 'string' && a.includes('测试静态设备') && a.includes('192.0.2.99:8080'));
-check('单个添加返回列表页', sent.map(s => s.type + '|' + s.file), ['yundeng:route|设备管理.html']);
+check('单个添加返回列表页', sent.map(s => s.type + '|' + s.file), ['yundeng:route|设备管理-自有设备.html']);
 
 /* ===================== 6. 返回按钮 ===================== */
 memStore['yundeng-device-toast'] = 'stale';
 sent.length = 0;
 clickEl($('#backBtn'));
-check('返回按钮发出路由消息', sent.map(s => s.type + '|' + s.file), ['yundeng:route|设备管理.html']);
+check('返回按钮发出路由消息', sent.map(s => s.type + '|' + s.file), ['yundeng:route|设备管理-自有设备.html']);
 check('返回不覆盖已有提示', memStore['yundeng-device-toast'], 'stale');
 
 /* ===================== 7. 注解零污染 ===================== */
@@ -592,7 +596,7 @@ check('注解变量仅在脚本中声明', html.includes('var annotations_remove
 
 /* ===================== 8. 批量提交（独立页面实例：主实例在单个提交后 submitting 已锁死） ===================== */
 {
-  const dom2 = new JSDOM(html, { runScripts: 'outside-only', pretendToBeVisual: true, url: 'http://127.0.0.1:8899/Prototype/添加设备.html?embedded=1' });
+  const dom2 = new JSDOM(html, { runScripts: 'outside-only', pretendToBeVisual: true, url: 'http://127.0.0.1:8899/Prototype/设备管理-自有设备-添加设备.html?embedded=1' });
   const win2 = dom2.window;
   const doc2 = win2.document;
   win2.tailwind = {};
@@ -633,7 +637,7 @@ check('注解变量仅在脚本中声明', html.includes('var annotations_remove
     return t ? t.textContent.trim() : null;
   })(), '已添加 2 个静态设备');
   await sleep(700);
-  check('批量提交后返回列表页', sent2.map(s => s.type + '|' + s.file), ['yundeng:route|设备管理.html']);
+  check('批量提交后返回列表页', sent2.map(s => s.type + '|' + s.file), ['yundeng:route|设备管理-自有设备.html']);
   check('批量提交回显提示', typeof store2['yundeng-device-toast'] === 'string' && store2['yundeng-device-toast'].includes('已添加 2 个静态设备'), true);
 }
 
