@@ -259,6 +259,61 @@
         gap: 12px;
         white-space: nowrap;
       }
+      .row-auth-trigger {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .row-auth-trigger svg {
+        width: 14px;
+        height: 14px;
+        color: var(--primary);
+      }
+      .row-more-trigger {
+        width: 28px;
+        height: 28px;
+        padding: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 0;
+        border-radius: 4px;
+        background: transparent;
+        color: var(--sub);
+      }
+      .row-more-trigger:hover,
+      .row-more-trigger[aria-expanded="true"] {
+        background: var(--hover);
+        color: var(--primary);
+      }
+      /* 浮层由 body 承载，不受表格横向滚动容器裁切。 */
+      .member-row-menu {
+        position: fixed;
+        z-index: 40;
+        width: 160px;
+        padding: 4px;
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        background: var(--card);
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.12);
+      }
+      .member-row-menu button {
+        display: block;
+        width: 100%;
+        padding: 8px 12px;
+        border: 0;
+        border-radius: 4px;
+        background: transparent;
+        color: var(--body);
+        text-align: left;
+      }
+      .member-row-menu button:hover,
+      .member-row-menu button:focus-visible {
+        background: var(--hover);
+      }
+      .member-row-menu button.danger {
+        color: var(--danger);
+      }
       .field {
         height: 32px;
         width: 100%;
@@ -1054,6 +1109,55 @@
         align-items: center;
         justify-content: flex-end;
         gap: 12px;
+      }
+      /* 查看成员：沿用 §5.6 的 760px Modal 和数据列表样式。 */
+      .member-view-modal .dialog-body {
+        padding: 24px;
+      }
+      .member-view-info {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px 24px;
+        margin: 0 0 24px;
+      }
+      .member-view-info > div {
+        display: grid;
+        grid-template-columns: 100px minmax(0, 1fr);
+        gap: 8px;
+        min-width: 0;
+      }
+      .member-view-info dt {
+        color: var(--sub);
+        text-align: right;
+      }
+      .member-view-info dd {
+        min-width: 0;
+        margin: 0;
+        color: var(--body);
+        overflow-wrap: anywhere;
+      }
+      .member-view-contact {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+      .member-view-modal .tabs {
+        margin-bottom: 16px;
+      }
+      .member-view-table-scroll {
+        overflow-x: auto;
+      }
+      .member-view-table {
+        min-width: 560px;
+      }
+      .member-view-table td:first-child {
+        font-family: "JetBrains Mono", monospace;
+        font-variant-numeric: tabular-nums;
+      }
+      @media (max-width: 640px) {
+        .member-view-info {
+          grid-template-columns: minmax(0, 1fr);
+        }
       }
       .form {
         display: flex;
@@ -2680,6 +2784,7 @@
         ><button class="btn primary" id="clearAuthSave">确定</button>
       </footer>
     </dialog>
+    <div id="memberRowMenu" class="member-row-menu" role="menu" aria-label="成员操作" hidden></div>
     <script>
       const PAGE = "members";
       ("use strict");
@@ -2982,6 +3087,15 @@
           tags: i % 9 === 8 ? [] : [seedProxyTags[i % seedProxyTags.length]],
         };
       });
+      // 本地演示授权关系；详情与授权操作读取同一份成员数据。
+      const seedMemberAccess = (index) => ({
+        environmentIds: index % 5 === 4
+          ? []
+          : seedEnvironments.slice(index * 2, index * 2 + (index % 3) + 1).map((r) => r.id),
+        deviceIds: index % 4 === 3
+          ? []
+          : seedProxies.slice(index * 2, index * 2 + (index % 2) + 1).map((r) => r.id),
+      });
       const seed = {
         version: 1,
         certificationStatus: "unverified",
@@ -2990,7 +3104,7 @@
         proxies: seedProxies,
         departments: seedDepartments,
         roles: seedRoles,
-        members: seedMembers,
+        members: seedMembers.map((m, i) => ({ ...m, ...seedMemberAccess(i) })),
         applications: Object.values({
           待审批: [
             {
@@ -3248,8 +3362,8 @@
           data = {
             ...value,
             members: value.members.map((m) => {
-              if ("email" in m && "password" in m) return m;
               const seeded = seedMembers.find((item) => item.id === m.id);
+              const seedAccess = seeded ? seedMemberAccess(seedMembers.indexOf(seeded)) : { environmentIds: [], deviceIds: [] };
               return {
                 ...m,
                 email: "email" in m ? m.email : seeded?.email || "",
@@ -3258,6 +3372,8 @@
                   "password" in m
                     ? m.password
                     : seeded?.password || "Yunlogin2026",
+                environmentIds: Array.isArray(m.environmentIds) ? m.environmentIds : seedAccess.environmentIds,
+                deviceIds: Array.isArray(m.deviceIds) ? m.deviceIds : seedAccess.deviceIds,
               };
             }),
           };
@@ -4082,6 +4198,7 @@
           drawer = false,
           filter = false,
           wide = false,
+          viewMember = false,
           confirm = "确定",
           cancel = "取消",
           hideFoot = false,
@@ -4095,7 +4212,8 @@
           "overlay" +
           (drawer ? " drawer" : "") +
           (filter ? " filter-drawer" : "") +
-          (wide ? " auth-picker-modal" : "");
+          (wide ? " auth-picker-modal" : "") +
+          (viewMember ? " member-view-modal" : "");
         $("#dialogTitle").textContent = title;
         $("#dialogBody").innerHTML = body;
         $("#dialogSave").textContent = confirm;
@@ -4238,7 +4356,7 @@
           toast("请先选择要清空授权的成员");
           return;
         }
-        clearAuthPending = { count: members.length, label };
+        clearAuthPending = { ids: members.map((m) => m.id), kind, label };
         $("#clearAuthTitle").textContent = `是否清空${label}授权`;
         $("#clearAuthCount").textContent = members.length;
         $("#clearAuthDesc").textContent = `清空后，所选成员的${label}授权将全部清除`;
@@ -4252,8 +4370,12 @@
         clearAuthPending = null;
         $("#clearAuthDialog").close();
         if (!pending) return;
+        pending.ids.forEach((id) => {
+          const member = memberBy(id);
+          if (member) member[pending.kind === "proxy" ? "deviceIds" : "environmentIds"] = [];
+        });
         ui.selected = [];
-        commit(`已清空 ${pending.count} 名成员的${pending.label}授权`);
+        commit(`已清空 ${pending.ids.length} 名成员的${pending.label}授权`);
       };
       $("#clearAuthDialog").addEventListener("click", (e) => {
         if (e.target !== $("#clearAuthDialog")) return;
@@ -5067,6 +5189,7 @@
       }
       function render() {
         if (!deptBy(ui.dept)) ui.dept = "d0";
+        closeMemberRowMenu();
         closeDepartmentMenu();
         const selectedDepartment = deptBy(ui.dept);
         const selectedTotal = deptCount(ui.dept);
@@ -5084,6 +5207,7 @@
         icons();
       }
       function renderResults() {
+        closeMemberRowMenu();
         const rows = memberRows(),
           pageRows = sliceRows(rows),
           // 主账号（owner）不可勾选：全选状态与批量计数只基于可勾选成员。
@@ -5100,7 +5224,7 @@
                           .map((id) => roleBy(id)?.name)
                           .filter(Boolean)
                           .join("、"),
-                      )}</td><td class="mono">${contactCell(m)}</td><td class="mono">${esc(m.joined)}</td><td class="mono">${esc(m.lastLogin || "—")}</td><td><span class="online-state ${m.online ? "is-online" : "is-offline"}">${m.online ? "在线" : "离线"}</span></td><td><button class="toggle" role="switch" aria-label="${esc(m.name)}的启用状态" aria-checked="${m.enabled}" data-action="member-status" data-id="${m.id}" ${m.owner ? "disabled" : ""}></button></td><td><div class="row-actions">${m.owner ? `<button type="button" class="link" disabled aria-disabled="true" title="主账号不支持编辑">编辑</button>` : link("编辑", "member-edit", m.id)}${m.owner ? "" : link("删除", "member-delete", m.id, true)}</div></td></tr>`,
+                      )}</td><td class="mono">${contactCell(m)}</td><td class="mono">${esc(m.joined)}</td><td class="mono">${esc(m.lastLogin || "—")}</td><td><span class="online-state ${m.online ? "is-online" : "is-offline"}">${m.online ? "在线" : "离线"}</span></td><td><button class="toggle" role="switch" aria-label="${esc(m.name)}的启用状态" aria-checked="${m.enabled}" data-action="member-status" data-id="${m.id}" ${m.owner ? "disabled" : ""}></button></td><td>${memberActions(m)}</td></tr>`,
                   )
                   .join("")
               : `<tr><td colspan="10">${empty(ui.keyword || filterCount() ? "未搜索到相关结果" : "暂无成员数据")}</td></tr>`
@@ -5116,6 +5240,86 @@
         }
         renderBatchBar();
         icons();
+      }
+      function memberActions(m) {
+        return `<div class="row-actions">${m.owner ? '<button type="button" class="link" disabled aria-disabled="true" title="主账号不支持编辑">编辑</button>' : link("编辑", "member-edit", m.id)}<button type="button" class="link row-auth-trigger" data-action="member-auth-menu" data-id="${esc(m.id)}" aria-haspopup="menu" aria-expanded="false">授权${icon("chevron-down")}</button><button type="button" class="row-more-trigger" data-action="member-more-menu" data-id="${esc(m.id)}" aria-label="${esc(m.name)}的更多操作" aria-haspopup="menu" aria-expanded="false">${icon("ellipsis-vertical")}</button></div>`;
+      }
+      let memberViewState = { id: "", tab: "env" };
+      function memberAccessRows(member, kind) {
+        const keys = kind === "env" ? member.environmentIds : member.deviceIds;
+        const pool = kind === "env" ? authPickerPool("environments", seedEnvironments) : authPickerPool("proxies", seedProxies);
+        return (Array.isArray(keys) ? keys : []).map((id) => pool.find((r) => r.id === id)).filter(Boolean);
+      }
+      function memberViewTable(member, kind) {
+        const rows = memberAccessRows(member, kind);
+        const isEnv = kind === "env";
+        const headers = isEnv ? ["序号", "环境名称", "分组", "备注"] : ["序号", "设备名称", "标签"];
+        return `<div class="member-view-table-scroll"><table class="data-table member-view-table"><thead><tr>${headers.map((h) => `<th scope="col">${h}</th>`).join("")}</tr></thead><tbody>${rows.length ? rows.map((r, index) => `<tr><td>${index + 1}</td><td>${esc(r.name)}</td>${isEnv ? `<td>${esc(r.group || "—")}</td><td>${esc(r.note || "—")}</td>` : `<td>${esc((r.tags || []).join("、") || "—")}</td>`}</tr>`).join("") : `<tr><td colspan="${headers.length}">${empty(isEnv ? "暂无授权环境" : "暂无授权设备")}</td></tr>`}</tbody></table></div>`;
+      }
+      function renderMemberViewTab() {
+        const member = memberBy(memberViewState.id);
+        if (!member || !$("#memberViewPanel")) return;
+        $$("#memberViewTabs [role=tab]").forEach((tab) => {
+          const active = tab.dataset.viewTab === memberViewState.tab;
+          tab.setAttribute("aria-selected", String(active));
+          tab.tabIndex = active ? 0 : -1;
+        });
+        $("#memberViewPanel").setAttribute("aria-labelledby", memberViewState.tab === "env" ? "memberViewEnv" : "memberViewDevice");
+        $("#memberViewPanel").innerHTML = memberViewTable(member, memberViewState.tab);
+        icons();
+      }
+      function viewMember(id) {
+        const m = memberBy(id);
+        if (!m) return;
+        memberViewState = { id, tab: "env" };
+        const field = (label, value, mono = false) => `<div><dt>${label}：</dt><dd${mono ? ' class="mono"' : ""}>${value}</dd></div>`;
+        const contact = [m.phone, m.email].filter(Boolean);
+        const info = [
+          field("成员名称", esc(m.name)),
+          field("姓名", esc(m.realName || "未认证")),
+          field("账号", esc(m.account || "—"), true),
+          field("所属角色", esc(m.roles.map((id) => roleBy(id)?.name).filter(Boolean).join("、") || "—")),
+          field("所在部门", esc(deptBy(m.dept)?.name || "未分配部门")),
+          field("联系方式", `<span class="member-view-contact">${(contact.length ? contact : ["—"]).map((v) => `<span>${esc(v)}</span>`).join("")}</span>`),
+          field("添加日期", esc(m.joined || "—"), true),
+          field("最近登录时间", esc(m.lastLogin || "—"), true),
+          field("是否在线", esc(m.online ? "在线" : "离线")),
+          field("成员状态", esc(m.enabled ? "启用" : "禁用")),
+        ];
+        const count = (kind) => memberAccessRows(m, kind).length;
+        const body = `<dl class="member-view-info">${info.join("")}</dl><div class="tabs" id="memberViewTabs" role="tablist" aria-label="成员授权资源"><button type="button" id="memberViewEnv" class="tab" role="tab" data-view-tab="env" aria-controls="memberViewPanel" aria-selected="true">授权环境（<span class="mono">${count("env")}</span>）</button><button type="button" id="memberViewDevice" class="tab" role="tab" data-view-tab="proxy" aria-controls="memberViewPanel" aria-selected="false" tabindex="-1">授权设备（<span class="mono">${count("proxy")}</span>）</button></div><section id="memberViewPanel" role="tabpanel" aria-labelledby="memberViewEnv">${memberViewTable(m, "env")}</section>`;
+        openDialog("查看成员", body, null, { hideFoot: true, viewMember: true });
+      }
+      let memberRowMenuTrigger = null;
+      function closeMemberRowMenu(restoreFocus = false) {
+        const menu = $("#memberRowMenu");
+        if (!menu || menu.hidden) return;
+        menu.hidden = true;
+        memberRowMenuTrigger?.setAttribute("aria-expanded", "false");
+        if (restoreFocus && memberRowMenuTrigger?.isConnected) memberRowMenuTrigger.focus();
+      }
+      function toggleMemberRowMenu(trigger, kind) {
+        const menu = $("#memberRowMenu");
+        const same = !menu.hidden && memberRowMenuTrigger === trigger;
+        closeMemberRowMenu();
+        if (same) return;
+        const id = esc(trigger.dataset.id);
+        const options = kind === "auth"
+          ? [["授权环境", "member-auth-env"], ["授权设备", "member-auth-proxy"]]
+          : [["查看成员", "member-view"], ...(!memberBy(trigger.dataset.id)?.owner ? [["删除", "member-delete"]] : [])];
+        menu.setAttribute("aria-label", kind === "auth" ? "授权资源" : "成员操作");
+        menu.innerHTML = options.map(([label, action]) =>
+          `<button type="button" role="menuitem" class="${action === "member-delete" ? "danger" : ""}" data-action="${action}" data-id="${id}">${label}</button>`
+        ).join("");
+        memberRowMenuTrigger = trigger;
+        trigger.setAttribute("aria-expanded", "true");
+        menu.hidden = false;
+        const anchor = trigger.getBoundingClientRect();
+        const width = menu.offsetWidth;
+        const height = menu.offsetHeight;
+        menu.style.left = `${Math.max(8, Math.min(kind === "auth" ? anchor.left : anchor.right - width, innerWidth - width - 8))}px`;
+        menu.style.top = `${anchor.bottom + 4 + height > innerHeight ? Math.max(8, anchor.top - height - 4) : anchor.bottom + 4}px`;
+        $("button", menu)?.focus();
       }
       // 批量操作条：仅在有选中成员时出现，操作项与下拉气泡同图1。
       function renderBatchBar() {
@@ -5903,6 +6107,7 @@
          关键词按中文逗号拆分、按「或」语义匹配，与 §5.4.2 的查询逻辑保持一致。 */
       const authPicker = {
         kind: "env",
+        memberIds: [],
         page: 1,
         size: 10,
         group: "",
@@ -5910,7 +6115,7 @@
         selected: new Set(),
       };
       const authPickerMembers = () =>
-        ui.selected.map(memberBy).filter((m) => m && !m.owner);
+        authPicker.memberIds.map(memberBy).filter(Boolean);
       const authPickerPool = (key, fallback) =>
         Array.isArray(data[key]) ? data[key] : fallback;
       // 环境与设备共用同一套表格骨架，差异只在列定义、下拉选项与搜索占位文案。
@@ -6061,7 +6266,8 @@
         host.innerHTML = authPickerResult();
         icons();
       }
-      function openAuthPicker(kind) {
+      function openAuthPicker(kind, memberId = "") {
+        authPicker.memberIds = memberId ? [memberId] : ui.selected.filter((id) => !memberBy(id)?.owner);
         const members = authPickerMembers();
         if (!members.length) {
           toast("请先选择要授权的成员");
@@ -6072,13 +6278,13 @@
         authPicker.size = 10;
         authPicker.group = "";
         authPicker.keyword = "";
-        authPicker.selected = new Set();
+        authPicker.selected = new Set(memberId ? (kind === "proxy" ? members[0].deviceIds : members[0].environmentIds) || [] : []);
         openDialog(
           authPickerConfig().title,
           authPickerMarkup(),
           () => {
             const count = authPicker.selected.size;
-            if (!count) {
+            if (!count && !memberId) {
               toast(
                 authPicker.kind === "env"
                   ? "请选择要授权的环境"
@@ -6087,8 +6293,14 @@
               return false;
             }
             const label = authPicker.kind === "env" ? "环境" : "设备";
-            ui.selected = [];
-            commit(`已为 ${members.length} 名成员授权 ${count} 个${label}`);
+            const key = authPicker.kind === "env" ? "environmentIds" : "deviceIds";
+            members.forEach((member) => {
+              member[key] = memberId
+                ? [...authPicker.selected]
+                : [...new Set([...(member[key] || []), ...authPicker.selected])];
+            });
+            if (!memberId) ui.selected = [];
+            commit(memberId ? `已更新${label}授权` : `已为 ${members.length} 名成员授权 ${count} 个${label}`);
             return true;
           },
           { wide: true },
@@ -6202,10 +6414,20 @@
         const t = e.target.closest("[data-action]");
         if (!t) return;
         const { action, id } = t.dataset;
+        if (action === "member-auth-menu" || action === "member-more-menu") {
+          toggleMemberRowMenu(t, action === "member-auth-menu" ? "auth" : "more");
+          return;
+        }
+        const rowMenuOrigin = t.closest("#memberRowMenu") ? memberRowMenuTrigger : null;
+        if (rowMenuOrigin) closeMemberRowMenu();
         if (t.closest(".menu")) t.closest("details").open = false;
         if (action === "member-add") memberEditor();
         if (action === "member-edit") memberEditor(id);
+        if (action === "member-view") viewMember(id);
         if (action === "member-delete") removeMembers([id]);
+        if (action === "member-auth-env") openAuthPicker("env", id);
+        if (action === "member-auth-proxy") openAuthPicker("proxy", id);
+        if (rowMenuOrigin && $("#businessDialog").open) returnFocus = rowMenuOrigin;
         if (action === "batch-delete") removeMembers(ui.selected);
         if (action === "transfer") transferMembers();
         if (action === "batch-enable" || action === "batch-disable")
@@ -6254,6 +6476,36 @@
         if (action === "cert-close") closeDialog();
         if (action === "export") exportMembers();
       });
+      document.addEventListener("click", (e) => {
+        if (!e.target.closest("#memberRowMenu, [data-action='member-auth-menu'], [data-action='member-more-menu']")) closeMemberRowMenu();
+        const tab = e.target.closest("#memberViewTabs [data-view-tab]");
+        if (tab) {
+          memberViewState.tab = tab.dataset.viewTab;
+          renderMemberViewTab();
+        }
+      });
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && !$("#memberRowMenu").hidden) {
+          e.preventDefault();
+          closeMemberRowMenu(true);
+        }
+        const menuItem = e.target.closest("#memberRowMenu [role=menuitem]");
+        if (menuItem && ["ArrowUp", "ArrowDown", "Home", "End"].includes(e.key)) {
+          e.preventDefault();
+          const items = $$("#memberRowMenu [role=menuitem]");
+          const index = items.indexOf(menuItem);
+          const next = e.key === "Home" ? 0 : e.key === "End" ? items.length - 1 : (index + (e.key === "ArrowDown" ? 1 : -1) + items.length) % items.length;
+          items[next].focus();
+        }
+        const tab = e.target.closest("#memberViewTabs [role=tab]");
+        if (!tab || !["ArrowLeft", "ArrowRight"].includes(e.key)) return;
+        e.preventDefault();
+        memberViewState.tab = memberViewState.tab === "env" ? "proxy" : "env";
+        renderMemberViewTab();
+        $(memberViewState.tab === "env" ? "#memberViewEnv" : "#memberViewDevice").focus();
+      });
+      document.addEventListener("scroll", () => closeMemberRowMenu(), true);
+      window.addEventListener("resize", () => closeMemberRowMenu());
 
       start();
     </script>

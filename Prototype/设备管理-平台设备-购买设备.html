@@ -981,7 +981,7 @@
       $('#buyProxy').disabled = !quote.available; $('#addCart').disabled = !quote.available;
       if (Number(state.proxy.coupon) === 20 && quote.coupon === 0) { state.proxy.coupon = 0; $('#proxyCoupon').value = ''; }
       $('#orderSummary').innerHTML = [
-        ['设备类型', quote.product?.name || '待选择'], ['设备地区', regionSummaryText()],
+        ['类型-套餐', quote.product?.name || '待选择'], ['设备地区', regionSummaryText()],
         ['地址类型', 'IPv4'], ['购买时长', isDynamicProxy() ? `${quote.trafficPack?.days || 0}天` : `${state.proxy.duration}个月`], ['购买数量', `${state.proxy.qty}个`]
       ].map(([label,value]) => `<div class="summary-line"><dt>${label}</dt><dd>${value}</dd></div>`).join('');
       renderPriceDetail(quote); renderPayments();

@@ -6,6 +6,7 @@
   <title>回收站 - 云登</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="公共导航.css?v=20261013e">
   <link rel="stylesheet" href="筛选布局.css?v=20260814">
   <script>
@@ -55,15 +56,15 @@
     .data-table td { height:48px; padding:9px 12px; border-bottom:1px solid #F0F1F3; color:#3A3F4A; vertical-align:middle; }
     .data-table tbody tr:hover td { background:#F3F4F6; }
     .data-table tbody tr.selected td { background:#E6F0FF; }
-    .data-table .action-column { position:sticky; right:0; z-index:2; background:#FFFFFF; box-shadow:-1px 0 0 #E8EAED; }
+    .data-table .action-column { position:sticky; right:0; z-index:2; background:#FFFFFF; border-left:1px solid #E8EAED; }
     .data-table thead .action-column { z-index:3; background:#F0F1F3; }
     .data-table tbody tr:hover .action-column { background:#F3F4F6; }
     .data-table tbody tr.selected .action-column { background:#E6F0FF; }
     .row-check { width:15px; height:15px; accent-color:#0066FF; cursor:pointer; }
     .cell-text { display:block; max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-    .tag { height:22px; padding:0 8px; border:1px solid #0066FF; border-radius:4px; display:inline-flex; align-items:center; font-size:11px; background:#E6F0FF; color:#0066FF; }
-    .table-actions { display:flex; align-items:center; gap:12px; white-space:nowrap; }
-    .table-action { height:28px; padding:0; border:0; background:transparent; color:#0066FF; font-size:12px; line-height:28px; white-space:nowrap; }
+    .tag { height:22px; padding:0 8px; border:1px solid #0066FF; border-radius:4px; display:inline-flex; align-items:center; flex:none; white-space:nowrap; font-size:11px; background:#E6F0FF; color:#0066FF; }
+    .table-actions { display:flex; align-items:center; justify-content:flex-start; gap:12px; white-space:nowrap; }
+    .table-action { padding:0; border:0; background:transparent; color:#0066FF; font-size:13px; line-height:20px; white-space:nowrap; cursor:pointer; }
     .table-action:hover { text-decoration:underline; }
     .table-action.is-danger { color:#D9001B; }
     #pagination { display:flex; align-items:center; justify-content:flex-end; flex-wrap:wrap; gap:16px; padding-top:20px; color:#6E7685; font-size:12px; }
@@ -91,63 +92,81 @@
     @keyframes toast-in { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
     .scroll-thin::-webkit-scrollbar { width:7px; height:7px; }
     .scroll-thin::-webkit-scrollbar-thumb { background:#9DA2AC; border-radius:8px; }
+    /* 回收站继承 design.md 的单区块列表、32px 控件与表格规格。 */
+    #mainContent.page-content { min-height:100%; padding-bottom:20px; display:flex; flex-direction:column; overflow:auto; }
+    #mainContent.page-content > section:only-child { min-height:100%; flex:1 0 auto; display:flex; flex-direction:column; }
+    .recycle-tabs { display:flex; align-items:center; gap:0; overflow-x:auto; border-bottom:1px solid #E8EAED; flex:none; }
+    .type-tab { min-width:auto; height:44px; padding:0 20px; gap:8px; color:#3A3F4A; font-size:13px; }
+    .type-tab + .type-tab::after { content:""; position:absolute; left:0; height:16px; border-left:1px solid #E8EAED; }
+    .type-tab.active::before { left:20px; right:20px; }
+    .recycle-toolbar { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px 16px; padding:16px 0; }
+    .recycle-toolbar-actions { display:flex; align-items:center; justify-content:flex-start; flex-wrap:wrap; gap:8px; min-width:0; }
+    .recycle-search-host { flex:0 1 320px; min-width:0; }
+    .recycle-search-host .order-global-search { width:100%; }
+    .recycle-search-host .field { height:32px; border:1px solid #DFE1E5; border-radius:4px; background:#FFFFFF; color:#3A3F4A; font-size:13px; outline:none; }
+    .recycle-search-host .field:hover { border-color:#9DA2AC; }
+    .recycle-search-host .field:focus-visible { border-color:#0066FF; box-shadow:0 0 0 2px #E6F0FF; }
+    .recycle-group { position:relative; width:150px; flex:none; }
+    .recycle-group select { width:100%; padding:0 30px 0 12px; appearance:none; }
+    .recycle-group > svg, .recycle-group > i { position:absolute; right:10px; top:8px; pointer-events:none; color:#9DA2AC; }
+    .retention-note { display:inline-flex; align-items:center; gap:6px; color:#0091D5; font-size:12px; white-space:nowrap; }
+    .recycle-heading { display:flex; align-items:center; gap:10px; padding:0 0 16px; }
+    #tableArea { flex:none; min-height:0; }
+    .data-table { table-layout:fixed; min-width:1100px; }
+    .data-table th { height:44px; }
+    .data-table td { height:48px; text-align:left; }
+    .data-table .action-column { min-width:0; text-align:left; }
+    .cell-text { max-width:100%; }
+    .cell-link { color:#3A3F4A; }
+    .cell-link:hover { color:#0066FF; text-decoration:underline; }
+    .cell-sub { display:block; color:#9DA2AC; font-size:11px; line-height:18px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .modal-mask.hidden { display:none; }
+    .recycle-tabs .type-tab:focus-visible, .table-action:focus-visible { outline:2px solid #0066FF; outline-offset:2px; }
+    ::selection { background:#E6F0FF; color:#1A1D24; }
     @media (max-width:767px) {
       .type-tab { min-width:96px; padding:0 12px; }
       .modal-mask { padding:12px; }
       .dialog-panel { min-height:230px; }
     }
     @media (max-width:720px) {
+      .recycle-toolbar-actions,.recycle-toolbar .order-search-filter-group { flex:0 0 100%; width:100%; margin-left:0; justify-content:flex-start; }
+      .recycle-search-host { flex:1 1 auto; }
+      .retention-note { white-space:normal; }
       #pagination { justify-content:flex-start; }
       .pg-right { flex-wrap:wrap; }
+    }
+    @media (min-width:721px) and (max-width:1080px) {
+      .recycle-toolbar .order-search-filter-group { flex:1 1 100%; margin-left:0; justify-content:flex-end; }
     }
   </style>
   <script src="公共导航.js?v=20261013e"></script>
 </head>
 <body>
-    <main id="mainContent" class="min-h-screen min-w-0 overflow-auto p-4">
-      <section class="bg-card rounded-lg p-5 md:p-6 mb-4 min-w-0" aria-labelledby="filterTitle">
-        <h2 id="filterTitle" class="sr-only">回收站筛选</h2>
-        <div id="typeTabs" class="flex overflow-x-auto border-b border-line-lighter scroll-thin mb-5" role="tablist" aria-label="回收资源类型"></div>
-        <div class="filter-flow">
-          <div id="groupControl" class="filter-item">
-            <label class="filter-label" for="groupFilter">环境分组</label>
-            <div class="relative">
-              <select id="groupFilter" class="control w-full pl-3 pr-8 appearance-none" aria-label="环境分组">
-                <option value="">全部分组</option>
-              </select>
-              <i data-lucide="chevron-down" class="w-4 h-4 absolute right-2.5 top-1/2 -translate-y-1/2 text-ink-muted pointer-events-none"></i>
-            </div>
-          </div>
-          <div class="filter-item">
-            <label class="filter-label" for="searchInput">关键词</label>
-            <div class="relative">
-              <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-ink-muted pointer-events-none"></i>
-              <input id="searchInput" class="control w-full pl-9 pr-9" maxlength="100" placeholder="搜索名称、账号、ID 或备注" aria-label="搜索回收数据">
-              <button id="clearSearchBtn" type="button" class="hidden absolute right-2 top-1/2 -translate-y-1/2 w-6 h-6 text-ink-muted hover:text-ink-body inline-flex items-center justify-center" title="清空搜索" aria-label="清空搜索"><i data-lucide="x" class="w-4 h-4"></i></button>
-            </div>
-          </div>
-          <div class="filter-actions">
-            <button id="queryBtn" type="button" class="btn btn-primary"><i data-lucide="search" class="w-4 h-4"></i>查询</button>
-            <button id="resetBtn" type="button" class="btn btn-secondary"><i data-lucide="rotate-ccw" class="w-4 h-4"></i>重置</button>
-          </div>
-        </div>
-      </section>
+    <main id="mainContent" class="page-content min-w-0 p-4">
+      <!-- 分类、检索和数据列表共处单一业务区块。 -->
       <section class="bg-card rounded-lg p-5 md:p-6 min-w-0" aria-labelledby="recycleTitle">
-        <div class="flex items-start justify-between flex-wrap gap-3 mb-4">
-          <div class="min-w-0">
-            <h2 id="recycleTitle" class="inline-block text-[18px] font-semibold text-ink-title"><span id="listTitle">环境回收列表</span></h2>
-            <p class="mt-1 flex items-start gap-1.5 text-[12px] text-info"><i data-lucide="circle-alert" class="w-4 h-4 flex-none mt-px"></i><span>回收站中的数据保存 30 天后会自动清空</span></p>
-          </div>
-          <div class="flex flex-wrap items-center gap-2">
+        <nav id="typeTabs" class="recycle-tabs scroll-thin" role="tablist" aria-label="回收资源类型"></nav>
+        <div class="recycle-toolbar">
+          <div class="recycle-toolbar-actions">
             <div id="actionButtons" class="flex flex-wrap items-center gap-2"></div>
+            <span class="retention-note"><i data-lucide="info" class="w-4 h-4 flex-none"></i>回收站中的数据保存30天后会自动清空</span>
             <button id="refreshBtn" type="button" class="icon-btn flex-none" title="刷新列表" aria-label="刷新列表"><i data-lucide="refresh-cw" class="w-4 h-4"></i></button>
           </div>
+          <div class="order-search-filter-group">
+            <div id="recycleSearchHost" class="recycle-search-host"></div>
+            <div id="groupControl" class="recycle-group hidden">
+              <label class="sr-only" for="groupFilter">环境分组</label>
+              <select id="groupFilter" class="control" aria-label="环境分组"><option value="">选择分组</option></select>
+              <i data-lucide="chevron-down" class="w-4 h-4"></i>
+            </div>
+          </div>
         </div>
+        <div class="recycle-heading"><h2 id="recycleTitle" class="text-[16px] font-semibold text-ink-title"><span id="listTitle">环境回收列表</span></h2><span id="listCount" class="text-[12px] text-ink-sub mono"></span></div>
         <div id="selectionBar" class="hidden mb-4 h-8 px-3 rounded bg-primary-bg text-primary items-center justify-between gap-3">
           <span>已选择 <strong id="selectedCount" class="mono">0</strong> 项</span>
           <button id="clearSelectionBtn" type="button" class="h-8 hover:underline">取消选择</button>
         </div>
-        <div id="tableArea" class="min-h-[360px] min-w-0 overflow-x-auto scroll-thin border border-line rounded" role="region" aria-label="回收站数据列表" tabindex="0"></div>
+        <div id="tableArea" class="min-w-0 overflow-x-auto scroll-thin border border-line rounded" role="region" aria-label="回收站数据列表" tabindex="0"></div>
         <footer id="pagination" aria-label="回收站列表分页"></footer>
       </section>
     </main>
@@ -186,23 +205,17 @@
   <script>
     const $ = id => document.getElementById(id);
     const typeConfig = {
-      environment:{label:'环境', icon:'monitor-cog', singular:'环境', toolbar:'selection', searchKeys:['id','group','name','account','remark','operator'], columns:[
-        {key:'select',label:'',width:42},{key:'id',label:'序号/ID',width:88},{key:'group',label:'分组',width:110},{key:'name',label:'环境名称',width:170},{key:'account',label:'账号',width:150},{key:'remark',label:'备注',width:150},{key:'tags',label:'标签',width:120},{key:'operator',label:'操作者',width:110},{key:'deletedAt',label:'删除时间',width:168},{key:'actions',label:'操作',width:190}
+      environment:{label:'环境', icon:'network', singular:'环境', toolbar:'selection', searchKeys:['id','group','name','account','remark','operator'], columns:[
+        {key:'select',label:'',width:42},{key:'id',label:'序号',width:70},{key:'group',label:'分组',width:100},{key:'name',label:'环境名称',width:150},{key:'account',label:'账号',width:105},{key:'remark',label:'备注',width:115},{key:'tags',label:'标签',width:100},{key:'operator',label:'操作者',width:110},{key:'deletedAt',label:'删除时间',width:175},{key:'actions',label:'操作',width:145}
       ]},
-      account:{label:'账号', icon:'user-round', singular:'账号', toolbar:'selection', searchKeys:['name','platform','account','remark','operator'], columns:[
-        {key:'select',label:'',width:42},{key:'name',label:'名称',width:180},{key:'platform',label:'平台',width:120},{key:'account',label:'账号',width:180},{key:'remark',label:'备注',width:180},{key:'operator',label:'操作者',width:120},{key:'deletedAt',label:'删除时间',width:168},{key:'actions',label:'操作',width:190}
+      account:{label:'账号', icon:'file-user', singular:'账号', toolbar:'selection', searchKeys:['name','platform','account','remark','operator'], columns:[
+        {key:'select',label:'',width:42},{key:'name',label:'名称',width:170},{key:'platform',label:'平台',width:170},{key:'account',label:'账号',width:180},{key:'remark',label:'备注',width:160},{key:'operator',label:'操作者',width:120},{key:'deletedAt',label:'删除时间',width:175},{key:'actions',label:'操作',width:158}
       ]},
-      platform_proxy:{label:'平台设备', icon:'cloud-cog', singular:'平台设备', toolbar:'clear', searchKeys:['id','name','proxyInfo','provider','tags','operator'], columns:[
-        {key:'select',label:'',width:42},{key:'id',label:'序号',width:82},{key:'name',label:'设备名称',width:180},{key:'proxyInfo',label:'设备信息',width:210},{key:'provider',label:'服务商',width:120},{key:'tags',label:'标签',width:120},{key:'operator',label:'操作者',width:120},{key:'deletedAt',label:'删除时间',width:168},{key:'actions',label:'操作',width:190}
+      platform_proxy:{label:'平台设备', icon:'monitor', singular:'平台设备', toolbar:'clear', searchKeys:['id','name','proxyInfo','provider','tags','operator'], columns:[
+        {key:'id',label:'序号',width:70},{key:'name',label:'设备名称',width:155},{key:'proxyInfo',label:'设备信息',width:205},{key:'provider',label:'服务商',width:190},{key:'tags',label:'标签',width:100},{key:'operator',label:'操作者',width:120},{key:'deletedAt',label:'删除时间',width:175},{key:'actions',label:'操作',width:100}
       ]},
-      owned_proxy:{label:'自有设备', icon:'server-cog', singular:'自有设备', toolbar:'all', searchKeys:['id','name','proxyInfo','proxyType','remark','operator'], columns:[
-        {key:'select',label:'',width:42},{key:'id',label:'序号/ID',width:88},{key:'name',label:'设备名称',width:180},{key:'proxyInfo',label:'设备信息',width:210},{key:'proxyType',label:'设备类型',width:110},{key:'remark',label:'备注',width:160},{key:'operator',label:'操作者',width:120},{key:'deletedAt',label:'删除时间',width:168},{key:'actions',label:'操作',width:190}
-      ]},
-      proxy_api:{label:'代理API', icon:'braces', singular:'设备 API', toolbar:'all', searchKeys:['id','name','proxyType','extractMode','extractUrl','operator'], columns:[
-        {key:'select',label:'',width:42},{key:'id',label:'序号/ID',width:88},{key:'name',label:'名称',width:180},{key:'proxyType',label:'设备类型',width:110},{key:'extractMode',label:'提取方式',width:120},{key:'extractUrl',label:'提取链接',width:240},{key:'operator',label:'操作者',width:120},{key:'deletedAt',label:'删除时间',width:168},{key:'actions',label:'操作',width:190}
-      ]},
-      rpa_template:{label:'RPA模板', icon:'bot', singular:'RPA 模板', toolbar:'all', searchKeys:['name','group','remark','operator'], columns:[
-        {key:'select',label:'',width:42},{key:'name',label:'名称',width:210},{key:'group',label:'分组',width:150},{key:'remark',label:'备注',width:240},{key:'operator',label:'操作者',width:120},{key:'deletedAt',label:'删除时间',width:168},{key:'actions',label:'操作',width:190}
+      owned_proxy:{label:'自有设备', icon:'users-round', singular:'自有设备', toolbar:'all', searchKeys:['id','name','proxyInfo','proxyType','exitIp','remark','extractMode','sourceLabel','operator'], columns:[
+        {key:'id',label:'序号/ID',width:80},{key:'name',label:'设备名称',width:160},{key:'proxyInfo',label:'设备信息',width:160},{key:'proxyType',label:'设备类型',width:85},{key:'exitIp',label:'出口IP',width:115},{key:'remark',label:'备注',width:130},{key:'operator',label:'操作者',width:90},{key:'deletedAt',label:'删除时间',width:175},{key:'actions',label:'操作',width:140}
       ]}
     };
     const recycleData = {
@@ -228,35 +241,68 @@
         {recycleId:'RB-A-0105',name:'新加坡店铺',platform:'Shopee',account:'sg***@mail.test',remark:'东南亚组',operator:'张小登',deletedAt:'2026-08-04 09:12:36',expireAt:'2026-09-03 09:12:36'},
         {recycleId:'RB-A-0102',name:'内容运营账号',platform:'TikTok Shop',account:'tt***@mail.test',remark:'短视频运营',operator:'成员 1938',deletedAt:'2026-08-01 16:08:44',expireAt:'2026-08-31 16:08:44'}
       ],
-      platform_proxy:[
-        {recycleId:'RB-PP-021',id:'PP-021',name:'美国洛杉矶静态-21',proxyInfo:'198.51.100.21:443',provider:'云登精选',tags:'美国 / 静态',operator:'张小登',deletedAt:'2026-08-06 14:20:16',expireAt:'2026-09-05 14:20:16'},
-        {recycleId:'RB-PP-018',id:'PP-018',name:'英国伦敦住宅-18',proxyInfo:'198.51.100.18:443',provider:'BrightRoute',tags:'英国 / 住宅',operator:'成员 1938',deletedAt:'2026-08-04 11:06:42',expireAt:'2026-09-03 11:06:42'},
-        {recycleId:'RB-PP-014',id:'PP-014',name:'日本东京动态-14',proxyInfo:'动态提取',provider:'云登精选',tags:'日本 / 动态',operator:'张小登',deletedAt:'2026-08-02 17:31:09',expireAt:'2026-09-01 17:31:09'}
-      ],
-      owned_proxy:[
-        {recycleId:'RB-OP-011',id:'OP-011',name:'自有线路-US-11',proxyInfo:'203.0.113.11:8080',proxyType:'HTTP',remark:'广告专用',operator:'张小登',deletedAt:'2026-08-05 13:42:17',expireAt:'2026-09-04 13:42:17'},
-        {recycleId:'RB-OP-009',id:'OP-009',name:'自有线路-SG-09',proxyInfo:'203.0.113.9:1080',proxyType:'SOCKS5',remark:'店铺运营',operator:'成员 1938',deletedAt:'2026-08-03 10:16:30',expireAt:'2026-09-02 10:16:30'},
-        {recycleId:'RB-OP-004',id:'OP-004',name:'自有线路-DE-04',proxyInfo:'203.0.113.4:443',proxyType:'HTTPS',remark:'欧洲站',operator:'张小登',deletedAt:'2026-07-31 19:05:58',expireAt:'2026-08-30 19:05:58'}
-      ],
-      proxy_api:[
-        {recycleId:'RB-API-006',id:'API-006',name:'住宅动态提取-06',proxyType:'HTTP',extractMode:'每次启动提取',extractUrl:'https://proxy.example.test/extract/006',operator:'张小登',deletedAt:'2026-08-05 09:20:18',expireAt:'2026-09-04 09:20:18'},
-        {recycleId:'RB-API-004',id:'API-004',name:'海外静态池-04',proxyType:'SOCKS5',extractMode:'固定时长提取',extractUrl:'https://proxy.example.test/extract/004',operator:'成员 1938',deletedAt:'2026-08-02 12:36:51',expireAt:'2026-09-01 12:36:51'},
-        {recycleId:'RB-API-002',id:'API-002',name:'广告线路池-02',proxyType:'HTTPS',extractMode:'每次打开提取',extractUrl:'https://proxy.example.test/extract/002',operator:'张小登',deletedAt:'2026-07-30 15:42:03',expireAt:'2026-08-29 15:42:03'}
-      ],
-      rpa_template:[
-        {recycleId:'RB-RPA-017',name:'店铺订单批量导出',group:'订单处理',remark:'每日订单归档',operator:'张小登',deletedAt:'2026-08-06 16:04:25',expireAt:'2026-09-05 16:04:25'},
-        {recycleId:'RB-RPA-013',name:'广告数据定时汇总',group:'广告运营',remark:'周报数据源',operator:'成员 1938',deletedAt:'2026-08-04 10:18:39',expireAt:'2026-09-03 10:18:39'},
-        {recycleId:'RB-RPA-009',name:'商品库存检查',group:'店铺运营',remark:'低库存提醒',operator:'张小登',deletedAt:'2026-08-01 17:26:04',expireAt:'2026-08-31 17:26:04'}
-      ]
+      platform_proxy:[],
+      owned_proxy:[]
     };
+    // 截图样本置顶；其余演示数据落在同一 30 天保留窗口内。
+    recycleData.environment.unshift(
+      {recycleId:'RB-E-27738',id:'27738',group:'默认分组',name:'dynamic-143_2',account:'-',remark:'-',tags:[],operator:'郭伟利(Fox)',deletedAt:'2026-10-13 12:06:42',groupExists:true},
+      {recycleId:'RB-E-27420',id:'27420',group:'默认分组',name:'test ipipv-ipData',account:'-',remark:'-',tags:[],operator:'郭伟利(Fox)',deletedAt:'2026-10-13 12:06:42',groupExists:true},
+      {recycleId:'RB-E-27447',id:'27447',group:'默认分组',name:'141云登浏览器',account:'-',remark:'-',tags:[],operator:'郭伟利(Fox)',deletedAt:'2026-10-13 12:06:42',groupExists:true},
+      {recycleId:'RB-E-27449',id:'27449',group:'默认分组',name:'141云登浏览器',account:'-',remark:'-',tags:[],operator:'郭伟利(Fox)',deletedAt:'2026-10-13 12:06:42',groupExists:true}
+    );
+    recycleData.account.unshift({recycleId:'RB-A-301',name:'-',platform:'敦煌网后台 - 中国',account:'du***@mail.test',remark:'-',operator:'Ollie',deletedAt:'2026-10-13 11:17:21'});
+    recycleData.account.push(
+      {recycleId:'RB-A-302',name:'美国站广告账号',platform:'Google Ads',account:'us***@mail.test',remark:'广告组',operator:'郭伟利(Fox)',deletedAt:'2026-10-12 09:24:18'},
+      {recycleId:'RB-A-303',name:'店铺客服账号',platform:'Shopee',account:'cs***@mail.test',remark:'客服',operator:'Ollie',deletedAt:'2026-10-11 15:17:32'},
+      {recycleId:'RB-A-304',name:'日本站运营账号',platform:'Amazon',account:'jp***@mail.test',remark:'日本站',operator:'张小登',deletedAt:'2026-10-10 10:35:46'}
+    );
+    recycleData.platform_proxy = [
+      ['538','洛杉矶-美国住宅-01','204.0.20.***:****','美国-洛杉矶','全球家庭住宅-静态','洛杉矶-资源_ipv','正午的阳光','2026-10-14 10:34:49'],
+      ['537','洛杉矶-美国住宅-02','216.132.131.***:****','美国-洛杉矶','全球家庭住宅-静态','洛杉矶-资源_ld2','正午的阳光','2026-10-14 10:34:23'],
+      ['535','洛杉矶-美国住宅-03','204.141.248.***:****','美国-洛杉矶','全球家庭住宅-静态','洛杉矶-资源_ipv','-','2026-10-08 17:28:40'],
+      ['532','东京-静态住宅-01','198.51.100.***:****','日本-东京','全球家庭住宅-静态','东京-资源_ipv','郭伟利(Fox)','2026-10-08 16:14:12'],
+      ['526','新加坡-动态住宅-02','203.0.113.***:****','新加坡','全球家庭住宅-动态','新加坡-资源_02','正午的阳光','2026-10-07 14:06:20'],
+      ['521','伦敦-英国住宅-01','198.51.100.***:****','英国-伦敦','全球家庭住宅-静态','伦敦-资源_ipv','Ollie','2026-10-06 09:42:16'],
+      ['519','法兰克福-静态住宅-01','203.0.113.***:****','德国-法兰克福','全球家庭住宅-静态','德国-资源_01','郭伟利(Fox)','2026-10-05 11:35:18'],
+      ['515','纽约-美国住宅-04','192.0.2.***:****','美国-纽约','全球家庭住宅-动态','纽约-资源_04','Ollie','2026-10-04 13:02:47']
+    ].map(([id,name,proxyInfo,region,provider,providerSub,operator,deletedAt])=>({recycleId:`RB-PP-${id}`,id,name,proxyInfo,region,provider,providerSub,tags:[],operator,deletedAt}));
+    recycleData.owned_proxy = [
+      ['5188','代理检测失败-01','154.64.138.***:****','HTTP','154.64.138.***','-','2026-10-13 16:03:02'],
+      ['5047','自有设备-office-02','64.144.22.***:****','Socks5','64.144.22.***','-','2026-10-13 12:05:44'],
+      ['5039','自有设备-美国-03','203.0.113.***:****','HTTP','203.0.113.***','店铺运营','2026-10-12 10:45:13'],
+      ['5008','自有设备-东京-04','198.51.100.***:****','Socks5','198.51.100.***','日本站','2026-10-11 17:20:06'],
+      ['4971','自有设备-伦敦-05','192.0.2.***:****','HTTPS','192.0.2.***','广告测试','2026-10-10 14:09:41'],
+      ['4952','自有设备-德国-06','203.0.113.***:****','HTTP','203.0.113.***','-','2026-10-09 11:36:08'],
+      ['4933','自有设备-新加坡-07','198.51.100.***:****','Socks5','198.51.100.***','团队共享','2026-10-08 09:17:32'],
+      ['4910','自有设备-加拿大-08','192.0.2.***:****','HTTP','192.0.2.***','-','2026-10-07 13:42:26']
+    ].map(([id,name,proxyInfo,proxyType,exitIp,remark,deletedAt])=>({recycleId:`RB-OP-${id}`,id,name,proxyInfo,proxyType,exitIp,remark,operator:'-',deletedAt}));
+    recycleData.owned_proxy.push(...[
+      ['239','代理API-1kf','http','上次提取失效才提取新IP','bridge3.ipipv.com:6230:***','2026-10-14 11:02:09'],
+      ['237','代理API-s','socks5','上次提取失效才提取新IP','api.shenlongip.com/ip/…','2026-10-13 16:16:46'],
+      ['238','代理API-qbu','http','上次提取失效才提取新IP','bridge3.ipipv.com:6772:***','2026-10-13 16:03:47'],
+      ['236','代理API-东京','http','每次启动提取','proxy.example.test/extract/236','2026-10-12 09:43:12'],
+      ['235','代理API-伦敦','socks5','每次启动提取','proxy.example.test/extract/235','2026-10-11 14:02:36'],
+      ['234','代理API-德国','http','固定时长提取','proxy.example.test/extract/234','2026-10-10 16:20:08'],
+      ['233','代理API-北美','socks5','每次打开提取','proxy.example.test/extract/233','2026-10-09 11:34:25'],
+      ['232','代理API-运营','http','每次启动提取','proxy.example.test/extract/232','2026-10-08 10:06:31']
+    ].map(([id,name,proxyType,extractMode,extractUrl,deletedAt])=>({recycleId:`RB-API-${id}`,id,name,proxyInfo:extractUrl,proxyType,exitIp:'-',remark:extractMode,extractMode,sourceLabel:'代理API',operator:'-',deletedAt})));
+    Object.entries(recycleData).forEach(([type,items])=>items.forEach((item,index)=>{
+      if(item.deletedAt<'2026-09-15') item.deletedAt=`2026-10-${String(12-index%9).padStart(2,'0')} 14:20:16`;
+      if(type==='account' && item.account && item.account!=='-') item.account=item.account.replace(/@.+$/, '@***');
+      item.expireAt=new Date(new Date(item.deletedAt.replace(' ','T')+'+08:00').getTime()+30*86400000).toLocaleString('sv-SE',{timeZone:'Asia/Shanghai'});
+    }));
+    Object.values(recycleData).forEach(items=>items.sort((a,b)=>b.deletedAt.localeCompare(a.deletedAt)));
     const state = {
       currentType:'environment', page:1, pageSize:10, selected:new Set(),
       filters:Object.fromEntries(Object.keys(typeConfig).map(type=>[type,{keyword:'',group:''}])),
-    }; 
+    };
+    const searchBoxes = {};
     const escapeHtml = value => String(value ?? '-').replace(/[&<>'"]/g, char=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
     const unique = values => [...new Set(values.filter(Boolean))];
     const currentConfig = () => typeConfig[state.currentType];
     function renderTabs() {
+      $('typeTabs').innerHTML=Object.entries(typeConfig).map(([type,config])=>`<button type="button" class="type-tab ${type===state.currentType?'active':''}" role="tab" aria-selected="${type===state.currentType}" tabindex="${type===state.currentType?'0':'-1'}" data-type="${type}"><i data-lucide="${config.icon}" class="w-4 h-4"></i>${config.label}</button>`).join('');
       $('typeTabs').querySelectorAll('[data-type]').forEach(button=>button.addEventListener('click',()=>switchType(button.dataset.type)));
     }
     function renderGroupOptions() {
@@ -264,22 +310,23 @@
       $('groupControl').classList.toggle('hidden',!visible);
       if (!visible) return;
       const groups = unique(recycleData.environment.map(item=>item.group));
-      $('groupFilter').innerHTML = '<option value="">全部分组</option>'+groups.map(group=>`<option value="${escapeHtml(group)}">${escapeHtml(group)}</option>`).join('');
+      $('groupFilter').innerHTML = '<option value="">选择分组</option>'+groups.map(group=>`<option value="${escapeHtml(group)}">${escapeHtml(group)}</option>`).join('');
       $('groupFilter').value = state.filters.environment.group;
     }
     function renderToolbar() {
       const config=currentConfig(), count=state.selected.size, total=recycleData[state.currentType].length;
       $('listTitle').textContent=`${config.label}回收列表`;
+      $('listCount').textContent=`共 ${getFilteredItems().length} 条`;
       const selectedDisabled=count===0?'disabled':'';
       if(config.toolbar==='selection') {
         $('actionButtons').innerHTML=`
-          <button id="restoreSelectedBtn" type="button" class="btn btn-secondary" ${selectedDisabled}><i data-lucide="archive-restore" class="w-4 h-4"></i>恢复</button>
+          <button id="restoreSelectedBtn" type="button" class="btn btn-secondary" ${selectedDisabled}><i data-lucide="undo-2" class="w-4 h-4"></i>恢复</button>
           <button id="deleteSelectedBtn" type="button" class="btn btn-danger-outline" ${selectedDisabled}><i data-lucide="trash-2" class="w-4 h-4"></i>删除</button>`;
       } else if(config.toolbar==='clear') {
         $('actionButtons').innerHTML=`<button id="clearAllBtn" type="button" class="btn btn-danger-outline" ${total===0?'disabled':''}><i data-lucide="trash-2" class="w-4 h-4"></i>清空回收站</button>`;
       } else {
         $('actionButtons').innerHTML=`
-          <button id="restoreAllBtn" type="button" class="btn btn-secondary" ${total===0?'disabled':''}><i data-lucide="archive-restore" class="w-4 h-4"></i>全部恢复</button>
+          <button id="restoreAllBtn" type="button" class="btn btn-primary" ${total===0?'disabled':''}><i data-lucide="undo-2" class="w-4 h-4"></i>全部恢复</button>
           <button id="clearAllBtn" type="button" class="btn btn-danger-outline" ${total===0?'disabled':''}><i data-lucide="trash-2" class="w-4 h-4"></i>清空回收站</button>`;
       }
       $('restoreSelectedBtn')?.addEventListener('click',()=>openConfirm('restore',[...state.selected]));
@@ -291,51 +338,49 @@
       $('selectedCount').textContent=count;
     }
     function getFilteredItems() {
-      const config=currentConfig(), filter=state.filters[state.currentType], keyword=filter.keyword.trim().toLowerCase();
+      const filter=state.filters[state.currentType];
       return recycleData[state.currentType].filter(item=>{
         const groupMatch=state.currentType!=='environment'||!filter.group||item.group===filter.group;
-        const keywordMatch=!keyword||config.searchKeys.some(key=>{
-          const value=Array.isArray(item[key])?item[key].join(' '):item[key];
-          return String(value??'').toLowerCase().includes(keyword);
-        });
-        return groupMatch&&keywordMatch;
+        return groupMatch&&searchBoxes[state.currentType].matches(item);
       });
     }
     function renderCell(item,key) {
       if(key==='select') return `<input type="checkbox" class="row-check" data-select-id="${item.recycleId}" ${state.selected.has(item.recycleId)?'checked':''} aria-label="选择${escapeHtml(item.name)}">`;
-      if(key==='id') return `<span class="mono text-[12px] text-ink-sub">${escapeHtml(item.id)}</span>`;
-      if(key==='name') return `<button type="button" class="cell-text text-left text-primary hover:underline font-medium" data-detail="${item.recycleId}" title="${escapeHtml(item.name)}">${escapeHtml(item.name)}</button>`;
+      if(key==='id') return `<span class="mono">${escapeHtml(item.id)}</span>`;
+      if(key==='name') return `<div class="flex items-center gap-1.5 min-w-0"><button type="button" class="cell-text cell-link text-left min-w-0" data-detail="${item.recycleId}" title="查看${escapeHtml(item.name)}详情">${escapeHtml(item.name)}</button>${item.sourceLabel?`<span class="tag flex-none">${escapeHtml(item.sourceLabel)}</span>`:''}</div>`;
       if(key==='tags') {
         const tags=item.tags||[];
         return tags.length?`<div class="flex items-center gap-1">${tags.slice(0,2).map(tag=>`<span class="tag">${escapeHtml(tag)}</span>`).join('')}${tags.length>2?`<span class="text-[11px] text-ink-muted">+${tags.length-2}</span>`:''}</div>`:'-';
       }
       if(key==='group') return item.groupExists===false?`<span class="inline-flex items-center gap-1 text-warning" title="恢复时进入未分组"><i data-lucide="triangle-alert" class="w-3.5 h-3.5"></i>${escapeHtml(item.group)}</span>`:`<span class="cell-text" title="${escapeHtml(item.group)}">${escapeHtml(item.group)}</span>`;
-      if(key==='deletedAt') return `<span class="mono text-[11px] whitespace-nowrap text-ink-sub">${escapeHtml(item.deletedAt)}</span>`;
-      if(key==='actions') return `<div class="table-actions">
-        <button type="button" class="table-action" data-detail="${item.recycleId}">查看详情</button>
-        <button type="button" class="table-action" data-restore="${item.recycleId}">恢复</button>
-        <button type="button" class="table-action is-danger" data-purge="${item.recycleId}">删除</button>
-      </div>`;
+      if(key==='deletedAt') return `<span class="mono whitespace-nowrap" title="${escapeHtml(item.deletedAt)}">${escapeHtml(item.deletedAt)}</span>`;
+      if(key==='proxyInfo' && state.currentType==='platform_proxy') return `<span class="cell-text mono">${escapeHtml(item.proxyInfo)}</span><span class="cell-sub">${escapeHtml(item.region)}</span>`;
+      if(key==='provider') return `<span class="cell-text">${escapeHtml(item.provider)}</span><span class="cell-sub">${escapeHtml(item.providerSub)}</span>`;
+      if(key==='extractUrl') return `<span class="cell-text mono" title="脱敏提取链接：${escapeHtml(item.extractUrl)}">${escapeHtml(item.extractUrl)}</span>`;
+      if(key==='exitIp') return `<span class="mono">${escapeHtml(item.exitIp)}</span>`;
+      if(key==='actions') return `<div class="table-actions">${state.currentType==='platform_proxy'?'':`<button type="button" class="table-action" data-restore="${item.recycleId}">恢复</button>`}<button type="button" class="table-action is-danger" data-purge="${item.recycleId}">删除</button></div>`;
       const value=item[key]??'-';
-      return `<span class="cell-text" title="${escapeHtml(value)}">${escapeHtml(value)}</span>`;
+      return `<span class="cell-text ${key==='account'?'mono':''}" title="${escapeHtml(value)}">${escapeHtml(value)}</span>`;
     }
     function renderTable() {
       const all=getFilteredItems(), totalPages=Math.max(1,Math.ceil(all.length/state.pageSize));
       if(state.page>totalPages) state.page=totalPages;
       const start=(state.page-1)*state.pageSize, pageItems=all.slice(start,start+state.pageSize), config=currentConfig();
-      const header=`<thead><tr>${config.columns.map((column,index)=>{
+      const tableWidth=config.columns.reduce((sum,column)=>sum+column.width,0);
+      const header=`<thead><tr>${config.columns.map(column=>{
         if(column.key==='select') {
           const allSelected=pageItems.length>0&&pageItems.every(item=>state.selected.has(item.recycleId));
           return `<th style="width:${column.width}px"><input id="selectAll" type="checkbox" class="row-check" ${allSelected?'checked':''} ${pageItems.length===0?'disabled':''} aria-label="选择当前页全部数据"></th>`;
         }
         const actionColumn=column.key==='actions';
+        return `<th scope="col" class="${actionColumn?'action-column':''}" style="width:${column.width}px">${escapeHtml(column.label)}</th>`;
       }).join('')}</tr></thead>`;
       if(pageItems.length===0) {
         const hasFilter=Boolean(state.filters[state.currentType].keyword||state.filters[state.currentType].group);
-        $('tableArea').innerHTML=`<table class="data-table">${header}</table><div class="min-h-[390px] flex items-center justify-center px-5"><div class="text-center"><span class="w-16 h-16 rounded-lg bg-page text-ink-muted mx-auto flex items-center justify-center"><i data-lucide="${hasFilter?'search-x':'archive-restore'}" class="w-8 h-8"></i></span><p class="mt-4 text-[15px] font-medium text-ink-title">${hasFilter?'未找到符合条件的数据':'回收站很干净'}</p><p class="mt-1.5 text-[12px] text-ink-muted">${hasFilter?'请调整或清空筛选条件':'去其它的页面逛逛吧'}</p>${hasFilter?'<button id="emptyResetBtn" type="button" class="btn btn-secondary mt-4"><i data-lucide="rotate-ccw" class="w-4 h-4"></i>清空筛选</button>':''}</div></div>`;
+        $('tableArea').innerHTML=`<table class="data-table" style="min-width:${tableWidth}px">${header}</table><div class="min-h-[320px] flex items-center justify-center px-5"><div class="text-center"><span class="w-16 h-16 rounded-lg bg-page text-ink-muted mx-auto flex items-center justify-center"><i data-lucide="${hasFilter?'search-x':'archive-restore'}" class="w-8 h-8"></i></span><p class="mt-4 text-[15px] font-medium text-ink-title">${hasFilter?'未找到符合条件的数据':'回收站很干净'}</p><p class="mt-1.5 text-[12px] text-ink-sub">${hasFilter?'请调整筛选条件':'去其它的页面逛逛吧'}</p>${hasFilter?'<button id="emptyResetBtn" type="button" class="btn btn-secondary mt-4"><i data-lucide="rotate-ccw" class="w-4 h-4"></i>清空筛选</button>':''}</div></div>`;
         $('emptyResetBtn')?.addEventListener('click',clearFilters);
       } else {
-        $('tableArea').innerHTML=`<table class="data-table">${header}<tbody>${pageItems.map(item=>`<tr class="${state.selected.has(item.recycleId)?'selected':''}">${config.columns.map(column=>`<td class="${column.key==='actions'?'action-column':''}">${renderCell(item,column.key)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+        $('tableArea').innerHTML=`<table class="data-table" style="min-width:${tableWidth}px">${header}<tbody>${pageItems.map(item=>`<tr class="${state.selected.has(item.recycleId)?'selected':''}">${config.columns.map(column=>`<td class="${column.key==='actions'?'action-column':''}">${renderCell(item,column.key)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
       }
       bindTableEvents();
       renderPagination(all.length,totalPages);
@@ -382,19 +427,18 @@
     function switchType(type) {
       if(type===state.currentType) return;
       state.currentType=type; state.page=1; state.selected.clear();
-      history.replaceState(null,'',`#${type}`);
-      $('searchInput').value=state.filters[type].keyword;
+      const url=new URL(location.href); url.searchParams.set('type',type); history.pushState(null,'',url);
       renderAll();
     }
     function renderAll() {
+      Object.entries(searchBoxes).forEach(([type,box])=>box.container.classList.toggle('hidden',type!==state.currentType));
+      searchBoxes[state.currentType].sync();
       renderTabs(); renderGroupOptions(); renderToolbar(); renderTable();
-      $('searchInput').value=state.filters[state.currentType].keyword;
-      $('clearSearchBtn').classList.toggle('hidden',!$('searchInput').value);
       lucide.createIcons()
     }
     function clearFilters() {
       state.filters[state.currentType]={keyword:'',group:''}; state.page=1; state.selected.clear();
-      $('searchInput').value=''; renderAll();
+      searchBoxes[state.currentType].clear({focus:false});
     }
     function getItem(recycleId) { return recycleData[state.currentType].find(item=>item.recycleId===recycleId); }
     function openDetail(recycleId,trigger) {
@@ -402,10 +446,10 @@
       state.lastFocus=trigger||document.activeElement;
       const config=currentConfig();
       const hiddenKeys=new Set(['recycleId','groupExists','tags']);
-      const labels={id:'原对象 ID',group:'原分组',name:'名称',account:'账号',remark:'备注',operator:'删除操作者',deletedAt:'删除时间',expireAt:'预计清除时间',platform:'平台',proxyInfo:'设备信息',provider:'服务商',proxyType:'设备类型',extractMode:'提取方式',extractUrl:'提取链接'};
+      const labels={id:'原对象 ID',group:'原分组',name:'名称',account:'账号',remark:'备注',operator:'删除操作者',deletedAt:'删除时间',expireAt:'预计清除时间',platform:'平台',proxyInfo:'设备信息',provider:'服务商',providerSub:'资源',region:'地区',proxyType:'设备类型',exitIp:'出口 IP',extractMode:'提取方式',sourceLabel:'来源类型'};
       const fields=Object.entries(item).filter(([key])=>!hiddenKeys.has(key)&&labels[key]);
       $('detailContent').innerHTML=`
-        <div class="flex items-start gap-3 pb-5 border-b border-line-lighter"><span class="w-10 h-10 rounded bg-primary-bg text-primary flex items-center justify-center"><i data-lucide="${config.icon}" class="w-5 h-5"></i></span><div><p class="text-[15px] font-semibold text-ink-title">${escapeHtml(item.name)}</p><p class="text-[12px] text-ink-muted mt-1">${config.label} · 回收编号 <span class="mono">${escapeHtml(item.recycleId)}</span></p></div></div>
+        <div class="flex items-start gap-3 pb-5 border-b border-line-lighter"><span class="w-10 h-10 rounded bg-primary-bg text-primary flex items-center justify-center"><i data-lucide="${config.icon}" class="w-5 h-5"></i></span><div><p class="text-[15px] font-semibold text-ink-title">${escapeHtml(item.name)}</p><p class="text-[12px] text-ink-muted mt-1">${escapeHtml(item.sourceLabel||config.label)} · 回收编号 <span class="mono">${escapeHtml(item.recycleId)}</span></p></div></div>
         <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-0 mt-3">${fields.map(([key,value])=>`<div class="py-3 border-b border-line-lighter min-w-0"><dt class="text-[12px] text-ink-muted">${labels[key]}</dt><dd class="mt-1 text-ink-title break-words ${key.endsWith('At')||key==='id'?'mono text-[12px]':''}">${escapeHtml(value)}</dd></div>`).join('')}</dl>
         <div class="mt-5 p-3 rounded bg-info-bg text-info flex items-start gap-2"><i data-lucide="shield-check" class="w-4 h-4 mt-0.5 flex-none"></i><p class="text-[12px] leading-5">详情已隐藏密码、Cookie、令牌、设备认证信息和 API 密钥。恢复前仍由服务端校验权限、到期状态与资源冲突。</p></div>`;
       $('detailModal').classList.remove('hidden');
@@ -421,10 +465,11 @@
       if(!count) return;
       state.lastFocus=trigger||document.activeElement; state.pendingAction={action,ids:[...ids],type:state.currentType};
       const danger=action==='purge'||action==='clearAll', all=action==='restoreAll'||action==='clearAll';
-      const title={restore:count>1?'批量恢复':`恢复${config.singular}`,purge:count>1?'批量删除':`删除${config.singular}`,restoreAll:'全部恢复',clearAll:'清空回收站'}[action];
+      const singular=count===1&&items[0].sourceLabel?items[0].sourceLabel:config.singular;
+      const title={restore:count>1?'批量恢复':`恢复${singular}`,purge:count>1?'批量删除':`删除${singular}`,restoreAll:'全部恢复',clearAll:'清空回收站'}[action];
       let message='';
-      if(action==='restore') message=count>1?`确认恢复回收站中的所选的${config.singular}吗？`:`确认恢复回收站中的${config.singular}“${items[0].name}”吗？`;
-      if(action==='purge') message=`删除后${config.singular}将不可恢复，确认要删除吗？`;
+      if(action==='restore') message=count>1?`确认恢复回收站中的所选的${config.singular}吗？`:`确认恢复回收站中的${singular}“${items[0].name}”吗？`;
+      if(action==='purge') message=`删除后${singular}将不可恢复，确认要删除吗？`;
       if(action==='restoreAll') message=`将恢复“${config.label}”中的 ${count} 项数据，确认继续吗？`;
       if(action==='clearAll') message=`将永久删除“${config.label}”中的 ${count} 项数据，确认清空吗？`;
       $('confirmTitle').textContent=title; $('confirmMessage').textContent=message;
@@ -445,7 +490,7 @@
       state.operationLoading=true; $('confirmSubmitBtn').disabled=true; $('confirmCancelBtn').disabled=true; $('confirmCloseBtn').disabled=true;
       $('confirmSubmitBtn').innerHTML='<i data-lucide="loader-circle" class="w-4 h-4 animate-spin"></i>处理中'; lucide.createIcons();
       setTimeout(()=>{
-        const config=typeConfig[pending.type], list=recycleData[pending.type], restore=pending.action==='restore'||pending.action==='restoreAll';
+      const list=recycleData[pending.type], restore=pending.action==='restore'||pending.action==='restoreAll';
         const affected=list.filter(item=>pending.ids.includes(item.recycleId));
         recycleData[pending.type]=list.filter(item=>!pending.ids.includes(item.recycleId));
         const missingGroup=restore&&affected.some(item=>item.groupExists===false);
@@ -464,7 +509,68 @@
       $('toastContainer').prepend(el); while($('toastContainer').children.length>3) $('toastContainer').lastElementChild.remove();
       el.querySelector('button').addEventListener('click',()=>el.remove()); lucide.createIcons(); setTimeout(()=>el.remove(),3200);
     }
-    const initialType=location.hash.slice(1); if(typeConfig[initialType]) state.currentType=initialType;
+    function initSearchBoxes() {
+      const labels={id:'序号',group:'分组',name:'名称',account:'账号',remark:'备注',tags:'标签',operator:'操作者',platform:'平台',proxyInfo:'设备信息',provider:'服务商',proxyType:'设备类型',exitIp:'出口IP',extractMode:'提取方式',sourceLabel:'来源类型'};
+      Object.entries(typeConfig).forEach(([type,config])=>{
+        const container=document.createElement('div');
+        container.id=`recycleSearch_${type}`;
+        container.className='order-global-search hidden';
+        $('recycleSearchHost').append(container);
+        const selector=`#${container.id}`;
+        searchBoxes[type]=window.YDSearchBox.init(selector,{
+          label:`${config.label}回收数据`, inputId:`recycleKeyword_${type}`,
+          scopes:[{key:'all',label:'全局搜索'},...config.searchKeys.map(key=>({key,label:labels[key]||key}))],
+          values:item=>Object.fromEntries(config.searchKeys.map(key=>[key,item[key]])),
+          onChange:()=>{
+            state.filters[type].keyword=window.YDSearchBox.value(selector);
+            if(type===state.currentType){state.page=1;state.selected.clear();renderAll();}
+          }
+        });
+      });
+    }
+    function closeActiveModal() {
+      if(!$('detailModal').classList.contains('hidden')) closeDetail();
+      else if(!$('confirmModal').classList.contains('hidden')) closeConfirm();
+    }
+    $('groupFilter').addEventListener('change',event=>{state.filters.environment.group=event.target.value;state.page=1;state.selected.clear();renderAll();});
+    $('refreshBtn').addEventListener('click',()=>{state.selected.clear();renderAll();toast('列表已刷新','info');});
+    $('clearSelectionBtn').addEventListener('click',()=>{state.selected.clear();renderAll();});
+    $('confirmSubmitBtn').addEventListener('click',executePendingAction);
+    $('confirmCancelBtn').addEventListener('click',closeConfirm);
+    $('confirmCloseBtn').addEventListener('click',closeConfirm);
+    $('confirmModal').addEventListener('click',event=>{if(event.target===$('confirmModal')) closeConfirm();});
+    $('detailCloseBtn').addEventListener('click',closeDetail);
+    $('detailDoneBtn').addEventListener('click',closeDetail);
+    $('detailModal').addEventListener('click',event=>{if(event.target===$('detailModal')) closeDetail();});
+    document.addEventListener('keydown',event=>{
+      if(event.key==='Escape') closeActiveModal();
+      if(event.key==='Tab') {
+        const modal=[$('confirmModal'),$('detailModal')].find(element=>!element.classList.contains('hidden'));
+        if(!modal) return;
+        const focusable=[...modal.querySelectorAll('button:not(:disabled)')];
+        const first=focusable[0],last=focusable.at(-1);
+        if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}
+        else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}
+      }
+    });
+    $('typeTabs').addEventListener('keydown',event=>{
+      if(!['ArrowLeft','ArrowRight','Home','End'].includes(event.key)) return;
+      event.preventDefault();
+      const types=Object.keys(typeConfig),index=types.indexOf(state.currentType);
+      const next=event.key==='Home'?0:event.key==='End'?types.length-1:(index+(event.key==='ArrowRight'?1:-1)+types.length)%types.length;
+      switchType(types[next]); $('typeTabs').querySelector('[aria-selected="true"]').focus();
+    });
+    const normalizeType=type=>type==='proxy_api'?'owned_proxy':typeConfig[type]?type:'environment';
+    window.addEventListener('popstate',()=>{
+      state.currentType=normalizeType(new URLSearchParams(location.search).get('type'));
+      state.page=1; state.selected.clear(); renderAll();
+    });
+    const initialType=new URLSearchParams(location.search).get('type')||location.hash.slice(1);
+    state.currentType=normalizeType(initialType);
+    if(initialType==='proxy_api') {
+      const url=new URL(location.href); url.searchParams.set('type','owned_proxy'); url.hash=''; history.replaceState(null,'',url);
+    }
+    initSearchBoxes();
     renderAll();
   </script>
 </body>
